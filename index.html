@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>NERLA AI Chatbot</title>
+<title>NERLA AI Chatbot Aprendiz</title>
 <style>
   body {
     background: #111;
@@ -69,7 +69,7 @@
 </head>
 <body>
 
-<h1>NERLA AI Chatbot</h1>
+<h1>NERLA AI Chatbot Aprendiz</h1>
 <div id="chatbox" aria-live="polite" role="log"></div>
 
 <div id="inputArea">
@@ -82,6 +82,23 @@
   const inputText = document.getElementById('inputText');
   const sendBtn = document.getElementById('sendBtn');
 
+  // Base simples de perguntas e respostas iniciais
+  let baseConhecimento = {
+    "oi": "Olá! Eu sou a NERLA, sua inteligência artificial.",
+    "olá": "Olá! Eu sou a NERLA, sua inteligência artificial.",
+    "como você está": "Estou sempre pronta para ajudar!",
+    "tudo bem": "Tudo ótimo, e você?",
+    "quem é você": "Eu sou um chatbot básico criado para responder suas perguntas.",
+    "nerla": "NERLA é um projeto misterioso de IA, envolto em segredos.",
+    "adeus": "Até mais! Volte sempre para conversar comigo.",
+    "tchau": "Até mais! Volte sempre para conversar comigo."
+  };
+
+  // Tenta carregar respostas aprendidas da memória local
+  if(localStorage.getItem('baseConhecimento')) {
+    baseConhecimento = JSON.parse(localStorage.getItem('baseConhecimento'));
+  }
+
   function appendMessage(text, className) {
     const div = document.createElement('div');
     div.textContent = text;
@@ -91,26 +108,18 @@
     chatbox.scrollTop = chatbox.scrollHeight;
   }
 
-  // Regras simples para respostas
   function responder(mensagem) {
-    mensagem = mensagem.toLowerCase();
+    mensagem = mensagem.toLowerCase().trim();
+    if (baseConhecimento[mensagem]) {
+      return baseConhecimento[mensagem];
+    } else {
+      return null;
+    }
+  }
 
-    if (mensagem.includes('oi') || mensagem.includes('olá')) {
-      return 'Olá! Eu sou a NERLA, sua inteligência artificial.';
-    }
-    if (mensagem.includes('como você está') || mensagem.includes('tudo bem')) {
-      return 'Estou sempre pronta para ajudar!';
-    }
-    if (mensagem.includes('quem é você')) {
-      return 'Eu sou um chatbot básico criado para responder suas perguntas.';
-    }
-    if (mensagem.includes('nerla')) {
-      return 'NERLA é um projeto misterioso de IA, envolto em segredos.';
-    }
-    if (mensagem.includes('adeus') || mensagem.includes('tchau')) {
-      return 'Até mais! Volte sempre para conversar comigo.';
-    }
-    return 'Desculpe, ainda estou aprendendo e não entendi sua mensagem.';
+  function aprender(pergunta, resposta) {
+    baseConhecimento[pergunta.toLowerCase()] = resposta;
+    localStorage.setItem('baseConhecimento', JSON.stringify(baseConhecimento));
   }
 
   function enviarMensagem() {
@@ -118,14 +127,74 @@
     if (!msg) return;
     appendMessage(msg, 'user');
     inputText.value = '';
-    const resposta = responder(msg);
-    setTimeout(() => appendMessage(resposta), 500);
+
+    let resposta = responder(msg);
+    if (resposta !== null) {
+      setTimeout(() => appendMessage(resposta), 400);
+    } else {
+      setTimeout(() => appendMessage('Não sei a resposta para isso. Pode me ensinar? (responda "sim" ou "não")'), 400);
+      aguardarEnsino(msg);
+    }
+  }
+
+  // Variável para guardar se estamos esperando ensinar algo
+  let esperandoEnsino = false;
+  let perguntaParaEnsinar = null;
+
+  function aguardarEnsino(pergunta) {
+    esperandoEnsino = true;
+    perguntaParaEnsinar = pergunta;
+
+    // Cria listener para próxima resposta do usuário
+    function listener(e) {
+      if(e.key === 'Enter') {
+        const respostaUsuario = inputText.value.trim().toLowerCase();
+        inputText.value = '';
+        if (!esperandoEnsino) {
+          return;
+        }
+        if (respostaUsuario === 'sim') {
+          esperandoEnsino = false;
+          appendMessage('Me diga a resposta para "' + perguntaParaEnsinar + '"', null);
+          // Espera próxima mensagem para salvar
+          proximoEnsino();
+        } else {
+          esperandoEnsino = false;
+          appendMessage('Ok, tudo bem! Vou tentar aprender depois.', null);
+          inputText.removeEventListener('keydown', listener);
+        }
+      }
+    }
+    inputText.addEventListener('keydown', listener);
+
+    // Para guardar o próximo ensino
+    function proximoEnsino() {
+      function listenerResposta(e) {
+        if(e.key === 'Enter') {
+          const respostaNova = inputText.value.trim();
+          inputText.value = '';
+          if(respostaNova.length < 1) {
+            appendMessage('Resposta inválida, por favor digite algo.', null);
+            return;
+          }
+          aprender(perguntaParaEnsinar, respostaNova);
+          appendMessage('Aprendi! Obrigado por me ensinar.', null);
+          esperandoEnsino = false;
+          inputText.removeEventListener('keydown', listenerResposta);
+          inputText.removeEventListener('keydown', listener);
+        }
+      }
+      inputText.addEventListener('keydown', listenerResposta);
+    }
   }
 
   sendBtn.addEventListener('click', enviarMensagem);
   inputText.addEventListener('keydown', e => {
-    if (e.key === 'Enter') enviarMensagem();
+    if (e.key === 'Enter' && !esperandoEnsino) enviarMensagem();
   });
+
+  // Mensagem inicial
+  appendMessage('Olá! Eu sou a NERLA. Pergunte algo ou diga "oi".');
 </script>
 
 </body>
