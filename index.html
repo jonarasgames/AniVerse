@@ -1,201 +1,113 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>NERLA AI Chatbot Aprendiz</title>
-<style>
-  body {
-    background: #111;
-    color: #0ff;
-    font-family: monospace;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    height: 100vh;
-    margin: 0;
-    padding: 20px;
-  }
-  #chatbox {
-    width: 90%;
-    max-width: 600px;
-    height: 70vh;
-    background: #000a;
-    border: 2px solid #0ff;
-    border-radius: 10px;
-    padding: 15px;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  .message {
-    background: #002222;
-    padding: 10px;
-    border-radius: 5px;
-    max-width: 80%;
-  }
-  .user {
-    background: #004466;
-    align-self: flex-end;
-  }
-  #inputArea {
-    margin-top: 15px;
-    width: 90%;
-    max-width: 600px;
-    display: flex;
-    gap: 10px;
-  }
-  #inputText {
-    flex: 1;
-    padding: 10px;
-    font-size: 1rem;
-    border-radius: 5px;
-    border: 2px solid #0ff;
-    background: #111;
-    color: #0ff;
-  }
-  #sendBtn {
-    padding: 10px 20px;
-    background: #0ff;
-    border: none;
-    border-radius: 5px;
-    font-weight: bold;
-    cursor: pointer;
-    color: #000;
-  }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat IA NERLA</title>
+  <style>
+    body {
+      background: #000;
+      color: #0ff;
+      font-family: monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      height: 100vh;
+      padding: 20px;
+      margin: 0;
+    }
+    h1 {
+      margin-bottom: 10px;
+    }
+    #chatbox {
+      width: 90%;
+      max-width: 700px;
+      height: 70vh;
+      background: #111;
+      border: 2px solid #0ff;
+      border-radius: 10px;
+      padding: 15px;
+      overflow-y: auto;
+    }
+    .message {
+      margin: 5px 0;
+      padding: 10px;
+      background: #003;
+      border-radius: 5px;
+    }
+    .user {
+      background: #005;
+      align-self: flex-end;
+    }
+    #inputArea {
+      display: flex;
+      margin-top: 10px;
+      width: 90%;
+      max-width: 700px;
+    }
+    #inputText {
+      flex: 1;
+      padding: 10px;
+      font-size: 1rem;
+      border: 2px solid #0ff;
+      background: #111;
+      color: #0ff;
+    }
+    #sendBtn {
+      padding: 10px 20px;
+      background: #0ff;
+      color: #000;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
+  <h1>Chat com a NERLA</h1>
+  <div id="chatbox"></div>
+  <div id="inputArea">
+    <input id="inputText" type="text" placeholder="Pergunte algo..." />
+    <button id="sendBtn">Enviar</button>
+  </div>
 
-<h1>NERLA AI Chatbot Aprendiz</h1>
-<div id="chatbox" aria-live="polite" role="log"></div>
+  <script>
+    const chatbox = document.getElementById('chatbox');
+    const inputText = document.getElementById('inputText');
+    const sendBtn = document.getElementById('sendBtn');
 
-<div id="inputArea">
-  <input id="inputText" type="text" placeholder="Digite sua mensagem aqui..." aria-label="Digite sua mensagem" />
-  <button id="sendBtn">Enviar</button>
-</div>
-
-<script>
-  const chatbox = document.getElementById('chatbox');
-  const inputText = document.getElementById('inputText');
-  const sendBtn = document.getElementById('sendBtn');
-
-  // Base simples de perguntas e respostas iniciais
-  let baseConhecimento = {
-    "oi": "Olá! Eu sou a NERLA, sua inteligência artificial.",
-    "olá": "Olá! Eu sou a NERLA, sua inteligência artificial.",
-    "como você está": "Estou sempre pronta para ajudar!",
-    "tudo bem": "Tudo ótimo, e você?",
-    "quem é você": "Eu sou um chatbot básico criado para responder suas perguntas.",
-    "nerla": "NERLA é um projeto misterioso de IA, envolto em segredos.",
-    "adeus": "Até mais! Volte sempre para conversar comigo.",
-    "tchau": "Até mais! Volte sempre para conversar comigo."
-  };
-
-  // Tenta carregar respostas aprendidas da memória local
-  if(localStorage.getItem('baseConhecimento')) {
-    baseConhecimento = JSON.parse(localStorage.getItem('baseConhecimento'));
-  }
-
-  function appendMessage(text, className) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    div.classList.add('message');
-    if (className) div.classList.add(className);
-    chatbox.appendChild(div);
-    chatbox.scrollTop = chatbox.scrollHeight;
-  }
-
-  function responder(mensagem) {
-    mensagem = mensagem.toLowerCase().trim();
-    if (baseConhecimento[mensagem]) {
-      return baseConhecimento[mensagem];
-    } else {
-      return null;
+    function addMessage(text, isUser = false) {
+      const msg = document.createElement('div');
+      msg.textContent = text;
+      msg.className = 'message' + (isUser ? ' user' : '');
+      chatbox.appendChild(msg);
+      chatbox.scrollTop = chatbox.scrollHeight;
     }
-  }
 
-  function aprender(pergunta, resposta) {
-    baseConhecimento[pergunta.toLowerCase()] = resposta;
-    localStorage.setItem('baseConhecimento', JSON.stringify(baseConhecimento));
-  }
-
-  function enviarMensagem() {
-    const msg = inputText.value.trim();
-    if (!msg) return;
-    appendMessage(msg, 'user');
-    inputText.value = '';
-
-    let resposta = responder(msg);
-    if (resposta !== null) {
-      setTimeout(() => appendMessage(resposta), 400);
-    } else {
-      setTimeout(() => appendMessage('Não sei a resposta para isso. Pode me ensinar? (responda "sim" ou "não")'), 400);
-      aguardarEnsino(msg);
+    async function enviarPergunta(pergunta) {
+      addMessage(pergunta, true);
+      addMessage("Pensando...", false);
+      try {
+        const res = await fetch(`https://free-unoficial-gpt4o-mini-api-g70n.onrender.com/chat/?query=${encodeURIComponent(pergunta)}`);
+        const data = await res.json();
+        chatbox.lastChild.textContent = data.response || "[Sem resposta]";
+      } catch (e) {
+        chatbox.lastChild.textContent = "[Erro ao conectar com a IA]";
+      }
     }
-  }
 
-  // Variável para guardar se estamos esperando ensinar algo
-  let esperandoEnsino = false;
-  let perguntaParaEnsinar = null;
-
-  function aguardarEnsino(pergunta) {
-    esperandoEnsino = true;
-    perguntaParaEnsinar = pergunta;
-
-    // Cria listener para próxima resposta do usuário
-    function listener(e) {
-      if(e.key === 'Enter') {
-        const respostaUsuario = inputText.value.trim().toLowerCase();
+    sendBtn.onclick = () => {
+      const msg = inputText.value.trim();
+      if (msg) {
+        enviarPergunta(msg);
         inputText.value = '';
-        if (!esperandoEnsino) {
-          return;
-        }
-        if (respostaUsuario === 'sim') {
-          esperandoEnsino = false;
-          appendMessage('Me diga a resposta para "' + perguntaParaEnsinar + '"', null);
-          // Espera próxima mensagem para salvar
-          proximoEnsino();
-        } else {
-          esperandoEnsino = false;
-          appendMessage('Ok, tudo bem! Vou tentar aprender depois.', null);
-          inputText.removeEventListener('keydown', listener);
-        }
       }
-    }
-    inputText.addEventListener('keydown', listener);
+    };
 
-    // Para guardar o próximo ensino
-    function proximoEnsino() {
-      function listenerResposta(e) {
-        if(e.key === 'Enter') {
-          const respostaNova = inputText.value.trim();
-          inputText.value = '';
-          if(respostaNova.length < 1) {
-            appendMessage('Resposta inválida, por favor digite algo.', null);
-            return;
-          }
-          aprender(perguntaParaEnsinar, respostaNova);
-          appendMessage('Aprendi! Obrigado por me ensinar.', null);
-          esperandoEnsino = false;
-          inputText.removeEventListener('keydown', listenerResposta);
-          inputText.removeEventListener('keydown', listener);
-        }
-      }
-      inputText.addEventListener('keydown', listenerResposta);
-    }
-  }
-
-  sendBtn.addEventListener('click', enviarMensagem);
-  inputText.addEventListener('keydown', e => {
-    if (e.key === 'Enter' && !esperandoEnsino) enviarMensagem();
-  });
-
-  // Mensagem inicial
-  appendMessage('Olá! Eu sou a NERLA. Pergunte algo ou diga "oi".');
-</script>
-
+    inputText.addEventListener('keydown', e => {
+      if (e.key === 'Enter') sendBtn.click();
+    });
+  </script>
 </body>
 </html>
