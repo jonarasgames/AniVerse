@@ -3,24 +3,57 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Nerla – IA que responde</title>
+  <title>Nerla – IA Brasileira</title>
   <style>
-    body, html {
-      margin: 0; padding: 0; height: 100%;
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, #ece9f3, #fafbff);
-      display: flex; align-items: center; justify-content: center;
+    body {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      background: linear-gradient(to bottom right, #f0f4ff, #e0e0f8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
     }
-    #container {
-      width: 100%; max-width: 600px; height: 90vh;
-      background: #fff; box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-      border-radius: 16px; display: flex; flex-direction: column;
+
+    #app {
+      width: 100%;
+      max-width: 600px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
       overflow: hidden;
     }
-    #chat {
-      flex: 1; padding: 20px; overflow-y: auto;
-      display: flex; flex-direction: column; gap: 12px;
+
+    #header {
+      background: #6c5ce7;
+      color: white;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
+
+    #header img {
+      width: 40px;
+      border-radius: 50%;
+    }
+
+    #header h1 {
+      margin: 0;
+      font-size: 1.2rem;
+    }
+
+    #chat {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
     .msg {
       padding: 12px 16px;
       border-radius: 20px;
@@ -28,78 +61,122 @@
       animation: fadeIn 0.3s ease forwards;
       opacity: 0;
     }
-    .me { align-self: flex-end; background: #6c5ce7; color: white; border-bottom-right-radius: 4px; }
-    .nerla { align-self: flex-start; background: #f1f3f5; color: #333; border-bottom-left-radius: 4px; }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+    .me {
+      align-self: flex-end;
+      background: #6c5ce7;
+      color: white;
+      border-bottom-right-radius: 4px;
+    }
+
+    .nerla {
+      align-self: flex-start;
+      background: #eee;
+      color: #222;
+      border-bottom-left-radius: 4px;
     }
 
     #input-area {
       display: flex;
       padding: 12px;
       border-top: 1px solid #ddd;
-      background: #f9f9fc;
+      background: #f8f8ff;
     }
+
     #prompt {
       flex: 1;
       padding: 10px 15px;
-      border: 1px solid #ccc;
       border-radius: 25px;
+      border: 1px solid #ccc;
       font-size: 1rem;
+      outline: none;
     }
+
     #send-btn {
       margin-left: 10px;
       background: #6c5ce7;
-      color: #fff;
+      color: white;
       border: none;
       border-radius: 25px;
       padding: 10px 20px;
       cursor: pointer;
+      font-weight: bold;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
 <body>
-  <div id="container">
+  <div id="app">
+    <div id="header">
+      <img src="https://i.imgur.com/7H2b8Z4.png" alt="Avatar da Nerla">
+      <h1>Nerla – Sua IA Brasileira 💬</h1>
+    </div>
     <div id="chat"></div>
     <div id="input-area">
-      <input type="text" id="prompt" placeholder="Pergunte algo à Nerla..." autocomplete="off" />
+      <input type="text" id="prompt" placeholder="Fale com a Nerla..." />
       <button id="send-btn">Enviar</button>
     </div>
   </div>
 
-  <!-- Puter.js (carrega a IA grátis) -->
-  <script src="https://js.puter.com/v2/"></script>
   <script>
     const chat = document.getElementById('chat');
     const input = document.getElementById('prompt');
     const button = document.getElementById('send-btn');
 
-    button.onclick = () => sendMessage();
-    input.addEventListener("keydown", e => { if (e.key === "Enter") sendMessage(); });
+    button.onclick = sendMessage;
+    input.addEventListener("keydown", e => {
+      if (e.key === "Enter") sendMessage();
+    });
 
-    function appendMessage(sender, text) {
-      const el = document.createElement("div");
-      el.className = `msg ${sender}`;
-      el.textContent = text;
-      chat.appendChild(el);
+    function addMsg(sender, text) {
+      const msg = document.createElement("div");
+      msg.className = `msg ${sender}`;
+      msg.textContent = text;
+      chat.appendChild(msg);
       chat.scrollTop = chat.scrollHeight;
     }
 
     async function sendMessage() {
-      const question = input.value.trim();
-      if (!question) return;
-      appendMessage("me", question);
+      const userInput = input.value.trim();
+      if (!userInput) return;
+
+      addMsg("me", userInput);
       input.value = "";
-      chat.scrollTop = chat.scrollHeight;
+
+      addMsg("nerla", "✍️ Nerla está pensando...");
+
+      const systemPrompt = "Você é Nerla, uma IA brasileira divertida, simpática e que sempre responde em português com bom humor.";
+      const apiKey = ""; // não precisa de chave se usar modelos públicos
+      const endpoint = "https://openrouter.ai/api/v1/chat/completions";
 
       try {
-        const res = await puter.ai.chat(question, { system: "Você é a Nerla, uma IA brasileira simpática e engraçada. Sempre responda em português." });
-        appendMessage("nerla", res);
-      } catch (e) {
-        appendMessage("nerla", "⚠️ Ocorreu um erro tentando falar com a IA...");
-        console.error(e);
+        const response = await fetch(endpoint, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer sk-demo-0f9cc1c5-25b3-4264-a731-nerla-modelo"
+          },
+          body: JSON.stringify({
+            model: "mistral/mistral-7b-instruct",
+            messages: [
+              { role: "system", content: systemPrompt },
+              { role: "user", content: userInput }
+            ]
+          })
+        });
+
+        const data = await response.json();
+        const nerlaReply = data.choices?.[0]?.message?.content || "❌ Erro na resposta da IA.";
+        document.querySelectorAll('.nerla').at(-1).remove(); // remove o "Nerla está pensando..."
+        addMsg("nerla", nerlaReply);
+      } catch (err) {
+        document.querySelectorAll('.nerla').at(-1).remove();
+        addMsg("nerla", "❌ Nerla travou! Tente de novo.");
+        console.error(err);
       }
     }
   </script>
