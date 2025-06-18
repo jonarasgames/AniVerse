@@ -2,22 +2,29 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Nerla – IA Brasileira</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nerla – Sua IA Brasileira</title>
   <style>
+    :root {
+      --cor-fundo: #f0f4ff;
+      --cor-nerla: #6c5ce7;
+      --cor-user: #222;
+      --avatar-nerla: url('https://i.imgur.com/7H2b8Z4.png');
+      --fonte: 'Segoe UI', sans-serif;
+    }
     body {
       margin: 0;
-      font-family: "Segoe UI", sans-serif;
-      background: linear-gradient(to bottom right, #f0f4ff, #e0e0f8);
+      font-family: var(--fonte);
+      background: var(--cor-fundo);
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
     }
-
     #app {
       width: 100%;
-      max-width: 600px;
+      max-width: 700px;
+      height: 90vh;
       background: white;
       border-radius: 16px;
       box-shadow: 0 10px 25px rgba(0,0,0,0.1);
@@ -25,26 +32,22 @@
       flex-direction: column;
       overflow: hidden;
     }
-
     #header {
-      background: #6c5ce7;
+      background: var(--cor-nerla);
       color: white;
       padding: 16px;
       display: flex;
       align-items: center;
       gap: 10px;
     }
-
     #header img {
       width: 40px;
       border-radius: 50%;
     }
-
     #header h1 {
       margin: 0;
       font-size: 1.2rem;
     }
-
     #chat {
       flex: 1;
       padding: 20px;
@@ -53,36 +56,32 @@
       flex-direction: column;
       gap: 12px;
     }
-
     .msg {
       padding: 12px 16px;
       border-radius: 20px;
       max-width: 75%;
       animation: fadeIn 0.3s ease forwards;
       opacity: 0;
+      white-space: pre-wrap;
     }
-
     .me {
       align-self: flex-end;
-      background: #6c5ce7;
+      background: var(--cor-nerla);
       color: white;
       border-bottom-right-radius: 4px;
     }
-
     .nerla {
       align-self: flex-start;
       background: #eee;
-      color: #222;
+      color: var(--cor-user);
       border-bottom-left-radius: 4px;
     }
-
     #input-area {
       display: flex;
       padding: 12px;
       border-top: 1px solid #ddd;
       background: #f8f8ff;
     }
-
     #prompt {
       flex: 1;
       padding: 10px 15px;
@@ -91,10 +90,13 @@
       font-size: 1rem;
       outline: none;
     }
-
+    #send-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
     #send-btn {
       margin-left: 10px;
-      background: #6c5ce7;
+      background: var(--cor-nerla);
       color: white;
       border: none;
       border-radius: 25px;
@@ -102,23 +104,85 @@
       cursor: pointer;
       font-weight: bold;
     }
-
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
+    }
+    #history {
+      padding: 10px;
+      font-size: 0.9rem;
+      background: #f3f3f3;
+      max-height: 150px;
+      overflow-y: auto;
+    }
+    #nerla-toy {
+      display: flex;
+      justify-content: center;
+      margin: 10px 0;
+    }
+    #nerla-toy img {
+      width: 80px;
+      cursor: pointer;
+      transition: transform 0.2s;
+      border-radius: 50%;
+    }
+    #nerla-toy img:hover {
+      transform: scale(1.1);
+    }
+    #personalizar {
+      padding: 8px;
+      background: #eee;
+      text-align: center;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+    }
+    #personalizar label {
+      font-size: 0.9rem;
+      margin-right: 4px;
+    }
+    #personalizar input[type="text"],
+    #personalizar input[type="url"] {
+      width: 130px;
+      padding: 4px 6px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 0.9rem;
+    }
+    #personalizar input[type="color"] {
+      cursor: pointer;
+      border: none;
+      width: 40px;
+      height: 30px;
+      padding: 0;
     }
   </style>
 </head>
 <body>
   <div id="app">
     <div id="header">
-      <img src="https://i.imgur.com/7H2b8Z4.png" alt="Avatar da Nerla">
-      <h1>Nerla – Sua IA Brasileira 💬</h1>
+      <img id="nerla-avatar" src="https://i.imgur.com/7H2b8Z4.png" alt="Avatar da Nerla" />
+      <h1 id="nerla-nome">Nerla – IA Brasileira</h1>
     </div>
-    <div id="chat"></div>
+    <div id="history" aria-label="Histórico de mensagens"></div>
+    <div id="chat" aria-live="polite" aria-atomic="true"></div>
+    <div id="nerla-toy">
+      <img src="https://i.imgur.com/7H2b8Z4.png" alt="Nerla Toy" title="Clique para fazer carinho na Nerla" onclick="carinhoNerla()" />
+    </div>
     <div id="input-area">
-      <input type="text" id="prompt" placeholder="Fale com a Nerla..." />
-      <button id="send-btn">Enviar</button>
+      <input type="text" id="prompt" placeholder="Fale com a Nerla..." aria-label="Campo para digitar mensagem" autocomplete="off" />
+      <button id="send-btn" aria-label="Enviar mensagem">Enviar</button>
+    </div>
+    <div id="personalizar" aria-label="Personalizar Nerla">
+      <label for="cor-fundo">Cor fundo:</label>
+      <input type="color" id="cor-fundo" value="#f0f4ff" title="Muda a cor do fundo" />
+      <label for="cor-nerla">Cor IA:</label>
+      <input type="color" id="cor-nerla" value="#6c5ce7" title="Muda a cor da Nerla" />
+      <label for="avatar-url">Avatar URL:</label>
+      <input type="url" id="avatar-url" placeholder="URL da imagem" title="URL do avatar da Nerla" />
+      <label for="nome-ia">Nome IA:</label>
+      <input type="text" id="nome-ia" placeholder="Nome da IA" title="Nome que aparece no topo" />
     </div>
   </div>
 
@@ -126,58 +190,97 @@
     const chat = document.getElementById('chat');
     const input = document.getElementById('prompt');
     const button = document.getElementById('send-btn');
+    const history = document.getElementById('history');
+    const avatar = document.getElementById('nerla-avatar');
+    const nerlaNome = document.getElementById('nerla-nome');
+
+    let bloqueado = false;
+
+    // Atualiza cores e avatar pela personalização
+    document.getElementById('cor-fundo').addEventListener('input', e => {
+      document.documentElement.style.setProperty('--cor-fundo', e.target.value);
+      document.body.style.background = e.target.value;
+    });
+    document.getElementById('cor-nerla').addEventListener('input', e => {
+      document.documentElement.style.setProperty('--cor-nerla', e.target.value);
+      document.getElementById('header').style.background = e.target.value;
+      button.style.background = e.target.value;
+    });
+    document.getElementById('avatar-url').addEventListener('change', e => {
+      if(e.target.value) avatar.src = e.target.value;
+    });
+    document.getElementById('nome-ia').addEventListener('input', e => {
+      nerlaNome.innerText = e.target.value || 'Nerla – IA Brasileira';
+    });
 
     button.onclick = sendMessage;
     input.addEventListener("keydown", e => {
       if (e.key === "Enter") sendMessage();
     });
 
-    function addMsg(sender, text) {
+    function addMsg(sender, text, salvar = true) {
       const msg = document.createElement("div");
       msg.className = `msg ${sender}`;
       msg.textContent = text;
       chat.appendChild(msg);
       chat.scrollTop = chat.scrollHeight;
+
+      if (salvar) {
+        const item = document.createElement("div");
+        item.textContent = `${sender === 'me' ? 'Você' : nerlaNome.innerText.replace(' – IA Brasileira', '')}: ${text}`;
+        history.appendChild(item);
+        history.scrollTop = history.scrollHeight;
+      }
     }
 
     async function sendMessage() {
+      if (bloqueado) return;
       const userInput = input.value.trim();
       if (!userInput) return;
 
       addMsg("me", userInput);
       input.value = "";
+      bloqueado = true;
+      button.disabled = true;
+      input.disabled = true;
 
-      addMsg("nerla", "✍️ Nerla está pensando...");
-
-      const systemPrompt = "Você é Nerla, uma IA brasileira divertida, simpática e que sempre responde em português com bom humor.";
-      const apiKey = ""; // não precisa de chave se usar modelos públicos
-      const endpoint = "https://openrouter.ai/api/v1/chat/completions";
+      addMsg("nerla", "✍️ Nerla está pensando...", false);
 
       try {
-        const response = await fetch(endpoint, {
+        const response = await fetch("https://ai-ml-api.endpoint.example/chat", { // substitua pela URL correta da sua API
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": "Bearer sk-demo-0f9cc1c5-25b3-4264-a731-nerla-modelo"
+            "Authorization": "Bearer 0655f12fa27d4a328b0c010c300e27f0"
           },
           body: JSON.stringify({
-            model: "mistral/mistral-7b-instruct",
-            messages: [
-              { role: "system", content: systemPrompt },
-              { role: "user", content: userInput }
-            ]
+            message: userInput,
+            // outros parâmetros que sua API exigir
           })
         });
 
+        if(!response.ok) throw new Error("Erro na resposta da API");
+
         const data = await response.json();
-        const nerlaReply = data.choices?.[0]?.message?.content || "❌ Erro na resposta da IA.";
-        document.querySelectorAll('.nerla').at(-1).remove(); // remove o "Nerla está pensando..."
+        const nerlaReply = data.reply || "❌ Nenhuma resposta da IA.";
+
+        document.querySelectorAll('.nerla').at(-1).remove();
         addMsg("nerla", nerlaReply);
+
       } catch (err) {
         document.querySelectorAll('.nerla').at(-1).remove();
-        addMsg("nerla", "❌ Nerla travou! Tente de novo.");
+        addMsg("nerla", "❌ Erro na comunicação com Nerla.");
         console.error(err);
       }
+
+      bloqueado = false;
+      button.disabled = false;
+      input.disabled = false;
+      input.focus();
+    }
+
+    function carinhoNerla() {
+      addMsg("nerla", "Awn, que carinho gostoso! 🥰");
     }
   </script>
 </body>
