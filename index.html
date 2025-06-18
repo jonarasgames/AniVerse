@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>NERLA AI Chatbot</title>
+<style>
+  body {
+    background: #111;
+    color: #0ff;
+    font-family: monospace;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    height: 100vh;
+    margin: 0;
+    padding: 20px;
+  }
+  #chatbox {
+    width: 90%;
+    max-width: 600px;
+    height: 70vh;
+    background: #000a;
+    border: 2px solid #0ff;
+    border-radius: 10px;
+    padding: 15px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .message {
+    background: #002222;
+    padding: 10px;
+    border-radius: 5px;
+    max-width: 80%;
+  }
+  .user {
+    background: #004466;
+    align-self: flex-end;
+  }
+  #inputArea {
+    margin-top: 15px;
+    width: 90%;
+    max-width: 600px;
+    display: flex;
+    gap: 10px;
+  }
+  #inputText {
+    flex: 1;
+    padding: 10px;
+    font-size: 1rem;
+    border-radius: 5px;
+    border: 2px solid #0ff;
+    background: #111;
+    color: #0ff;
+  }
+  #sendBtn {
+    padding: 10px 20px;
+    background: #0ff;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #000;
+  }
+</style>
+</head>
+<body>
+
+<h1>NERLA AI Chatbot</h1>
+<div id="chatbox" aria-live="polite" role="log"></div>
+
+<div id="inputArea">
+  <input id="inputText" type="text" placeholder="Digite sua mensagem aqui..." aria-label="Digite sua mensagem" />
+  <button id="sendBtn">Enviar</button>
+</div>
+
+<script>
+  const chatbox = document.getElementById('chatbox');
+  const inputText = document.getElementById('inputText');
+  const sendBtn = document.getElementById('sendBtn');
+
+  function appendMessage(text, className) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    div.classList.add('message');
+    if (className) div.classList.add(className);
+    chatbox.appendChild(div);
+    chatbox.scrollTop = chatbox.scrollHeight;
+  }
+
+  // Regras simples para respostas
+  function responder(mensagem) {
+    mensagem = mensagem.toLowerCase();
+
+    if (mensagem.includes('oi') || mensagem.includes('olá')) {
+      return 'Olá! Eu sou a NERLA, sua inteligência artificial.';
+    }
+    if (mensagem.includes('como você está') || mensagem.includes('tudo bem')) {
+      return 'Estou sempre pronta para ajudar!';
+    }
+    if (mensagem.includes('quem é você')) {
+      return 'Eu sou um chatbot básico criado para responder suas perguntas.';
+    }
+    if (mensagem.includes('nerla')) {
+      return 'NERLA é um projeto misterioso de IA, envolto em segredos.';
+    }
+    if (mensagem.includes('adeus') || mensagem.includes('tchau')) {
+      return 'Até mais! Volte sempre para conversar comigo.';
+    }
+    return 'Desculpe, ainda estou aprendendo e não entendi sua mensagem.';
+  }
+
+  function enviarMensagem() {
+    const msg = inputText.value.trim();
+    if (!msg) return;
+    appendMessage(msg, 'user');
+    inputText.value = '';
+    const resposta = responder(msg);
+    setTimeout(() => appendMessage(resposta), 500);
+  }
+
+  sendBtn.addEventListener('click', enviarMensagem);
+  inputText.addEventListener('keydown', e => {
+    if (e.key === 'Enter') enviarMensagem();
+  });
+</script>
+
+</body>
+</html>
