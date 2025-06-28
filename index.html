@@ -1,452 +1,171 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Nerla – Sua IA Brasileira</title>
-<style>
-  :root {
-    --cor-fundo: #f0f4ff;
-    --cor-nerla: #6c5ce7;
-    --cor-user: #222;
-    --avatar-nerla: url('https://i.imgur.com/7H2b8Z4.png');
-    --fonte: 'Segoe UI', sans-serif;
-  }
-
-  body {
-    margin: 0;
-    font-family: var(--fonte);
-    background: var(--cor-fundo);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-  }
-
-  #app {
-    width: 100%;
-    max-width: 700px;
-    height: 90vh;
-    background: white;
-    border-radius: 16px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    position: relative;
-  }
-
-  #header {
-    background: var(--cor-nerla);
-    color: white;
-    padding: 16px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  #header img {
-    width: 40px;
-    border-radius: 50%;
-  }
-
-  #header h1 {
-    margin: 0;
-    font-size: 1.2rem;
-    flex-grow: 1;
-  }
-
-  #options-btn {
-    background: transparent;
-    border: 2px solid white;
-    color: white;
-    border-radius: 20px;
-    padding: 6px 12px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background 0.3s, color 0.3s;
-  }
-  #options-btn:hover {
-    background: white;
-    color: var(--cor-nerla);
-  }
-
-  #chat {
-    flex: 1;
-    padding: 20px;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .msg {
-    padding: 12px 16px;
-    border-radius: 20px;
-    max-width: 75%;
-    animation: fadeIn 0.3s ease forwards;
-    opacity: 0;
-    white-space: pre-wrap;
-  }
-
-  .me {
-    align-self: flex-end;
-    background: var(--cor-nerla);
-    color: white;
-    border-bottom-right-radius: 4px;
-  }
-
-  .nerla {
-    align-self: flex-start;
-    background: #eee;
-    color: var(--cor-user);
-    border-bottom-left-radius: 4px;
-  }
-
-  #input-area {
-    display: flex;
-    padding: 12px;
-    border-top: 1px solid #ddd;
-    background: #f8f8ff;
-  }
-
-  #prompt {
-    flex: 1;
-    padding: 10px 15px;
-    border-radius: 25px;
-    border: 1px solid #ccc;
-    font-size: 1rem;
-    outline: none;
-  }
-
-  #send-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  #send-btn {
-    margin-left: 10px;
-    background: var(--cor-nerla);
-    color: white;
-    border: none;
-    border-radius: 25px;
-    padding: 10px 20px;
-    cursor: pointer;
-    font-weight: bold;
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  #history-panel {
-    position: absolute;
-    top: 60px;
-    right: 0;
-    width: 280px;
-    height: calc(100% - 60px);
-    background: #fafaff;
-    border-left: 2px solid var(--cor-nerla);
-    box-shadow: -4px 0 8px rgba(0,0,0,0.1);
-    padding: 10px;
-    overflow-y: auto;
-    display: none;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  #history-panel h2 {
-    margin: 0 0 10px 0;
-    font-size: 1.1rem;
-    color: var(--cor-nerla);
-    text-align: center;
-  }
-
-  .history-item {
-    padding: 6px 8px;
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 0 4px rgba(0,0,0,0.05);
-    cursor: pointer;
-  }
-  .history-item:hover {
-    background: var(--cor-nerla);
-    color: white;
-  }
-
-  #nerla-toy {
-    display: flex;
-    justify-content: center;
-    margin: 10px 0;
-  }
-
-  #nerla-toy img {
-    width: 80px;
-    cursor: pointer;
-    transition: transform 0.2s;
-    border-radius: 50%;
-  }
-
-  #nerla-toy img:hover {
-    transform: scale(1.1);
-  }
-
-  #personalizar-panel {
-    position: absolute;
-    top: 60px;
-    left: 0;
-    width: 280px;
-    height: calc(100% - 60px);
-    background: #fafaff;
-    border-right: 2px solid var(--cor-nerla);
-    box-shadow: 4px 0 8px rgba(0,0,0,0.1);
-    padding: 15px;
-    overflow-y: auto;
-    display: none;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  #personalizar-panel h2 {
-    margin: 0 0 12px 0;
-    font-size: 1.1rem;
-    color: var(--cor-nerla);
-    text-align: center;
-  }
-
-  #personalizar-panel label {
-    font-size: 0.9rem;
-    display: block;
-    margin-bottom: 6px;
-    font-weight: 600;
-  }
-
-  #personalizar-panel input[type="text"],
-  #personalizar-panel input[type="url"],
-  #personalizar-panel input[type="color"] {
-    width: 100%;
-    padding: 6px 8px;
-    font-size: 1rem;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AniVerse - Seu Universo de Animes</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dark-mode.css" id="dark-mode-style" disabled>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="icon" href="images/logo.png" type="image/png">
 </head>
 <body>
-<div id="app" role="main" aria-label="Aplicação Nerla">
-  <div id="header">
-    <img id="nerla-avatar" src="https://i.imgur.com/7H2b8Z4.png" alt="Avatar da Nerla" />
-    <h1 id="nerla-nome">Nerla – IA Brasileira</h1>
-    <button id="options-btn" aria-haspopup="true" aria-expanded="false" aria-controls="personalizar-panel history-panel">Opções ⚙️</button>
-  </div>
-  <div id="personalizar-panel" role="region" aria-label="Painel de personalização" tabindex="-1">
-    <h2>Personalizar Nerla</h2>
-    <label for="cor-fundo">Cor do fundo:</label>
-    <input type="color" id="cor-fundo" value="#f0f4ff" />
-    <label for="cor-nerla">Cor da Nerla:</label>
-    <input type="color" id="cor-nerla" value="#6c5ce7" />
-    <label for="avatar-url">URL do Avatar:</label>
-    <input type="url" id="avatar-url" placeholder="Cole a URL da imagem" />
-    <label for="nome-ia">Nome da IA:</label>
-    <input type="text" id="nome-ia" placeholder="Nome que aparece no topo" />
-  </div>
-  <div id="history-panel" role="region" aria-label="Histórico de conversas" tabindex="-1">
-    <h2>Histórico</h2>
-    <div id="history"></div>
-  </div>
-  <div id="chat" aria-live="polite" aria-atomic="true" tabindex="0"></div>
-  <div id="nerla-toy" role="button" aria-label="Faça carinho na Nerla" tabindex="0" title="Clique para fazer carinho na Nerla">
-    <img src="https://i.imgur.com/7H2b8Z4.png" alt="Nerla Toy" />
-  </div>
-  <div id="input-area">
-    <input type="text" id="prompt" placeholder="Fale com a Nerla..." aria-label="Campo para digitar mensagem" autocomplete="off" />
-    <button id="send-btn" aria-label="Enviar mensagem">Enviar</button>
-  </div>
-</div>
+    <header>
+        <div class="container">
+            <div class="logo-container">
+                <img src="images/logo.png" alt="AniVerse Logo" class="logo">
+                <h1>AniVerse</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#" class="active" data-section="home">Início</a></li>
+                    <li><a href="#" data-section="animes">Animes</a></li>
+                    <li><a href="#" data-section="movies">Filmes</a></li>
+                    <li><a href="#" data-section="ovas">OVAs</a></li>
+                    <li><a href="#" data-section="continue">Continuar Assistindo</a></li>
+                </ul>
+            </nav>
+            <div class="user-controls">
+                <button id="dark-mode-toggle" class="btn-icon">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="btn btn-primary">Login</button>
+            </div>
+        </div>
+    </header>
 
-<script>
-  const chat = document.getElementById('chat');
-  const input = document.getElementById('prompt');
-  const button = document.getElementById('send-btn');
-  const historyDiv = document.getElementById('history');
-  const avatar = document.getElementById('nerla-avatar');
-  const nerlaNome = document.getElementById('nerla-nome');
-  const personalizarPanel = document.getElementById('personalizar-panel');
-  const historyPanel = document.getElementById('history-panel');
-  const optionsBtn = document.getElementById('options-btn');
-  const nerlaToy = document.querySelector('#nerla-toy img');
+    <main class="container">
+        <section id="home-section" class="content-section active">
+            <div class="hero">
+                <div class="hero-content">
+                    <h2>Assista aos melhores animes</h2>
+                    <p>Milhares de episódios disponíveis a qualquer momento</p>
+                    <div class="search-bar">
+                        <input type="text" id="search-input" placeholder="Buscar animes...">
+                        <button class="btn btn-primary" id="search-btn"><i class="fas fa-search"></i></button>
+                    </div>
+                </div>
+            </div>
 
-  let bloqueado = false;
-  let historico = [];
+            <section class="continue-watching">
+                <h2 class="section-title">Continuar Assistindo</h2>
+                <div class="anime-grid" id="continue-watching-grid">
+                    <!-- Animes serão carregados via JavaScript -->
+                </div>
+            </section>
 
-  // Salvar e carregar histórico de localStorage
-  function salvarHistorico() {
-    localStorage.setItem('nerlaHistorico', JSON.stringify(historico));
-  }
-  function carregarHistorico() {
-    const data = localStorage.getItem('nerlaHistorico');
-    if (data) {
-      historico = JSON.parse(data);
-      historico.forEach(({sender, text}) => {
-        adicionarMsgNaTela(sender, text, false);
-        adicionarHistoricoItem(sender, text);
-      });
-    }
-  }
+            <section class="new-releases">
+                <h2 class="section-title">Novos Lançamentos</h2>
+                <div class="anime-grid" id="new-releases-grid">
+                    <!-- Animes serão carregados via JavaScript -->
+                </div>
+            </section>
 
-  // Adiciona mensagem ao chat
-  function adicionarMsgNaTela(sender, text, salvar=true) {
-    const msg = document.createElement('div');
-    msg.className = `msg ${sender}`;
-    msg.textContent = text;
-    chat.appendChild(msg);
-    chat.scrollTop = chat.scrollHeight;
+            <section class="categories">
+                <h2 class="section-title">Categorias</h2>
+                <div class="category-tabs">
+                    <button class="category-tab active" data-category="all">Todos</button>
+                    <button class="category-tab" data-category="action">Ação</button>
+                    <button class="category-tab" data-category="adventure">Aventura</button>
+                    <button class="category-tab" data-category="comedy">Comédia</button>
+                    <button class="category-tab" data-category="drama">Drama</button>
+                    <button class="category-tab" data-category="fantasy">Fantasia</button>
+                </div>
+            </section>
+        </section>
 
-    if (salvar) {
-      historico.push({sender, text});
-      adicionarHistoricoItem(sender, text);
-      salvarHistorico();
-    }
-  }
+        <section id="animes-section" class="content-section">
+            <h2 class="section-title">Animes</h2>
+            <div class="anime-grid" id="animes-grid">
+                <!-- Animes serão carregados via JavaScript -->
+            </div>
+        </section>
 
-  // Adiciona item no painel histórico
-  function adicionarHistoricoItem(sender, text) {
-    const item = document.createElement('div');
-    item.className = 'history-item';
-    item.textContent = (sender === 'me' ? 'Você' : nerlaNome.textContent) + ': ' + text;
-    item.tabIndex = 0;
-    item.onclick = () => {
-      // Ao clicar no histórico, a mensagem vai para o chat como nova mensagem do usuário
-      input.value = text;
-      input.focus();
-    };
-    historyDiv.appendChild(item);
-    historyDiv.scrollTop = historyDiv.scrollHeight;
-  }
+        <section id="movies-section" class="content-section">
+            <h2 class="section-title">Filmes</h2>
+            <div class="anime-grid" id="movies-grid">
+                <!-- Filmes serão carregados via JavaScript -->
+            </div>
+        </section>
 
-  // Limpa histórico do painel e array
-  function limparHistorico() {
-    historico = [];
-    historyDiv.innerHTML = '';
-    chat.innerHTML = '';
-    salvarHistorico();
-  }
+        <section id="ovas-section" class="content-section">
+            <h2 class="section-title">OVAs</h2>
+            <div class="anime-grid" id="ovas-grid">
+                <!-- OVAs serão carregados via JavaScript -->
+            </div>
+        </section>
 
-  // Envia mensagem do usuário e chama API
-  async function sendMessage() {
-    if (bloqueado) return;
-    const userInput = input.value.trim();
-    if (!userInput) return;
+        <section id="continue-section" class="content-section">
+            <h2 class="section-title">Continuar Assistindo</h2>
+            <div class="anime-grid" id="continue-grid">
+                <!-- Animes serão carregados via JavaScript -->
+            </div>
+        </section>
+    </main>
 
-    adicionarMsgNaTela('me', userInput);
-    input.value = '';
+    <div id="video-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div id="video-player-container">
+                <video id="anime-player" controls>
+                    <source src="" type="video/mp4">
+                    Seu navegador não suporta o elemento de vídeo.
+                </video>
+                <div class="video-controls">
+                    <button id="like-btn" class="btn-icon"><i class="far fa-thumbs-up"></i></button>
+                    <button id="dislike-btn" class="btn-icon"><i class="far fa-thumbs-down"></i></button>
+                    <span id="likes-count">0</span>
+                    <span id="dislikes-count">0</span>
+                </div>
+                <div class="video-info">
+                    <h2 id="video-title"></h2>
+                    <p id="video-description"></p>
+                    <div class="episode-selector">
+                        <select id="season-select">
+                            <!-- Temporadas serão carregadas via JavaScript -->
+                        </select>
+                        <select id="episode-select">
+                            <!-- Episódios serão carregados via JavaScript -->
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    bloqueado = true;
-    button.disabled = true;
-    input.disabled = true;
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>AniVerse</h3>
+                    <p>O melhor lugar para assistir animes online.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Links</h3>
+                    <ul>
+                        <li><a href="#">Termos de Serviço</a></li>
+                        <li><a href="#">Política de Privacidade</a></li>
+                        <li><a href="#">DMCA</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Redes Sociais</h3>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-discord"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 AniVerse. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
 
-    adicionarMsgNaTela('nerla', '✍️ Nerla está pensando...', false);
-
-    try {
-      const nerlaResposta = await callAPI(AIzaSyBR0YLoE-mtUuhPxGu9cAaBJVi98YgHhP4);
-
-      // Remove a mensagem "pensando"
-      const pensandoMsgs = [...chat.querySelectorAll('.nerla')].filter(div => div.textContent === '✍️ Nerla está pensando...');
-      pensandoMsgs.forEach(el => el.remove());
-
-      adicionarMsgNaTela('nerla', nerlaResposta);
-    } catch (error) {
-      const pensandoMsgs = [...chat.querySelectorAll('.nerla')].filter(div => div.textContent === '✍️ Nerla está pensando...');
-      pensandoMsgs.forEach(el => el.remove());
-      adicionarMsgNaTela('nerla', '❌ Erro na comunicação com Nerla.');
-      console.error(error);
-    }
-
-    bloqueado = false;
-    button.disabled = false;
-    input.disabled = false;
-    input.focus();
-  }
-
-  // Simulação de API - substitua pela sua função real que chama sua API
-  async function callAPI(message) {
-    // EXEMPLO: delay pra simular chamada e resposta
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        // Respostas simples baseadas em texto (você pode personalizar)
-        const respostas = [
-          "Claro! Isso é bem interessante 😄",
-          "Hmmm, deixa eu pensar... Ah, entendi!",
-          "Isso é uma pergunta profunda!",
-          "Vou te contar uma coisa: você é curioso!",
-          "Essa é boa! 😂",
-          "Não tenho certeza, mas vou aprender!",
-          "Conte comigo para isso!"
-        ];
-        const idx = Math.floor(Math.random() * respostas.length);
-        resolve(respostas[idx]);
-      }, 2000);
-    });
-  }
-
-  // Faz carinho na Nerla Toy
-  function carinhoNerla() {
-    adicionarMsgNaTela('nerla', 'Awn, que carinho gostoso! 🥰');
-  }
-
-  // Painel de opções toggle
-  let painelAberto = null;
-  optionsBtn.onclick = () => {
-    if (painelAberto === 'personalizar') {
-      personalizarPanel.style.display = 'none';
-      historyPanel.style.display = 'none';
-      optionsBtn.setAttribute('aria-expanded', 'false');
-      painelAberto = null;
-    } else {
-      personalizarPanel.style.display = 'flex';
-      historyPanel.style.display = 'flex';
-      optionsBtn.setAttribute('aria-expanded', 'true');
-      painelAberto = 'personalizar';
-    }
-  };
-
-  // Personalização ao vivo
-  document.getElementById('cor-fundo').addEventListener('input', e => {
-    document.documentElement.style.setProperty('--cor-fundo', e.target.value);
-    document.body.style.background = e.target.value;
-  });
-  document.getElementById('cor-nerla').addEventListener('input', e => {
-    document.documentElement.style.setProperty('--cor-nerla', e.target.value);
-    document.getElementById('header').style.background = e.target.value;
-    button.style.background = e.target.value;
-    optionsBtn.style.borderColor = e.target.value;
-    optionsBtn.style.color = 'white';
-  });
-  document.getElementById('avatar-url').addEventListener('change', e => {
-    if(e.target.value) avatar.src = e.target.value;
-  });
-  document.getElementById('nome-ia').addEventListener('input', e => {
-    nerlaNome.innerText = e.target.value || 'Nerla – IA Brasileira';
-  });
-
-  // Nerla Toy click e enter para acessibilidade
-  nerlaToy.addEventListener('click', carinhoNerla);
-  nerlaToy.addEventListener('keydown', e => {
-    if(e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      carinhoNerla();
-    }
-  });
-
-  button.onclick = sendMessage;
-  input.addEventListener('keydown', e => {
-    if(e.key === 'Enter') sendMessage();
-  });
-
-  // Carrega histórico ao iniciar
-  carregarHistorico();
-
-</script>
+    <script src="js/anime-db.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/video-player.js"></script>
 </body>
 </html>
