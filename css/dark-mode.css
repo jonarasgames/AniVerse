@@ -48,3 +48,23 @@
     color: white;
     border-color: #444;
 }
+
+option.watched {
+    color: #1dd1a1;
+}
+
+.profile-form input, .profile-form select {
+    background-color: #333;
+    color: white;
+    border-color: #444;
+}
+
+.pronoun-btn {
+    background-color: #444;
+    color: #ddd;
+}
+
+.pronoun-btn:hover, .pronoun-btn.active {
+    background-color: var(--primary-color);
+    color: white;
+}
