@@ -1,0 +1,161 @@
+[
+    {
+        "id": 1,
+        "title": "Attack on Titan",
+        "description": "Em um mundo onde a humanidade vive dentro de cidades cercadas por três enormes muralhas que os protegem dos gigantescos humanóides devoradores de humanos chamados de Titãs.",
+        "thumbnail": "https://i.ibb.co/0jq7R0y/anime-bg.jpg",
+        "trailer": "https://www.youtube.com/embed/MGRm4IzK1SQ?autoplay=1&mute=1&enablejsapi=1",
+        "type": "anime",
+        "dateAdded": "2023-10-20",
+        "categories": ["action", "drama", "fantasy"],
+        "seasons": [
+            {
+                "number": 1,
+                "episodes": [
+                    {
+                        "title": "Ao Grito de 'Você Está Livre'",
+                        "videoUrl": "https://stream.4nm-cdn-0483964.com/b-14/ani-ni-tsukeru-kusuri-wa-nai-fandublado-ef56c193/dubbed/1/86f78ee3-1f80-40e5-8352-e8d2aff0da8f/stream.mp4",
+                        "duration": 1440
+                    },
+                    {
+                        "title": "Aquele Dia",
+                        "videoUrl": "https://example.com/attack-on-titan-s1e2.mp4",
+                        "duration": 1440
+                    }
+                ]
+            },
+            {
+                "number": 2,
+                "episodes": [
+                    {
+                        "title": "A Muralha Sina",
+                        "videoUrl": "https://example.com/attack-on-titan-s2e1.mp4",
+                        "duration": 1440
+                    }
+                ]
+            }
+        ],
+        "year": 2013,
+        "rating": 4.8
+    },
+    {
+        "id": 2,
+        "title": "Demon Slayer: Mugen Train",
+        "description": "Tanjiro e seus amigos embarcam no Trem Infinito para ajudar o Pilar das Chamas, Kyojuro Rengoku, a combater um demônio que tem atormentado os passageiros.",
+        "thumbnail": "https://i.ibb.co/0jq7R0y/anime-bg.jpg",
+        "trailer": "https://www.youtube.com/embed/ATJYac_dORw?autoplay=1&mute=1&enablejsapi=1",
+        "type": "movie",
+        "dateAdded": "2023-10-19",
+        "categories": ["action", "fantasy"],
+        "seasons": [
+            {
+                "number": 1,
+                "episodes": [
+                    {
+                        "title": "Demon Slayer: Mugen Train",
+                        "videoUrl": "https://example.com/demon-slayer-movie.mp4",
+                        "duration": 6600
+                    }
+                ]
+            }
+        ],
+        "year": 2020,
+        "rating": 4.9
+    },
+    {
+        "id": 3,
+        "title": "Jujutsu Kaisen 0",
+        "description": "Yuta Okkotsu ganha o controle de um espírito amaldiçoado extremamente poderoso e se matricula na Tokyo Prefectural Jujutsu High School sob a orientação de Satoru Gojo.",
+        "thumbnail": "https://i.ibb.co/0jq7R0y/anime-bg.jpg",
+        "trailer": "https://www.youtube.com/embed/2docezZl574?autoplay=1&mute=1&enablejsapi=1",
+        "type": "movie",
+        "dateAdded": "2023-10-18",
+        "categories": ["action", "supernatural"],
+        "seasons": [
+            {
+                "number": 1,
+                "episodes": [
+                    {
+                        "title": "Jujutsu Kaisen 0",
+                        "videoUrl": "https://example.com/jujutsu-kaisen-0.mp4",
+                        "duration": 6300
+                    }
+                ]
+            }
+        ],
+        "year": 2021,
+        "rating": 4.7
+    },
+    {
+        "id": 4,
+        "title": "One Piece: Stampede",
+        "description": "Piratas de todo o mundo se reúnem para o Pirate Expo, organizado pelo misterioso Buena Festa, onde o tesouro deixado pelo lendário Gol D. Roger está em jogo.",
+        "thumbnail": "https://i.ibb.co/0jq7R0y/anime-bg.jpg",
+        "trailer": "https://www.youtube.com/embed/CZzQ6dJkik0?autoplay=1&mute=1&enablejsapi=1",
+        "type": "movie",
+        "dateAdded": "2023-10-17",
+        "categories": ["action", "adventure"],
+        "seasons": [
+            {
+                "number": 1,
+                "episodes": [
+                    {
+                        "title": "One Piece: Stampede",
+                        "videoUrl": "https://example.com/one-piece-stampede.mp4",
+                        "duration": 6300
+                    }
+                ]
+            }
+        ],
+        "year": 2019,
+        "rating": 4.6
+    },
+    {
+        "id": 5,
+        "title": "My Hero Academia: Heroes Rising",
+        "description": "Os alunos da Classe 1-A visitam a Ilha Nabu, onde eventualmente acabam enfrentando um vilão com uma peculiaridade alarmante.",
+        "thumbnail": "https://i.ibb.co/0jq7R0y/anime-bg.jpg",
+        "trailer": "https://www.youtube.com/embed/VQGCKyvzIM4?autoplay=1&mute=1&enablejsapi=1",
+        "type": "movie",
+        "dateAdded": "2023-10-16",
+        "categories": ["action", "superhero"],
+        "seasons": [
+            {
+                "number": 1,
+                "episodes": [
+                    {
+                        "title": "My Hero Academia: Heroes Rising",
+                        "videoUrl": "https://example.com/mha-heroes-rising.mp4",
+                        "duration": 6240
+                    }
+                ]
+            }
+        ],
+        "year": 2019,
+        "rating": 4.8
+    },
+    {
+        "id": 6,
+        "title": "Neon Genesis Evangelion: The End of Evangelion",
+        "description": "Complementando a série original, este filme apresenta um final alternativo para a história de Shinji Ikari e os Evangelions.",
+        "thumbnail": "https://i.ibb.co/0jq7R0y/anime-bg.jpg",
+        "trailer": "https://www.youtube.com/embed/KzZPV-BFw50?autoplay=1&mute=1&enablejsapi=1",
+        "type": "movie",
+        "dateAdded": "2023-10-15",
+        "categories": ["drama", "mecha", "psychological"],
+        "seasons": [
+            {
+                "number": 1,
+                "episodes": [
+                    {
+                        "title": "The End of Evangelion",
+                        "videoUrl": "https://example.com/end-of-evangelion.mp4",
+                        "duration": 5520
+                    }
+                ]
+            }
+        ],
+        "year": 1997,
+        "rating": 4.9
+    }
+]
