@@ -64,19 +64,18 @@ document.addEventListener('DOMContentLoaded', function() {
         loadContinueWatching();
         loadFullCatalog();
         setupCategoryTabs();
+        updateProfileDisplay();
     }, 300);
     
     // Modais de Termos e Privacidade
-    const termsLinks = document.querySelectorAll('a[href="#terms"], a[href="#privacy"]');
-    termsLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            if (this.getAttribute('href') === '#terms') {
-                document.getElementById('terms-modal').style.display = 'block';
-            } else {
-                document.getElementById('privacy-modal').style.display = 'block';
-            }
-        });
+    document.getElementById('terms-link').addEventListener('click', function(e) {
+        e.preventDefault();
+        document.getElementById('terms-modal').style.display = 'block';
+    });
+    
+    document.getElementById('privacy-link').addEventListener('click', function(e) {
+        e.preventDefault();
+        document.getElementById('privacy-modal').style.display = 'block';
     });
     
     document.querySelector('.close-terms').addEventListener('click', function() {
@@ -88,8 +87,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Sistema de Perfil
-    const loginBtn = document.querySelector('.btn-primary');
-    loginBtn.addEventListener('click', function(e) {
+    document.getElementById('login-btn').addEventListener('click', function(e) {
         e.preventDefault();
         openProfileModal();
     });
@@ -157,34 +155,42 @@ function setupCategoryTabs() {
 }
 
 function showCategoryAnimes(category) {
-    const categorySections = document.querySelectorAll('.category-animes');
+    const categorySections = document.querySelectorAll('.category-section');
     
     if (category === 'all') {
-        categorySections.forEach(section => section.classList.remove('active'));
+        categorySections.forEach(section => {
+            if (section !== document.querySelector('.categories')) {
+                section.remove();
+            }
+        });
         return;
     }
     
-    // Filtrar animes por categoria
-    const filteredAnimes = animeDB.animes.filter(anime => 
-        anime.categories.includes(category)
-    );
+    // Verificar se a seção já existe
+    let categorySection = document.getElementById(`${category}-section`);
     
-    // Criar ou atualizar grid de categoria
-    let categoryGrid = document.getElementById(`${category}-animes`);
-    
-    if (!categoryGrid) {
-        const categorySection = document.createElement('section');
+    if (!categorySection) {
+        // Filtrar animes por categoria
+        const filteredAnimes = animeDB.animes.filter(anime => 
+            anime.categories && anime.categories.includes(category)
+        );
+        
+        if (filteredAnimes.length === 0) return;
+        
+        // Criar nova seção
+        categorySection = document.createElement('section');
         categorySection.className = 'category-section';
+        categorySection.id = `${category}-section`;
         categorySection.innerHTML = `
             <h3 class="category-title" style="text-transform: capitalize;">${category}</h3>
-            <div class="anime-grid category-animes active" id="${category}-animes"></div>
+            <div class="anime-grid" id="${category}-animes"></div>
         `;
         
         document.querySelector('main').appendChild(categorySection);
-        categoryGrid = document.getElementById(`${category}-animes`);
+        
+        // Renderizar animes
+        renderAnimeGrid(filteredAnimes, `${category}-animes`);
     }
-    
-    renderAnimeGrid(filteredAnimes, `${category}-animes`);
 }
 
 function renderAnimeGrid(animes, containerId) {
@@ -192,6 +198,11 @@ function renderAnimeGrid(animes, containerId) {
     if (!container) return;
     
     container.innerHTML = '';
+    
+    if (animes.length === 0) {
+        container.innerHTML = '<p class="no-results">Nenhum anime encontrado.</p>';
+        return;
+    }
     
     animes.forEach(anime => {
         const animeCard = document.createElement('div');
@@ -227,17 +238,6 @@ function renderAnimeGrid(animes, containerId) {
         
         animeCard.addEventListener('click', function() {
             openAnimeModal(anime);
-        });
-        
-        // Configurar eventos para o trailer
-        animeCard.addEventListener('mouseenter', function() {
-            const overlay = this.querySelector('.trailer-overlay');
-            if (overlay) overlay.style.opacity = '1';
-        });
-        
-        animeCard.addEventListener('mouseleave', function() {
-            const overlay = this.querySelector('.trailer-overlay');
-            if (overlay) overlay.style.opacity = '0';
         });
         
         container.appendChild(animeCard);
@@ -554,6 +554,9 @@ function setupProfileModal() {
         });
     });
     
+    // Atualizar pré-visualização quando o nome muda
+    document.getElementById('profile-name').addEventListener('input', updateAvatarPreview);
+    
     // Salvar perfil
     document.getElementById('save-profile').addEventListener('click', function() {
         const name = document.getElementById('profile-name').value.trim();
@@ -596,10 +599,12 @@ function updateAvatarPreview() {
 
 function updateProfileDisplay() {
     const profile = animeDB.getProfile();
-    const loginBtn = document.querySelector('.btn-primary');
+    const loginBtn = document.getElementById('login-btn');
     
     if (profile) {
         loginBtn.innerHTML = `<i class="fas fa-user"></i> ${profile.name}${profile.pronoun}`;
+    } else {
+        loginBtn.innerHTML = '<i class="fas fa-user"></i> Entrar';
     }
 }
 
@@ -608,6 +613,7 @@ function renderSearchResults(results) {
     homeSection.innerHTML = `
         <h2 class="section-title">Resultados da Busca</h2>
         <div class="anime-grid" id="search-results-grid"></div>
+        <button id="back-to-home" class="btn btn-primary"><i class="fas fa-arrow-left"></i> Voltar</button>
     `;
     
     const grid = document.getElementById('search-results-grid');
@@ -616,4 +622,8 @@ function renderSearchResults(results) {
     } else {
         grid.innerHTML = '<p class="no-results">Nenhum anime encontrado. Tente outro termo de busca.</p>';
     }
+    
+    document.getElementById('back-to-home').addEventListener('click', function() {
+        location.reload();
+    });
 }
