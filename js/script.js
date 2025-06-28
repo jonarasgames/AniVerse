@@ -117,6 +117,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+// Funções do sistema
 function loadNewReleases() {
     const newReleases = animeDB.getNewReleases();
     renderAnimeGrid(newReleases, 'new-releases-grid');
@@ -592,9 +593,24 @@ function updateAvatarPreview() {
     const charImg = document.querySelector('.char-option.selected img')?.src || 'https://i.ibb.co/0jq7R0y/anime-bg.jpg';
     
     const preview = document.getElementById('avatar-preview');
-    preview.querySelector('.avatar-bg').style.backgroundColor = bgColor;
-    preview.querySelector('.avatar-char').src = charImg;
-    preview.querySelector('.avatar-name').textContent = `${name}${pronoun}`;
+    const avatarBg = preview.querySelector('.avatar-bg');
+    const avatarChar = preview.querySelector('.avatar-char');
+    const avatarName = preview.querySelector('.avatar-name');
+    
+    // Aplicar estilos para o círculo perfeito
+    avatarBg.style.backgroundColor = bgColor;
+    avatarBg.style.borderRadius = '50%';
+    avatarBg.style.overflow = 'hidden';
+    avatarBg.style.border = '3px solid white';
+    avatarBg.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.2)';
+    
+    avatarChar.src = charImg;
+    avatarChar.style.width = '100%';
+    avatarChar.style.height = '100%';
+    avatarChar.style.objectFit = 'cover';
+    avatarChar.style.objectPosition = 'center';
+    
+    avatarName.textContent = `${name}${pronoun}`;
 }
 
 function updateProfileDisplay() {
