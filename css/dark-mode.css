@@ -1,0 +1,50 @@
+:root {
+    --background-color: #121212;
+    --text-color: #e0e0e0;
+    --card-bg: #1e1e1e;
+    --header-bg: #0f0f0f;
+    --footer-bg: #0f0f0f;
+    --secondary-color: #2a2a2a;
+    --watched-color: rgba(46, 204, 113, 0.5);
+}
+
+.anime-card {
+    border: 1px solid #333;
+}
+
+.anime-meta {
+    color: #aaa;
+}
+
+.modal-content {
+    border: 1px solid #333;
+}
+
+.search-bar input {
+    background-color: #333;
+    color: white;
+}
+
+.search-bar input::placeholder {
+    color: #aaa;
+}
+
+.category-tab {
+    background-color: #333;
+    color: #ddd;
+}
+
+.category-tab:hover {
+    background-color: #444;
+}
+
+.category-tab.active {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.episode-selector select {
+    background-color: #333;
+    color: white;
+    border-color: #444;
+}
