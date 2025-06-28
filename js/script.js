@@ -62,7 +62,40 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {
         loadNewReleases();
         loadContinueWatching();
+        loadFullCatalog();
+        setupCategoryTabs();
     }, 300);
+    
+    // Modais de Termos e Privacidade
+    const termsLinks = document.querySelectorAll('a[href="#terms"], a[href="#privacy"]');
+    termsLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (this.getAttribute('href') === '#terms') {
+                document.getElementById('terms-modal').style.display = 'block';
+            } else {
+                document.getElementById('privacy-modal').style.display = 'block';
+            }
+        });
+    });
+    
+    document.querySelector('.close-terms').addEventListener('click', function() {
+        document.getElementById('terms-modal').style.display = 'none';
+    });
+    
+    document.querySelector('.close-privacy').addEventListener('click', function() {
+        document.getElementById('privacy-modal').style.display = 'none';
+    });
+    
+    // Sistema de Perfil
+    const loginBtn = document.querySelector('.btn-primary');
+    loginBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        openProfileModal();
+    });
+    
+    // Configurar eventos do modal de perfil
+    setupProfileModal();
     
     // Busca
     const searchInput = document.getElementById('search-input');
@@ -84,26 +117,15 @@ document.addEventListener('DOMContentLoaded', function() {
             renderSearchResults(results);
         }
     }
-    
-    function renderSearchResults(results) {
-        const homeSection = document.getElementById('home-section');
-        homeSection.innerHTML = `
-            <h2 class="section-title">Resultados da Busca</h2>
-            <div class="anime-grid" id="search-results-grid"></div>
-        `;
-        
-        const grid = document.getElementById('search-results-grid');
-        if (results.length > 0) {
-            renderAnimeGrid(results, grid);
-        } else {
-            grid.innerHTML = '<p class="no-results">Nenhum anime encontrado. Tente outro termo de busca.</p>';
-        }
-    }
 });
 
 function loadNewReleases() {
     const newReleases = animeDB.getNewReleases();
     renderAnimeGrid(newReleases, 'new-releases-grid');
+}
+
+function loadFullCatalog() {
+    renderAnimeGrid(animeDB.animes, 'full-catalog-grid');
 }
 
 function loadAnimeSection(type) {
@@ -116,6 +138,53 @@ function loadContinueWatching() {
     const continueList = animeDB.getContinueWatching();
     renderContinueWatchingGrid(continueList, 'continue-watching-grid');
     renderContinueWatchingGrid(continueList, 'continue-grid');
+}
+
+function setupCategoryTabs() {
+    const categoryTabs = document.querySelectorAll('.category-tab');
+    
+    categoryTabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            // Ativar aba selecionada
+            categoryTabs.forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Mostrar animes da categoria
+            const category = this.getAttribute('data-category');
+            showCategoryAnimes(category);
+        });
+    });
+}
+
+function showCategoryAnimes(category) {
+    const categorySections = document.querySelectorAll('.category-animes');
+    
+    if (category === 'all') {
+        categorySections.forEach(section => section.classList.remove('active'));
+        return;
+    }
+    
+    // Filtrar animes por categoria
+    const filteredAnimes = animeDB.animes.filter(anime => 
+        anime.categories.includes(category)
+    );
+    
+    // Criar ou atualizar grid de categoria
+    let categoryGrid = document.getElementById(`${category}-animes`);
+    
+    if (!categoryGrid) {
+        const categorySection = document.createElement('section');
+        categorySection.className = 'category-section';
+        categorySection.innerHTML = `
+            <h3 class="category-title" style="text-transform: capitalize;">${category}</h3>
+            <div class="anime-grid category-animes active" id="${category}-animes"></div>
+        `;
+        
+        document.querySelector('main').appendChild(categorySection);
+        categoryGrid = document.getElementById(`${category}-animes`);
+    }
+    
+    renderAnimeGrid(filteredAnimes, `${category}-animes`);
 }
 
 function renderAnimeGrid(animes, containerId) {
@@ -133,11 +202,19 @@ function renderAnimeGrid(animes, containerId) {
         const continueData = animeDB.continueWatching[anime.id];
         const progressBar = continueData ? `<div class="progress-bar" style="width: ${continueData.progress}%"></div>` : '';
         
+        // Verificar se há episódios assistidos
+        const watchedCount = getWatchedEpisodesCount(anime.id);
+        const watchedBadge = watchedCount > 0 ? `<div class="watched-badge">${watchedCount}/${getTotalEpisodes(anime)}</div>` : '';
+        
         animeCard.innerHTML = `
             <div class="anime-thumbnail">
                 <img src="${anime.thumbnail}" alt="${anime.title}">
-                <iframe class="anime-trailer" src="${anime.trailer}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <div class="trailer-overlay">
+                    <i class="fas fa-play"></i>
+                    <span>Assistir Trailer</span>
+                </div>
                 ${progressBar}
+                ${watchedBadge}
             </div>
             <div class="anime-info">
                 <h3 class="anime-title">${anime.title}</h3>
@@ -153,18 +230,14 @@ function renderAnimeGrid(animes, containerId) {
         });
         
         // Configurar eventos para o trailer
-        const trailer = animeCard.querySelector('.anime-trailer');
         animeCard.addEventListener('mouseenter', function() {
-            if (trailer) {
-                trailer.src = trailer.src.replace('autoplay=0', 'autoplay=1');
-            }
+            const overlay = this.querySelector('.trailer-overlay');
+            if (overlay) overlay.style.opacity = '1';
         });
         
         animeCard.addEventListener('mouseleave', function() {
-            if (trailer) {
-                trailer.src = trailer.src.replace('autoplay=1', 'autoplay=0');
-                trailer.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
-            }
+            const overlay = this.querySelector('.trailer-overlay');
+            if (overlay) overlay.style.opacity = '0';
         });
         
         container.appendChild(animeCard);
@@ -219,6 +292,8 @@ function openAnimeModal(anime, seasonNumber = 1, episodeNumber = 1) {
     const episodeSelect = document.getElementById('episode-select');
     const likesCount = document.getElementById('likes-count');
     const dislikesCount = document.getElementById('dislikes-count');
+    const likeBtn = document.getElementById('like-btn');
+    const dislikeBtn = document.getElementById('dislike-btn');
     
     // Configurar informações do anime
     videoTitle.textContent = anime.title;
@@ -255,6 +330,19 @@ function openAnimeModal(anime, seasonNumber = 1, episodeNumber = 1) {
         const rating = animeDB.getEpisodeRating(anime.id, selectedSeason, episodeNumber);
         likesCount.textContent = rating.likes;
         dislikesCount.textContent = rating.dislikes;
+        
+        // Verificar avaliação do usuário
+        const userRating = animeDB.getUserRating(anime.id, selectedSeason, episodeNumber);
+        if (userRating === 'like') {
+            likeBtn.classList.add('active');
+            dislikeBtn.classList.remove('active');
+        } else if (userRating === 'dislike') {
+            dislikeBtn.classList.add('active');
+            likeBtn.classList.remove('active');
+        } else {
+            likeBtn.classList.remove('active');
+            dislikeBtn.classList.remove('active');
+        }
     }
     
     seasonSelect.addEventListener('change', function() {
@@ -269,20 +357,42 @@ function openAnimeModal(anime, seasonNumber = 1, episodeNumber = 1) {
     });
     
     // Configurar botões de like/dislike
-    document.getElementById('like-btn').addEventListener('click', function() {
-        animeDB.rateEpisode(anime.id, seasonSelect.value, episodeSelect.value, true);
+    likeBtn.addEventListener('click', function() {
+        const currentRating = animeDB.getUserRating(anime.id, seasonSelect.value, episodeSelect.value);
+        
+        if (currentRating === 'like') {
+            // Remover like
+            animeDB.rateEpisode(anime.id, seasonSelect.value, episodeSelect.value, null);
+            this.classList.remove('active');
+        } else {
+            // Adicionar like
+            animeDB.rateEpisode(anime.id, seasonSelect.value, episodeSelect.value, true);
+            this.classList.add('active');
+            dislikeBtn.classList.remove('active');
+        }
+        
         const rating = animeDB.getEpisodeRating(anime.id, seasonSelect.value, episodeSelect.value);
         likesCount.textContent = rating.likes;
-        this.classList.add('active');
-        document.getElementById('dislike-btn').classList.remove('active');
+        dislikesCount.textContent = rating.dislikes;
     });
     
-    document.getElementById('dislike-btn').addEventListener('click', function() {
-        animeDB.rateEpisode(anime.id, seasonSelect.value, episodeSelect.value, false);
+    dislikeBtn.addEventListener('click', function() {
+        const currentRating = animeDB.getUserRating(anime.id, seasonSelect.value, episodeSelect.value);
+        
+        if (currentRating === 'dislike') {
+            // Remover dislike
+            animeDB.rateEpisode(anime.id, seasonSelect.value, episodeSelect.value, null);
+            this.classList.remove('active');
+        } else {
+            // Adicionar dislike
+            animeDB.rateEpisode(anime.id, seasonSelect.value, episodeSelect.value, false);
+            this.classList.add('active');
+            likeBtn.classList.remove('active');
+        }
+        
         const rating = animeDB.getEpisodeRating(anime.id, seasonSelect.value, episodeSelect.value);
+        likesCount.textContent = rating.likes;
         dislikesCount.textContent = rating.dislikes;
-        this.classList.add('active');
-        document.getElementById('like-btn').classList.remove('active');
     });
     
     // Carregar episódio inicial
@@ -354,4 +464,156 @@ function openAnimeModal(anime, seasonNumber = 1, episodeNumber = 1) {
             clearInterval(saveInterval);
         }
     });
+}
+
+function getWatchedEpisodesCount(animeId) {
+    let count = 0;
+    const anime = animeDB.getAnimeById(animeId);
+    
+    if (!anime) return 0;
+    
+    anime.seasons.forEach(season => {
+        season.episodes.forEach((episode, index) => {
+            if (animeDB.isEpisodeWatched(animeId, season.number, index + 1)) {
+                count++;
+            }
+        });
+    });
+    
+    return count;
+}
+
+function getTotalEpisodes(anime) {
+    return anime.seasons.reduce((total, season) => total + season.episodes.length, 0);
+}
+
+function openProfileModal() {
+    const profile = animeDB.getProfile();
+    const modal = document.getElementById('profile-modal');
+    
+    if (profile) {
+        document.getElementById('profile-name').value = profile.name;
+        document.getElementById('selected-pronoun').value = profile.pronoun;
+        
+        // Selecionar pronome
+        document.querySelectorAll('.pronoun-btn').forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.dataset.pronoun === profile.pronoun) {
+                btn.classList.add('active');
+            }
+        });
+        
+        // Selecionar fundo e personagem
+        document.querySelectorAll('.bg-option').forEach(option => {
+            option.classList.remove('selected');
+            if (option.style.backgroundColor === profile.avatarBg) {
+                option.classList.add('selected');
+            }
+        });
+        
+        document.querySelectorAll('.char-option').forEach(option => {
+            option.classList.remove('selected');
+            if (option.dataset.char === profile.avatarChar) {
+                option.classList.add('selected');
+            }
+        });
+        
+        // Atualizar pré-visualização
+        updateAvatarPreview();
+    }
+    
+    modal.style.display = 'block';
+}
+
+function setupProfileModal() {
+    // Selecionar pronome
+    document.querySelectorAll('.pronoun-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.pronoun-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            document.getElementById('selected-pronoun').value = this.dataset.pronoun;
+            updateAvatarPreview();
+        });
+    });
+    
+    // Selecionar fundo
+    document.querySelectorAll('.bg-option').forEach(option => {
+        option.addEventListener('click', function() {
+            document.querySelectorAll('.bg-option').forEach(o => o.classList.remove('selected'));
+            this.classList.add('selected');
+            updateAvatarPreview();
+        });
+    });
+    
+    // Selecionar personagem
+    document.querySelectorAll('.char-option').forEach(option => {
+        option.addEventListener('click', function() {
+            document.querySelectorAll('.char-option').forEach(o => o.classList.remove('selected'));
+            this.classList.add('selected');
+            updateAvatarPreview();
+        });
+    });
+    
+    // Salvar perfil
+    document.getElementById('save-profile').addEventListener('click', function() {
+        const name = document.getElementById('profile-name').value.trim();
+        const pronoun = document.getElementById('selected-pronoun').value;
+        const bgColor = document.querySelector('.bg-option.selected')?.style.backgroundColor;
+        const char = document.querySelector('.char-option.selected')?.dataset.char;
+        
+        if (name && pronoun && bgColor && char) {
+            animeDB.saveProfile({
+                name,
+                pronoun,
+                avatarBg: bgColor,
+                avatarChar: char
+            });
+            
+            document.getElementById('profile-modal').style.display = 'none';
+            updateProfileDisplay();
+        } else {
+            alert('Por favor, preencha todos os campos do perfil.');
+        }
+    });
+    
+    // Fechar modal
+    document.querySelector('.close-profile').addEventListener('click', function() {
+        document.getElementById('profile-modal').style.display = 'none';
+    });
+}
+
+function updateAvatarPreview() {
+    const name = document.getElementById('profile-name').value || 'Nome';
+    const pronoun = document.getElementById('selected-pronoun').value || '-san';
+    const bgColor = document.querySelector('.bg-option.selected')?.style.backgroundColor || '#ff6b6b';
+    const charImg = document.querySelector('.char-option.selected img')?.src || 'https://i.ibb.co/0jq7R0y/anime-bg.jpg';
+    
+    const preview = document.getElementById('avatar-preview');
+    preview.querySelector('.avatar-bg').style.backgroundColor = bgColor;
+    preview.querySelector('.avatar-char').src = charImg;
+    preview.querySelector('.avatar-name').textContent = `${name}${pronoun}`;
+}
+
+function updateProfileDisplay() {
+    const profile = animeDB.getProfile();
+    const loginBtn = document.querySelector('.btn-primary');
+    
+    if (profile) {
+        loginBtn.innerHTML = `<i class="fas fa-user"></i> ${profile.name}${profile.pronoun}`;
+    }
+}
+
+function renderSearchResults(results) {
+    const homeSection = document.getElementById('home-section');
+    homeSection.innerHTML = `
+        <h2 class="section-title">Resultados da Busca</h2>
+        <div class="anime-grid" id="search-results-grid"></div>
+    `;
+    
+    const grid = document.getElementById('search-results-grid');
+    if (results.length > 0) {
+        renderAnimeGrid(results, grid);
+    } else {
+        grid.innerHTML = '<p class="no-results">Nenhum anime encontrado. Tente outro termo de busca.</p>';
+    }
 }
