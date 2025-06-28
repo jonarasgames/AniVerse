@@ -606,6 +606,12 @@ option.watched {
     position: relative;
     border: 3px solid white; /* Borda branca para destacar */
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); /* Sombra suave */
+    transition: all 0.3s ease;
+}
+
+.avatar-bg:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
 .avatar-char {
