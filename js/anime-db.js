@@ -1,10 +1,11 @@
-// Banco de dados de animes (pode ser substituído por uma API real)
 class AnimeDatabase {
     constructor() {
         this.animes = [];
         this.watchedEpisodes = JSON.parse(localStorage.getItem('watchedEpisodes')) || {};
         this.continueWatching = JSON.parse(localStorage.getItem('continueWatching')) || {};
         this.ratings = JSON.parse(localStorage.getItem('episodeRatings')) || {};
+        this.userRatings = JSON.parse(localStorage.getItem('userEpisodeRatings')) || {};
+        this.profile = JSON.parse(localStorage.getItem('userProfile')) || null;
         this.loadData();
     }
 
@@ -108,17 +109,36 @@ class AnimeDatabase {
 
     rateEpisode(animeId, seasonNumber, episodeNumber, isLike) {
         const key = `${animeId}-${seasonNumber}-${episodeNumber}`;
+        const userKey = `${animeId}-${seasonNumber}-${episodeNumber}-user`;
+        
+        // Verificar avaliação anterior do usuário
+        const previousRating = this.userRatings[userKey];
+        
         if (!this.ratings[key]) {
             this.ratings[key] = { likes: 0, dislikes: 0 };
         }
-
-        if (isLike) {
-            this.ratings[key].likes += 1;
-        } else {
-            this.ratings[key].dislikes += 1;
+        
+        // Remover avaliação anterior se existir
+        if (previousRating === 'like') {
+            this.ratings[key].likes -= 1;
+        } else if (previousRating === 'dislike') {
+            this.ratings[key].dislikes -= 1;
         }
-
+        
+        // Adicionar nova avaliação
+        if (isLike === true) {
+            this.ratings[key].likes += 1;
+            this.userRatings[userKey] = 'like';
+        } else if (isLike === false) {
+            this.ratings[key].dislikes += 1;
+            this.userRatings[userKey] = 'dislike';
+        } else {
+            // Remover avaliação
+            this.userRatings[userKey] = null;
+        }
+        
         localStorage.setItem('episodeRatings', JSON.stringify(this.ratings));
+        localStorage.setItem('userEpisodeRatings', JSON.stringify(this.userRatings));
     }
 
     getEpisodeRating(animeId, seasonNumber, episodeNumber) {
@@ -126,9 +146,23 @@ class AnimeDatabase {
         return this.ratings[key] || { likes: 0, dislikes: 0 };
     }
 
+    getUserRating(animeId, seasonNumber, episodeNumber) {
+        const key = `${animeId}-${seasonNumber}-${episodeNumber}-user`;
+        return this.userRatings[key] || null;
+    }
+
     isEpisodeWatched(animeId, seasonNumber, episodeNumber) {
         const key = `${animeId}-${seasonNumber}-${episodeNumber}`;
         return !!this.watchedEpisodes[key];
+    }
+
+    saveProfile(profileData) {
+        this.profile = profileData;
+        localStorage.setItem('userProfile', JSON.stringify(this.profile));
+    }
+
+    getProfile() {
+        return this.profile;
     }
 }
 
