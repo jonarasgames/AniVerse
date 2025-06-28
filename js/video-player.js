@@ -8,31 +8,36 @@ document.addEventListener('DOMContentLoaded', function() {
             switch (e.key) {
                 case ' ':
                     // Espaço para play/pause
+                    e.preventDefault();
                     if (videoPlayer.paused) {
                         videoPlayer.play();
                     } else {
                         videoPlayer.pause();
                     }
-                    e.preventDefault();
                     break;
                 case 'ArrowRight':
                     // Avançar 5 segundos
+                    e.preventDefault();
                     videoPlayer.currentTime += 5;
                     break;
                 case 'ArrowLeft':
                     // Retroceder 5 segundos
+                    e.preventDefault();
                     videoPlayer.currentTime -= 5;
                     break;
                 case 'ArrowUp':
                     // Aumentar volume
+                    e.preventDefault();
                     videoPlayer.volume = Math.min(videoPlayer.volume + 0.1, 1);
                     break;
                 case 'ArrowDown':
                     // Diminuir volume
+                    e.preventDefault();
                     videoPlayer.volume = Math.max(videoPlayer.volume - 0.1, 0);
                     break;
                 case 'f':
                     // Tela cheia
+                    e.preventDefault();
                     if (videoPlayer.requestFullscreen) {
                         videoPlayer.requestFullscreen();
                     } else if (videoPlayer.webkitRequestFullscreen) {
@@ -43,6 +48,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     break;
                 case 'm':
                     // Mudo
+                    e.preventDefault();
                     videoPlayer.muted = !videoPlayer.muted;
                     break;
             }
@@ -66,14 +72,5 @@ document.addEventListener('DOMContentLoaded', function() {
                 );
             }
         }
-    });
-    
-    // Pausar vídeos de trailer quando o modal é aberto
-    document.getElementById('video-modal').addEventListener('click', function() {
-        document.querySelectorAll('.anime-trailer').forEach(iframe => {
-            if (iframe.contentWindow) {
-                iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
-            }
-        });
     });
 });
