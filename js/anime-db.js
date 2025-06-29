@@ -6,32 +6,22 @@ class AnimeDatabase {
         this.ratings = JSON.parse(localStorage.getItem('episodeRatings')) || {};
         this.userRatings = JSON.parse(localStorage.getItem('userEpisodeRatings')) || {};
         this.profile = JSON.parse(localStorage.getItem('userProfile')) || null;
-        this.loadData();
+        
+        // Adicionar listener para quando os dados forem carregados
+        this.loadData().then(() => {
+            window.dispatchEvent(new Event('animeDataLoaded'));
+        });
     }
 
     async loadData() {
         try {
             const response = await fetch('anime-data.json');
             this.animes = await response.json();
-            this.fixVideoUrls(); // Corrigir URLs ao carregar
             this.sortAnimesByDate();
         } catch (error) {
             console.error("Erro ao carregar dados dos animes:", error);
             this.animes = [];
         }
-    }
-
-    fixVideoUrls() {
-        this.animes.forEach(anime => {
-            anime.seasons.forEach(season => {
-                season.episodes.forEach(episode => {
-                    // Corrigir URLs que contêm parâmetros
-                    if (episode.videoUrl.includes('?')) {
-                        episode.videoUrl = episode.videoUrl.split('?')[0];
-                    }
-                });
-            });
-        });
     }
 
     sortAnimesByDate() {
@@ -155,3 +145,9 @@ class AnimeDatabase {
 }
 
 const animeDB = new AnimeDatabase();
+
+window.addEventListener('animeDataLoaded', () => {
+    if (typeof loadNewReleases === 'function') loadNewReleases();
+    if (typeof loadContinueWatching === 'function') loadContinueWatching();
+    if (typeof loadFullCatalog === 'function') loadFullCatalog();
+});
