@@ -6,7 +6,11 @@ class AnimeDatabase {
         this.ratings = JSON.parse(localStorage.getItem('episodeRatings')) || {};
         this.userRatings = JSON.parse(localStorage.getItem('userEpisodeRatings')) || {};
         this.profile = JSON.parse(localStorage.getItem('userProfile')) || null;
-        this.loadData();
+        
+        // Adicionar listener para quando os dados forem carregados
+        this.loadData().then(() => {
+            window.dispatchEvent(new Event('animeDataLoaded'));
+        });
     }
 
     async loadData() {
@@ -141,3 +145,9 @@ class AnimeDatabase {
 }
 
 const animeDB = new AnimeDatabase();
+
+window.addEventListener('animeDataLoaded', () => {
+    if (typeof loadNewReleases === 'function') loadNewReleases();
+    if (typeof loadContinueWatching === 'function') loadContinueWatching();
+    if (typeof loadFullCatalog === 'function') loadFullCatalog();
+});
