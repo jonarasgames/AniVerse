@@ -562,7 +562,8 @@ function setupProfileModal() {
     document.getElementById('save-profile').addEventListener('click', function() {
         const name = document.getElementById('profile-name').value.trim();
         const pronoun = document.getElementById('selected-pronoun').value;
-        const bgColor = document.querySelector('.bg-option.selected')?.style.backgroundColor;
+        const selectedBgOption = document.querySelector('.bg-option.selected');
+        const bgColor = selectedBgOption ? window.getComputedStyle(selectedBgOption).backgroundColor : '#ff6b6b';
         const char = document.querySelector('.char-option.selected')?.dataset.char;
         
         if (name && pronoun && bgColor && char) {
@@ -589,7 +590,8 @@ function setupProfileModal() {
 function updateAvatarPreview() {
     const name = document.getElementById('profile-name').value || 'Nome';
     const pronoun = document.getElementById('selected-pronoun').value || '-san';
-    const bgColor = document.querySelector('.bg-option.selected')?.style.backgroundColor || '#ff6b6b';
+    const selectedBgOption = document.querySelector('.bg-option.selected');
+    const bgColor = selectedBgOption ? window.getComputedStyle(selectedBgOption).backgroundColor : '#ff6b6b';
     const charImg = document.querySelector('.char-option.selected img')?.src || 'https://i.ibb.co/0jq7R0y/anime-bg.jpg';
     
     const preview = document.getElementById('avatar-preview');
@@ -616,11 +618,19 @@ function updateAvatarPreview() {
 function updateProfileDisplay() {
     const profile = animeDB.getProfile();
     const loginBtn = document.getElementById('login-btn');
+    const headerAvatar = document.getElementById('header-avatar');
+    const headerAvatarImg = headerAvatar.querySelector('img');
     
     if (profile) {
         loginBtn.innerHTML = `<i class="fas fa-user"></i> ${profile.name}${profile.pronoun}`;
+        
+        // Atualizar avatar no cabeçalho
+        headerAvatar.style.display = 'block';
+        headerAvatar.style.backgroundColor = profile.avatarBg;
+        headerAvatarImg.src = document.querySelector(`.char-option[data-char="${profile.avatarChar}"] img`)?.src || '';
     } else {
         loginBtn.innerHTML = '<i class="fas fa-user"></i> Entrar';
+        headerAvatar.style.display = 'none';
     }
 }
 
