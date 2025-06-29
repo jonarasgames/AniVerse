@@ -58,12 +58,20 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
+    // Mostrar mensagem de carregamento
+    const grids = document.querySelectorAll('.anime-grid');
+    grids.forEach(grid => {
+        grid.innerHTML = `
+            <div class="loading-message">
+                <i class="fas fa-spinner"></i>
+                <p>Carregando animes...</p>
+            </div>
+        `;
+    });
+
     // Carregar conteúdo inicial
     setTimeout(() => {
-        loadNewReleases();
-        loadContinueWatching();
-        loadFullCatalog();
-        setupCategoryTabs();
+        checkAnimeDBLoaded();
         updateProfileDisplay();
     }, 300);
     
@@ -116,6 +124,17 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
+
+function checkAnimeDBLoaded() {
+    if (animeDB.animes.length > 0) {
+        loadNewReleases();
+        loadContinueWatching();
+        loadFullCatalog();
+        setupCategoryTabs();
+    } else {
+        setTimeout(checkAnimeDBLoaded, 100);
+    }
+}
 
 function loadNewReleases() {
     const newReleases = animeDB.getNewReleases();
@@ -561,7 +580,8 @@ function setupProfileModal() {
     document.getElementById('save-profile').addEventListener('click', function() {
         const name = document.getElementById('profile-name').value.trim();
         const pronoun = document.getElementById('selected-pronoun').value;
-        const bgColor = document.querySelector('.bg-option.selected')?.style.backgroundColor;
+        const selectedBgOption = document.querySelector('.bg-option.selected');
+        const bgColor = selectedBgOption ? window.getComputedStyle(selectedBgOption).backgroundColor : '#ff6b6b';
         const char = document.querySelector('.char-option.selected')?.dataset.char;
         
         if (name && pronoun && bgColor && char) {
@@ -588,23 +608,61 @@ function setupProfileModal() {
 function updateAvatarPreview() {
     const name = document.getElementById('profile-name').value || 'Nome';
     const pronoun = document.getElementById('selected-pronoun').value || '-san';
-    const bgColor = document.querySelector('.bg-option.selected')?.style.backgroundColor || '#ff6b6b';
+    const selectedBgOption = document.querySelector('.bg-option.selected');
+    const bgColor = selectedBgOption ? window.getComputedStyle(selectedBgOption).backgroundColor : '#ff6b6b';
     const charImg = document.querySelector('.char-option.selected img')?.src || 'https://i.ibb.co/0jq7R0y/anime-bg.jpg';
     
     const preview = document.getElementById('avatar-preview');
-    preview.querySelector('.avatar-bg').style.backgroundColor = bgColor;
-    preview.querySelector('.avatar-char').src = charImg;
-    preview.querySelector('.avatar-name').textContent = `${name}${pronoun}`;
+    const avatarBg = preview.querySelector('.avatar-bg');
+    const avatarChar = preview.querySelector('.avatar-char');
+    const avatarName = preview.querySelector('.avatar-name');
+    
+    // Aplicar estilos para o círculo perfeito
+    avatarBg.style.backgroundColor = bgColor;
+    avatarBg.style.borderRadius = '50%';
+    avatarBg.style.overflow = 'hidden';
+    avatarBg.style.border = '3px solid white';
+    avatarBg.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.2)';
+    
+    avatarChar.src = charImg;
+    avatarChar.style.width = '100%';
+    avatarChar.style.height = '100%';
+    avatarChar.style.objectFit = 'cover';
+    avatarChar.style.objectPosition = 'center';
+    
+    avatarName.textContent = `${name}${pronoun}`;
 }
 
 function updateProfileDisplay() {
     const profile = animeDB.getProfile();
     const loginBtn = document.getElementById('login-btn');
-    
+    const headerAvatar = document.getElementById('header-avatar');
+    const headerAvatarImg = headerAvatar.querySelector('img');
+    const welcomeContainer = document.getElementById('user-welcome-container');
+
     if (profile) {
         loginBtn.innerHTML = `<i class="fas fa-user"></i> ${profile.name}${profile.pronoun}`;
+        
+        // Atualizar avatar no cabeçalho
+        headerAvatar.style.display = 'block';
+        headerAvatar.style.backgroundColor = profile.avatarBg;
+        headerAvatarImg.src = document.querySelector(`.char-option[data-char="${profile.avatarChar}"] img`)?.src || '';
+        
+        // Mostrar mensagem de boas-vindas
+        if (welcomeContainer) {
+            welcomeContainer.innerHTML = `
+                <div class="welcome-avatar" style="background-color: ${profile.avatarBg}">
+                    <img src="${headerAvatarImg.src}" alt="${profile.name}">
+                </div>
+                <div class="welcome-message">
+                    Bem-vindo de volta, <span>${profile.name}${profile.pronoun}</span>!
+                </div>
+            `;
+        }
     } else {
         loginBtn.innerHTML = '<i class="fas fa-user"></i> Entrar';
+        headerAvatar.style.display = 'none';
+        if (welcomeContainer) welcomeContainer.innerHTML = '';
     }
 }
 
