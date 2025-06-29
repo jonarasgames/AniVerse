@@ -137,9 +137,9 @@
     {
         "id": 6,
         "title": "Neon Genesis Evangelion: The End of Evangelion",
-        "description": "Complementando a série original, este filme apresenta um final alternativo para a história de Shinji Ikari e os Evangelions.",
+        "description": "A SEELE ordena um ataque à NERV para destruir os EVAs antes que Gendo consiga provocar o terceiro impacto e a união das almas humanas.",
         "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/thumbnails/evangelionmovie.png",
-        "trailer": "https://www.youtube.com/embed/KzZPV-BFw50?autoplay=1&mute=1&enablejsapi=1",
+        "trailer": "https://geo.dailymotion.com/player.html?video=x24kdhz",
         "type": "movie",
         "dateAdded": "2023-10-15",
         "categories": ["drama", "mecha", "psychological"],
@@ -149,14 +149,14 @@
                 "episodes": [
                     {
                         "title": "The End of Evangelion",
-                        "videoUrl": "https://example.com/end-of-evangelion.mp4",
-                        "duration": 5520
+                        "videoUrl": "https://lightspeedst.net/s3/mp4/neon-genesis-evangelion-the-end-of-evangelion-dublado/sd/1.mp4",
+                        "duration": 5222
                     }
                 ]
             }
         ],
         "year": 1997,
-        "rating": 4.9
+        "rating": 8.1
     },
     {
         "id": 7,
@@ -172,134 +172,134 @@
                 "number": 1,
                 "episodes": [
                     {
-                        "title": "Episódio 1",
+                        "title": "A Diante, os Exames de Entrada!",
                         "videoUrl": "https://rr2---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751229154&ei=YjJhaJeCDOjjj-8PvYyE4AY&ip=200.106.211.8&id=1818693fb0a03dda&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751200354,&mh=Ai&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=2&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.601&lmt=1590666467370908&mt=1751199921&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRQIhAO4HRL2dUMRkLuPLqiDySeEpQPSnMsWhlS6cOJrS_VjCAiBQOGRZUI_DENEAol02163qSKBbwfs8wUKKjYqS9yEaJQ%3D%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRQIhAOHp2tcUFONfg5PztamY3DgIKIaSegy_mXPr0vy3MB9wAiBqteFyfMrJK6Ie3hNG7gKleQBn7zCIeZpgp0s1ETQPnQ%3D%3D&cpn=16NM023HSA0iq0gv&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
                         "duration": 1447
                     },
                     {
                         "title": "Dia da Osaka",
-                        "videoUrl": "https://watch.4nm-cdn-0483964.com/b-16/azumanga-daioh-f8610c78/subtitled/2/e7c66dc9-7e34-40d1-aef2-82ddeeb18728/stream.mp4?type=anime&expires=1751164849&signature=94cfa5027e860f3f9e7e0b6431f9fb7ce4918c75b75c4996f416f382d070a0bf",
+                        "videoUrl": "https://rr2---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751230083&ei=AzZhaNbvC-fay_sP2q3xwQg&ip=200.106.211.8&id=48cee761c2e6d4c2&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751201283,&mh=Q-&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=2&pcm2cms=yes&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.601&lmt=1698634852309329&mt=1751200880&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRQIgMQwHSk8sM3f30cU8QN2s_YytpGF5mYFo4da0UGR8pRoCIQDR7nePi-pYBvRT1z5ug7T5qUyr5yxl4J9tDHxmwpuUbw%3D%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pcm2cms,pl,rms&lsig=APaTxxMwRgIhAMlBIhbOBFRA-a3RKkprWH3WwbiYHdhYu6Ro_tYPpSIBAiEAjsbaflO0vuMbOXNbP_7MiPwXhgE1_4emaHXqTcPuh3E%3D&cpn=FQTRlUzTenFFLlba&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
                         "duration": 1447
                     },
                     {
                         "title": "Nyamo",
-                        "videoUrl": "https://watch.4nm-cdn-0483964.com/b-16/azumanga-daioh-f8610c78/subtitled/3/1aa5d0ae-048d-4bb4-a4bd-fd42cb7a40a9/stream.mp4?type=anime&expires=1751165247&signature=50317925f63379f1886feebc225414c74185ce60f337475ef809b9e469d6dc3d",
+                        "videoUrl": "https://rr2---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751230162&ei=UjZhaIaGNa2LvPIP5fS_0Q8&ip=200.106.211.8&id=4166242b89cb2377&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751201362,&mh=EF&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=2&pcm2cms=yes&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.787&lmt=1698458477848235&mt=1751200880&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRgIhAI26HT7-Fki-EhCn2oLlXkPbPjJC462KyAgkSAXOfwIEAiEA837-we5cffZ-p_aIQn2EnIaE9w33iE2TgdtVuGxSfN8%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pcm2cms,pl,rms&lsig=APaTxxMwRAIgfcIecCCyxBjhGBCE9BCVKG2wDHvsB4eAForORhwIRb4CIEPzqiEOgBrRfJ2rSgWhWzzsC09ymfRb52Pe1Ms_7GoB&cpn=dfU9JKg7DQtkLykG&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
                         "duration": 1447
                     },
                     {
                         "title": "Piscina! Piscina! Piscina!",
-                        "videoUrl": "https://watch.4nm-cdn-0483964.com/b-16/azumanga-daioh-f8610c78/subtitled/4/4c4b0994-364c-4565-a54c-ea1828768761/stream.mp4?type=anime&expires=1751165323&signature=7fcc790377d1fc282b5c24cacb9c8f878104a8888e228a9c190403d7a0ced888",
+                        "videoUrl": "https://rr3---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751230203&ei=ezZhaOadGrSty_sPsOC16Ak&ip=200.106.211.8&id=bd256ee5446e264b&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751201403,&mh=-X&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=3&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.601&lmt=1590666474076972&mt=1751200880&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRAIgfFjuvlhtG03c23383ahEVIRjgu-YD3-YTbuHZsnHpEMCIBpb9zKv9K61cJsePNwWSyYYenL44yef-VujLcYFF5qX&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRAIgZm7bhiZ59f2w7XMZofZLF7Si22KonwL7SXpb-AD83-ACIBYUe-B4DApslLuoO2-8A4G3OKcTJkWu24lmlKd3kyKR&cpn=K5a5O0WBwsKbImuu&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
                         "duration": 1447
                     },
                     {
                         "title": "Férias de verão",
-                        "videoUrl": "https://watch.4nm-cdn-0483964.com/b-16/azumanga-daioh-f8610c78/subtitled/5/4c3553a9-c52b-4923-b9c5-cb66a743ae33/stream.mp4?type=anime&expires=1751165456&signature=699ad3fb791b4c2d0a122a16e2220016b4cf940500474846e7eecd114aa6d0d7",
-                        "duration": 1440
+                        "videoUrl": "https://rr3---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751230848&ei=ADlhaNKeHZ2OvPIP346-uQ4&ip=200.106.211.8&id=2723714775968011&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751202048,&mh=yb&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=3&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.601&lmt=1590666480433489&mt=1751201598&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRgIhAMacddQqKYrCYNU8dqrufIUid3CtjZJnJ5xWtzVlUnQoAiEAki6eb8znmkeWfohZiXDCUyetEukwjAV14tOJaDE8NKo%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRgIhALTMEau_t8Jpo_kXHGDAhEaajLVX8TLUfJTRuj0fnBSpAiEA4_nD1NYXOH0AwPgryH_FN_p1p1McHNGu5v_GtHd8P7E%3D&cpn=Ke_UvJVFRU7PPff3&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+                        "duration": 1447
                     },
                     {
                         "title": "Festival de Esportes",
-                        "videoUrl": "https://example.com/attack-on-titan-s1e2.mp4",
-                        "duration": 1440
+                        "videoUrl": "https://rr2---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751231716&ei=ZDxhaLPWCo-1y_sPjZKNAQ&ip=200.106.211.8&id=1c3ec3c7e9ddfc0a&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751202916,&mh=-9&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=2&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.439&lmt=1590666489303739&mt=1751202563&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRQIhAKxrWuGxnLZqGzprSODlvkV2Kr9rRBQLkE-LgwEdpSUUAiBBVxuC5pJv__wSVIPN5Tj3SVy910V8h4m1cWjvxbLg6w%3D%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRQIhAMfGD0WM3Cu4nud8lmkkKT59MxSr5gHLSnQwCdYtExiYAiA8oanHwpAke6fnEVSwlIR4L5XXHqHzR3uV-HnSj4w-lg%3D%3D&cpn=bhuuRCiROJV4MSMx&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+                        "duration": 1447
                     },
                     {
                         "title": "Festival Cultural",
-                        "videoUrl": "https://stream.4nm-cdn-0483964.com/b-14/ani-ni-tsukeru-kusuri-wa-nai-fandublado-ef56c193/dubbed/1/86f78ee3-1f80-40e5-8352-e8d2aff0da8f/stream.mp4",
-                        "duration": 1440
+                        "videoUrl": "https://rr1---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751231746&ei=gjxhaP-oOeqI3rsP0_7KwAc&ip=200.106.211.8&id=a4ae57e54096e6eb&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751202946,&mh=pn&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=1&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.276&lmt=1697777500964110&mt=1751202563&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRQIhAIvHjoX_LDn_xb26RANcxQcwwNScsglGdxlxxRqwSceiAiAYgjlcbVF6Nts-cHkW1cuwz-o0hMj6COqBfADkKPC0hA%3D%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRAIgW7y5cyHT7Ima0GUcjI8TaUWrFA2gb4hQIrXeIFmwrakCIBFyoF_8KMc6HP1yQPNX3qoO79ZPGI68rfwptNH9h43s&cpn=YbOb4dlezYAmO6X2&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+                        "duration": 1447
                     },
                     {
                         "title": "Especial Sonhos de Ano Novo",
-                        "videoUrl": "https://example.com/attack-on-titan-s1e2.mp4",
-                        "duration": 1440
+                        "videoUrl": "https://rr1---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751231782&ei=pjxhaIWYNezay_sP_tvF0Ag&ip=200.106.211.8&id=5bd174efa7523e04&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751202982,&mh=St&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=1&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1448.158&lmt=1698131677662001&mt=1751202563&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRQIgBAAcxgfFK9kZDnBFsrZakhX-_ku2MEOCtH5rmHuDVTkCIQCqWVLY56FsO3z6wqWKfBC1ZKIpQ2vyIgqOn8pQzNF_eg%3D%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRAIgHdoU4J-TIJss8J4g91zG1HLOUtZqTRiCUyqXyJZYVEQCID8ATBzVFrtRYBHxjBuuYhNd6Slg9HkxztH8_MQJ2LQA&cpn=CbSvxLJs7M6Ulr9s&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+                        "duration": 1447
                     },
                     {
                         "title": "Sakaki-san",
-                        "videoUrl": "https://stream.4nm-cdn-0483964.com/b-14/ani-ni-tsukeru-kusuri-wa-nai-fandublado-ef56c193/dubbed/1/86f78ee3-1f80-40e5-8352-e8d2aff0da8f/stream.mp4",
-                        "duration": 1440
+                        "videoUrl": "https://rr3---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751242520&ei=mGZhaKKrAZ7lxtYP-bebwAM&ip=200.106.211.8&id=7162f9596de3d476&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751213720,&mh=Et&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=3&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.578&lmt=1590666497884755&mt=1751213349&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRQIgAXkUFKZShBDH8CnYp6hiZf1VXkBVIM9ZtwWk8Ld-efYCIQDLnNjUVuvzwX20ENSBQi18jb1lylVLX4r3vciPPDxJkA%3D%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRQIgO3JdgF2nnDN9zloYptDf9w8VGHslOGppffBJNTHwn0kCIQCt9eUTztcYIOzLvuiF6vU6MmaisEPsM2l_6ho5WB39nA%3D%3D&cpn=3F9mlW-sG9f-EezI&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+                        "duration": 1447
                     },
                     {
-                        "title": "Somos Estudantes do Segundo Ano!",
-                        "videoUrl": "https://example.com/attack-on-titan-s1e2.mp4",
-                        "duration": 1440
+                        "title": "Nós Somos Estudantes do Segundo Ano!",
+                        "videoUrl": "https://rr1---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751243494&ei=ZmphaLyfFovVy_sP1IfawQo&ip=200.106.211.8&id=7822e69b4faf8e24&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751214694,&mh=lP&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=1&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.996&lmt=1590666506416329&mt=1751214313&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRAIgb2pwOp6JSdKK2ttSp4nlkcUi46Q0wdXSGhcr9yAvVb4CIDpX6kgkMr4231V3VBMa5MR3yqKS8OteUCa199TtAuhf&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRgIhAJRfsUjc27jlWpaVnJ-2732jSjr_oK5f5Iz_Cf3KALt2AiEAnfT7QbRlJnJTNds6cTzJIAwVPuutodFHsDaxlfYA5cc%3D&cpn=L9qVnb8w4_Z3pQ2M&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+                        "duration": 1447
                     },
                     {
                         "title": "Kagura e Sakaki",
-                        "videoUrl": "https://stream.4nm-cdn-0483964.com/b-14/ani-ni-tsukeru-kusuri-wa-nai-fandublado-ef56c193/dubbed/1/86f78ee3-1f80-40e5-8352-e8d2aff0da8f/stream.mp4",
-                        "duration": 1440
+                        "videoUrl": "https://rr2---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751243549&ei=nWphaOmuOd2m0_wP-LaZyQ0&ip=200.106.211.8&id=19e5e12b3b7f6690&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751214749,&mh=Ey&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=2&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.230&lmt=1590666510794972&mt=1751214313&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRQIhAM_yyjGU1FFNhRuG5YVkCPuEVx5deV2LdtxJYVp4nhOCAiBD6oH3HfBgXfso1zgHbt7RKCQmwxKsZNvcTOxyKjjvQQ%3D%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRQIgS2j-67HTf4vCWKlhBDJ70bD7V1QBYifYD9ofobTVJuMCIQDMWMjBosptJpXmq5w3BEsdWIyvT-mDTLMp2ZJskoQMeg%3D%3D&cpn=xqwuTHJMlD0Y9O89&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+                        "duration": 1447
                     },
                     {
                         "title": "Dia da Chyio-chan",
-                        "videoUrl": "https://example.com/attack-on-titan-s1e2.mp4",
-                        "duration": 1440
+                        "videoUrl": "https://rr2---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751243587&ei=w2phaNOiHo3Ky_sPwbzdoQI&ip=200.106.211.8&id=00da210f70c0ea9a&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751214787,&mh=N1&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=2&pcm2cms=yes&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1417.160&lmt=1697955082369238&mt=1751214313&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRgIhAORojXsbgTPm2UbQnggTbqbEj_zUT2QKHdeaFKKg6SKyAiEAwDoZmrkkZ37eKruJJkj9skof1nOhOKIaHY5Zo0Sn0G4%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pcm2cms,pl,rms&lsig=APaTxxMwRQIgIwATNkfZevHAE83FvPzmuF2utLVPYxV5ifvlkMs67YsCIQCb2l1FHG6Yh6TSKd9OIsW0BUleHVM164WgsDev3B6xiA%3D%3D&cpn=lCRDdTwloNeDPsbd&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+                        "duration": 1447
                     },
                     {
                         "title": "Provas",
-                        "videoUrl": "https://stream.4nm-cdn-0483964.com/b-14/ani-ni-tsukeru-kusuri-wa-nai-fandublado-ef56c193/dubbed/1/86f78ee3-1f80-40e5-8352-e8d2aff0da8f/stream.mp4",
-                        "duration": 1440
+                        "videoUrl": "https://rr1---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751243650&ei=AmthaJeNJY2sy_sPgtWZoAQ&ip=200.106.211.8&id=f96323ca47d410ed&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751214850,&mh=iL&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=1&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.230&lmt=1590666531303370&mt=1751214567&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRQIhAMpSauufUDpmbqajsEjXMuCAr2wNSQWW6JZhiBc_WNRtAiBbzLQw39nL3IQifrT9Sp_xfHHzjlINM24dyGAXuvrjvw%3D%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRgIhAJJeUx36wHyiz_Xn5IGx7NS23edceciNju1VXUYEv3mcAiEAj3YvX2ddGaVFkOdwoVZ6rq8ekRzA8-WT7oeYweyV3xE%3D&cpn=nSla874D979YB2as&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+                        "duration": 1447
                     },
                     {
                         "title": "O Mar, Quimonos e Festa",
-                        "videoUrl": "https://example.com/attack-on-titan-s1e2.mp4",
-                        "duration": 1440
+                        "videoUrl": "https://rr1---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751243694&ei=LmthaI-TBqmBy_sPiZPi-QQ&ip=200.106.211.8&id=eacb3b70b556f4e7&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751214894,&mh=X-&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=1&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.276&lmt=1590666541573558&mt=1751214551&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRAIgAbWYf1FFgF3Nk86ZVDlE0gIqYig2c0BUF4esI21LRFQCIGUyxgzx6PW7Mr4cH_6znnMXfJPmCPRpMBVcEFeYtTu0&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRgIhAL4NMWnrM6MBrYdSErDcBE176aivnQClSZ5jgIkNV71dAiEAwbGrnxYPmuzQ_vHBySs08Q2FQ4bDfpaJzvGGcn5-6ow%3D&cpn=KBAT2XpRi5A-Rxdc&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+                        "duration": 1447
                     },
                     {
                         "title": "Festival de Esportes do Segundo Ano",
-                        "videoUrl": "https://stream.4nm-cdn-0483964.com/b-14/ani-ni-tsukeru-kusuri-wa-nai-fandublado-ef56c193/dubbed/1/86f78ee3-1f80-40e5-8352-e8d2aff0da8f/stream.mp4",
-                        "duration": 1440
+                        "videoUrl": "https://rr3---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751243735&ei=V2thaNHWFvaXvPIPjcqkuQo&ip=200.106.211.8&id=f87348c3aef98910&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751214935,&mh=q7&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=3&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.276&lmt=1590666546599898&mt=1751214567&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRQIgP4G7uyhGRPKQ-hpnEWfBPXnwCEIMrRNAc-QU1gQDYfwCIQDN79w7MoL-Q2pIvyc3-AtDHo1n2SjrlW_4a_ZfKWZyjg%3D%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRQIgSfVSq5lvEv8p8h2oA6eoa9hbYo7LDL1vxghHSYDdV2QCIQCqPJXhjwQ-SPMVYxeLIpAHtEDiYRd3UDwHg7o2MOYhlA%3D%3D&cpn=FNVGQRwo67PGtcPK&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+                        "duration": 1447
                     },
                     {
                         "title": "Festival Cultural do Segundo Ano",
-                        "videoUrl": "https://example.com/attack-on-titan-s1e2.mp4",
-                        "duration": 1440
+                        "videoUrl": "https://rr1---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751243775&ei=f2thaOnGG9SEy_sPrtbauQ8&ip=200.106.211.8&id=f81aa631eead5df2&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751214975,&mh=oB&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=1&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.322&lmt=1590666561799761&mt=1751214794&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRgIhANE0nameC_tmj10zBdfd40gexFj3KKk4JHndHu61Ld20AiEAoKWt8MPRp8KVoScF7o2cXBeLc0nGne1Re4rUezXM4Is%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRQIhAJKAT8IczKFge9PECnwcAn5i8KgDdJc2ddFN78eZ_Bs_AiBMgcN6FJYWZw63U1Gmd_mFwzb3C1uXDXnR79bYGuld7w%3D%3D&cpn=-cmFbNUwkrGlXzJL&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+                        "duration": 1447
                     },
                     {
                         "title": "Fim do Segundo Semestre e Natal",
-                        "videoUrl": "https://stream.4nm-cdn-0483964.com/b-14/ani-ni-tsukeru-kusuri-wa-nai-fandublado-ef56c193/dubbed/1/86f78ee3-1f80-40e5-8352-e8d2aff0da8f/stream.mp4",
-                        "duration": 1440
+                        "videoUrl": "https://rr3---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751243806&ei=nmthaJ7sJ5uCy_sPy9-U0QM&ip=200.106.211.8&id=5fa74169336fa12f&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751215006,&mh=vW&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=3&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.369&lmt=1590666573813143&mt=1751214567&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRQIgWQY7x5RhtkZACiFzg1V_o4G8dm8Ox-OA9l1aTVOcsu8CIQDBjUUtyZKS0Nj6Zbxxo3q54Z_WmGLFLkj7Sa6nVWnHSA%3D%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRQIhAJStngNlevBuYA3bqhqUxMj_D0A_TQovLhbp5Sz4cYXxAiBLJrC0dHcuFlpUWyY5Vwg8jRTk5jomK2U0gZ5M-P8F-w%3D%3D&cpn=topJnCLEhBthW30D&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+                        "duration": 1447
                     },
                     {
                         "title": "Provações da Koyomi",
-                        "videoUrl": "https://example.com/attack-on-titan-s1e2.mp4",
-                        "duration": 1440
-                    },
-                    {
-                        "title": "Terceiro Ano",
-                        "videoUrl": "https://stream.4nm-cdn-0483964.com/b-14/ani-ni-tsukeru-kusuri-wa-nai-fandublado-ef56c193/dubbed/1/86f78ee3-1f80-40e5-8352-e8d2aff0da8f/stream.mp4",
-                        "duration": 1440
+                        "videoUrl": "https://rr2---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751243847&ei=x2thaNX6HOqI3rsP0_7KwAc&ip=200.106.211.8&id=fc13f9af6728f209&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751215047,&mh=J-&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=2&pcm2cms=yes&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.276&lmt=1697095940103829&mt=1751214798&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRQIhAO-joL1svqsbTWLLMPPIcEzZqShpmPAgMmemM-0i4ZmGAiBGHmMVAC7wT5AJfjI3LSYOBRVjwO6QgN9U3V_dDokgrA%3D%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pcm2cms,pl,rms&lsig=APaTxxMwRAIgWIGCEkg0mhj9ixwp-RoSvXWsLfXPaJOGLl24jRJwFHgCIHIyenFSQ80C8QPSi8KMmC2OtFINAlXDIwdJt-4g_NWE&cpn=gm-Q-LWzFcQucM7a&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+                        "duration": 1447
                     },
                     {
                         "title": "Uma Noite de Primavera",
-                        "videoUrl": "https://example.com/attack-on-titan-s1e2.mp4",
-                        "duration": 1440
+                        "videoUrl": "https://rr1---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751243881&ei=6WthaOXOHtH6zLUP74f1qQc&ip=200.106.211.8&id=9c8a974de77a4aad&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751215081,&mh=2x&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=1&pcm2cms=yes&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.230&lmt=1590666582088600&mt=1751214567&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRQIhAPoPUfTaCWI6-SyC4myYMOgndNJsOmPX7w38FXMZ8KNwAiAzD8KhHbM078ygzP1MSGFYWaIL-lZRVQT_BMzArl7n9A%3D%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pcm2cms,pl,rms&lsig=APaTxxMwRQIgOPvXJaAxNQ9mPfnoSvYcn8CVZCns4CtrLLjYNhf6BpkCIQDCiutzOhVLiLTie3779hI0butRhEm4FrZIjslkcZc4gw%3D%3D&cpn=pd4CVcrZuxTVbp3c&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+                        "duration": 1447
+                    },
+                    {
+                        "title": "Terceiro Ano",
+                        "videoUrl": "https://rr3---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751243917&ei=DWxhaKvQOr7Mj-8Pi5Hs2Q4&ip=200.106.211.8&id=cb89f2acc30c2bba&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751215117,&mh=pU&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=3&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.276&lmt=1697423092149816&mt=1751214794&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRgIhAIRw8t5NpUEv7VaQ72jcGV0IHnL8c5lA5j3fomwHHL-aAiEA97qpSOmqwbNK523XG1M0YT1FVoG5GtNqzM_TWiD67zg%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRQIgcOC_z5O7Vj_GuLX2I3iQ_Wgpwt4r4dlpv3fwmppOPmcCIQCR7pul_Rvw6Ot2QzTF5wQVZpIY5e982nO7sWZBxg4mnQ%3D%3D&cpn=Eklj1CDt0Bo-oNq3&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+                        "duration": 1447
                     },
                     {
                         "title": "Excursão Escolar",
-                        "videoUrl": "https://stream.4nm-cdn-0483964.com/b-14/ani-ni-tsukeru-kusuri-wa-nai-fandublado-ef56c193/dubbed/1/86f78ee3-1f80-40e5-8352-e8d2aff0da8f/stream.mp4",
-                        "duration": 1440
+                        "videoUrl": "https://rr1---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751243945&ei=KWxhaIa8BpeF0_wP8OqqyQE&ip=200.106.211.8&id=ccd0054507277aa2&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751215145,&mh=-C&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=1&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.230&lmt=1697738412064806&mt=1751214567&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRgIhAMdZDaEApDc04Y5C0a_QAnyIjOkXCp2DZ4zEDtP0GnmKAiEA8KaBUGvUOOi3ole2CPjYqOkO_-uwATG800jBJ_S317I%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRAIgDaRGyjiaUWeP9qx_UZBcQzikkqWo0kz8x9j9ohBDTjYCIDE-qsx8uzbuhCjbja_XbRuRI03GIQ9fGCqG6Z2N4LGA&cpn=ljQ20_tcXpADuBDJ&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+                        "duration": 1447
                     },
                     {
                         "title": "Estudos Para os Exames de Admissão",
-                        "videoUrl": "https://example.com/attack-on-titan-s1e2.mp4",
-                        "duration": 1440
+                        "videoUrl": "https://rr2---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751243982&ei=TmxhaIGBE5L_xtYPm6LpsQ8&ip=200.106.211.8&id=218719939e8108cf&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751215182,&mh=_T&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=2&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.230&lmt=1590666610200663&mt=1751214798&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRAIgBF_GEmcF658Mq7E2maVU_MU3Oi3Egyg9Nd_c_VBlNkICIHW0ZzbsTRdcF97iP4XjTEbc_laD-0Woh4EotR4wM5e4&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRQIhAN8trlKEFT_VFuOMoffIMJZiFtYYC49e6RLqLaGzWnk4AiA6WmBKZ7-2NvyJNODeGfj8tfXoePAigdexOmV-a3MhqA%3D%3D&cpn=oxRcTXaDS2RZUACT&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+                        "duration": 1447
                     },
                     {
                         "title": "Último Festival de Esportes",
-                        "videoUrl": "https://stream.4nm-cdn-0483964.com/b-14/ani-ni-tsukeru-kusuri-wa-nai-fandublado-ef56c193/dubbed/1/86f78ee3-1f80-40e5-8352-e8d2aff0da8f/stream.mp4",
-                        "duration": 1440
+                        "videoUrl": "https://rr2---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751244021&ei=dWxhaOefEcqWvPIPztGv2Qc&ip=200.106.211.8&id=0e5e4bc9e45db171&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751215221,&mh=Gb&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=2&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.949&lmt=1698036143133602&mt=1751214798&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRAIgKrjGFdTCXgazpRLZ_vt-uPWO0joObUY9nj2j8zpI3isCIGy74nZuk3sPK1lHkj6rS3Eoz8V65h2kCmK6_5RqQSMY&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRQIhAP-9BAAyxRN0k5r6aY-bmbOhDkhHfT5yPt5VLzWxEQHyAiBiyt07x3heCfeJpd0-q1Fcw9jp22s8Em6-WE7r-X5aSw%3D%3D&cpn=a-I6lvi4gzQwvTDa&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+                        "duration": 1447
                     },
                     {
                         "title": "Yamamayaa",
-                        "videoUrl": "https://example.com/attack-on-titan-s1e2.mp4",
-                        "duration": 1440
+                        "videoUrl": "https://rr3---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751244055&ei=l2xhaOa1Ja7hut0Pj5O98QU&ip=200.106.211.8&id=b846bf8f85cd0bc9&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751215255,&mh=HF&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=3&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.183&lmt=1590666642791413&mt=1751214798&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRAIgGvmz6x7bTNAZvZuIr7i74hHVMat6QJffuIAiOouchSgCIFDkO3cgUIwqvVYUjmD77NhD3Fkw6l53QyHDjwwkBmXX&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRgIhAMGiAR50rV5w0fI48-gzGxwbK_zA9A2UtKFXOUsoSrpzAiEAzDkqGwg4BfHjzJOi8fY8Lnq5o3K1TQvh-OCYnKiYRvY%3D&cpn=TgrtR_P0e75f-MBf&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+                        "duration": 1447
                     },
                     {
                         "title": "Em Frente: Os Exames de Admissão!",
-                        "videoUrl": "https://stream.4nm-cdn-0483964.com/b-14/ani-ni-tsukeru-kusuri-wa-nai-fandublado-ef56c193/dubbed/1/86f78ee3-1f80-40e5-8352-e8d2aff0da8f/stream.mp4",
-                        "duration": 1440
+                        "videoUrl": "https://rr2---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751244087&ei=t2xhaIu4Mq_out0Pk-vU-A0&ip=200.106.211.8&id=ada12a2202f8a879&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751215287,&mh=pK&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=2&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.903&lmt=1590666628083161&mt=1751215036&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRgIhAJcKS70mdKX9FqUzUke9GSxH4ByyJYgejowHmVFOPhS4AiEAx3EYjup9nr6EFaGbvM8dVUaKJ1mGRLHrpi5LgxkbRno%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRgIhANVKrO-JR2Bzw0gUb1zIXDjFB7adKbOJh2d12VzJn6t9AiEAr2XLndyB5zfLWLJHboPHDEEuu4tPsgVnAx4sA3A874I%3D&cpn=CA4g7q6tgP-GujxK&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+                        "duration": 1447
                     },
                     {
-                        "title": "Fim",
-                        "videoUrl": "https://stream.4nm-cdn-0483964.com/b-14/ani-ni-tsukeru-kusuri-wa-nai-fandublado-ef56c193/dubbed/1/86f78ee3-1f80-40e5-8352-e8d2aff0da8f/stream.mp4",
-                        "duration": 1440
+                        "title": "Cerimônia de Formatura",
+                        "videoUrl": "https://lightspeedst.net/s3/mp4/azumanga-daioh/sd/26.mp4",
+                        "duration": 1447
                     }
                 ]
             }
