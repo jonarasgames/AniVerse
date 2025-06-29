@@ -6,8 +6,8 @@ class AnimeDatabase {
         this.ratings = JSON.parse(localStorage.getItem('episodeRatings')) || {};
         this.userRatings = JSON.parse(localStorage.getItem('userEpisodeRatings')) || {};
         this.profile = JSON.parse(localStorage.getItem('userProfile')) || null;
+        this.customVideos = JSON.parse(localStorage.getItem('customVideos')) || {};
         
-        // Adicionar listener para quando os dados forem carregados
         this.loadData().then(() => {
             window.dispatchEvent(new Event('animeDataLoaded'));
         });
@@ -38,7 +38,7 @@ class AnimeDatabase {
 
     getContinueWatching() {
         return Object.keys(this.continueWatching).map(id => {
-            const anime = this.animes.find(a => a.id == id);
+            const anime = this.animes.find(a => a.id == id) || this.getCustomAnime(id);
             if (anime) {
                 return {
                     ...anime,
@@ -52,7 +52,46 @@ class AnimeDatabase {
     }
 
     getAnimeById(id) {
-        return this.animes.find(anime => anime.id == id);
+        return this.animes.find(anime => anime.id == id) || this.getCustomAnime(id);
+    }
+
+    getCustomAnime(id) {
+        if (this.customVideos[id]) {
+            return {
+                id: id,
+                title: this.customVideos[id].title || "Vídeo Customizado",
+                thumbnail: "https://i.ibb.co/0jq7R0y/anime-bg.jpg",
+                description: "Vídeo adicionado manualmente",
+                type: "custom",
+                seasons: [{
+                    number: 1,
+                    episodes: Object.values(this.customVideos[id].episodes)
+                }]
+            };
+        }
+        return null;
+    }
+
+    addCustomVideo(animeId, title, seasonNumber, episodeNumber, videoUrl) {
+        if (!animeId || !videoUrl) return false;
+
+        if (!this.customVideos[animeId]) {
+            this.customVideos[animeId] = {
+                title: title || `Vídeo ${animeId}`,
+                episodes: {}
+            };
+        }
+
+        const episodeKey = `s${seasonNumber}e${episodeNumber}`;
+        this.customVideos[animeId].episodes[episodeKey] = {
+            number: episodeNumber,
+            title: title || `Episódio ${episodeNumber}`,
+            duration: 0,
+            videoUrl: videoUrl
+        };
+
+        localStorage.setItem('customVideos', JSON.stringify(this.customVideos));
+        return true;
     }
 
     markEpisodeWatched(animeId, seasonNumber, episodeNumber) {
@@ -65,8 +104,13 @@ class AnimeDatabase {
         const anime = this.getAnimeById(animeId);
         if (!anime) return;
 
-        const episode = anime.seasons[seasonNumber - 1].episodes[episodeNumber - 1];
-        const progress = (currentTime / episode.duration) * 100;
+        let duration = 1200; // Default 20 minutes
+        const season = anime.seasons[seasonNumber - 1];
+        if (season && season.episodes[episodeNumber - 1]) {
+            duration = season.episodes[episodeNumber - 1].duration || duration;
+        }
+
+        const progress = (currentTime / duration) * 100;
 
         this.continueWatching[animeId] = {
             season: seasonNumber,
@@ -75,7 +119,6 @@ class AnimeDatabase {
             timestamp: new Date().getTime()
         };
 
-        // Manter apenas os 10 mais recentes
         const entries = Object.entries(this.continueWatching);
         if (entries.length > 10) {
             const sorted = entries.sort((a, b) => b[1].timestamp - a[1].timestamp);
@@ -89,21 +132,18 @@ class AnimeDatabase {
         const key = `${animeId}-${seasonNumber}-${episodeNumber}`;
         const userKey = `${animeId}-${seasonNumber}-${episodeNumber}-user`;
         
-        // Verificar avaliação anterior do usuário
         const previousRating = this.userRatings[userKey];
         
         if (!this.ratings[key]) {
             this.ratings[key] = { likes: 0, dislikes: 0 };
         }
         
-        // Remover avaliação anterior se existir
         if (previousRating === 'like') {
             this.ratings[key].likes -= 1;
         } else if (previousRating === 'dislike') {
             this.ratings[key].dislikes -= 1;
         }
         
-        // Adicionar nova avaliação
         if (isLike === true) {
             this.ratings[key].likes += 1;
             this.userRatings[userKey] = 'like';
@@ -111,7 +151,6 @@ class AnimeDatabase {
             this.ratings[key].dislikes += 1;
             this.userRatings[userKey] = 'dislike';
         } else {
-            // Remover avaliação
             delete this.userRatings[userKey];
         }
         
@@ -141,6 +180,19 @@ class AnimeDatabase {
 
     getProfile() {
         return this.profile;
+    }
+
+    // Novo método para verificar se um link expirou
+    isLinkExpired(videoUrl) {
+        if (!videoUrl.includes('expires=')) return false;
+        
+        const expiresMatch = videoUrl.match(/expires=(\d+)/);
+        if (!expiresMatch) return false;
+        
+        const expires = parseInt(expiresMatch[1]);
+        const now = Math.floor(Date.now() / 1000);
+        
+        return now > expires;
     }
 }
 
