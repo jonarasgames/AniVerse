@@ -907,4 +907,63 @@ footer {
     .char-options-grid {
         grid-template-columns: repeat(2, 1fr);
     }
+/* Custom Video Modal */
+#custom-link-modal .modal-content {
+    max-width: 500px;
+    padding: 20px;
+}
+
+#custom-link-modal .form-group {
+    margin-bottom: 15px;
+}
+
+#custom-link-modal label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+#custom-link-modal input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+#custom-link-modal small {
+    color: #666;
+    font-size: 0.8rem;
+}
+
+#play-custom-video {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+}
+
+/* Video Error */
+.video-error {
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.video-error p {
+    margin-bottom: 15px;
+}
+
+/* Floating Button */
+#custom-video-btn {
+    transition: all 0.3s ease;
+}
+
+#custom-video-btn:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
 }
