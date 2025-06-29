@@ -7,36 +7,32 @@ document.addEventListener('DOMContentLoaded', function() {
         if (modal.style.display === 'block') {
             switch (e.key) {
                 case ' ':
-                    // Espaço para play/pause
                     e.preventDefault();
                     if (videoPlayer.paused) {
-                        videoPlayer.play();
+                        videoPlayer.play().catch(e => {
+                            console.log("Play bloqueado:", e);
+                        });
                     } else {
                         videoPlayer.pause();
                     }
                     break;
                 case 'ArrowRight':
-                    // Avançar 5 segundos
                     e.preventDefault();
                     videoPlayer.currentTime += 5;
                     break;
                 case 'ArrowLeft':
-                    // Retroceder 5 segundos
                     e.preventDefault();
                     videoPlayer.currentTime -= 5;
                     break;
                 case 'ArrowUp':
-                    // Aumentar volume
                     e.preventDefault();
                     videoPlayer.volume = Math.min(videoPlayer.volume + 0.1, 1);
                     break;
                 case 'ArrowDown':
-                    // Diminuir volume
                     e.preventDefault();
                     videoPlayer.volume = Math.max(videoPlayer.volume - 0.1, 0);
                     break;
                 case 'f':
-                    // Tela cheia
                     e.preventDefault();
                     if (videoPlayer.requestFullscreen) {
                         videoPlayer.requestFullscreen();
@@ -47,7 +43,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                     break;
                 case 'm':
-                    // Mudo
                     e.preventDefault();
                     videoPlayer.muted = !videoPlayer.muted;
                     break;
@@ -72,5 +67,25 @@ document.addEventListener('DOMContentLoaded', function() {
                 );
             }
         }
+    });
+
+    // Tratamento de erros
+    videoPlayer.addEventListener('error', function() {
+        console.error("Erro no vídeo:", videoPlayer.error);
+        const errorContainer = document.createElement('div');
+        errorContainer.className = 'video-error';
+        errorContainer.innerHTML = `
+            <p>Erro ao carregar o vídeo (${videoPlayer.error.code})</p>
+            <p>O vídeo pode estar indisponível ou o link expirou.</p>
+            <button id="try-reload-btn" class="btn btn-primary">Tentar novamente</button>
+        `;
+        
+        const container = document.getElementById('video-player-container');
+        container.appendChild(errorContainer);
+        
+        document.getElementById('try-reload-btn').addEventListener('click', function() {
+            videoPlayer.load();
+            errorContainer.remove();
+        });
     });
 });
