@@ -112,17 +112,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (e.key === 'Enter') performSearch();
     });
     
-    function performSearch() {
-        const query = searchInput.value.trim().toLowerCase();
-        if (query) {
-            const results = animeDB.animes.filter(anime => 
-                anime.title.toLowerCase().includes(query) || 
-                anime.description.toLowerCase().includes(query)
-            );
-            
-            renderSearchResults(results);
-        }
-    }
+    // Adicionar botão de vídeo customizado
+    addCustomVideoButton();
 });
 
 function checkAnimeDBLoaded() {
@@ -238,10 +229,10 @@ function renderAnimeGrid(animes, containerId) {
         
         animeCard.innerHTML = `
             <div class="anime-thumbnail">
-                <img src="${anime.thumbnail}" alt="${anime.title}">
+                <img src="${anime.thumbnail || 'https://i.ibb.co/0jq7R0y/anime-bg.jpg'}" alt="${anime.title}">
                 <div class="trailer-overlay">
                     <i class="fas fa-play"></i>
-                    <span>Assistir Trailer</span>
+                    <span>Assistir</span>
                 </div>
                 ${progressBar}
                 ${watchedBadge}
@@ -249,8 +240,8 @@ function renderAnimeGrid(animes, containerId) {
             <div class="anime-info">
                 <h3 class="anime-title">${anime.title}</h3>
                 <div class="anime-meta">
-                    <span>${anime.year}</span>
-                    <span>${anime.rating} <i class="fas fa-star" style="color: gold;"></i></span>
+                    <span>${anime.year || ''}</span>
+                    <span>${anime.rating || 'N/A'} <i class="fas fa-star" style="color: gold;"></i></span>
                 </div>
             </div>
         `;
@@ -281,7 +272,7 @@ function renderContinueWatchingGrid(animes, containerId) {
         
         animeCard.innerHTML = `
             <div class="anime-thumbnail">
-                <img src="${anime.thumbnail}" alt="${anime.title}">
+                <img src="${anime.thumbnail || 'https://i.ibb.co/0jq7R0y/anime-bg.jpg'}" alt="${anime.title}">
                 <div class="progress-bar" style="width: ${anime.progress}%"></div>
                 <div class="watched-badge">Continuar</div>
             </div>
@@ -316,7 +307,7 @@ function openAnimeModal(anime, seasonNumber = 1, episodeNumber = 1) {
     
     // Configurar informações do anime
     videoTitle.textContent = anime.title;
-    videoDescription.textContent = anime.description;
+    videoDescription.textContent = anime.description || "Descrição não disponível";
     
     // Configurar temporadas
     seasonSelect.innerHTML = '';
@@ -337,7 +328,7 @@ function openAnimeModal(anime, seasonNumber = 1, episodeNumber = 1) {
         season.episodes.forEach((episode, index) => {
             const option = document.createElement('option');
             option.value = index + 1;
-            option.textContent = `Episódio ${index + 1}: ${episode.title}`;
+            option.textContent = `Episódio ${index + 1}: ${episode.title || ''}`;
             if (animeDB.isEpisodeWatched(anime.id, selectedSeason, index + 1)) {
                 option.classList.add('watched');
             }
@@ -380,11 +371,9 @@ function openAnimeModal(anime, seasonNumber = 1, episodeNumber = 1) {
         const currentRating = animeDB.getUserRating(anime.id, seasonSelect.value, episodeSelect.value);
         
         if (currentRating === 'like') {
-            // Remover like
             animeDB.rateEpisode(anime.id, seasonSelect.value, episodeSelect.value, null);
             this.classList.remove('active');
         } else {
-            // Adicionar like
             animeDB.rateEpisode(anime.id, seasonSelect.value, episodeSelect.value, true);
             this.classList.add('active');
             dislikeBtn.classList.remove('active');
@@ -399,11 +388,9 @@ function openAnimeModal(anime, seasonNumber = 1, episodeNumber = 1) {
         const currentRating = animeDB.getUserRating(anime.id, seasonSelect.value, episodeSelect.value);
         
         if (currentRating === 'dislike') {
-            // Remover dislike
             animeDB.rateEpisode(anime.id, seasonSelect.value, episodeSelect.value, null);
             this.classList.remove('active');
         } else {
-            // Adicionar dislike
             animeDB.rateEpisode(anime.id, seasonSelect.value, episodeSelect.value, false);
             this.classList.add('active');
             likeBtn.classList.remove('active');
@@ -423,21 +410,66 @@ function openAnimeModal(anime, seasonNumber = 1, episodeNumber = 1) {
     
     function loadEpisode(anime, seasonNum, episodeNum) {
         const season = anime.seasons[seasonNum - 1];
+        if (!season) {
+            showVideoError('Temporada não encontrada');
+            return;
+        }
+
         const episode = season.episodes[episodeNum - 1];
-        
+        if (!episode) {
+            showVideoError('Episódio não encontrado');
+            return;
+        }
+
+        if (!episode.videoUrl) {
+            showVideoError('URL do vídeo não disponível');
+            return;
+        }
+
+        // Verificar se o link expirou
+        if (animeDB.isLinkExpired(episode.videoUrl)) {
+            showVideoError('Este link expirou e não pode mais ser reproduzido');
+            return;
+        }
+
         videoPlayer.src = episode.videoUrl;
-        videoTitle.textContent = `${anime.title} - ${episode.title}`;
+        videoTitle.textContent = `${anime.title} - ${episode.title || `Episódio ${episodeNum}`}`;
         
-        // Verificar se há progresso salvo
         if (animeDB.continueWatching[anime.id] && 
             animeDB.continueWatching[anime.id].season == seasonNum && 
             animeDB.continueWatching[anime.id].episode == episodeNum) {
-            videoPlayer.currentTime = (animeDB.continueWatching[anime.id].progress / 100) * episode.duration;
+            videoPlayer.currentTime = (animeDB.continueWatching[anime.id].progress / 100) * (episode.duration || 1200);
         } else {
             videoPlayer.currentTime = 0;
         }
         
-        videoPlayer.play().catch(e => console.log("Autoplay bloqueado:", e));
+        videoPlayer.load();
+        videoPlayer.play().catch(e => {
+            console.log("Autoplay bloqueado:", e);
+            showVideoError('Erro ao reproduzir. Clique no botão de play para tentar novamente.');
+        });
+    }
+    
+    function showVideoError(message) {
+        const container = document.getElementById('video-player-container');
+        let errorMsg = container.querySelector('.video-error');
+        
+        if (!errorMsg) {
+            errorMsg = document.createElement('div');
+            errorMsg.className = 'video-error';
+            container.appendChild(errorMsg);
+        }
+        
+        errorMsg.innerHTML = `
+            <p>${message}</p>
+            <button id="try-reload" class="btn btn-primary">Tentar novamente</button>
+        `;
+        
+        document.getElementById('try-reload').addEventListener('click', function() {
+            videoPlayer.load();
+            errorMsg.remove();
+            videoPlayer.play().catch(e => console.log("Erro ao reproduzir:", e));
+        });
     }
     
     // Salvar progresso periodicamente
@@ -457,7 +489,6 @@ function openAnimeModal(anime, seasonNumber = 1, episodeNumber = 1) {
         animeDB.markEpisodeWatched(anime.id, seasonSelect.value, episodeSelect.value);
         clearInterval(saveInterval);
         
-        // Marcar como assistido no select
         const options = episodeSelect.options;
         for (let i = 0; i < options.length; i++) {
             if (options[i].value == episodeSelect.value) {
@@ -514,7 +545,6 @@ function openProfileModal() {
         document.getElementById('profile-name').value = profile.name;
         document.getElementById('selected-pronoun').value = profile.pronoun;
         
-        // Selecionar pronome
         document.querySelectorAll('.pronoun-btn').forEach(btn => {
             btn.classList.remove('active');
             if (btn.dataset.pronoun === profile.pronoun) {
@@ -522,7 +552,6 @@ function openProfileModal() {
             }
         });
         
-        // Selecionar fundo e personagem
         document.querySelectorAll('.bg-option').forEach(option => {
             option.classList.remove('selected');
             if (option.style.backgroundColor === profile.avatarBg) {
@@ -537,7 +566,6 @@ function openProfileModal() {
             }
         });
         
-        // Atualizar pré-visualização
         updateAvatarPreview();
     }
     
@@ -545,7 +573,6 @@ function openProfileModal() {
 }
 
 function setupProfileModal() {
-    // Selecionar pronome
     document.querySelectorAll('.pronoun-btn').forEach(btn => {
         btn.addEventListener('click', function() {
             document.querySelectorAll('.pronoun-btn').forEach(b => b.classList.remove('active'));
@@ -555,7 +582,6 @@ function setupProfileModal() {
         });
     });
     
-    // Selecionar fundo
     document.querySelectorAll('.bg-option').forEach(option => {
         option.addEventListener('click', function() {
             document.querySelectorAll('.bg-option').forEach(o => o.classList.remove('selected'));
@@ -564,7 +590,6 @@ function setupProfileModal() {
         });
     });
     
-    // Selecionar personagem
     document.querySelectorAll('.char-option').forEach(option => {
         option.addEventListener('click', function() {
             document.querySelectorAll('.char-option').forEach(o => o.classList.remove('selected'));
@@ -573,10 +598,8 @@ function setupProfileModal() {
         });
     });
     
-    // Atualizar pré-visualização quando o nome muda
     document.getElementById('profile-name').addEventListener('input', updateAvatarPreview);
     
-    // Salvar perfil
     document.getElementById('save-profile').addEventListener('click', function() {
         const name = document.getElementById('profile-name').value.trim();
         const pronoun = document.getElementById('selected-pronoun').value;
@@ -599,7 +622,6 @@ function setupProfileModal() {
         }
     });
     
-    // Fechar modal
     document.querySelector('.close-profile').addEventListener('click', function() {
         document.getElementById('profile-modal').style.display = 'none';
     });
@@ -617,7 +639,6 @@ function updateAvatarPreview() {
     const avatarChar = preview.querySelector('.avatar-char');
     const avatarName = preview.querySelector('.avatar-name');
     
-    // Aplicar estilos para o círculo perfeito
     avatarBg.style.backgroundColor = bgColor;
     avatarBg.style.borderRadius = '50%';
     avatarBg.style.overflow = 'hidden';
@@ -643,12 +664,10 @@ function updateProfileDisplay() {
     if (profile) {
         loginBtn.innerHTML = `<i class="fas fa-user"></i> ${profile.name}${profile.pronoun}`;
         
-        // Atualizar avatar no cabeçalho
         headerAvatar.style.display = 'block';
         headerAvatar.style.backgroundColor = profile.avatarBg;
         headerAvatarImg.src = document.querySelector(`.char-option[data-char="${profile.avatarChar}"] img`)?.src || '';
         
-        // Mostrar mensagem de boas-vindas
         if (welcomeContainer) {
             welcomeContainer.innerHTML = `
                 <div class="welcome-avatar" style="background-color: ${profile.avatarBg}">
@@ -663,6 +682,18 @@ function updateProfileDisplay() {
         loginBtn.innerHTML = '<i class="fas fa-user"></i> Entrar';
         headerAvatar.style.display = 'none';
         if (welcomeContainer) welcomeContainer.innerHTML = '';
+    }
+}
+
+function performSearch() {
+    const query = searchInput.value.trim().toLowerCase();
+    if (query) {
+        const results = animeDB.animes.filter(anime => 
+            anime.title.toLowerCase().includes(query) || 
+            (anime.description && anime.description.toLowerCase().includes(query))
+        );
+        
+        renderSearchResults(results);
     }
 }
 
@@ -683,5 +714,93 @@ function renderSearchResults(results) {
     
     document.getElementById('back-to-home').addEventListener('click', function() {
         location.reload();
+    });
+}
+
+function addCustomVideoButton() {
+    if (document.getElementById('custom-video-btn')) return;
+
+    const customBtn = document.createElement('button');
+    customBtn.id = 'custom-video-btn';
+    customBtn.className = 'btn btn-primary';
+    customBtn.innerHTML = '<i class="fas fa-plus"></i> Adicionar Vídeo';
+    customBtn.style.position = 'fixed';
+    customBtn.style.bottom = '20px';
+    customBtn.style.right = '20px';
+    customBtn.style.zIndex = '1000';
+    customBtn.style.padding = '10px 15px';
+    customBtn.style.borderRadius = '50px';
+    customBtn.style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.2)';
+    
+    customBtn.addEventListener('click', openCustomLinkModal);
+    document.body.appendChild(customBtn);
+}
+
+function openCustomLinkModal() {
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.id = 'custom-link-modal';
+    modal.innerHTML = `
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Adicionar Vídeo Externo</h2>
+            <div class="form-group">
+                <label for="custom-anime-id">ID do Anime:</label>
+                <input type="text" id="custom-anime-id" placeholder="ID único para o vídeo">
+            </div>
+            <div class="form-group">
+                <label for="custom-anime-title">Título:</label>
+                <input type="text" id="custom-anime-title" placeholder="Título do anime/vídeo">
+            </div>
+            <div class="form-group">
+                <label for="custom-season">Temporada:</label>
+                <input type="number" id="custom-season" value="1" min="1">
+            </div>
+            <div class="form-group">
+                <label for="custom-episode">Episódio:</label>
+                <input type="number" id="custom-episode" value="1" min="1">
+            </div>
+            <div class="form-group">
+                <label for="custom-video-url">URL do Vídeo:</label>
+                <input type="text" id="custom-video-url" placeholder="Cole o link do vídeo aqui">
+                <small>Links protegidos podem não funcionar devido a restrições CORS</small>
+            </div>
+            <button id="play-custom-video" class="btn btn-primary">Reproduzir</button>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+    modal.style.display = 'block';
+
+    modal.querySelector('.close-modal').addEventListener('click', function() {
+        modal.style.display = 'none';
+        document.body.removeChild(modal);
+    });
+
+    document.getElementById('play-custom-video').addEventListener('click', function() {
+        const animeId = document.getElementById('custom-anime-id').value.trim();
+        const title = document.getElementById('custom-anime-title').value.trim();
+        const seasonNumber = parseInt(document.getElementById('custom-season').value);
+        const episodeNumber = parseInt(document.getElementById('custom-episode').value);
+        const videoUrl = document.getElementById('custom-video-url').value.trim();
+
+        if (!animeId || !videoUrl) {
+            alert('Por favor, preencha o ID do anime e a URL do vídeo');
+            return;
+        }
+
+        if (!title) {
+            alert('Por favor, informe um título para o vídeo');
+            return;
+        }
+
+        animeDB.addCustomVideo(animeId, title, seasonNumber, episodeNumber, videoUrl);
+        const anime = animeDB.getAnimeById(animeId);
+        
+        if (anime) {
+            openAnimeModal(anime, seasonNumber, episodeNumber);
+            modal.style.display = 'none';
+            document.body.removeChild(modal);
+        }
     });
 }
