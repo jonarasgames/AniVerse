@@ -157,5 +157,154 @@
         ],
         "year": 1997,
         "rating": 4.9
+    },
+    {
+        "id": 7,
+        "title": "Azumanga Daioh",
+        "description": "Uma série animada cômica e altamente imprevisível que acompanha um grupo de meninas do ensino médio e seus professores.",
+        "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/thumbnails/attack.png",
+        "trailer": "https://www.youtube.com/embed/mqqxHv-BBSY?autoplay=1&mute=1&enablejsapi=1",
+        "type": "anime",
+        "dateAdded": "2025-07-28",
+        "categories": ["comedy", "slice of life"],
+        "seasons": [
+            {
+                "number": 1,
+                "episodes": [
+                    {
+                        "title": "Ao Grito de 'Você Está Livre'",
+                        "videoUrl": "https://stream.4nm-cdn-0483964.com/b-14/ani-ni-tsukeru-kusuri-wa-nai-fandublado-ef56c193/dubbed/1/86f78ee3-1f80-40e5-8352-e8d2aff0da8f/stream.mp4",
+                        "duration": 1440
+                    },
+                    {
+                        "title": "Aquele Dia",
+                        "videoUrl": "https://example.com/attack-on-titan-s1e2.mp4",
+                        "duration": 1440
+                    },
+                    {
+                        "title": "Ao Grito de 'Você Está Livre'",
+                        "videoUrl": "https://stream.4nm-cdn-0483964.com/b-14/ani-ni-tsukeru-kusuri-wa-nai-fandublado-ef56c193/dubbed/1/86f78ee3-1f80-40e5-8352-e8d2aff0da8f/stream.mp4",
+                        "duration": 1440
+                    },
+                    {
+                        "title": "Aquele Dia",
+                        "videoUrl": "https://example.com/attack-on-titan-s1e2.mp4",
+                        "duration": 1440
+                    },
+                    {
+                        "title": "Ao Grito de 'Você Está Livre'",
+                        "videoUrl": "https://stream.4nm-cdn-0483964.com/b-14/ani-ni-tsukeru-kusuri-wa-nai-fandublado-ef56c193/dubbed/1/86f78ee3-1f80-40e5-8352-e8d2aff0da8f/stream.mp4",
+                        "duration": 1440
+                    },
+                    {
+                        "title": "Aquele Dia",
+                        "videoUrl": "https://example.com/attack-on-titan-s1e2.mp4",
+                        "duration": 1440
+                    },
+                    {
+                        "title": "Ao Grito de 'Você Está Livre'",
+                        "videoUrl": "https://stream.4nm-cdn-0483964.com/b-14/ani-ni-tsukeru-kusuri-wa-nai-fandublado-ef56c193/dubbed/1/86f78ee3-1f80-40e5-8352-e8d2aff0da8f/stream.mp4",
+                        "duration": 1440
+                    },
+                    {
+                        "title": "Aquele Dia",
+                        "videoUrl": "https://example.com/attack-on-titan-s1e2.mp4",
+                        "duration": 1440
+                    },
+                    {
+                        "title": "Ao Grito de 'Você Está Livre'",
+                        "videoUrl": "https://stream.4nm-cdn-0483964.com/b-14/ani-ni-tsukeru-kusuri-wa-nai-fandublado-ef56c193/dubbed/1/86f78ee3-1f80-40e5-8352-e8d2aff0da8f/stream.mp4",
+                        "duration": 1440
+                    },
+                    {
+                        "title": "Aquele Dia",
+                        "videoUrl": "https://example.com/attack-on-titan-s1e2.mp4",
+                        "duration": 1440
+                    },
+                    {
+                        "title": "Ao Grito de 'Você Está Livre'",
+                        "videoUrl": "https://stream.4nm-cdn-0483964.com/b-14/ani-ni-tsukeru-kusuri-wa-nai-fandublado-ef56c193/dubbed/1/86f78ee3-1f80-40e5-8352-e8d2aff0da8f/stream.mp4",
+                        "duration": 1440
+                    },
+                    {
+                        "title": "Aquele Dia",
+                        "videoUrl": "https://example.com/attack-on-titan-s1e2.mp4",
+                        "duration": 1440
+                    },
+                    {
+                        "title": "Ao Grito de 'Você Está Livre'",
+                        "videoUrl": "https://stream.4nm-cdn-0483964.com/b-14/ani-ni-tsukeru-kusuri-wa-nai-fandublado-ef56c193/dubbed/1/86f78ee3-1f80-40e5-8352-e8d2aff0da8f/stream.mp4",
+                        "duration": 1440
+                    },
+                    {
+                        "title": "Aquele Dia",
+                        "videoUrl": "https://example.com/attack-on-titan-s1e2.mp4",
+                        "duration": 1440
+                    },
+                    {
+                        "title": "Ao Grito de 'Você Está Livre'",
+                        "videoUrl": "https://stream.4nm-cdn-0483964.com/b-14/ani-ni-tsukeru-kusuri-wa-nai-fandublado-ef56c193/dubbed/1/86f78ee3-1f80-40e5-8352-e8d2aff0da8f/stream.mp4",
+                        "duration": 1440
+                    },
+                    {
+                        "title": "Aquele Dia",
+                        "videoUrl": "https://example.com/attack-on-titan-s1e2.mp4",
+                        "duration": 1440
+                    },
+                    {
+                        "title": "Ao Grito de 'Você Está Livre'",
+                        "videoUrl": "https://stream.4nm-cdn-0483964.com/b-14/ani-ni-tsukeru-kusuri-wa-nai-fandublado-ef56c193/dubbed/1/86f78ee3-1f80-40e5-8352-e8d2aff0da8f/stream.mp4",
+                        "duration": 1440
+                    },
+                    {
+                        "title": "Aquele Dia",
+                        "videoUrl": "https://example.com/attack-on-titan-s1e2.mp4",
+                        "duration": 1440
+                    },
+                    {
+                        "title": "Ao Grito de 'Você Está Livre'",
+                        "videoUrl": "https://stream.4nm-cdn-0483964.com/b-14/ani-ni-tsukeru-kusuri-wa-nai-fandublado-ef56c193/dubbed/1/86f78ee3-1f80-40e5-8352-e8d2aff0da8f/stream.mp4",
+                        "duration": 1440
+                    },
+                    {
+                        "title": "Aquele Dia",
+                        "videoUrl": "https://example.com/attack-on-titan-s1e2.mp4",
+                        "duration": 1440
+                    },
+                    {
+                        "title": "Ao Grito de 'Você Está Livre'",
+                        "videoUrl": "https://stream.4nm-cdn-0483964.com/b-14/ani-ni-tsukeru-kusuri-wa-nai-fandublado-ef56c193/dubbed/1/86f78ee3-1f80-40e5-8352-e8d2aff0da8f/stream.mp4",
+                        "duration": 1440
+                    },
+                    {
+                        "title": "Aquele Dia",
+                        "videoUrl": "https://example.com/attack-on-titan-s1e2.mp4",
+                        "duration": 1440
+                    },
+                    {
+                        "title": "Ao Grito de 'Você Está Livre'",
+                        "videoUrl": "https://stream.4nm-cdn-0483964.com/b-14/ani-ni-tsukeru-kusuri-wa-nai-fandublado-ef56c193/dubbed/1/86f78ee3-1f80-40e5-8352-e8d2aff0da8f/stream.mp4",
+                        "duration": 1440
+                    },
+                    {
+                        "title": "Aquele Dia",
+                        "videoUrl": "https://example.com/attack-on-titan-s1e2.mp4",
+                        "duration": 1440
+                    },
+                    {
+                        "title": "Ao Grito de 'Você Está Livre'",
+                        "videoUrl": "https://stream.4nm-cdn-0483964.com/b-14/ani-ni-tsukeru-kusuri-wa-nai-fandublado-ef56c193/dubbed/1/86f78ee3-1f80-40e5-8352-e8d2aff0da8f/stream.mp4",
+                        "duration": 1440
+                    },
+                    {
+                        "title": "Ao Grito de 'Você Está Livre'",
+                        "videoUrl": "https://stream.4nm-cdn-0483964.com/b-14/ani-ni-tsukeru-kusuri-wa-nai-fandublado-ef56c193/dubbed/1/86f78ee3-1f80-40e5-8352-e8d2aff0da8f/stream.mp4",
+                        "duration": 1440
+                    }
+                ]
+            }
+        ],
+        "year": 2002,
+        "rating": 8.1
     }
 ]
