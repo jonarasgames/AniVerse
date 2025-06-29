@@ -10,15 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Espaço para play/pause
                     e.preventDefault();
                     if (videoPlayer.paused) {
-                        videoPlayer.play().catch(error => {
-                            console.error("Erro ao reproduzir vídeo:", error);
-                            // Tentar novamente sem parâmetros se falhar
-                            const currentSrc = videoPlayer.src;
-                            if (currentSrc.includes('?')) {
-                                videoPlayer.src = currentSrc.split('?')[0];
-                                videoPlayer.play().catch(e => console.error("Erro na segunda tentativa:", e));
-                            }
-                        });
+                        videoPlayer.play();
                     } else {
                         videoPlayer.pause();
                     }
@@ -60,21 +52,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     videoPlayer.muted = !videoPlayer.muted;
                     break;
             }
-        }
-    });
-    
-    // Tratamento de erros de vídeo
-    videoPlayer.addEventListener('error', function() {
-        console.error("Erro ao carregar vídeo:", videoPlayer.error);
-        const currentSrc = videoPlayer.src;
-        
-        // Tentar remover parâmetros se houver
-        if (currentSrc.includes('?')) {
-            const cleanSrc = currentSrc.split('?')[0];
-            console.log("Tentando carregar URL limpa:", cleanSrc);
-            videoPlayer.src = cleanSrc;
-            videoPlayer.load();
-            videoPlayer.play().catch(e => console.error("Erro ao tentar reproduzir URL limpa:", e));
         }
     });
     
