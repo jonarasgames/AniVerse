@@ -58,20 +58,12 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Mostrar mensagem de carregamento
-    const grids = document.querySelectorAll('.anime-grid');
-    grids.forEach(grid => {
-        grid.innerHTML = `
-            <div class="loading-message">
-                <i class="fas fa-spinner"></i>
-                <p>Carregando animes...</p>
-            </div>
-        `;
-    });
-
     // Carregar conteúdo inicial
     setTimeout(() => {
-        checkAnimeDBLoaded();
+        loadNewReleases();
+        loadContinueWatching();
+        loadFullCatalog();
+        setupCategoryTabs();
         updateProfileDisplay();
     }, 300);
     
@@ -125,17 +117,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-function checkAnimeDBLoaded() {
-    if (animeDB.animes.length > 0) {
-        loadNewReleases();
-        loadContinueWatching();
-        loadFullCatalog();
-        setupCategoryTabs();
-    } else {
-        setTimeout(checkAnimeDBLoaded, 100);
-    }
-}
-
+// Funções do sistema
 function loadNewReleases() {
     const newReleases = animeDB.getNewReleases();
     renderAnimeGrid(newReleases, 'new-releases-grid');
@@ -638,8 +620,7 @@ function updateProfileDisplay() {
     const loginBtn = document.getElementById('login-btn');
     const headerAvatar = document.getElementById('header-avatar');
     const headerAvatarImg = headerAvatar.querySelector('img');
-    const welcomeContainer = document.getElementById('user-welcome-container');
-
+    
     if (profile) {
         loginBtn.innerHTML = `<i class="fas fa-user"></i> ${profile.name}${profile.pronoun}`;
         
@@ -647,22 +628,9 @@ function updateProfileDisplay() {
         headerAvatar.style.display = 'block';
         headerAvatar.style.backgroundColor = profile.avatarBg;
         headerAvatarImg.src = document.querySelector(`.char-option[data-char="${profile.avatarChar}"] img`)?.src || '';
-        
-        // Mostrar mensagem de boas-vindas
-        if (welcomeContainer) {
-            welcomeContainer.innerHTML = `
-                <div class="welcome-avatar" style="background-color: ${profile.avatarBg}">
-                    <img src="${headerAvatarImg.src}" alt="${profile.name}">
-                </div>
-                <div class="welcome-message">
-                    Bem-vindo de volta, <span>${profile.name}${profile.pronoun}</span>!
-                </div>
-            `;
-        }
     } else {
         loginBtn.innerHTML = '<i class="fas fa-user"></i> Entrar';
         headerAvatar.style.display = 'none';
-        if (welcomeContainer) welcomeContainer.innerHTML = '';
     }
 }
 
