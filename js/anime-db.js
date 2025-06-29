@@ -13,25 +13,11 @@ class AnimeDatabase {
         try {
             const response = await fetch('anime-data.json');
             this.animes = await response.json();
-            this.fixVideoUrls(); // Corrigir URLs ao carregar
             this.sortAnimesByDate();
         } catch (error) {
             console.error("Erro ao carregar dados dos animes:", error);
             this.animes = [];
         }
-    }
-
-    fixVideoUrls() {
-        this.animes.forEach(anime => {
-            anime.seasons.forEach(season => {
-                season.episodes.forEach(episode => {
-                    // Corrigir URLs que contêm parâmetros
-                    if (episode.videoUrl.includes('?')) {
-                        episode.videoUrl = episode.videoUrl.split('?')[0];
-                    }
-                });
-            });
-        });
     }
 
     sortAnimesByDate() {
@@ -85,7 +71,6 @@ class AnimeDatabase {
             timestamp: new Date().getTime()
         };
 
-        // Manter apenas os 10 mais recentes
         const entries = Object.entries(this.continueWatching);
         if (entries.length > 10) {
             const sorted = entries.sort((a, b) => b[1].timestamp - a[1].timestamp);
@@ -99,21 +84,18 @@ class AnimeDatabase {
         const key = `${animeId}-${seasonNumber}-${episodeNumber}`;
         const userKey = `${animeId}-${seasonNumber}-${episodeNumber}-user`;
         
-        // Verificar avaliação anterior do usuário
         const previousRating = this.userRatings[userKey];
         
         if (!this.ratings[key]) {
             this.ratings[key] = { likes: 0, dislikes: 0 };
         }
         
-        // Remover avaliação anterior se existir
         if (previousRating === 'like') {
             this.ratings[key].likes -= 1;
         } else if (previousRating === 'dislike') {
             this.ratings[key].dislikes -= 1;
         }
         
-        // Adicionar nova avaliação
         if (isLike === true) {
             this.ratings[key].likes += 1;
             this.userRatings[userKey] = 'like';
@@ -121,7 +103,6 @@ class AnimeDatabase {
             this.ratings[key].dislikes += 1;
             this.userRatings[userKey] = 'dislike';
         } else {
-            // Remover avaliação
             delete this.userRatings[userKey];
         }
         
@@ -151,6 +132,20 @@ class AnimeDatabase {
 
     getProfile() {
         return this.profile;
+    }
+
+    async getVideoUrl(episode) {
+        try {
+            if (episode.videoUrl.includes('4nm-cdn-0483964.com')) {
+                // Usar proxy para URLs protegidas
+                const path = encodeURIComponent(episode.videoUrl.split('4nm-cdn-0483964.com/')[1]);
+                return `/api/stream?url=${path}`;
+            }
+            return episode.videoUrl;
+        } catch (error) {
+            console.error("Erro ao processar URL do vídeo:", error);
+            return episode.videoUrl;
+        }
     }
 }
 
