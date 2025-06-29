@@ -193,6 +193,44 @@ nav a:hover, nav a.active {
     border-radius: 0 4px 4px 0;
 }
 
+/* User Welcome Section */
+.user-welcome {
+    background-color: var(--secondary-color);
+    padding: 15px 0;
+    margin: 20px 0;
+    border-radius: 8px;
+}
+
+#user-welcome-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.welcome-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid var(--primary-color);
+}
+
+.welcome-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.welcome-message {
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+
+.welcome-message span {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
 /* Content Sections */
 .content-section {
     display: none;
@@ -573,10 +611,26 @@ option.watched {
 .bg-color-8 { background-color: #ff9f43; }
 .bg-color-9 { background-color: #576574; }
 .bg-color-10 { background-color: #0abde3; }
+.bg-color-11 { background-color: #ff7979; }
+.bg-color-12 { background-color: #badc58; }
+.bg-color-13 { background-color: #7ed6df; }
+.bg-color-14 { background-color: #e056fd; }
+.bg-color-15 { background-color: #686de0; }
+.bg-color-16 { background-color: #30336b; }
+.bg-color-17 { background-color: #130f40; }
+.bg-color-18 { background-color: #22a6b3; }
+.bg-color-19 { background-color: #6ab04c; }
+.bg-color-20 { background-color: #eb4d4b; }
+
+.char-options-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+}
 
 .char-option {
-    width: 100%;
-    aspect-ratio: 1;
+    width: 80px;
+    height: 80px;
     border-radius: 8px;
     overflow: hidden;
     cursor: pointer;
@@ -609,14 +663,14 @@ option.watched {
 .avatar-bg {
     width: 100px;
     height: 100px;
-    border-radius: 50%; /* Isso cria o círculo perfeito */
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden; /* Isso corta a imagem para caber no círculo */
+    overflow: hidden;
     position: relative;
-    border: 3px solid white; /* Borda branca para destacar */
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); /* Sombra suave */
+    border: 3px solid white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     transition: all 0.3s ease;
 }
 
@@ -626,25 +680,40 @@ option.watched {
 }
 
 .avatar-char {
-    width: 100%; /* Preenche todo o círculo */
+    width: 100%;
     height: 100%;
-    object-fit: cover; /* Garante que a imagem cubra todo o espaço */
-    object-position: center; /* Centraliza a imagem */
+    object-fit: cover;
+    object-position: center;
 }
 
-/* Ajuste para a pré-visualização no modal */
-.preview-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px; /* Mais espaço entre a imagem e o nome */
+.welcome-message {
+    font-size: 1.2rem;
+    font-weight: 500;
 }
 
-.avatar-name {
+.welcome-message span {
+    color: var(--primary-color);
     font-weight: 600;
-    color: var(--text-color);
+}
+
+/* Loading state */
+.loading-message {
     text-align: center;
-    margin-top: 10px;
+    padding: 40px;
+    font-size: 1.2rem;
+    color: var(--primary-color);
+    grid-column: 1 / -1;
+}
+
+.loading-message i {
+    font-size: 2rem;
+    margin-bottom: 15px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 /* Footer */
@@ -718,7 +787,7 @@ footer {
     overflow: hidden;
     border: 2px solid white;
     margin-right: 10px;
-    display: none; /* Inicialmente escondido */
+    display: none;
 }
 
 .user-avatar img {
@@ -810,6 +879,10 @@ footer {
     .avatar-selector {
         grid-template-columns: 1fr;
     }
+
+    .char-options-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
 }
 
 @media (max-width: 480px) {
@@ -829,5 +902,9 @@ footer {
     .episode-selector {
         flex-direction: column;
         gap: 10px;
+    }
+
+    .char-options-grid {
+        grid-template-columns: repeat(2, 1fr);
     }
 }
