@@ -162,7 +162,7 @@
         "id": 7,
         "title": "Azumanga Daioh",
         "description": "Uma série animada cômica e altamente imprevisível que acompanha um grupo de meninas do ensino médio e seus professores.",
-        "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/thumbnails/attack.png",
+        "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/thumbnails/azudaioh.png",
         "trailer": "https://www.youtube.com/embed/mqqxHv-BBSY?autoplay=1&mute=1&enablejsapi=1",
         "type": "anime",
         "dateAdded": "2025-07-28",
@@ -172,132 +172,132 @@
                 "number": 1,
                 "episodes": [
                     {
-                        "title": "Ao Grito de 'Você Está Livre'",
+                        "title": "Episódio 1",
                         "videoUrl": "https://stream.4nm-cdn-0483964.com/b-14/ani-ni-tsukeru-kusuri-wa-nai-fandublado-ef56c193/dubbed/1/86f78ee3-1f80-40e5-8352-e8d2aff0da8f/stream.mp4",
                         "duration": 1440
                     },
                     {
-                        "title": "Aquele Dia",
+                        "title": "Dia da Osaka",
                         "videoUrl": "https://example.com/attack-on-titan-s1e2.mp4",
                         "duration": 1440
                     },
                     {
-                        "title": "Ao Grito de 'Você Está Livre'",
+                        "title": "Nyamo",
                         "videoUrl": "https://stream.4nm-cdn-0483964.com/b-14/ani-ni-tsukeru-kusuri-wa-nai-fandublado-ef56c193/dubbed/1/86f78ee3-1f80-40e5-8352-e8d2aff0da8f/stream.mp4",
                         "duration": 1440
                     },
                     {
-                        "title": "Aquele Dia",
+                        "title": "Piscina! Piscina! Piscina!",
                         "videoUrl": "https://example.com/attack-on-titan-s1e2.mp4",
                         "duration": 1440
                     },
                     {
-                        "title": "Ao Grito de 'Você Está Livre'",
+                        "title": "Férias de verão",
                         "videoUrl": "https://stream.4nm-cdn-0483964.com/b-14/ani-ni-tsukeru-kusuri-wa-nai-fandublado-ef56c193/dubbed/1/86f78ee3-1f80-40e5-8352-e8d2aff0da8f/stream.mp4",
                         "duration": 1440
                     },
                     {
-                        "title": "Aquele Dia",
+                        "title": "Festival de Esportes",
                         "videoUrl": "https://example.com/attack-on-titan-s1e2.mp4",
                         "duration": 1440
                     },
                     {
-                        "title": "Ao Grito de 'Você Está Livre'",
+                        "title": "Festival Cultural",
                         "videoUrl": "https://stream.4nm-cdn-0483964.com/b-14/ani-ni-tsukeru-kusuri-wa-nai-fandublado-ef56c193/dubbed/1/86f78ee3-1f80-40e5-8352-e8d2aff0da8f/stream.mp4",
                         "duration": 1440
                     },
                     {
-                        "title": "Aquele Dia",
+                        "title": "Especial Sonhos de Ano Novo",
                         "videoUrl": "https://example.com/attack-on-titan-s1e2.mp4",
                         "duration": 1440
                     },
                     {
-                        "title": "Ao Grito de 'Você Está Livre'",
+                        "title": "Sakaki-san",
                         "videoUrl": "https://stream.4nm-cdn-0483964.com/b-14/ani-ni-tsukeru-kusuri-wa-nai-fandublado-ef56c193/dubbed/1/86f78ee3-1f80-40e5-8352-e8d2aff0da8f/stream.mp4",
                         "duration": 1440
                     },
                     {
-                        "title": "Aquele Dia",
+                        "title": "Somos Estudantes do Segundo Ano!",
                         "videoUrl": "https://example.com/attack-on-titan-s1e2.mp4",
                         "duration": 1440
                     },
                     {
-                        "title": "Ao Grito de 'Você Está Livre'",
+                        "title": "Kagura e Sakaki",
                         "videoUrl": "https://stream.4nm-cdn-0483964.com/b-14/ani-ni-tsukeru-kusuri-wa-nai-fandublado-ef56c193/dubbed/1/86f78ee3-1f80-40e5-8352-e8d2aff0da8f/stream.mp4",
                         "duration": 1440
                     },
                     {
-                        "title": "Aquele Dia",
+                        "title": "Dia da Chyio-chan",
                         "videoUrl": "https://example.com/attack-on-titan-s1e2.mp4",
                         "duration": 1440
                     },
                     {
-                        "title": "Ao Grito de 'Você Está Livre'",
+                        "title": "Provas",
                         "videoUrl": "https://stream.4nm-cdn-0483964.com/b-14/ani-ni-tsukeru-kusuri-wa-nai-fandublado-ef56c193/dubbed/1/86f78ee3-1f80-40e5-8352-e8d2aff0da8f/stream.mp4",
                         "duration": 1440
                     },
                     {
-                        "title": "Aquele Dia",
+                        "title": "O Mar, Quimonos e Festa",
                         "videoUrl": "https://example.com/attack-on-titan-s1e2.mp4",
                         "duration": 1440
                     },
                     {
-                        "title": "Ao Grito de 'Você Está Livre'",
+                        "title": "Festival de Esportes do Segundo Ano",
                         "videoUrl": "https://stream.4nm-cdn-0483964.com/b-14/ani-ni-tsukeru-kusuri-wa-nai-fandublado-ef56c193/dubbed/1/86f78ee3-1f80-40e5-8352-e8d2aff0da8f/stream.mp4",
                         "duration": 1440
                     },
                     {
-                        "title": "Aquele Dia",
+                        "title": "Festival Cultural do Segundo Ano",
                         "videoUrl": "https://example.com/attack-on-titan-s1e2.mp4",
                         "duration": 1440
                     },
                     {
-                        "title": "Ao Grito de 'Você Está Livre'",
+                        "title": "Fim do Segundo Semestre e Natal",
                         "videoUrl": "https://stream.4nm-cdn-0483964.com/b-14/ani-ni-tsukeru-kusuri-wa-nai-fandublado-ef56c193/dubbed/1/86f78ee3-1f80-40e5-8352-e8d2aff0da8f/stream.mp4",
                         "duration": 1440
                     },
                     {
-                        "title": "Aquele Dia",
+                        "title": "Provações da Koyomi",
                         "videoUrl": "https://example.com/attack-on-titan-s1e2.mp4",
                         "duration": 1440
                     },
                     {
-                        "title": "Ao Grito de 'Você Está Livre'",
+                        "title": "Terceiro Ano",
                         "videoUrl": "https://stream.4nm-cdn-0483964.com/b-14/ani-ni-tsukeru-kusuri-wa-nai-fandublado-ef56c193/dubbed/1/86f78ee3-1f80-40e5-8352-e8d2aff0da8f/stream.mp4",
                         "duration": 1440
                     },
                     {
-                        "title": "Aquele Dia",
+                        "title": "Uma Noite de Primavera",
                         "videoUrl": "https://example.com/attack-on-titan-s1e2.mp4",
                         "duration": 1440
                     },
                     {
-                        "title": "Ao Grito de 'Você Está Livre'",
+                        "title": "Excursão Escolar",
                         "videoUrl": "https://stream.4nm-cdn-0483964.com/b-14/ani-ni-tsukeru-kusuri-wa-nai-fandublado-ef56c193/dubbed/1/86f78ee3-1f80-40e5-8352-e8d2aff0da8f/stream.mp4",
                         "duration": 1440
                     },
                     {
-                        "title": "Aquele Dia",
+                        "title": "Estudos Para os Exames de Admissão",
                         "videoUrl": "https://example.com/attack-on-titan-s1e2.mp4",
                         "duration": 1440
                     },
                     {
-                        "title": "Ao Grito de 'Você Está Livre'",
+                        "title": "Último Festival de Esportes",
                         "videoUrl": "https://stream.4nm-cdn-0483964.com/b-14/ani-ni-tsukeru-kusuri-wa-nai-fandublado-ef56c193/dubbed/1/86f78ee3-1f80-40e5-8352-e8d2aff0da8f/stream.mp4",
                         "duration": 1440
                     },
                     {
-                        "title": "Aquele Dia",
+                        "title": "Yamamayaa",
                         "videoUrl": "https://example.com/attack-on-titan-s1e2.mp4",
                         "duration": 1440
                     },
                     {
-                        "title": "Ao Grito de 'Você Está Livre'",
+                        "title": "Em Frente: Os Exames de Admissão!",
                         "videoUrl": "https://stream.4nm-cdn-0483964.com/b-14/ani-ni-tsukeru-kusuri-wa-nai-fandublado-ef56c193/dubbed/1/86f78ee3-1f80-40e5-8352-e8d2aff0da8f/stream.mp4",
                         "duration": 1440
                     },
                     {
-                        "title": "Ao Grito de 'Você Está Livre'",
+                        "title": "Fim",
                         "videoUrl": "https://stream.4nm-cdn-0483964.com/b-14/ani-ni-tsukeru-kusuri-wa-nai-fandublado-ef56c193/dubbed/1/86f78ee3-1f80-40e5-8352-e8d2aff0da8f/stream.mp4",
                         "duration": 1440
                     }
