@@ -1,310 +1,563 @@
 [
-    {
-        "id": 1,
-        "title": "Attack on Titan",
-        "description": "Em um mundo onde a humanidade vive dentro de cidades cercadas por três enormes muralhas que os protegem dos gigantescos humanóides devoradores de humanos chamados de Titãs.",
-        "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/thumbnails/attack.png",
-        "trailer": "https://www.youtube.com/embed/MGRm4IzK1SQ?autoplay=1&mute=1&enablejsapi=1",
-        "type": "anime",
-        "dateAdded": "2023-10-20",
-        "categories": ["action", "drama", "fantasy"],
-        "seasons": [
-            {
-                "number": 1,
-                "episodes": [
-                    {
-                        "title": "Ao Grito de 'Você Está Livre'",
-                        "videoUrl": "https://stream.4nm-cdn-0483964.com/b-14/ani-ni-tsukeru-kusuri-wa-nai-fandublado-ef56c193/dubbed/1/86f78ee3-1f80-40e5-8352-e8d2aff0da8f/stream.mp4",
-                        "duration": 1440
-                    },
-                    {
-                        "title": "Aquele Dia",
-                        "videoUrl": "https://example.com/attack-on-titan-s1e2.mp4",
-                        "duration": 1440
-                    }
-                ]
-            },
-            {
-                "number": 2,
-                "episodes": [
-                    {
-                        "title": "A Muralha Sina",
-                        "videoUrl": "https://example.com/attack-on-titan-s2e1.mp4",
-                        "duration": 1440
-                    }
-                ]
-            }
-        ],
-        "year": 2013,
-        "rating": 4.8
-    },
-    {
-        "id": 2,
-        "title": "Demon Slayer: Mugen Train",
-        "description": "Tanjiro e seus amigos embarcam no Trem Infinito para ajudar o Pilar das Chamas, Kyojuro Rengoku, a combater um demônio que tem atormentado os passageiros.",
-        "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/thumbnails/demonmovie.png",
-        "trailer": "https://www.youtube.com/embed/ATJYac_dORw?autoplay=1&mute=1&enablejsapi=1",
-        "type": "movie",
-        "dateAdded": "2023-10-19",
-        "categories": ["action", "fantasy"],
-        "seasons": [
-            {
-                "number": 1,
-                "episodes": [
-                    {
-                        "title": "Demon Slayer: Mugen Train",
-                        "videoUrl": "https://example.com/demon-slayer-movie.mp4",
-                        "duration": 6600
-                    }
-                ]
-            }
-        ],
-        "year": 2020,
-        "rating": 4.9
-    },
-    {
-        "id": 3,
-        "title": "Jujutsu Kaisen 0",
-        "description": "Yuta Okkotsu ganha o controle de um espírito amaldiçoado extremamente poderoso e se matricula na Tokyo Prefectural Jujutsu High School sob a orientação de Satoru Gojo.",
-        "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/thumbnails/jujutsumovie.png",
-        "trailer": "https://www.youtube.com/embed/2docezZl574?autoplay=1&mute=1&enablejsapi=1",
-        "type": "movie",
-        "dateAdded": "2023-10-18",
-        "categories": ["action", "supernatural"],
-        "seasons": [
-            {
-                "number": 1,
-                "episodes": [
-                    {
-                        "title": "Jujutsu Kaisen 0",
-                        "videoUrl": "https://example.com/jujutsu-kaisen-0.mp4",
-                        "duration": 6300
-                    }
-                ]
-            }
-        ],
-        "year": 2021,
-        "rating": 4.7
-    },
-    {
-        "id": 4,
-        "title": "One Piece: Stampede",
-        "description": "Piratas de todo o mundo se reúnem para o Pirate Expo, organizado pelo misterioso Buena Festa, onde o tesouro deixado pelo lendário Gol D. Roger está em jogo.",
-        "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/thumbnails/onepiecemovie.png",
-        "trailer": "https://www.youtube.com/embed/CZzQ6dJkik0?autoplay=1&mute=1&enablejsapi=1",
-        "type": "movie",
-        "dateAdded": "2023-10-17",
-        "categories": ["action", "adventure"],
-        "seasons": [
-            {
-                "number": 1,
-                "episodes": [
-                    {
-                        "title": "One Piece: Stampede",
-                        "videoUrl": "https://example.com/one-piece-stampede.mp4",
-                        "duration": 6300
-                    }
-                ]
-            }
-        ],
-        "year": 2019,
-        "rating": 4.6
-    },
-    {
-        "id": 5,
-        "title": "My Hero Academia: Heroes Rising",
-        "description": "Os alunos da Classe 1-A visitam a Ilha Nabu, onde eventualmente acabam enfrentando um vilão com uma peculiaridade alarmante.",
-        "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/thumbnails/mhamovie.png",
-        "trailer": "https://www.youtube.com/embed/VQGCKyvzIM4?autoplay=1&mute=1&enablejsapi=1",
-        "type": "movie",
-        "dateAdded": "2023-10-16",
-        "categories": ["action", "superhero"],
-        "seasons": [
-            {
-                "number": 1,
-                "episodes": [
-                    {
-                        "title": "My Hero Academia: Heroes Rising",
-                        "videoUrl": "https://example.com/mha-heroes-rising.mp4",
-                        "duration": 6240
-                    }
-                ]
-            }
-        ],
-        "year": 2019,
-        "rating": 4.8
-    },
-    {
-        "id": 6,
-        "title": "Neon Genesis Evangelion: The End of Evangelion",
-        "description": "A SEELE ordena um ataque à NERV para destruir os EVAs antes que Gendo consiga provocar o terceiro impacto e a união das almas humanas.",
-        "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/thumbnails/evangelionmovie.png",
-        "trailer": "https://geo.dailymotion.com/player.html?video=x24kdhz",
-        "type": "movie",
-        "dateAdded": "2023-10-15",
-        "categories": ["drama", "mecha", "psychological"],
-        "seasons": [
-            {
-                "number": 1,
-                "episodes": [
-                    {
-                        "title": "The End of Evangelion",
-                        "videoUrl": "https://lightspeedst.net/s3/mp4/neon-genesis-evangelion-the-end-of-evangelion-dublado/sd/1.mp4",
-                        "duration": 5222
-                    }
-                ]
-            }
-        ],
-        "year": 1997,
-        "rating": 8.1
-    },
-    {
-        "id": 7,
-        "title": "Azumanga Daioh",
-        "description": "Uma série animada cômica e altamente imprevisível que acompanha um grupo de meninas do ensino médio e seus professores.",
-        "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/thumbnails/azudaioh.png",
-        "trailer": "https://www.youtube.com/embed/mqqxHv-BBSY?autoplay=1&mute=1&enablejsapi=1",
-        "type": "anime",
-        "dateAdded": "2025-07-28",
-        "categories": ["comedy", "slice of life"],
-        "seasons": [
-            {
-                "number": 1,
-                "episodes": [
-                    {
-                        "title": "A Diante, os Exames de Entrada!",
-                        "videoUrl": "https://rr2---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751229154&ei=YjJhaJeCDOjjj-8PvYyE4AY&ip=200.106.211.8&id=1818693fb0a03dda&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751200354,&mh=Ai&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=2&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.601&lmt=1590666467370908&mt=1751199921&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRQIhAO4HRL2dUMRkLuPLqiDySeEpQPSnMsWhlS6cOJrS_VjCAiBQOGRZUI_DENEAol02163qSKBbwfs8wUKKjYqS9yEaJQ%3D%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRQIhAOHp2tcUFONfg5PztamY3DgIKIaSegy_mXPr0vy3MB9wAiBqteFyfMrJK6Ie3hNG7gKleQBn7zCIeZpgp0s1ETQPnQ%3D%3D&cpn=16NM023HSA0iq0gv&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
-                        "duration": 1447
-                    },
-                    {
-                        "title": "Dia da Osaka",
-                        "videoUrl": "https://rr2---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751230083&ei=AzZhaNbvC-fay_sP2q3xwQg&ip=200.106.211.8&id=48cee761c2e6d4c2&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751201283,&mh=Q-&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=2&pcm2cms=yes&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.601&lmt=1698634852309329&mt=1751200880&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRQIgMQwHSk8sM3f30cU8QN2s_YytpGF5mYFo4da0UGR8pRoCIQDR7nePi-pYBvRT1z5ug7T5qUyr5yxl4J9tDHxmwpuUbw%3D%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pcm2cms,pl,rms&lsig=APaTxxMwRgIhAMlBIhbOBFRA-a3RKkprWH3WwbiYHdhYu6Ro_tYPpSIBAiEAjsbaflO0vuMbOXNbP_7MiPwXhgE1_4emaHXqTcPuh3E%3D&cpn=FQTRlUzTenFFLlba&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
-                        "duration": 1447
-                    },
-                    {
-                        "title": "Nyamo",
-                        "videoUrl": "https://rr2---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751230162&ei=UjZhaIaGNa2LvPIP5fS_0Q8&ip=200.106.211.8&id=4166242b89cb2377&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751201362,&mh=EF&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=2&pcm2cms=yes&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.787&lmt=1698458477848235&mt=1751200880&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRgIhAI26HT7-Fki-EhCn2oLlXkPbPjJC462KyAgkSAXOfwIEAiEA837-we5cffZ-p_aIQn2EnIaE9w33iE2TgdtVuGxSfN8%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pcm2cms,pl,rms&lsig=APaTxxMwRAIgfcIecCCyxBjhGBCE9BCVKG2wDHvsB4eAForORhwIRb4CIEPzqiEOgBrRfJ2rSgWhWzzsC09ymfRb52Pe1Ms_7GoB&cpn=dfU9JKg7DQtkLykG&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
-                        "duration": 1447
-                    },
-                    {
-                        "title": "Piscina! Piscina! Piscina!",
-                        "videoUrl": "https://rr3---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751230203&ei=ezZhaOadGrSty_sPsOC16Ak&ip=200.106.211.8&id=bd256ee5446e264b&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751201403,&mh=-X&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=3&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.601&lmt=1590666474076972&mt=1751200880&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRAIgfFjuvlhtG03c23383ahEVIRjgu-YD3-YTbuHZsnHpEMCIBpb9zKv9K61cJsePNwWSyYYenL44yef-VujLcYFF5qX&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRAIgZm7bhiZ59f2w7XMZofZLF7Si22KonwL7SXpb-AD83-ACIBYUe-B4DApslLuoO2-8A4G3OKcTJkWu24lmlKd3kyKR&cpn=K5a5O0WBwsKbImuu&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
-                        "duration": 1447
-                    },
-                    {
-                        "title": "Férias de verão",
-                        "videoUrl": "https://rr3---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751230848&ei=ADlhaNKeHZ2OvPIP346-uQ4&ip=200.106.211.8&id=2723714775968011&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751202048,&mh=yb&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=3&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.601&lmt=1590666480433489&mt=1751201598&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRgIhAMacddQqKYrCYNU8dqrufIUid3CtjZJnJ5xWtzVlUnQoAiEAki6eb8znmkeWfohZiXDCUyetEukwjAV14tOJaDE8NKo%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRgIhALTMEau_t8Jpo_kXHGDAhEaajLVX8TLUfJTRuj0fnBSpAiEA4_nD1NYXOH0AwPgryH_FN_p1p1McHNGu5v_GtHd8P7E%3D&cpn=Ke_UvJVFRU7PPff3&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
-                        "duration": 1447
-                    },
-                    {
-                        "title": "Festival de Esportes",
-                        "videoUrl": "https://rr2---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751231716&ei=ZDxhaLPWCo-1y_sPjZKNAQ&ip=200.106.211.8&id=1c3ec3c7e9ddfc0a&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751202916,&mh=-9&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=2&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.439&lmt=1590666489303739&mt=1751202563&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRQIhAKxrWuGxnLZqGzprSODlvkV2Kr9rRBQLkE-LgwEdpSUUAiBBVxuC5pJv__wSVIPN5Tj3SVy910V8h4m1cWjvxbLg6w%3D%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRQIhAMfGD0WM3Cu4nud8lmkkKT59MxSr5gHLSnQwCdYtExiYAiA8oanHwpAke6fnEVSwlIR4L5XXHqHzR3uV-HnSj4w-lg%3D%3D&cpn=bhuuRCiROJV4MSMx&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
-                        "duration": 1447
-                    },
-                    {
-                        "title": "Festival Cultural",
-                        "videoUrl": "https://rr1---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751231746&ei=gjxhaP-oOeqI3rsP0_7KwAc&ip=200.106.211.8&id=a4ae57e54096e6eb&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751202946,&mh=pn&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=1&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.276&lmt=1697777500964110&mt=1751202563&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRQIhAIvHjoX_LDn_xb26RANcxQcwwNScsglGdxlxxRqwSceiAiAYgjlcbVF6Nts-cHkW1cuwz-o0hMj6COqBfADkKPC0hA%3D%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRAIgW7y5cyHT7Ima0GUcjI8TaUWrFA2gb4hQIrXeIFmwrakCIBFyoF_8KMc6HP1yQPNX3qoO79ZPGI68rfwptNH9h43s&cpn=YbOb4dlezYAmO6X2&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
-                        "duration": 1447
-                    },
-                    {
-                        "title": "Especial Sonhos de Ano Novo",
-                        "videoUrl": "https://rr1---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751231782&ei=pjxhaIWYNezay_sP_tvF0Ag&ip=200.106.211.8&id=5bd174efa7523e04&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751202982,&mh=St&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=1&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1448.158&lmt=1698131677662001&mt=1751202563&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRQIgBAAcxgfFK9kZDnBFsrZakhX-_ku2MEOCtH5rmHuDVTkCIQCqWVLY56FsO3z6wqWKfBC1ZKIpQ2vyIgqOn8pQzNF_eg%3D%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRAIgHdoU4J-TIJss8J4g91zG1HLOUtZqTRiCUyqXyJZYVEQCID8ATBzVFrtRYBHxjBuuYhNd6Slg9HkxztH8_MQJ2LQA&cpn=CbSvxLJs7M6Ulr9s&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
-                        "duration": 1447
-                    },
-                    {
-                        "title": "Sakaki-san",
-                        "videoUrl": "https://rr3---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751242520&ei=mGZhaKKrAZ7lxtYP-bebwAM&ip=200.106.211.8&id=7162f9596de3d476&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751213720,&mh=Et&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=3&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.578&lmt=1590666497884755&mt=1751213349&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRQIgAXkUFKZShBDH8CnYp6hiZf1VXkBVIM9ZtwWk8Ld-efYCIQDLnNjUVuvzwX20ENSBQi18jb1lylVLX4r3vciPPDxJkA%3D%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRQIgO3JdgF2nnDN9zloYptDf9w8VGHslOGppffBJNTHwn0kCIQCt9eUTztcYIOzLvuiF6vU6MmaisEPsM2l_6ho5WB39nA%3D%3D&cpn=3F9mlW-sG9f-EezI&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
-                        "duration": 1447
-                    },
-                    {
-                        "title": "Nós Somos Estudantes do Segundo Ano!",
-                        "videoUrl": "https://rr1---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751243494&ei=ZmphaLyfFovVy_sP1IfawQo&ip=200.106.211.8&id=7822e69b4faf8e24&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751214694,&mh=lP&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=1&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.996&lmt=1590666506416329&mt=1751214313&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRAIgb2pwOp6JSdKK2ttSp4nlkcUi46Q0wdXSGhcr9yAvVb4CIDpX6kgkMr4231V3VBMa5MR3yqKS8OteUCa199TtAuhf&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRgIhAJRfsUjc27jlWpaVnJ-2732jSjr_oK5f5Iz_Cf3KALt2AiEAnfT7QbRlJnJTNds6cTzJIAwVPuutodFHsDaxlfYA5cc%3D&cpn=L9qVnb8w4_Z3pQ2M&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
-                        "duration": 1447
-                    },
-                    {
-                        "title": "Kagura e Sakaki",
-                        "videoUrl": "https://rr2---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751243549&ei=nWphaOmuOd2m0_wP-LaZyQ0&ip=200.106.211.8&id=19e5e12b3b7f6690&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751214749,&mh=Ey&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=2&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.230&lmt=1590666510794972&mt=1751214313&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRQIhAM_yyjGU1FFNhRuG5YVkCPuEVx5deV2LdtxJYVp4nhOCAiBD6oH3HfBgXfso1zgHbt7RKCQmwxKsZNvcTOxyKjjvQQ%3D%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRQIgS2j-67HTf4vCWKlhBDJ70bD7V1QBYifYD9ofobTVJuMCIQDMWMjBosptJpXmq5w3BEsdWIyvT-mDTLMp2ZJskoQMeg%3D%3D&cpn=xqwuTHJMlD0Y9O89&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
-                        "duration": 1447
-                    },
-                    {
-                        "title": "Dia da Chyio-chan",
-                        "videoUrl": "https://rr2---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751243587&ei=w2phaNOiHo3Ky_sPwbzdoQI&ip=200.106.211.8&id=00da210f70c0ea9a&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751214787,&mh=N1&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=2&pcm2cms=yes&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1417.160&lmt=1697955082369238&mt=1751214313&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRgIhAORojXsbgTPm2UbQnggTbqbEj_zUT2QKHdeaFKKg6SKyAiEAwDoZmrkkZ37eKruJJkj9skof1nOhOKIaHY5Zo0Sn0G4%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pcm2cms,pl,rms&lsig=APaTxxMwRQIgIwATNkfZevHAE83FvPzmuF2utLVPYxV5ifvlkMs67YsCIQCb2l1FHG6Yh6TSKd9OIsW0BUleHVM164WgsDev3B6xiA%3D%3D&cpn=lCRDdTwloNeDPsbd&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
-                        "duration": 1447
-                    },
-                    {
-                        "title": "Provas",
-                        "videoUrl": "https://rr1---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751243650&ei=AmthaJeNJY2sy_sPgtWZoAQ&ip=200.106.211.8&id=f96323ca47d410ed&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751214850,&mh=iL&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=1&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.230&lmt=1590666531303370&mt=1751214567&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRQIhAMpSauufUDpmbqajsEjXMuCAr2wNSQWW6JZhiBc_WNRtAiBbzLQw39nL3IQifrT9Sp_xfHHzjlINM24dyGAXuvrjvw%3D%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRgIhAJJeUx36wHyiz_Xn5IGx7NS23edceciNju1VXUYEv3mcAiEAj3YvX2ddGaVFkOdwoVZ6rq8ekRzA8-WT7oeYweyV3xE%3D&cpn=nSla874D979YB2as&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
-                        "duration": 1447
-                    },
-                    {
-                        "title": "O Mar, Quimonos e Festa",
-                        "videoUrl": "https://rr1---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751243694&ei=LmthaI-TBqmBy_sPiZPi-QQ&ip=200.106.211.8&id=eacb3b70b556f4e7&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751214894,&mh=X-&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=1&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.276&lmt=1590666541573558&mt=1751214551&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRAIgAbWYf1FFgF3Nk86ZVDlE0gIqYig2c0BUF4esI21LRFQCIGUyxgzx6PW7Mr4cH_6znnMXfJPmCPRpMBVcEFeYtTu0&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRgIhAL4NMWnrM6MBrYdSErDcBE176aivnQClSZ5jgIkNV71dAiEAwbGrnxYPmuzQ_vHBySs08Q2FQ4bDfpaJzvGGcn5-6ow%3D&cpn=KBAT2XpRi5A-Rxdc&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
-                        "duration": 1447
-                    },
-                    {
-                        "title": "Festival de Esportes do Segundo Ano",
-                        "videoUrl": "https://rr3---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751243735&ei=V2thaNHWFvaXvPIPjcqkuQo&ip=200.106.211.8&id=f87348c3aef98910&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751214935,&mh=q7&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=3&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.276&lmt=1590666546599898&mt=1751214567&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRQIgP4G7uyhGRPKQ-hpnEWfBPXnwCEIMrRNAc-QU1gQDYfwCIQDN79w7MoL-Q2pIvyc3-AtDHo1n2SjrlW_4a_ZfKWZyjg%3D%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRQIgSfVSq5lvEv8p8h2oA6eoa9hbYo7LDL1vxghHSYDdV2QCIQCqPJXhjwQ-SPMVYxeLIpAHtEDiYRd3UDwHg7o2MOYhlA%3D%3D&cpn=FNVGQRwo67PGtcPK&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
-                        "duration": 1447
-                    },
-                    {
-                        "title": "Festival Cultural do Segundo Ano",
-                        "videoUrl": "https://rr1---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751243775&ei=f2thaOnGG9SEy_sPrtbauQ8&ip=200.106.211.8&id=f81aa631eead5df2&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751214975,&mh=oB&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=1&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.322&lmt=1590666561799761&mt=1751214794&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRgIhANE0nameC_tmj10zBdfd40gexFj3KKk4JHndHu61Ld20AiEAoKWt8MPRp8KVoScF7o2cXBeLc0nGne1Re4rUezXM4Is%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRQIhAJKAT8IczKFge9PECnwcAn5i8KgDdJc2ddFN78eZ_Bs_AiBMgcN6FJYWZw63U1Gmd_mFwzb3C1uXDXnR79bYGuld7w%3D%3D&cpn=-cmFbNUwkrGlXzJL&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
-                        "duration": 1447
-                    },
-                    {
-                        "title": "Fim do Segundo Semestre e Natal",
-                        "videoUrl": "https://rr3---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751243806&ei=nmthaJ7sJ5uCy_sPy9-U0QM&ip=200.106.211.8&id=5fa74169336fa12f&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751215006,&mh=vW&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=3&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.369&lmt=1590666573813143&mt=1751214567&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRQIgWQY7x5RhtkZACiFzg1V_o4G8dm8Ox-OA9l1aTVOcsu8CIQDBjUUtyZKS0Nj6Zbxxo3q54Z_WmGLFLkj7Sa6nVWnHSA%3D%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRQIhAJStngNlevBuYA3bqhqUxMj_D0A_TQovLhbp5Sz4cYXxAiBLJrC0dHcuFlpUWyY5Vwg8jRTk5jomK2U0gZ5M-P8F-w%3D%3D&cpn=topJnCLEhBthW30D&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
-                        "duration": 1447
-                    },
-                    {
-                        "title": "Provações da Koyomi",
-                        "videoUrl": "https://rr2---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751243847&ei=x2thaNX6HOqI3rsP0_7KwAc&ip=200.106.211.8&id=fc13f9af6728f209&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751215047,&mh=J-&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=2&pcm2cms=yes&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.276&lmt=1697095940103829&mt=1751214798&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRQIhAO-joL1svqsbTWLLMPPIcEzZqShpmPAgMmemM-0i4ZmGAiBGHmMVAC7wT5AJfjI3LSYOBRVjwO6QgN9U3V_dDokgrA%3D%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pcm2cms,pl,rms&lsig=APaTxxMwRAIgWIGCEkg0mhj9ixwp-RoSvXWsLfXPaJOGLl24jRJwFHgCIHIyenFSQ80C8QPSi8KMmC2OtFINAlXDIwdJt-4g_NWE&cpn=gm-Q-LWzFcQucM7a&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
-                        "duration": 1447
-                    },
-                    {
-                        "title": "Uma Noite de Primavera",
-                        "videoUrl": "https://rr1---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751243881&ei=6WthaOXOHtH6zLUP74f1qQc&ip=200.106.211.8&id=9c8a974de77a4aad&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751215081,&mh=2x&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=1&pcm2cms=yes&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.230&lmt=1590666582088600&mt=1751214567&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRQIhAPoPUfTaCWI6-SyC4myYMOgndNJsOmPX7w38FXMZ8KNwAiAzD8KhHbM078ygzP1MSGFYWaIL-lZRVQT_BMzArl7n9A%3D%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pcm2cms,pl,rms&lsig=APaTxxMwRQIgOPvXJaAxNQ9mPfnoSvYcn8CVZCns4CtrLLjYNhf6BpkCIQDCiutzOhVLiLTie3779hI0butRhEm4FrZIjslkcZc4gw%3D%3D&cpn=pd4CVcrZuxTVbp3c&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
-                        "duration": 1447
-                    },
-                    {
-                        "title": "Terceiro Ano",
-                        "videoUrl": "https://rr3---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751243917&ei=DWxhaKvQOr7Mj-8Pi5Hs2Q4&ip=200.106.211.8&id=cb89f2acc30c2bba&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751215117,&mh=pU&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=3&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.276&lmt=1697423092149816&mt=1751214794&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRgIhAIRw8t5NpUEv7VaQ72jcGV0IHnL8c5lA5j3fomwHHL-aAiEA97qpSOmqwbNK523XG1M0YT1FVoG5GtNqzM_TWiD67zg%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRQIgcOC_z5O7Vj_GuLX2I3iQ_Wgpwt4r4dlpv3fwmppOPmcCIQCR7pul_Rvw6Ot2QzTF5wQVZpIY5e982nO7sWZBxg4mnQ%3D%3D&cpn=Eklj1CDt0Bo-oNq3&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
-                        "duration": 1447
-                    },
-                    {
-                        "title": "Excursão Escolar",
-                        "videoUrl": "https://rr1---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751243945&ei=KWxhaIa8BpeF0_wP8OqqyQE&ip=200.106.211.8&id=ccd0054507277aa2&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751215145,&mh=-C&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=1&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.230&lmt=1697738412064806&mt=1751214567&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRgIhAMdZDaEApDc04Y5C0a_QAnyIjOkXCp2DZ4zEDtP0GnmKAiEA8KaBUGvUOOi3ole2CPjYqOkO_-uwATG800jBJ_S317I%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRAIgDaRGyjiaUWeP9qx_UZBcQzikkqWo0kz8x9j9ohBDTjYCIDE-qsx8uzbuhCjbja_XbRuRI03GIQ9fGCqG6Z2N4LGA&cpn=ljQ20_tcXpADuBDJ&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
-                        "duration": 1447
-                    },
-                    {
-                        "title": "Estudos Para os Exames de Admissão",
-                        "videoUrl": "https://rr2---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751243982&ei=TmxhaIGBE5L_xtYPm6LpsQ8&ip=200.106.211.8&id=218719939e8108cf&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751215182,&mh=_T&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=2&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.230&lmt=1590666610200663&mt=1751214798&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRAIgBF_GEmcF658Mq7E2maVU_MU3Oi3Egyg9Nd_c_VBlNkICIHW0ZzbsTRdcF97iP4XjTEbc_laD-0Woh4EotR4wM5e4&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRQIhAN8trlKEFT_VFuOMoffIMJZiFtYYC49e6RLqLaGzWnk4AiA6WmBKZ7-2NvyJNODeGfj8tfXoePAigdexOmV-a3MhqA%3D%3D&cpn=oxRcTXaDS2RZUACT&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
-                        "duration": 1447
-                    },
-                    {
-                        "title": "Último Festival de Esportes",
-                        "videoUrl": "https://rr2---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751244021&ei=dWxhaOefEcqWvPIPztGv2Qc&ip=200.106.211.8&id=0e5e4bc9e45db171&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751215221,&mh=Gb&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=2&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.949&lmt=1698036143133602&mt=1751214798&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRAIgKrjGFdTCXgazpRLZ_vt-uPWO0joObUY9nj2j8zpI3isCIGy74nZuk3sPK1lHkj6rS3Eoz8V65h2kCmK6_5RqQSMY&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRQIhAP-9BAAyxRN0k5r6aY-bmbOhDkhHfT5yPt5VLzWxEQHyAiBiyt07x3heCfeJpd0-q1Fcw9jp22s8Em6-WE7r-X5aSw%3D%3D&cpn=a-I6lvi4gzQwvTDa&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
-                        "duration": 1447
-                    },
-                    {
-                        "title": "Yamamayaa",
-                        "videoUrl": "https://rr3---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751244055&ei=l2xhaOa1Ja7hut0Pj5O98QU&ip=200.106.211.8&id=b846bf8f85cd0bc9&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751215255,&mh=HF&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=3&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.183&lmt=1590666642791413&mt=1751214798&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRAIgGvmz6x7bTNAZvZuIr7i74hHVMat6QJffuIAiOouchSgCIFDkO3cgUIwqvVYUjmD77NhD3Fkw6l53QyHDjwwkBmXX&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRgIhAMGiAR50rV5w0fI48-gzGxwbK_zA9A2UtKFXOUsoSrpzAiEAzDkqGwg4BfHjzJOi8fY8Lnq5o3K1TQvh-OCYnKiYRvY%3D&cpn=TgrtR_P0e75f-MBf&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
-                        "duration": 1447
-                    },
-                    {
-                        "title": "Em Frente: Os Exames de Admissão!",
-                        "videoUrl": "https://rr2---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751244087&ei=t2xhaIu4Mq_out0Pk-vU-A0&ip=200.106.211.8&id=ada12a2202f8a879&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751215287,&mh=pK&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=2&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.903&lmt=1590666628083161&mt=1751215036&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRgIhAJcKS70mdKX9FqUzUke9GSxH4ByyJYgejowHmVFOPhS4AiEAx3EYjup9nr6EFaGbvM8dVUaKJ1mGRLHrpi5LgxkbRno%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRgIhANVKrO-JR2Bzw0gUb1zIXDjFB7adKbOJh2d12VzJn6t9AiEAr2XLndyB5zfLWLJHboPHDEEuu4tPsgVnAx4sA3A874I%3D&cpn=CA4g7q6tgP-GujxK&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
-                        "duration": 1447
-                    },
-                    {
-                        "title": "Cerimônia de Formatura",
-                        "videoUrl": "https://lightspeedst.net/s3/mp4/azumanga-daioh/sd/26.mp4",
-                        "duration": 1447
-                    }
-                ]
-            }
-        ],
-        "year": 2002,
-        "rating": 8.1
-    }
+  {
+    "id": 1,
+    "title": "Attack on Titan",
+    "description": "Em um mundo onde a humanidade vive dentro de cidades cercadas por três enormes muralhas que os protegem dos gigantescos humanóides devoradores de humanos chamados de Titãs.",
+    "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/thumbnails/attack.png",
+    "trailer": "https://www.youtube.com/embed/MGRm4IzK1SQ?autoplay=1&mute=1&enablejsapi=1",
+    "type": "anime",
+    "dateAdded": "2023-10-20",
+    "categories": [
+      "action",
+      "drama",
+      "fantasy"
+    ],
+    "seasons": [
+      {
+        "number": 1,
+        "episodes": [
+          {
+            "title": "Ao Grito de 'Você Está Livre'",
+            "videoUrl": "https://stream.4nm-cdn-0483964.com/b-14/ani-ni-tsukeru-kusuri-wa-nai-fandublado-ef56c193/dubbed/1/86f78ee3-1f80-40e5-8352-e8d2aff0da8f/stream.mp4",
+            "duration": 1440
+          },
+          {
+            "title": "Aquele Dia",
+            "videoUrl": "https://example.com/attack-on-titan-s1e2.mp4",
+            "duration": 1440
+          }
+        ]
+      },
+      {
+        "number": 2,
+        "episodes": [
+          {
+            "title": "A Muralha Sina",
+            "videoUrl": "https://example.com/attack-on-titan-s2e1.mp4",
+            "duration": 1440
+          }
+        ]
+      }
+    ],
+    "year": 2013,
+    "rating": 4.8
+  },
+  {
+    "id": 2,
+    "title": "Demon Slayer: Mugen Train",
+    "description": "Tanjiro e seus amigos embarcam no Trem Infinito para ajudar o Pilar das Chamas, Kyojuro Rengoku, a combater um demônio que tem atormentado os passageiros.",
+    "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/thumbnails/demonmovie.png",
+    "trailer": "https://www.youtube.com/embed/ATJYac_dORw?autoplay=1&mute=1&enablejsapi=1",
+    "type": "movie",
+    "dateAdded": "2023-10-19",
+    "categories": [
+      "action",
+      "fantasy"
+    ],
+    "seasons": [
+      {
+        "number": 1,
+        "episodes": [
+          {
+            "title": "Demon Slayer: Mugen Train",
+            "videoUrl": "https://example.com/demon-slayer-movie.mp4",
+            "duration": 6600
+          }
+        ]
+      }
+    ],
+    "year": 2020,
+    "rating": 4.9
+  },
+  {
+    "id": 3,
+    "title": "Jujutsu Kaisen 0",
+    "description": "Yuta Okkotsu ganha o controle de um espírito amaldiçoado extremamente poderoso e se matricula na Tokyo Prefectural Jujutsu High School sob a orientação de Satoru Gojo.",
+    "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/thumbnails/jujutsumovie.png",
+    "trailer": "https://www.youtube.com/embed/2docezZl574?autoplay=1&mute=1&enablejsapi=1",
+    "type": "movie",
+    "dateAdded": "2023-10-18",
+    "categories": [
+      "action",
+      "supernatural"
+    ],
+    "seasons": [
+      {
+        "number": 1,
+        "episodes": [
+          {
+            "title": "Jujutsu Kaisen 0",
+            "videoUrl": "https://example.com/jujutsu-kaisen-0.mp4",
+            "duration": 6300
+          }
+        ]
+      }
+    ],
+    "year": 2021,
+    "rating": 4.7
+  },
+  {
+    "id": 4,
+    "title": "One Piece: Stampede",
+    "description": "Piratas de todo o mundo se reúnem para o Pirate Expo, organizado pelo misterioso Buena Festa, onde o tesouro deixado pelo lendário Gol D. Roger está em jogo.",
+    "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/thumbnails/onepiecemovie.png",
+    "trailer": "https://www.youtube.com/embed/CZzQ6dJkik0?autoplay=1&mute=1&enablejsapi=1",
+    "type": "movie",
+    "dateAdded": "2023-10-17",
+    "categories": [
+      "action",
+      "adventure"
+    ],
+    "seasons": [
+      {
+        "number": 1,
+        "episodes": [
+          {
+            "title": "One Piece: Stampede",
+            "videoUrl": "https://example.com/one-piece-stampede.mp4",
+            "duration": 6300
+          }
+        ]
+      }
+    ],
+    "year": 2019,
+    "rating": 4.6
+  },
+  {
+    "id": 5,
+    "title": "My Hero Academia: Heroes Rising",
+    "description": "Os alunos da Classe 1-A visitam a Ilha Nabu, onde eventualmente acabam enfrentando um vilão com uma peculiaridade alarmante.",
+    "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/thumbnails/mhamovie.png",
+    "trailer": "https://www.youtube.com/embed/VQGCKyvzIM4?autoplay=1&mute=1&enablejsapi=1",
+    "type": "movie",
+    "dateAdded": "2023-10-16",
+    "categories": [
+      "action",
+      "superhero"
+    ],
+    "seasons": [
+      {
+        "number": 1,
+        "episodes": [
+          {
+            "title": "My Hero Academia: Heroes Rising",
+            "videoUrl": "https://example.com/mha-heroes-rising.mp4",
+            "duration": 6240
+          }
+        ]
+      }
+    ],
+    "year": 2019,
+    "rating": 4.8
+  },
+  {
+    "id": 6,
+    "title": "Neon Genesis Evangelion: The End of Evangelion",
+    "description": "A SEELE ordena um ataque à NERV para destruir os EVAs antes que Gendo consiga provocar o terceiro impacto e a união das almas humanas.",
+    "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/thumbnails/evangelionmovie.png",
+    "trailer": "https://geo.dailymotion.com/player.html?video=x24kdhz",
+    "type": "movie",
+    "dateAdded": "2023-10-15",
+    "categories": [
+      "drama",
+      "mecha",
+      "psychological"
+    ],
+    "seasons": [
+      {
+        "number": 1,
+        "episodes": [
+          {
+            "title": "The End of Evangelion",
+            "videoUrl": "https://lightspeedst.net/s3/mp4/neon-genesis-evangelion-the-end-of-evangelion-dublado/sd/1.mp4",
+            "duration": 5222
+          }
+        ]
+      }
+    ],
+    "year": 1997,
+    "rating": 8.1
+  },
+  {
+    "id": 7,
+    "title": "Azumanga Daioh",
+    "description": "Uma série animada cômica e altamente imprevisível que acompanha um grupo de meninas do ensino médio e seus professores.",
+    "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/thumbnails/azudaioh.png",
+    "trailer": "https://www.youtube.com/embed/mqqxHv-BBSY?autoplay=1&mute=1&enablejsapi=1",
+    "type": "anime",
+    "dateAdded": "2025-07-28",
+    "categories": [
+      "comedy",
+      "slice of life"
+    ],
+    "seasons": [
+      {
+        "number": 1,
+        "episodes": [
+          {
+            "title": "A Diante, os Exames de Entrada!",
+            "videoUrl": "https://rr2---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751229154&ei=YjJhaJeCDOjjj-8PvYyE4AY&ip=200.106.211.8&id=1818693fb0a03dda&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751200354,&mh=Ai&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=2&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.601&lmt=1590666467370908&mt=1751199921&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRQIhAO4HRL2dUMRkLuPLqiDySeEpQPSnMsWhlS6cOJrS_VjCAiBQOGRZUI_DENEAol02163qSKBbwfs8wUKKjYqS9yEaJQ%3D%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRQIhAOHp2tcUFONfg5PztamY3DgIKIaSegy_mXPr0vy3MB9wAiBqteFyfMrJK6Ie3hNG7gKleQBn7zCIeZpgp0s1ETQPnQ%3D%3D&cpn=16NM023HSA0iq0gv&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1447
+          },
+          {
+            "title": "Dia da Osaka",
+            "videoUrl": "https://rr2---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751230083&ei=AzZhaNbvC-fay_sP2q3xwQg&ip=200.106.211.8&id=48cee761c2e6d4c2&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751201283,&mh=Q-&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=2&pcm2cms=yes&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.601&lmt=1698634852309329&mt=1751200880&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRQIgMQwHSk8sM3f30cU8QN2s_YytpGF5mYFo4da0UGR8pRoCIQDR7nePi-pYBvRT1z5ug7T5qUyr5yxl4J9tDHxmwpuUbw%3D%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pcm2cms,pl,rms&lsig=APaTxxMwRgIhAMlBIhbOBFRA-a3RKkprWH3WwbiYHdhYu6Ro_tYPpSIBAiEAjsbaflO0vuMbOXNbP_7MiPwXhgE1_4emaHXqTcPuh3E%3D&cpn=FQTRlUzTenFFLlba&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1447
+          },
+          {
+            "title": "Nyamo",
+            "videoUrl": "https://rr2---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751230162&ei=UjZhaIaGNa2LvPIP5fS_0Q8&ip=200.106.211.8&id=4166242b89cb2377&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751201362,&mh=EF&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=2&pcm2cms=yes&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.787&lmt=1698458477848235&mt=1751200880&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRgIhAI26HT7-Fki-EhCn2oLlXkPbPjJC462KyAgkSAXOfwIEAiEA837-we5cffZ-p_aIQn2EnIaE9w33iE2TgdtVuGxSfN8%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pcm2cms,pl,rms&lsig=APaTxxMwRAIgfcIecCCyxBjhGBCE9BCVKG2wDHvsB4eAForORhwIRb4CIEPzqiEOgBrRfJ2rSgWhWzzsC09ymfRb52Pe1Ms_7GoB&cpn=dfU9JKg7DQtkLykG&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1447
+          },
+          {
+            "title": "Piscina! Piscina! Piscina!",
+            "videoUrl": "https://rr3---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751230203&ei=ezZhaOadGrSty_sPsOC16Ak&ip=200.106.211.8&id=bd256ee5446e264b&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751201403,&mh=-X&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=3&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.601&lmt=1590666474076972&mt=1751200880&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRAIgfFjuvlhtG03c23383ahEVIRjgu-YD3-YTbuHZsnHpEMCIBpb9zKv9K61cJsePNwWSyYYenL44yef-VujLcYFF5qX&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRAIgZm7bhiZ59f2w7XMZofZLF7Si22KonwL7SXpb-AD83-ACIBYUe-B4DApslLuoO2-8A4G3OKcTJkWu24lmlKd3kyKR&cpn=K5a5O0WBwsKbImuu&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1447
+          },
+          {
+            "title": "Férias de verão",
+            "videoUrl": "https://rr3---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751230848&ei=ADlhaNKeHZ2OvPIP346-uQ4&ip=200.106.211.8&id=2723714775968011&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751202048,&mh=yb&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=3&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.601&lmt=1590666480433489&mt=1751201598&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRgIhAMacddQqKYrCYNU8dqrufIUid3CtjZJnJ5xWtzVlUnQoAiEAki6eb8znmkeWfohZiXDCUyetEukwjAV14tOJaDE8NKo%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRgIhALTMEau_t8Jpo_kXHGDAhEaajLVX8TLUfJTRuj0fnBSpAiEA4_nD1NYXOH0AwPgryH_FN_p1p1McHNGu5v_GtHd8P7E%3D&cpn=Ke_UvJVFRU7PPff3&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1447
+          },
+          {
+            "title": "Festival de Esportes",
+            "videoUrl": "https://rr2---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751231716&ei=ZDxhaLPWCo-1y_sPjZKNAQ&ip=200.106.211.8&id=1c3ec3c7e9ddfc0a&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751202916,&mh=-9&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=2&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.439&lmt=1590666489303739&mt=1751202563&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRQIhAKxrWuGxnLZqGzprSODlvkV2Kr9rRBQLkE-LgwEdpSUUAiBBVxuC5pJv__wSVIPN5Tj3SVy910V8h4m1cWjvxbLg6w%3D%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRQIhAMfGD0WM3Cu4nud8lmkkKT59MxSr5gHLSnQwCdYtExiYAiA8oanHwpAke6fnEVSwlIR4L5XXHqHzR3uV-HnSj4w-lg%3D%3D&cpn=bhuuRCiROJV4MSMx&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1447
+          },
+          {
+            "title": "Festival Cultural",
+            "videoUrl": "https://rr1---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751231746&ei=gjxhaP-oOeqI3rsP0_7KwAc&ip=200.106.211.8&id=a4ae57e54096e6eb&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751202946,&mh=pn&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=1&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.276&lmt=1697777500964110&mt=1751202563&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRQIhAIvHjoX_LDn_xb26RANcxQcwwNScsglGdxlxxRqwSceiAiAYgjlcbVF6Nts-cHkW1cuwz-o0hMj6COqBfADkKPC0hA%3D%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRAIgW7y5cyHT7Ima0GUcjI8TaUWrFA2gb4hQIrXeIFmwrakCIBFyoF_8KMc6HP1yQPNX3qoO79ZPGI68rfwptNH9h43s&cpn=YbOb4dlezYAmO6X2&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1447
+          },
+          {
+            "title": "Especial Sonhos de Ano Novo",
+            "videoUrl": "https://rr1---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751231782&ei=pjxhaIWYNezay_sP_tvF0Ag&ip=200.106.211.8&id=5bd174efa7523e04&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751202982,&mh=St&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=1&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1448.158&lmt=1698131677662001&mt=1751202563&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRQIgBAAcxgfFK9kZDnBFsrZakhX-_ku2MEOCtH5rmHuDVTkCIQCqWVLY56FsO3z6wqWKfBC1ZKIpQ2vyIgqOn8pQzNF_eg%3D%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRAIgHdoU4J-TIJss8J4g91zG1HLOUtZqTRiCUyqXyJZYVEQCID8ATBzVFrtRYBHxjBuuYhNd6Slg9HkxztH8_MQJ2LQA&cpn=CbSvxLJs7M6Ulr9s&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1447
+          },
+          {
+            "title": "Sakaki-san",
+            "videoUrl": "https://rr3---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751242520&ei=mGZhaKKrAZ7lxtYP-bebwAM&ip=200.106.211.8&id=7162f9596de3d476&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751213720,&mh=Et&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=3&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.578&lmt=1590666497884755&mt=1751213349&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRQIgAXkUFKZShBDH8CnYp6hiZf1VXkBVIM9ZtwWk8Ld-efYCIQDLnNjUVuvzwX20ENSBQi18jb1lylVLX4r3vciPPDxJkA%3D%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRQIgO3JdgF2nnDN9zloYptDf9w8VGHslOGppffBJNTHwn0kCIQCt9eUTztcYIOzLvuiF6vU6MmaisEPsM2l_6ho5WB39nA%3D%3D&cpn=3F9mlW-sG9f-EezI&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1447
+          },
+          {
+            "title": "Nós Somos Estudantes do Segundo Ano!",
+            "videoUrl": "https://rr1---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751243494&ei=ZmphaLyfFovVy_sP1IfawQo&ip=200.106.211.8&id=7822e69b4faf8e24&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751214694,&mh=lP&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=1&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.996&lmt=1590666506416329&mt=1751214313&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRAIgb2pwOp6JSdKK2ttSp4nlkcUi46Q0wdXSGhcr9yAvVb4CIDpX6kgkMr4231V3VBMa5MR3yqKS8OteUCa199TtAuhf&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRgIhAJRfsUjc27jlWpaVnJ-2732jSjr_oK5f5Iz_Cf3KALt2AiEAnfT7QbRlJnJTNds6cTzJIAwVPuutodFHsDaxlfYA5cc%3D&cpn=L9qVnb8w4_Z3pQ2M&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1447
+          },
+          {
+            "title": "Kagura e Sakaki",
+            "videoUrl": "https://rr2---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751243549&ei=nWphaOmuOd2m0_wP-LaZyQ0&ip=200.106.211.8&id=19e5e12b3b7f6690&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751214749,&mh=Ey&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=2&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.230&lmt=1590666510794972&mt=1751214313&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRQIhAM_yyjGU1FFNhRuG5YVkCPuEVx5deV2LdtxJYVp4nhOCAiBD6oH3HfBgXfso1zgHbt7RKCQmwxKsZNvcTOxyKjjvQQ%3D%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRQIgS2j-67HTf4vCWKlhBDJ70bD7V1QBYifYD9ofobTVJuMCIQDMWMjBosptJpXmq5w3BEsdWIyvT-mDTLMp2ZJskoQMeg%3D%3D&cpn=xqwuTHJMlD0Y9O89&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1447
+          },
+          {
+            "title": "Dia da Chyio-chan",
+            "videoUrl": "https://rr2---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751243587&ei=w2phaNOiHo3Ky_sPwbzdoQI&ip=200.106.211.8&id=00da210f70c0ea9a&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751214787,&mh=N1&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=2&pcm2cms=yes&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1417.160&lmt=1697955082369238&mt=1751214313&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRgIhAORojXsbgTPm2UbQnggTbqbEj_zUT2QKHdeaFKKg6SKyAiEAwDoZmrkkZ37eKruJJkj9skof1nOhOKIaHY5Zo0Sn0G4%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pcm2cms,pl,rms&lsig=APaTxxMwRQIgIwATNkfZevHAE83FvPzmuF2utLVPYxV5ifvlkMs67YsCIQCb2l1FHG6Yh6TSKd9OIsW0BUleHVM164WgsDev3B6xiA%3D%3D&cpn=lCRDdTwloNeDPsbd&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1447
+          },
+          {
+            "title": "Provas",
+            "videoUrl": "https://rr1---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751243650&ei=AmthaJeNJY2sy_sPgtWZoAQ&ip=200.106.211.8&id=f96323ca47d410ed&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751214850,&mh=iL&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=1&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.230&lmt=1590666531303370&mt=1751214567&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRQIhAMpSauufUDpmbqajsEjXMuCAr2wNSQWW6JZhiBc_WNRtAiBbzLQw39nL3IQifrT9Sp_xfHHzjlINM24dyGAXuvrjvw%3D%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRgIhAJJeUx36wHyiz_Xn5IGx7NS23edceciNju1VXUYEv3mcAiEAj3YvX2ddGaVFkOdwoVZ6rq8ekRzA8-WT7oeYweyV3xE%3D&cpn=nSla874D979YB2as&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1447
+          },
+          {
+            "title": "O Mar, Quimonos e Festa",
+            "videoUrl": "https://rr1---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751243694&ei=LmthaI-TBqmBy_sPiZPi-QQ&ip=200.106.211.8&id=eacb3b70b556f4e7&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751214894,&mh=X-&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=1&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.276&lmt=1590666541573558&mt=1751214551&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRAIgAbWYf1FFgF3Nk86ZVDlE0gIqYig2c0BUF4esI21LRFQCIGUyxgzx6PW7Mr4cH_6znnMXfJPmCPRpMBVcEFeYtTu0&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRgIhAL4NMWnrM6MBrYdSErDcBE176aivnQClSZ5jgIkNV71dAiEAwbGrnxYPmuzQ_vHBySs08Q2FQ4bDfpaJzvGGcn5-6ow%3D&cpn=KBAT2XpRi5A-Rxdc&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1447
+          },
+          {
+            "title": "Festival de Esportes do Segundo Ano",
+            "videoUrl": "https://rr3---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751243735&ei=V2thaNHWFvaXvPIPjcqkuQo&ip=200.106.211.8&id=f87348c3aef98910&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751214935,&mh=q7&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=3&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.276&lmt=1590666546599898&mt=1751214567&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRQIgP4G7uyhGRPKQ-hpnEWfBPXnwCEIMrRNAc-QU1gQDYfwCIQDN79w7MoL-Q2pIvyc3-AtDHo1n2SjrlW_4a_ZfKWZyjg%3D%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRQIgSfVSq5lvEv8p8h2oA6eoa9hbYo7LDL1vxghHSYDdV2QCIQCqPJXhjwQ-SPMVYxeLIpAHtEDiYRd3UDwHg7o2MOYhlA%3D%3D&cpn=FNVGQRwo67PGtcPK&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1447
+          },
+          {
+            "title": "Festival Cultural do Segundo Ano",
+            "videoUrl": "https://rr1---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751243775&ei=f2thaOnGG9SEy_sPrtbauQ8&ip=200.106.211.8&id=f81aa631eead5df2&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751214975,&mh=oB&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=1&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.322&lmt=1590666561799761&mt=1751214794&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRgIhANE0nameC_tmj10zBdfd40gexFj3KKk4JHndHu61Ld20AiEAoKWt8MPRp8KVoScF7o2cXBeLc0nGne1Re4rUezXM4Is%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRQIhAJKAT8IczKFge9PECnwcAn5i8KgDdJc2ddFN78eZ_Bs_AiBMgcN6FJYWZw63U1Gmd_mFwzb3C1uXDXnR79bYGuld7w%3D%3D&cpn=-cmFbNUwkrGlXzJL&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1447
+          },
+          {
+            "title": "Fim do Segundo Semestre e Natal",
+            "videoUrl": "https://rr3---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751243806&ei=nmthaJ7sJ5uCy_sPy9-U0QM&ip=200.106.211.8&id=5fa74169336fa12f&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751215006,&mh=vW&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=3&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.369&lmt=1590666573813143&mt=1751214567&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRQIgWQY7x5RhtkZACiFzg1V_o4G8dm8Ox-OA9l1aTVOcsu8CIQDBjUUtyZKS0Nj6Zbxxo3q54Z_WmGLFLkj7Sa6nVWnHSA%3D%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRQIhAJStngNlevBuYA3bqhqUxMj_D0A_TQovLhbp5Sz4cYXxAiBLJrC0dHcuFlpUWyY5Vwg8jRTk5jomK2U0gZ5M-P8F-w%3D%3D&cpn=topJnCLEhBthW30D&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1447
+          },
+          {
+            "title": "Provações da Koyomi",
+            "videoUrl": "https://rr2---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751243847&ei=x2thaNX6HOqI3rsP0_7KwAc&ip=200.106.211.8&id=fc13f9af6728f209&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751215047,&mh=J-&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=2&pcm2cms=yes&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.276&lmt=1697095940103829&mt=1751214798&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRQIhAO-joL1svqsbTWLLMPPIcEzZqShpmPAgMmemM-0i4ZmGAiBGHmMVAC7wT5AJfjI3LSYOBRVjwO6QgN9U3V_dDokgrA%3D%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pcm2cms,pl,rms&lsig=APaTxxMwRAIgWIGCEkg0mhj9ixwp-RoSvXWsLfXPaJOGLl24jRJwFHgCIHIyenFSQ80C8QPSi8KMmC2OtFINAlXDIwdJt-4g_NWE&cpn=gm-Q-LWzFcQucM7a&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1447
+          },
+          {
+            "title": "Uma Noite de Primavera",
+            "videoUrl": "https://rr1---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751243881&ei=6WthaOXOHtH6zLUP74f1qQc&ip=200.106.211.8&id=9c8a974de77a4aad&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751215081,&mh=2x&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=1&pcm2cms=yes&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.230&lmt=1590666582088600&mt=1751214567&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRQIhAPoPUfTaCWI6-SyC4myYMOgndNJsOmPX7w38FXMZ8KNwAiAzD8KhHbM078ygzP1MSGFYWaIL-lZRVQT_BMzArl7n9A%3D%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pcm2cms,pl,rms&lsig=APaTxxMwRQIgOPvXJaAxNQ9mPfnoSvYcn8CVZCns4CtrLLjYNhf6BpkCIQDCiutzOhVLiLTie3779hI0butRhEm4FrZIjslkcZc4gw%3D%3D&cpn=pd4CVcrZuxTVbp3c&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1447
+          },
+          {
+            "title": "Terceiro Ano",
+            "videoUrl": "https://rr3---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751243917&ei=DWxhaKvQOr7Mj-8Pi5Hs2Q4&ip=200.106.211.8&id=cb89f2acc30c2bba&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751215117,&mh=pU&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=3&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.276&lmt=1697423092149816&mt=1751214794&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRgIhAIRw8t5NpUEv7VaQ72jcGV0IHnL8c5lA5j3fomwHHL-aAiEA97qpSOmqwbNK523XG1M0YT1FVoG5GtNqzM_TWiD67zg%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRQIgcOC_z5O7Vj_GuLX2I3iQ_Wgpwt4r4dlpv3fwmppOPmcCIQCR7pul_Rvw6Ot2QzTF5wQVZpIY5e982nO7sWZBxg4mnQ%3D%3D&cpn=Eklj1CDt0Bo-oNq3&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1447
+          },
+          {
+            "title": "Excursão Escolar",
+            "videoUrl": "https://rr1---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751243945&ei=KWxhaIa8BpeF0_wP8OqqyQE&ip=200.106.211.8&id=ccd0054507277aa2&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751215145,&mh=-C&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=1&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.230&lmt=1697738412064806&mt=1751214567&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRgIhAMdZDaEApDc04Y5C0a_QAnyIjOkXCp2DZ4zEDtP0GnmKAiEA8KaBUGvUOOi3ole2CPjYqOkO_-uwATG800jBJ_S317I%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRAIgDaRGyjiaUWeP9qx_UZBcQzikkqWo0kz8x9j9ohBDTjYCIDE-qsx8uzbuhCjbja_XbRuRI03GIQ9fGCqG6Z2N4LGA&cpn=ljQ20_tcXpADuBDJ&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1447
+          },
+          {
+            "title": "Estudos Para os Exames de Admissão",
+            "videoUrl": "https://rr2---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751243982&ei=TmxhaIGBE5L_xtYPm6LpsQ8&ip=200.106.211.8&id=218719939e8108cf&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751215182,&mh=_T&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=2&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.230&lmt=1590666610200663&mt=1751214798&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRAIgBF_GEmcF658Mq7E2maVU_MU3Oi3Egyg9Nd_c_VBlNkICIHW0ZzbsTRdcF97iP4XjTEbc_laD-0Woh4EotR4wM5e4&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRQIhAN8trlKEFT_VFuOMoffIMJZiFtYYC49e6RLqLaGzWnk4AiA6WmBKZ7-2NvyJNODeGfj8tfXoePAigdexOmV-a3MhqA%3D%3D&cpn=oxRcTXaDS2RZUACT&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1447
+          },
+          {
+            "title": "Último Festival de Esportes",
+            "videoUrl": "https://rr2---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751244021&ei=dWxhaOefEcqWvPIPztGv2Qc&ip=200.106.211.8&id=0e5e4bc9e45db171&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751215221,&mh=Gb&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=2&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.949&lmt=1698036143133602&mt=1751214798&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRAIgKrjGFdTCXgazpRLZ_vt-uPWO0joObUY9nj2j8zpI3isCIGy74nZuk3sPK1lHkj6rS3Eoz8V65h2kCmK6_5RqQSMY&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRQIhAP-9BAAyxRN0k5r6aY-bmbOhDkhHfT5yPt5VLzWxEQHyAiBiyt07x3heCfeJpd0-q1Fcw9jp22s8Em6-WE7r-X5aSw%3D%3D&cpn=a-I6lvi4gzQwvTDa&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1447
+          },
+          {
+            "title": "Yamamayaa",
+            "videoUrl": "https://rr3---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751244055&ei=l2xhaOa1Ja7hut0Pj5O98QU&ip=200.106.211.8&id=b846bf8f85cd0bc9&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751215255,&mh=HF&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=3&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.183&lmt=1590666642791413&mt=1751214798&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRAIgGvmz6x7bTNAZvZuIr7i74hHVMat6QJffuIAiOouchSgCIFDkO3cgUIwqvVYUjmD77NhD3Fkw6l53QyHDjwwkBmXX&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRgIhAMGiAR50rV5w0fI48-gzGxwbK_zA9A2UtKFXOUsoSrpzAiEAzDkqGwg4BfHjzJOi8fY8Lnq5o3K1TQvh-OCYnKiYRvY%3D&cpn=TgrtR_P0e75f-MBf&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1447
+          },
+          {
+            "title": "Em Frente: Os Exames de Admissão!",
+            "videoUrl": "https://rr2---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751244087&ei=t2xhaIu4Mq_out0Pk-vU-A0&ip=200.106.211.8&id=ada12a2202f8a879&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751215287,&mh=pK&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=2&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.903&lmt=1590666628083161&mt=1751215036&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRgIhAJcKS70mdKX9FqUzUke9GSxH4ByyJYgejowHmVFOPhS4AiEAx3EYjup9nr6EFaGbvM8dVUaKJ1mGRLHrpi5LgxkbRno%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRgIhANVKrO-JR2Bzw0gUb1zIXDjFB7adKbOJh2d12VzJn6t9AiEAr2XLndyB5zfLWLJHboPHDEEuu4tPsgVnAx4sA3A874I%3D&cpn=CA4g7q6tgP-GujxK&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1447
+          },
+          {
+            "title": "Cerimônia de Formatura",
+            "videoUrl": "https://lightspeedst.net/s3/mp4/azumanga-daioh/sd/26.mp4",
+            "duration": 1447
+          }
+        ]
+      }
+    ],
+    "year": 2002,
+    "rating": 8.1
+  },
+  {
+    "id": 8,
+    "title": "Ranma 1/2",
+    "description": "As aventuras românticas e as desventuras de um jovem que é atingido por uma maldição que o faz mudar de gênero.",
+    "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/thumbnails/ranmanet.png",
+    "trailer": "https://www.youtube.com/watch?v=V77a7NUof4I",
+    "type": "anime",
+    "dateAdded": "2025-06-29",
+    "categories": [
+      "adventure",
+      "comedy",
+      "romance"
+    ],
+    "seasons": [
+      {
+        "number": 1,
+        "episodes": [
+          {
+            "title": "Episódio 1",
+            "videoUrl": "https://rr16---sn-pmcg-4vgl.googlevideo.com/videoplayback?expire=1751269074&ei=Us5haL74DLCMvPIP4Z6QgAY&ip=200.106.211.8&id=60663ee29f1db755&itag=22&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1462.276&lmt=1728151979476086&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRQIgUPveIrZMGeu6Ti6hDqM8Jh4w2cGpXG3OOQRi1rK0fecCIQDhHMq7-YDptJirW_eai_djzfkK0_4v0RB_OpaI5sEcRQ%3D%3D&cpn=YAa7bgwNoJyqMFDa&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00&redirect_counter=1&cm2rm=sn-8v5oxucg-nn5e7l&rrc=80&fexp=24350590,24350737,24350796,24350816,24350827,24350961,24350984,24351254,24351307&req_id=fd0a615801f3a3ee&cms_redirect=yes&cmsv=e&met=1751240289,&mh=Ft&mm=29&mn=sn-pmcg-4vgl&ms=rdu&mt=1751239981&mv=m&mvi=16&pl=24&rms=rdu,au&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRAIgONbcZ-PrCkq_yo0gyfW2hfVsq5ImM0I2XHIZ3RFZFNUCIHjXyRGHrMxffw6YFB1N7EZ_eRqlqxdc916LFIMUdX9K",
+            "duration": 1462
+          },
+          {
+            "title": "Episódio 2",
+            "videoUrl": "https://rr2---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751269226&ei=6s5haPrkBLX23rsPm4LPIQ&ip=200.106.211.8&id=6b13652a27538fa4&itag=22&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751240426,&mh=Ap&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=2&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1462.230&lmt=1728757835819356&mt=1751239986&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRAIgLEE5FnjfTF7C7ornOT68X54uLdiSWwPquDZtP69zIakCICMj_vNXtZiJJ0JMaCMxPAg3ZjZx6XsnVayG_OxofDAt&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRgIhAMSrXn67tnshyE2IAYODLK83MqT5lOP4RzQudMmH5ij-AiEAk7jXJafOps-1fceh-uS6T66ma80iXaeXBHbMN4yQ5so%3D&cpn=KU3hnVRAVQ4ofIwA&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1462
+          },
+          {
+            "title": "Episódio 3",
+            "videoUrl": "https://rr2---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751269261&ei=Dc9haM3_JZW5ut0PpNjowQM&ip=200.106.211.8&id=3ba319406938c8cd&itag=22&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751240461,&mh=-8&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=2&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1462.276&lmt=1729366101039619&mt=1751239986&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRAIgW-BvdkX-CcGxMpwfUdTKt4PyShlczlUmPsSOUA8Q1okCICZSx-IRJE1ly27eJ2u4kdHpZIEfnF6-kdhWoS3MnpAb&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRQIgFzcMjKGtTJl0VfQ4kXESm_YJBlMc_vHRqqr03R_ArhcCIQDPoVipM4V1dRyM8DNeDOpNEr4koO5R5mDPvQTJCGPPqw%3D%3D&cpn=8M19QSf4x668aMlu&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1462
+          },
+          {
+            "title": "Episódio 4",
+            "videoUrl": "https://rr1---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751269312&ei=QM9haNKrMeKFy_sPt7-O6AY&ip=200.106.211.8&id=d88e1c1b49bafd47&itag=22&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751240512,&mh=vl&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=1&pcm2cms=yes&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1466.247&lmt=1729990756349937&mt=1751240231&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRgIhAIs_6wKdxenUkMWI3EPFCM7ig4lyTnROMPMX_V9hljhhAiEAqTdJtJH07gVEaU2bYMDJAaZHjaOt6E4E1SXqhVbsI8s%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pcm2cms,pl,rms&lsig=APaTxxMwRAIgPjYRxhzdl4c-Xa3aH_Zuy3BQ90h3J5WyMFdK2Cl-2ukCIBJhB3I3PZjaeLrEx6u5VCg3vP1dnw_dMmVJr7oGaEw_&cpn=Oz76bLxPqEGjuNXl&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1462
+          },
+          {
+            "title": "Episódio 5",
+            "videoUrl": "https://rr1---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751269358&ei=bs9haKe5MqiCy_sPxp7A4AE&ip=200.106.211.8&id=99dbb9d752e42470&itag=22&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751240558,&mh=IR&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=1&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1470.264&lmt=1730830879502352&mt=1751239986&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRQIhAKOgv-VoX_DSrfT0sOgAC6pOR9ydnQLfQWhFm-Hm35_gAiA-ye4kZYgE8e1SdAWeN7T2evlIExqfBG15R0fmChWMWg%3D%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRAIgM53j0QtR-9lnoPYngIs28UgUqTpOaE3Hx5pn1RQIOcECIEdaZnO27u6lZxYs_eVqaQV9ArJ190HYHrIYnq8bRCzo&cpn=I7aL9xzhH9QjldI4&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1462
+          },
+          {
+            "title": "Episódio 6",
+            "videoUrl": "https://rr2---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751269392&ei=kM9haNQUn4XL-w-oiNzpDQ&ip=200.106.211.8&id=cdf21ad1a100d332&itag=22&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751240592,&mh=Rh&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=2&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1462.346&lmt=1731328222165131&mt=1751240460&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRQIgRqCNaIKqAUOKLpf006gKF_yMrK1GFgLlzzqF91mV9RICIQD2ykRcNDadNhUXHarf-xti6jAXYczrIYlc55ezjlOVpg%3D%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRgIhAKb5vR9VNThS6aBQGHBhVytNH-lfHwZx2D6JD_7h5YhAAiEA9J_UQnk0DsgxOHrGG1DSUF2YZQOEkQWZia1u3cGRV70%3D&cpn=Vi83JA9TQt_H-bt-&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1462
+          },
+          {
+            "title": "Episódio 7",
+            "videoUrl": "https://rr1---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751269443&ei=w89haJvBFZusy_sPhqzriQY&ip=200.106.211.8&id=680d41b6957048b2&itag=22&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751240643,&mh=Mx&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=1&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1468.197&lmt=1731870966368736&mt=1751240460&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRAIgWY9WVPqnnY5Jvf0Mdy0xG-YLNpfpjqzXL4_TRSEYn9YCICW1qiSacb00zitqVgdE4WsHUnsSOGWZ-8rqqx58Bh0S&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRQIgF5XGyJDamvJYKrWNh274tDj_70N9a6G0bqMuU2LNVxkCIQCTH34UQ-md0vbElR23pFIxHxQUQFgiko5QhypEwi6P5w%3D%3D&cpn=MR3bSQirYKAiVrwF&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1462
+          },
+          {
+            "title": "Episódio 8",
+            "videoUrl": "https://rr3---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751269480&ei=6M9haLTbI4vxzLUPqqHhsAI&ip=200.106.211.8&id=5d11218b31edb0b8&itag=22&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751240680,&mh=Da&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=3&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1472.307&lmt=1732385438868867&mt=1751240231&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRAIgLpsXthm39xRqp2Bl-1XC2oZvTau2J4gUr-pN_-BMGrgCICw-QcvgEquAAmTmvE7zL6o0BQSbaHH8mEMvDkAGzDzo&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRAIgaoQDnIj1ogB17WkX6gMw1dwL6V1vBKYLSbO_uRnIkVoCIFn2HoBdXou467EmjLXsHzbYiJBMOUhZ04YzyreThy-u&cpn=5-7nsex0w3y1OR_L&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1462
+          },
+          {
+            "title": "Episódio 9",
+            "videoUrl": "https://rr3---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751269568&ei=QNBhaMfmKv-9y_sPocuysA4&ip=200.106.211.8&id=732f257ca035f17d&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751240768,&mh=Q2&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=3&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1466.247&lmt=1732995242873527&mt=1751240231&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRAIgL1Mvn4N9quS205LUt119uqW7YeMdRf0uPw8NTrwzSOQCIFLZGH213K23_KeIJK4fQJY7CxD3AH2QTszz2bFvnpAb&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRAIgM3TyQqPi8RNBbOzdrT-9D2zKFyguLTCqzXnoRVRH14wCIBY7ayI9eZcEw-XyVN-l7gcj8LlLSYjGHymjZExCFOsc&cpn=hDBZ7L1JldTNc9uB&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1462
+          },
+          {
+            "title": "Episódio 10",
+            "videoUrl": "https://rr1---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751269621&ei=ddBhaI2KI7-Hy_sP-sSaoQ4&ip=200.106.211.8&id=473619ae364eddde&itag=22&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751240821,&mh=p-&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=1&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1470.171&lmt=1733678785591148&mt=1751240481&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRAIgQP4NEg194zytqfaTNuP9dqQsyI0W0fWlAC3NW6f4qwwCIGQW-0SPIg2MPQ5oqDfNTsz_lyqfgBKU09OzrysPlnbI&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRQIhAJiVEfopXAUF_It6BEx3EOhs1VoM_J5UNWYM3WJo_8GAAiBLuI60_xo6kxa9JZ3e8BXJHkaa8NH5EFzMNTXIpF68Aw%3D%3D&cpn=aZNq5jGDlg6DRtI0&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1462
+          },
+          {
+            "title": "Episódio 11",
+            "videoUrl": "https://rr1---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751269657&ei=mdBhaL-mGLeFy_sP7422gAs&ip=200.106.211.8&id=dd4e2e99db4cae6b&itag=22&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751240857,&mh=jj&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=1&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1466.316&lmt=1734369057457295&mt=1751240481&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRQIgALbPW3h3ygzrBu28dE8k5CVRtBUJkE9MAumpKpNEEfMCIQCBHnEB1aBjwT22viju4T2QhWrZ_hkeSvjN1PfNUBPHig%3D%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRgIhAPpXGJnVsRh4ggYVJfYumusE49CtVs0oOVcnUmT5hNLbAiEA_vquBk3kyUuO1JUyAR8fhsejUfTnZyxFNX5v2nejYQU%3D&cpn=4hNeesVfwQfeWocn&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1462
+          },
+          {
+            "title": "Episódio 12",
+            "videoUrl": "https://cld.pt/dl/download/22281929-8523-4b60-be19-bcd9b6d2c127/Ranma.1-2.2024%20-%20Episodio%2012%20-%20Dub.mp4",
+            "duration": 1462
+          }
+        ]
+      }
+    ],
+    "year": 2024,
+    "rating": 7.9
+  },
+  {
+    "id": 9,
+    "title": "Komi Can't Communicate",
+    "description": "Uma aluna de elite e distante é de facto muito retraída e ansiosa por comunicar com os outros. Um estudante comum faz amizade com ela e ajuda-a a abrir-se e a falar com as pessoas.",
+    "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/thumbnails/komi.png",
+    "trailer": "https://www.youtube.com/watch?v=erF7lSzkTYA&pp=0gcJCdgAo7VqN5tD",
+    "type": "anime",
+    "dateAdded": "2025-06-29",
+    "categories": [
+      "comedy",
+      "slice of life"
+    ],
+    "seasons": [
+      {
+        "number": 1,
+        "episodes": [
+          {
+            "title": "É só que eu queria poder falar.",
+            "videoUrl": "https://rr1---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751271191&ei=l9ZhaPOEF8PZy_sPr4vnuQE&ip=200.106.211.8&id=3c64547eabe56b5f&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751242391,&mh=kJ&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=1&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1495.968&lmt=1647273927110418&mt=1751241918&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRQIgYqs1QVYVqj5f5L0YesuGK1YzcKc6wYHzWpRUY3doRS4CIQDevwfeCmyt3YbQSga0zznVmpuhqJaHrS9orUvdV-b7Uw%3D%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRQIgBeChbmXrOIagnA4hg2imk2kt2Veb06m3rQ8NIYydHNECIQCelHDrQYXMr08fDbpJeRarrHAMOIyd-ZUWAtWyTnXM5w%3D%3D&cpn=9_uUz6righEBTrt_&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1495
+          },
+          {
+            "title": "É só uma uma amizade de infância e mais.",
+            "videoUrl": "https://rr1---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751271219&ei=s9ZhaNWWEd3py_sP_qXrgAE&ip=200.106.211.8&id=1b0c38ca89f494d2&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751242419,&mh=dY&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=1&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1495.968&lmt=1647273929729719&mt=1751241918&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRAIgWWlFyUHf28u8h6jvOe7jAo_d-AW4YQGDpk1VQV6XGoICIHmZFKO9hsmE9-NLHYURgqmbXAB78fI-1NwuZbQ-yO3-&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRgIhAKhDmZx1qr2Ein9qh8TjfUAmGw0xTGxPYMp2Jf_2x7P1AiEApkwGxzT2rW659UU7AM30mHsjMOOIzzEjcEUuuVdOiVo%3D&cpn=X1bmFhyrasZ2-fsR&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1495
+          },
+          {
+            "title": "É só medo e mais.",
+            "videoUrl": "https://rr1---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751271620&ei=RNhhaMa5AsSe3rsPxMnJ-QE&ip=200.106.211.8&id=458c1e1764e033b6&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751242820,&mh=tx&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=1&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1431.533&lmt=1647274127306590&mt=1751242387&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRgIhAJkzjtZ69NDTqda0g02J5gdo6kgxONKsyRtHFTp4MkdHAiEAucl18sI7-gtmRF9KpSwwJMtCkrZhbgAEd-cXXQPR2xI%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRQIgI1tQ7Zu-nB49DNfCtrnQQ5ZP55wPPa6BI678BWKyiX8CIQCu_8QhcBtLO-_ewl466dG1fkckjA37uQIRcGhktVF7CQ%3D%3D&cpn=XX75gEflhS9UdhEr&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1495
+          },
+          {
+            "title": "É só uma questão física e mais.",
+            "videoUrl": "https://rr2---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751271661&ei=bdhhaMKlBeiFy_sPkJ-zyAo&ip=200.106.211.8&id=aa826f17619d4423&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751242861,&mh=mh&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=2&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1467.686&lmt=1647274208942333&mt=1751242634&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRAIgEoocwo2V8abqs0pkFw_g5KqdsjMz9QAYLRRew3uQ9R0CIA7gFRZHQeEn9SvdtDIQzpCF4276U9FyxSS2cxrhRzGH&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRgIhAMnxCT_-B3Gk6TWFr9J9zYhehdNZ1CnVOQLmpLAmWq5MAiEAubO6-0RzvoH7APwdkGxoC_hjTgfaSheSQVzDJ0PnQ_8%3D&cpn=euZqIJ6QK9tIsymh&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1495
+          },
+          {
+            "title": "É só meu uniforme de verão e mais.",
+            "videoUrl": "https://rr1---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751271859&ei=M9lhaKX1Eaf6xtYP9OLLgQk&ip=200.106.211.8&id=866d8907e6378d14&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751243059,&mh=E1&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=1&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1497.965&lmt=1647274639848140&mt=1751242634&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRgIhAJjRTOSUSXn-cVe4pfbLGDb4ixIPCiOdiV9phe-rxQNrAiEA15_534fgmz5tXLgb6iAeEFhZi9u5yOz3EIVvJDEqFKU%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRgIhAP6_lL_Wzhfu-xtSGfH4juQnM1Rv2i0nsBpxD8QeE2JCAiEA-M6nqwaifWDp5aOWE_gXnbqKd2y_HEj9_3uQgginBvU%3D&cpn=ADNarB7lXre5g2l5&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1495
+          },
+          {
+            "title": "É só uma brincadeira e mais.",
+            "videoUrl": "https://rr1---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751271910&ei=ZtlhaNixAo6GzLUPm7bjGQ&ip=200.106.211.8&id=026b800d4f852436&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751243110,&mh=2Z&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=1&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1437.570&lmt=1647274220361994&mt=1751242871&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRQIhANqnlxevr7WwCeSVijkRc1AV_2_i1uDDBOc3avAYrAFcAiAY3aujxnQCEtTzQLQ-8g8YLaqm1EDfV9A8h05qvaevmQ%3D%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRQIhAJrNdY7kgs2cK3FpmQN3BqVAiOnlFKxKv1doWlHM957kAiBZrlJOkCuEQ3QXt4Zy2H599U2AHxScUO735yjMeFAbHg%3D%3D&cpn=F_vt5LqcLBLv3sSn&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1495
+          },
+          {
+            "title": "É só a piscina e mais.",
+            "videoUrl": "https://rr2---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751271962&ei=mtlhaJWYDbCty_sPlM3ZuA0&ip=200.106.211.8&id=5b872ad73ae090aa&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751243162,&mh=Wn&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=2&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1495.968&lmt=1647273994616868&mt=1751242634&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRQIgKfv0bvxNrZAGIe3ekb2w7Nhm4WcMbvy0ODP5yirCtiICIQDXRXGQzqQd-mymApn5y4svr3PZ2lSlcXQaSVV1HzvNfg%3D%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRAIgErPrPAKVQ-aaqMv2C6LjAvvmGDiW6BIq-PPudHztpLMCIF_gtUny1oqqHKNlRTIS3xhhFFnj6G24xMZ02o_SYH3K&cpn=hx0hl4Ihui4Go6dX&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1495
+          },
+          {
+            "title": "É só Obom e mais.",
+            "videoUrl": "https://rr2---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751272016&ei=0NlhaJK9HLSly_sP9oWwiQI&ip=200.106.211.8&id=608dd0cffb0f01d7&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751243216,&mh=Bp&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=2&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1495.968&lmt=1647274499467035&mt=1751242871&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRAIgcjMjl7uo6WbCfwxKoHXR7mJrA4xZrnd2nK4CtDXvKnsCIGqf7fh7Anuv38VwCqmSFKEFsYEMVYzHQPDWr8vTNWlO&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRQIgb6aRJezS1fJJXkHNJwTHFQH2dxxa7U0Tv_3hjmEG9U4CIQC0bpUV9Sk99jEPxiBwCMytQVhwEeoHIf3fI-IpCKixXw%3D%3D&cpn=l-Q8B04ryq3Dmxj7&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1495
+          },
+          {
+            "title": "É só uma criança do interior e mais.",
+            "videoUrl": "https://rr3---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751272101&ei=JdphaNXoOJDQj-8Pvd6rkAU&ip=200.106.211.8&id=88012e6c090695cd&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751243301,&mh=XL&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=3&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1495.968&lmt=1647274069775680&mt=1751242871&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRgIhAICOh6oli6ufvBRxNbGfU3SqM1dc5P9aTTSE-iHW8t-zAiEAvSZtS28EraAJaQVEj34SHyKWLRQGFbHTHIcxbdRtjWg%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRQIhAOn9r7J3HOCkBXaZJx5RnSkLzwhpqA8q3A3SVhMAmWWYAiAIaVcl6l-0eMWCoqldz-a9VhMwA5H13xKIt3E6RTq13w%3D%3D&cpn=CW36--9KeBn9wuKd&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1495
+          },
+          {
+            "title": "É só dia de esporte e mais.",
+            "videoUrl": "https://rr1---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751272164&ei=Y9phaKiXPI3Kj-8Pi5j0MA&ip=200.106.211.8&id=71b68a7647ce9bc3&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751243363,&mh=Ml&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=1&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1499.939&lmt=1647274233536970&mt=1751242871&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRQIhAK95bA9VCT1ttNV71b6IgdEAZOfW7JiNl0c4dQVt3SFgAiBUvls3Pkughx8muPMhGsK0q35lBZ3hIterXCS18s0aqw%3D%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRQIgIYkPqxjE9zzKjwGGv4Um6DdOh8Apj5GQkiP6vfffKHsCIQCITsDdQMOYkm-4kqAn0e_KZ4zlqqxO1aDAvYyyvji8Og%3D%3D&cpn=86iGZpPe-5z0jhzt&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1495
+          },
+          {
+            "title": "São propostas para o festival e mais.",
+            "videoUrl": "https://rr2---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751272221&ei=ndphaILgEJqEy_sPoZSkkQM&ip=200.106.211.8&id=183f7be7ad73cc11&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751243421,&mh=16&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=2&pcm2cms=yes&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1507.950&lmt=1647274205249120&mt=1751242871&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRgIhAJ4GbRb9zFNZYTkaU-ctQKSoqk0e30WRqaZo47FZdmo-AiEA0FovUYsvejVk1rXE1KZ1pUPOliRMq_apl1-1cOaCqXs%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pcm2cms,pl,rms&lsig=APaTxxMwRAIgSHPrrYiqItpvlSRN3rVXJ236UEcl8DGYoCRs8CTGsWICIEWwykqXyADWEUcYtIT87IUKbE4g6dS1F-gblNK3c-zU&cpn=ET-fMR2P8QrlV7lK&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1495
+          },
+          {
+            "title": "É só o festival cultural.",
+            "videoUrl": "https://rr1---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751272272&ei=0NphaOC0FpqFy_sPqq--qAM&ip=200.106.211.8&id=42cb549752246936&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751243472,&mh=IK&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=1&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1493.948&lmt=1647274275612158&mt=1751242871&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRAIgYDxRaqznM_vChPC8u8VqfSI-kApXCKOtjwUwHGCuvqICIEYCU0tO2n4ioyf2If6WhlvEBDfN-5xnoLLUeT2Upx_J&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRQIgCD36yxAP3ljUKsavec4r64aPljWwEDQqCd2QCQfTmksCIQD6LaGmGDZME1pKqWxkUswCZFFfjYmC-JU_nP1whBEEHQ%3D%3D&cpn=89zRKgtDoeI8kFqG&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1495
+          }
+        ]
+      },
+      {
+        "number": 2,
+        "episodes": [
+          {
+            "title": "É só a chegada do inverno. E mais.",
+            "videoUrl": "https://rr1---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751272359&ei=J9thaNXbKLjy3rsPqazDkAI&ip=200.106.211.8&id=0ae645603ab00bc0&itag=22&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751243559,&mh=sg&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=1&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1504.026&lmt=1663907493508175&mt=1751242871&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRgIhAPUW8bpoNZ3dV5d0gF4ZVANJ3kysFQ9W94z0L9gmrVD_AiEA2vfqPVRZqixVMG5ElbYmL5SjQnymK_KeJrTzek-OYnE%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRgIhAJoCogAGK1ZsppQig1E8QXRnGlvw_SQGMsvFGRGaPgSrAiEAqOIIBwfHSMKPS7LBSOfzq0pHxP-gkSwdipAE16Rn2h4%3D&cpn=iOJPd9tqxZDCTpo2&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1503
+          },
+          {
+            "title": "É só um tufão. E mais.",
+            "videoUrl": "https://rr1---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751272481&ei=odthaOPkCJ6WvPIPt96JkQI&ip=200.106.211.8&id=a815d22f53b181fe&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751243681,&mh=pN&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=1&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1506.023&lmt=1663907527156553&mt=1751243353&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRgIhAJiCnIMM6_dPk-BPf0X3c45PY9aPqlEZ6F0vkwAfCjUtAiEAp1035TDJ3gmqHYFwfyWbWUY1ZM1pgMj_1P-841Yr93M%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRgIhALro0mfCeNfx0ubf4N-Ki2mpPeQHUSWstvB3sYpEOZwOAiEA1o014fvsVdun_Yaa8fBYiTKJuIQUUhKtOnujrsfYBgY%3D&cpn=P0dHDwRAITDJQ28X&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1505
+          },
+          {
+            "title": "É só um pensamento. E mais.",
+            "videoUrl": "https://rr3---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751272537&ei=2dthaMzUIJvHvPIPyf-B8Ac&ip=200.106.211.8&id=03c62f8477b3b3d9&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751243737,&mh=nq&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=3&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1506.023&lmt=1663907801012704&mt=1751243353&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRAIgU_5x06bu5vpGxxIiCUPe1U1f20UTtSVsgFSCAc5URegCIDOFaYARvY7fSoM5YI4hlqRVFokbCEdnXa1_hCiQoRzJ&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRQIgMJP3b0SKyDc31xmsJo2Sh5F6Fm52pv07AW9pqqL-oFECIQDh-fadNCALodsHlhNuRNU3dt9MIfyitoLcpE9f-R2tdw%3D%3D&cpn=HhLc1Q76AMEGLCa0&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1505
+          },
+          {
+            "title": "É só um Natal Feliz.",
+            "videoUrl": "https://rr1---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751272589&ei=DdxhaI7DLdj2zLUPsbPUwA0&ip=200.106.211.8&id=4a16cbdc115b7fb3&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751243789,&mh=YA&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=1&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1506.023&lmt=1663907812800053&mt=1751243353&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRAIgWR4tY8oKmxrVOmUv0ASkyvl2U171Rh2UXEW9pYwYjRQCIGFNuWSEn_ndM7i9ZA7Z7hTiiqk_I1Iq0mssDQwldPfF&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRgIhAIt_QS6zAdJ-6fjXrlhZS85Ym1xThQd10FDjR7peMI1kAiEAsXyJ-n9egMQ9CmuwjXI66xKIkkPmA76YPFndz_YhRIg%3D&cpn=3QpgbT0ZqS0r5A5I&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1505
+          },
+          {
+            "title": "É só um boneco de neve. E mais.",
+            "videoUrl": "https://rr2---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751272643&ei=Q9xhaKSPGZ3oj-8PkfPm-AE&ip=200.106.211.8&id=743aeb0702c35a58&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751243843,&mh=p3&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=2&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1502.005&lmt=1663907602502549&mt=1751243353&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRQIgahDKRvmAL2Jv4KmmtilpIpoQPdNoJydPgs1ihysziQgCIQD-eYsfwHG2t6FP-K2YHLCbuzbyFhETuUjlg8Ruis-gLQ%3D%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRAIgVWeVnZSZps7uvrBcRs-BcMDE21nCqr8HqzlpNd5iijsCIA6iYOS31RZlBQio0MkZbqdUHxILBV2ZjyDsyQ_OXrf_&cpn=xmtqfr7x4jeLsqIb&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1501
+          },
+          {
+            "title": "É só o ano-novo da galera. E mais.",
+            "videoUrl": "https://rr2---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751272726&ei=ltxhaKb0G6SAvPIP_fKN2QE&ip=200.106.211.8&id=0ef96deb124f1a46&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751243926,&mh=Om&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=2&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1497.083&lmt=1663907543741484&mt=1751243823&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRAIgZAsdkGWjr5uMD65EPxKNIC-iz-3yyxiagWnVFnYxXMECIFxrK6KTstGNVl8fU51_PJz-YCx4ABkVfQNln1yZq7x1&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRQIgVSCkh1E8b_xUePUCv-vZ_l2cjD7alqz2JHjP-TV8skwCIQC_vwHWBWFLcpJDO5RUTC8vRKiiMvYThIeb88CnwspK_g%3D%3D&cpn=CLbPxQVxtZZXD_XZ&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1497
+          },
+          {
+            "title": "É só um mal-entendido. E mais.",
+            "videoUrl": "https://rr2---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751272797&ei=3dxhaPrHEOap0_wP57aVqA0&ip=200.106.211.8&id=df14eb7b756db514&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751243997,&mh=X9&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=2&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1504.026&lmt=1663907624304580&mt=1751243823&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRQIhANQcL_R7eGv9SVOzDWb8w36b5nnf-Cb72_uu87HbQu2qAiAehdyVCvFlx0afiM8E1-MxRii33XTVk9m9ReSm0xCbBQ%3D%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRgIhANmODjyvo8W0jChXAAFONipuaJdMLro0CZ0lRAUfNT4OAiEAmKoxNyJB36whqc89fOaVULYA_6Ly0lnTiJ18_d9uMVg%3D&cpn=M5DTQ-PIakneJndp&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1503
+          },
+          {
+            "title": "É só a viagem escolar.",
+            "videoUrl": "https://rr1---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751273031&ei=x91haI6jC_zby_sP1fDEEQ&ip=200.106.211.8&id=c2a5066d05d4b17b&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751244231,&mh=Rm&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=1&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1473.747&lmt=1663907679694351&mt=1751244064&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRQIhAMUjJrR9xR_JsEMUShHbjqBEkoTZgjFT9-uobDHD5nmPAiALpAsScA9D7edNZFMqv3EWqsh6gx3iMjgHMoRogZkyYw%3D%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRAIgfzgZBbTBHeh98WgztTceiilMWxraqJYNxLjBoOIMt30CIHD-ZRKLw1XbuTJtE3V7LpsahyKz8hmvwzMQYFhqdTje&cpn=UhMtpDr4omty68Iy&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1473
+          },
+          {
+            "title": "É só o segundo dia da viagem escolar.",
+            "videoUrl": "https://rr2---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751273391&ei=L99haKaEM56WvPIPt96JkQI&ip=200.106.211.8&id=13dd5bcb4d84fabd&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751244591,&mh=SZ&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=2&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1498.035&lmt=1663907799441891&mt=1751244306&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRQIgSVCxBgw4n3dDuthKd7LpfjN3YFr06-kL7GSLUbUSOasCIQCSZObUIzD1i94hm7Q_0bKV366zrGwvcKxbYN_R9P-VUA%3D%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRgIhAMaH6i-H4jCOBLyvLJdHWIwoxlnnUQMHdcIlQoLBidvaAiEAghvjmBXddwriGWZlfjVpMhqML5HU1mZhATDEArlPDzs%3D&cpn=Pu9fRYpOSBYEeTdq&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1497
+          },
+          {
+            "title": "É só o Dia dos Namorados.",
+            "videoUrl": "https://rr2---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751273431&ei=V99haPSFGY2sy_sPgtWZoAQ&ip=200.106.211.8&id=706b6a0094ed1bb9&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751244631,&mh=d7&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=2&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1502.005&lmt=1663908013915863&mt=1751244066&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRQIgQ6UB2M9yB2kcIZgkWbSc0RKfBb0_nrcfMdM2OLdewJMCIQD8Fjrn-E5LPapNaMAto8oU2O8sQsIgoUhn0nfrS6pCMg%3D%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRAIgQauEhiatujTK637j2vOMegsyUcJx5feRGyPaJ_8swGUCIBLSaC_qdRCcd-0DI7hkzq5i8JTRPoWxspAopAq2TaWd&cpn=UdTT8s9fP97ptmhu&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1501
+          },
+          {
+            "title": "É só uma meia desfiada. E mais.",
+            "videoUrl": "https://rr1---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751273496&ei=mN9haNKqKKCGy_sPv_7QeA&ip=200.106.211.8&id=fb7282a27038b352&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751244696,&mh=Ib&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=1&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1504.026&lmt=1663907845110408&mt=1751244306&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRAIgAkps6bzeQlBUO17vPtGg7UI70IYEZ9fUA9XbWBmNOLICIHNjeP7ZAUmyAt46qumpR0jd-3Fl8SatP1I6U-cGaIkq&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRgIhAMnIX0jtqKhKbRLXItf6rISpPOnkpGd6EQiRWNXZaK8QAiEA148HOIdaQ91R4jmUN7_Fs4zGseJYJq4T9Uo_bzA5yDQ%3D&cpn=wCnwjiHMa3cH3whM&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1503
+          },
+          {
+            "title": "É só o White Day. E mais.",
+            "videoUrl": "https://rr2---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751273548&ei=zN9haLKNGdqIxtYP28TR8Aw&ip=200.106.211.8&id=21ffb90b2ccf8e89&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751244748,&mh=tG&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=2&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1504.026&lmt=1663907781639262&mt=1751244554&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRQIgXqnGws612MTzXoaAdBzXR_oLLJYi6-qA_tzdFx7SAiMCIQDzKynyrDyiyU36OvgcZZgesTkjEJ0yGnZeAi7MOQpvUQ%3D%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRgIhALDHvSHHQKSV_y3HGpUPsfTJGG1fJudsF33VGAWNs0YBAiEA_urgD1MFv7n1jgJTIfD0_yPLEL36tzAPK2xa_jUsp7Y%3D&cpn=wbRPZdsjuUdzRBne&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "duration": 1503
+          }
+        ]
+      }
+    ],
+    "year": 2021,
+    "rating": 7.7
+  }
 ]
