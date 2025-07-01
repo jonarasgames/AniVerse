@@ -27,16 +27,16 @@ document.addEventListener('DOMContentLoaded', function() {
     // Navegação entre seções
     const navLinks = document.querySelectorAll('nav a');
     const contentSections = document.querySelectorAll('.content-section');
-    
+
     navLinks.forEach(link => {
         link.addEventListener('click', function(e) {
             e.preventDefault();
             const sectionId = this.getAttribute('data-section') + '-section';
-            
+
             // Atualizar navegação ativa
             navLinks.forEach(navLink => navLink.classList.remove('active'));
             this.classList.add('active');
-            
+
             // Mostrar seção correspondente
             contentSections.forEach(section => {
                 section.classList.remove('active');
@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     section.classList.add('active');
                 }
             });
-            
+
             // Carregar conteúdo específico da seção
             if (sectionId === 'animes-section') {
                 loadAnimeSection('anime');
@@ -54,10 +54,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 loadAnimeSection('ova');
             } else if (sectionId === 'continue-section') {
                 loadContinueWatching();
+            } else if (sectionId === 'openings-section') {
+                // Já é tratado pelo music-player.js
+            } else if (sectionId === 'osts-section') {
+                // Já é tratado pelo music-player.js
+            } else if (sectionId === 'info-section') {
+                // Já é tratado pelo info-section.js
             }
         });
     });
-    
+
     // Mostrar mensagem de carregamento
     const grids = document.querySelectorAll('.anime-grid');
     grids.forEach(grid => {
