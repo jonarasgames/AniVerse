@@ -40,7 +40,10 @@
       }
     ],
     "year": 2013,
-    "rating": 4.8
+    "rating": 4.8,
+    "openings": [],
+    "endings": [],
+    "osts": []
   },
   {
     "id": 2,
@@ -67,7 +70,10 @@
       }
     ],
     "year": 2020,
-    "rating": 4.9
+    "rating": 4.9,
+     "openings": [],
+    "endings": [],
+    "osts": []
   },
   {
     "id": 3,
@@ -94,7 +100,10 @@
       }
     ],
     "year": 2021,
-    "rating": 4.7
+    "rating": 4.7,
+     "openings": [],
+    "endings": [],
+    "osts": []
   },
   {
     "id": 4,
@@ -121,7 +130,10 @@
       }
     ],
     "year": 2019,
-    "rating": 4.6
+    "rating": 4.6,
+     "openings": [],
+    "endings": [],
+    "osts": []
   },
   {
     "id": 5,
@@ -148,7 +160,10 @@
       }
     ],
     "year": 2019,
-    "rating": 4.8
+    "rating": 4.8,
+     "openings": [],
+    "endings": [],
+    "osts": []
   },
   {
     "id": 6,
@@ -176,7 +191,10 @@
       }
     ],
     "year": 1997,
-    "rating": 8.1
+    "rating": 8.1,
+     "openings": [],
+    "endings": [],
+    "osts": []
   },
   {
     "id": 7,
@@ -328,7 +346,10 @@
       }
     ],
     "year": 2002,
-    "rating": 8.1
+    "rating": 8.1,
+     "openings": [],
+    "endings": [],
+    "osts": []
   },
   {
     "id": 8,
@@ -558,6 +579,9 @@
       }
     ],
     "year": 2021,
-    "rating": 7.7
+    "rating": 7.7,
+     "openings": [],
+    "endings": [],
+    "osts": []
   }
 ]
