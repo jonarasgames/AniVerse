@@ -191,6 +191,25 @@
             <h2 class="section-title">Continuar Assistindo</h2>
             <div class="anime-grid" id="continue-grid"></div>
         </section>
+
+        <section id="openings-section" class="content-section">
+            <h2 class="section-title">Openings & Endings</h2>
+            <div class="music-grid" id="openings-grid"></div>
+        </section>
+
+        <section id="osts-section" class="content-section">
+            <h2 class="section-title">OSTs</h2>
+            <div class="music-grid" id="osts-grid"></div>
+        </section>
+
+        <section id="info-section" class="content-section">
+            <h2 class="section-title">Informações</h2>
+            <div class="search-bar">
+                <input type="text" id="info-search" placeholder="Buscar informações sobre animes...">
+                <button class="btn btn-primary" id="info-search-btn"><i class="fas fa-search"></i></button>
+            </div>
+            <div id="anime-info-container"></div>
+        </section>
     </main>
 
     <div id="video-modal" class="modal">
@@ -363,6 +382,48 @@
         </div>
     </div>
 
+    <div id="music-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div id="music-player-container">
+                <div class="music-player">
+                    <div class="music-cover">
+                        <img id="music-cover-img" src="" alt="Capa do Álbum">
+                    </div>
+                    <div class="music-info">
+                        <h2 id="music-title"></h2>
+                        <p id="music-artist"></p>
+                        <p id="music-anime"></p>
+                        <audio id="music-player" controls>
+                            <source src="" type="audio/mpeg">
+                            Seu navegador não suporta o elemento de áudio.
+                        </audio>
+                        <div class="music-controls">
+                            <button id="music-prev" class="btn-icon"><i class="fas fa-step-backward"></i></button>
+                            <button id="music-play" class="btn-icon"><i class="fas fa-play"></i></button>
+                            <button id="music-next" class="btn-icon"><i class="fas fa-step-forward"></i></button>
+                            <input type="range" id="music-progress" min="0" max="100" value="0">
+                            <span id="music-current-time">0:00</span>
+                            <span id="music-duration">0:00</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mini-player" id="mini-player">
+                    <div class="mini-cover">
+                        <img id="mini-cover-img" src="" alt="Capa">
+                    </div>
+                    <div class="mini-info">
+                        <span id="mini-title"></span>
+                        <span id="mini-artist"></span>
+                    </div>
+                    <div class="mini-controls">
+                        <button id="mini-play" class="btn-icon"><i class="fas fa-play"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <footer>
         <div class="container">
             <div class="footer-content">
@@ -395,5 +456,7 @@
     <script src="js/anime-db.js"></script>
     <script src="js/script.js"></script>
     <script src="js/video-player.js"></script>
+    <script src="js/music-player.js"></script>
+    <script src="js/info-section.js"></script>
 </body>
 </html>
