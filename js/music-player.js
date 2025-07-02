@@ -1,11 +1,12 @@
 document.addEventListener('DOMContentLoaded', function() {
     const musicModal = document.getElementById('music-modal');
-    const musicPlayer = document.getElementById('music-player');
+    const musicPlayer = new Audio();
     const miniPlayer = document.getElementById('mini-player');
     const playBtn = document.getElementById('music-play');
     const miniPlayBtn = document.getElementById('mini-play');
     const prevBtn = document.getElementById('music-prev');
     const nextBtn = document.getElementById('music-next');
+    const miniCloseBtn = document.getElementById('mini-close');
     const progressBar = document.getElementById('music-progress');
     const currentTimeEl = document.getElementById('music-current-time');
     const durationEl = document.getElementById('music-duration');
@@ -18,9 +19,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const musicAnime = document.getElementById('music-anime');
     
     let currentTrack = 0;
-    let playlist = [];
-    
-    // Dados de exemplo (substitua com seus dados reais)
+    let currentPlaylist = [];
+    let currentType = '';
+    let isPlaying = false;
+
+    // Dados de exemplo organizados por álbuns (OST)
     const musicLibrary = {
         openings: [
             {
@@ -30,29 +33,111 @@ document.addEventListener('DOMContentLoaded', function() {
                 cover: "https://i.ibb.co/0jq7R0y/anime-bg.jpg",
                 audio: "https://ia801700.us.archive.org/9/items/dragonmaid-02/01%20%E5%B0%8F%E6%9E%97%E3%81%95%E3%82%93%E3%81%A1.mp3",
                 type: "opening"
-            },
-            // Adicione mais músicas aqui
+            }
         ],
-        osts: [
-            {
-                title: "Main Theme",
-                artist: "Yuki Kajiura",
-                anime: "Demon Slayer",
+        osts: {
+            "Demon Slayer OST Vol.1": {
+                year: 2019,
                 cover: "https://i.ibb.co/0jq7R0y/anime-bg.jpg",
-                audio: "https://ia801700.us.archive.org/9/items/dragonmaid-02/01%20%E5%B0%8F%E6%9E%97%E3%81%95%E3%82%93%E3%81%A1.mp3",
-                type: "ost"
+                tracks: [
+                    {
+                        title: "Main Theme",
+                        artist: "Yuki Kajiura",
+                        anime: "Demon Slayer",
+                        audio: "https://ia801700.us.archive.org/9/items/dragonmaid-02/01%20%E5%B0%8F%E6%9E%97%E3%81%95%E3%82%93%E3%81%A1.mp3"
+                    },
+                    {
+                        title: "Battle Theme",
+                        artist: "Yuki Kajiura",
+                        anime: "Demon Slayer",
+                        audio: "https://ia801700.us.archive.org/9/items/dragonmaid-02/01%20%E5%B0%8F%E6%9E%97%E3%81%95%E3%82%93%E3%81%A1.mp3"
+                    }
+                ]
             },
-            // Adicione mais OSTs aqui
-        ]
+            "Demon Slayer OST Vol.2": {
+                year: 2020,
+                cover: "https://i.ibb.co/0jq7R0y/anime-bg.jpg",
+                tracks: [
+                    {
+                        title: "Emotional Theme",
+                        artist: "Yuki Kajiura",
+                        anime: "Demon Slayer",
+                        audio: "https://ia801700.us.archive.org/9/items/dragonmaid-02/01%20%E5%B0%8F%E6%9E%97%E3%81%95%E3%82%93%E3%81%A1.mp3"
+                    }
+                ]
+            }
+        }
     };
     
     // Carregar a lista de músicas
     function loadMusic(type) {
-        playlist = musicLibrary[type];
-        renderMusicGrid(type);
+        currentType = type;
+        
+        if (type === 'osts') {
+            renderAlbums();
+        } else {
+            currentPlaylist = musicLibrary[type];
+            renderMusicGrid(type);
+        }
     }
     
-    // Renderizar a grade de músicas
+    // Renderizar álbuns (para OSTs)
+    function renderAlbums() {
+        const grid = document.getElementById('osts-grid');
+        if (!grid) return;
+        
+        grid.innerHTML = '';
+        
+        for (const [albumName, albumData] of Object.entries(musicLibrary.osts)) {
+            const albumSection = document.createElement('div');
+            albumSection.className = 'album-section';
+            
+            albumSection.innerHTML = `
+                <div class="album-header">
+                    <div class="album-cover">
+                        <img src="${albumData.cover}" alt="${albumName}">
+                    </div>
+                    <div>
+                        <h3 class="album-title">${albumName}</h3>
+                        <p class="album-year">${albumData.year}</p>
+                    </div>
+                </div>
+                <div class="music-grid" id="album-${albumName.replace(/\s+/g, '-')}"></div>
+            `;
+            
+            grid.appendChild(albumSection);
+            
+            // Renderizar músicas do álbum
+            const albumGrid = albumSection.querySelector('.music-grid');
+            albumData.tracks.forEach((track, index) => {
+                const card = document.createElement('div');
+                card.className = 'music-card';
+                card.dataset.album = albumName;
+                card.dataset.index = index;
+                
+                card.innerHTML = `
+                    <div class="music-cover">
+                        <img src="${albumData.cover}" alt="${track.title}">
+                    </div>
+                    <div class="music-info">
+                        <h3 class="music-title">${track.title}</h3>
+                        <p class="music-anime">${track.artist}</p>
+                    </div>
+                `;
+                
+                card.addEventListener('click', () => {
+                    currentPlaylist = albumData.tracks;
+                    currentTrack = index;
+                    playTrack();
+                    musicModal.style.display = 'block';
+                });
+                
+                albumGrid.appendChild(card);
+            });
+        }
+    }
+    
+    // Renderizar a grade de músicas (para openings)
     function renderMusicGrid(type) {
         const grid = document.getElementById(`${type}-grid`);
         if (!grid) return;
@@ -76,7 +161,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             card.addEventListener('click', () => {
                 currentTrack = index;
-                playTrack(type);
+                playTrack();
                 musicModal.style.display = 'block';
             });
             
@@ -85,25 +170,36 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Tocar música
-    function playTrack(type) {
-        const track = musicLibrary[type][currentTrack];
+    function playTrack() {
+        const track = currentPlaylist[currentTrack];
         
         musicPlayer.src = track.audio;
-        coverImg.src = track.cover;
-        miniCoverImg.src = track.cover;
+        coverImg.src = track.cover || 'https://i.ibb.co/0jq7R0y/anime-bg.jpg';
+        miniCoverImg.src = track.cover || 'https://i.ibb.co/0jq7R0y/anime-bg.jpg';
         musicTitle.textContent = track.title;
         miniTitle.textContent = track.title;
         musicArtist.textContent = track.artist;
         miniArtist.textContent = track.artist;
-        musicAnime.textContent = track.anime;
+        musicAnime.textContent = track.anime || '';
         
         musicPlayer.play()
             .then(() => {
-                playBtn.innerHTML = '<i class="fas fa-pause"></i>';
-                miniPlayBtn.innerHTML = '<i class="fas fa-pause"></i>';
-                miniPlayer.style.display = 'flex';
+                isPlaying = true;
+                updatePlayButtons();
+                miniPlayer.classList.add('active');
             })
             .catch(e => console.error("Erro ao reproduzir:", e));
+    }
+    
+    // Atualizar botões de play/pause
+    function updatePlayButtons() {
+        if (isPlaying) {
+            playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+            miniPlayBtn.innerHTML = '<i class="fas fa-pause"></i>';
+        } else {
+            playBtn.innerHTML = '<i class="fas fa-play"></i>';
+            miniPlayBtn.innerHTML = '<i class="fas fa-play"></i>';
+        }
     }
     
     // Atualizar barra de progresso
@@ -131,40 +227,40 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Event listeners
-    playBtn.addEventListener('click', () => {
-        if (musicPlayer.paused) {
-            musicPlayer.play();
-            playBtn.innerHTML = '<i class="fas fa-pause"></i>';
-            miniPlayBtn.innerHTML = '<i class="fas fa-pause"></i>';
-        } else {
-            musicPlayer.pause();
-            playBtn.innerHTML = '<i class="fas fa-play"></i>';
-            miniPlayBtn.innerHTML = '<i class="fas fa-play"></i>';
-        }
-    });
+    playBtn.addEventListener('click', togglePlay);
+    miniPlayBtn.addEventListener('click', togglePlay);
     
-    miniPlayBtn.addEventListener('click', () => {
+    function togglePlay() {
         if (musicPlayer.paused) {
-            musicPlayer.play();
-            playBtn.innerHTML = '<i class="fas fa-pause"></i>';
-            miniPlayBtn.innerHTML = '<i class="fas fa-pause"></i>';
+            musicPlayer.play()
+                .then(() => {
+                    isPlaying = true;
+                    updatePlayButtons();
+                });
         } else {
             musicPlayer.pause();
-            playBtn.innerHTML = '<i class="fas fa-play"></i>';
-            miniPlayBtn.innerHTML = '<i class="fas fa-play"></i>';
+            isPlaying = false;
+            updatePlayButtons();
         }
-    });
+    }
     
     prevBtn.addEventListener('click', () => {
         currentTrack--;
-        if (currentTrack < 0) currentTrack = playlist.length - 1;
+        if (currentTrack < 0) currentTrack = currentPlaylist.length - 1;
         playTrack();
     });
     
     nextBtn.addEventListener('click', () => {
         currentTrack++;
-        if (currentTrack > playlist.length - 1) currentTrack = 0;
+        if (currentTrack > currentPlaylist.length - 1) currentTrack = 0;
         playTrack();
+    });
+    
+    miniCloseBtn.addEventListener('click', () => {
+        musicPlayer.pause();
+        isPlaying = false;
+        updatePlayButtons();
+        miniPlayer.classList.remove('active');
     });
     
     musicPlayer.addEventListener('timeupdate', updateProgress);
@@ -172,10 +268,21 @@ document.addEventListener('DOMContentLoaded', function() {
         nextBtn.click();
     });
     
+    musicPlayer.addEventListener('play', () => {
+        isPlaying = true;
+        updatePlayButtons();
+        miniPlayer.classList.add('active');
+    });
+    
+    musicPlayer.addEventListener('pause', () => {
+        isPlaying = false;
+        updatePlayButtons();
+    });
+    
     progressBar.addEventListener('click', setProgress);
     
     // Fechar modal
-    document.querySelector('.close-modal').addEventListener('click', () => {
+    document.querySelector('#music-modal .close-modal').addEventListener('click', () => {
         musicModal.style.display = 'none';
     });
     
