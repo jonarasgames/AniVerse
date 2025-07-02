@@ -22,52 +22,85 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentPlaylist = [];
     let currentType = '';
     let isPlaying = false;
+    let musicLibrary = { openings: [], endings: [], osts: {} };
 
-    // Dados de exemplo organizados por álbuns (OST)
-    const musicLibrary = {
-        openings: [
-            {
-                title: "Gurenge",
-                artist: "LiSA",
-                anime: "Demon Slayer",
-                cover: "https://i.ibb.co/0jq7R0y/anime-bg.jpg",
-                audio: "https://ia801700.us.archive.org/9/items/dragonmaid-02/01%20%E5%B0%8F%E6%9E%97%E3%81%95%E3%82%93%E3%81%A1.mp3",
-                type: "opening"
+    // Carregar dados do anime-data.json
+    fetch('anime-data.json')
+        .then(response => response.json())
+        .then(data => {
+            processAnimeData(data);
+            // Carregar músicas quando a seção for aberta
+            document.querySelector('nav').addEventListener('click', (e) => {
+                if (e.target.dataset.section === 'openings') {
+                    loadMusic('openings');
+                } else if (e.target.dataset.section === 'endings') {
+                    loadMusic('endings');
+                } else if (e.target.dataset.section === 'osts') {
+                    loadMusic('osts');
+                }
+            });
+            // Inicializar com openings
+            loadMusic('openings');
+        })
+        .catch(error => console.error('Erro ao carregar anime-data.json:', error));
+
+    // Processar dados do anime para o formato do player
+    function processAnimeData(animeData) {
+        animeData.forEach(anime => {
+            // Processar openings
+            if (anime.openings && anime.openings.length > 0) {
+                anime.openings.forEach(opening => {
+                    musicLibrary.openings.push({
+                        title: opening.title,
+                        artist: opening.artist,
+                        anime: anime.title,
+                        cover: opening.cover || anime.thumbnail,
+                        audio: opening.audio,
+                        type: 'opening',
+                        season: opening.season
+                    });
+                });
             }
-        ],
-        osts: {
-            "Demon Slayer OST Vol.1": {
-                year: 2019,
-                cover: "https://i.ibb.co/0jq7R0y/anime-bg.jpg",
-                tracks: [
-                    {
-                        title: "Main Theme",
-                        artist: "Yuki Kajiura",
-                        anime: "Demon Slayer",
-                        audio: "https://ia801700.us.archive.org/9/items/dragonmaid-02/01%20%E5%B0%8F%E6%9E%97%E3%81%95%E3%82%93%E3%81%A1.mp3"
-                    },
-                    {
-                        title: "Battle Theme",
-                        artist: "Yuki Kajiura",
-                        anime: "Demon Slayer",
-                        audio: "https://ia801700.us.archive.org/9/items/dragonmaid-02/01%20%E5%B0%8F%E6%9E%97%E3%81%95%E3%82%93%E3%81%A1.mp3"
-                    }
-                ]
-            },
-            "Demon Slayer OST Vol.2": {
-                year: 2020,
-                cover: "https://i.ibb.co/0jq7R0y/anime-bg.jpg",
-                tracks: [
-                    {
-                        title: "Emotional Theme",
-                        artist: "Yuki Kajiura",
-                        anime: "Demon Slayer",
-                        audio: "https://ia801700.us.archive.org/9/items/dragonmaid-02/01%20%E5%B0%8F%E6%9E%97%E3%81%95%E3%82%93%E3%81%A1.mp3"
-                    }
-                ]
+            
+            // Processar endings
+            if (anime.endings && anime.endings.length > 0) {
+                anime.endings.forEach(ending => {
+                    musicLibrary.endings.push({
+                        title: ending.title,
+                        artist: ending.artist,
+                        anime: anime.title,
+                        cover: ending.cover || anime.thumbnail,
+                        audio: ending.audio,
+                        type: 'ending',
+                        season: ending.season
+                    });
+                });
             }
-        }
-    };
+            
+            // Processar OSTs
+            if (anime.osts && Object.keys(anime.osts).length > 0) {
+                for (const [albumName, albumData] of Object.entries(anime.osts)) {
+                    if (!musicLibrary.osts[albumName]) {
+                        musicLibrary.osts[albumName] = {
+                            year: albumData.year,
+                            cover: albumData.cover || anime.thumbnail,
+                            tracks: []
+                        };
+                    }
+                    
+                    albumData.tracks.forEach(track => {
+                        musicLibrary.osts[albumName].tracks.push({
+                            title: track.title,
+                            artist: track.artist,
+                            anime: anime.title,
+                            audio: track.audio,
+                            duration: track.duration
+                        });
+                    });
+                }
+            }
+        });
+    }
     
     // Carregar a lista de músicas
     function loadMusic(type) {
@@ -121,7 +154,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                     <div class="music-info">
                         <h3 class="music-title">${track.title}</h3>
-                        <p class="music-anime">${track.artist}</p>
+                        <p class="music-anime">${track.artist} • ${track.anime}</p>
                     </div>
                 `;
                 
@@ -137,7 +170,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Renderizar a grade de músicas (para openings)
+    // Renderizar a grade de músicas (para openings/endings)
     function renderMusicGrid(type) {
         const grid = document.getElementById(`${type}-grid`);
         if (!grid) return;
@@ -155,7 +188,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
                 <div class="music-info">
                     <h3 class="music-title">${track.title}</h3>
-                    <p class="music-anime">${track.anime}</p>
+                    <p class="music-anime">${track.artist} • ${track.anime}</p>
                 </div>
             `;
             
@@ -291,16 +324,4 @@ document.addEventListener('DOMContentLoaded', function() {
             musicModal.style.display = 'none';
         }
     });
-    
-    // Carregar músicas quando a seção for aberta
-    document.querySelector('nav').addEventListener('click', (e) => {
-        if (e.target.dataset.section === 'openings') {
-            loadMusic('openings');
-        } else if (e.target.dataset.section === 'osts') {
-            loadMusic('osts');
-        }
-    });
-    
-    // Inicializar
-    loadMusic('openings');
 });
