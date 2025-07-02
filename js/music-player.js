@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // Elementos do player
     const musicModal = document.getElementById('music-modal');
     const musicPlayer = new Audio();
     const miniPlayer = document.getElementById('mini-player');
@@ -6,6 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const miniPlayBtn = document.getElementById('mini-play');
     const prevBtn = document.getElementById('music-prev');
     const nextBtn = document.getElementById('music-next');
+    const miniNextBtn = document.getElementById('mini-next');
     const miniCloseBtn = document.getElementById('mini-close');
     const progressBar = document.getElementById('music-progress');
     const currentTimeEl = document.getElementById('music-current-time');
@@ -21,7 +23,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const volumeControl = document.getElementById('volume-control');
     const repeatBtn = document.getElementById('repeat-btn');
     const shuffleBtn = document.getElementById('shuffle-btn');
+    const closeModalBtn = document.querySelector('#music-modal .close-modal');
     
+    // Variáveis de estado
     let currentTrack = 0;
     let currentPlaylist = [];
     let currentType = '';
@@ -29,14 +33,15 @@ document.addEventListener('DOMContentLoaded', function() {
     let isShuffle = false;
     let isRepeat = false;
     let animeData = [];
+    let musicLibrary = { openings: [], endings: [], osts: {} };
 
     // Carregar dados do JSON
     async function loadAnimeData() {
         try {
             const response = await fetch('https://raw.githubusercontent.com/jonarasgames/AniVerse/main/anime-data.json');
             animeData = await response.json();
-            console.log('Dados carregados:', animeData);
-            loadMusic('openings');
+            processMusicLibrary();
+            loadMusic('openings'); // Carrega openings por padrão
         } catch (error) {
             console.error('Erro ao carregar dados:', error);
         }
@@ -44,17 +49,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Processar os dados para criar a biblioteca de músicas
     function processMusicLibrary() {
-        const library = {
-            openings: [],
-            endings: [],
-            osts: {}
-        };
+        musicLibrary = { openings: [], endings: [], osts: {} };
 
         animeData.forEach(anime => {
             // Processar openings
             if (anime.openings && anime.openings.length > 0) {
                 anime.openings.forEach(opening => {
-                    library.openings.push({
+                    musicLibrary.openings.push({
                         title: opening.title,
                         artist: opening.artist,
                         anime: anime.title,
@@ -69,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Processar endings
             if (anime.endings && anime.endings.length > 0) {
                 anime.endings.forEach(ending => {
-                    library.endings.push({
+                    musicLibrary.endings.push({
                         title: ending.title,
                         artist: ending.artist,
                         anime: anime.title,
@@ -84,8 +85,8 @@ document.addEventListener('DOMContentLoaded', function() {
             // Processar OSTs
             if (anime.osts && Object.keys(anime.osts).length > 0) {
                 for (const [albumName, albumData] of Object.entries(anime.osts)) {
-                    if (!library.osts[albumName]) {
-                        library.osts[albumName] = {
+                    if (!musicLibrary.osts[albumName]) {
+                        musicLibrary.osts[albumName] = {
                             year: albumData.year,
                             cover: albumData.cover || anime.thumbnail,
                             tracks: []
@@ -93,7 +94,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
 
                     albumData.tracks.forEach(track => {
-                        library.osts[albumName].tracks.push({
+                        musicLibrary.osts[albumName].tracks.push({
                             title: track.title,
                             artist: track.artist,
                             anime: anime.title,
@@ -106,14 +107,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         });
-
-        return library;
     }
 
     // Carregar a lista de músicas
     function loadMusic(type) {
         currentType = type;
-        const musicLibrary = processMusicLibrary();
+        
+        // Esconder todas as grids primeiro
+        document.querySelectorAll('.music-grid-container').forEach(el => {
+            el.style.display = 'none';
+        });
+        
+        // Mostrar a grid selecionada
+        const gridContainer = document.getElementById(`${type}-container`);
+        if (gridContainer) gridContainer.style.display = 'block';
         
         if (type === 'osts') {
             renderAlbums(musicLibrary.osts);
@@ -139,7 +146,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="album-cover">
                         <img src="${albumData.cover}" alt="${albumName}" loading="lazy">
                     </div>
-                    <div>
+                    <div class="album-info">
                         <h3 class="album-title">${albumName}</h3>
                         <p class="album-year">${albumData.year}</p>
                     </div>
@@ -172,7 +179,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     currentPlaylist = albumData.tracks;
                     currentTrack = index;
                     playTrack();
-                    musicModal.style.display = 'block';
+                    openMusicModal();
                 });
                 
                 albumGrid.appendChild(card);
@@ -206,11 +213,23 @@ document.addEventListener('DOMContentLoaded', function() {
             card.addEventListener('click', () => {
                 currentTrack = index;
                 playTrack();
-                musicModal.style.display = 'block';
+                openMusicModal();
             });
             
             grid.appendChild(card);
         });
+    }
+    
+    // Abrir modal de música
+    function openMusicModal() {
+        musicModal.style.display = 'flex';
+        document.body.style.overflow = 'hidden'; // Impede rolagem da página
+    }
+    
+    // Fechar modal de música
+    function closeMusicModal() {
+        musicModal.style.display = 'none';
+        document.body.style.overflow = ''; // Restaura rolagem da página
     }
     
     // Tocar música
@@ -264,9 +283,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const currentSeconds = Math.floor(currentTime % 60);
         currentTimeEl.textContent = `${currentMinutes}:${currentSeconds < 10 ? '0' : ''}${currentSeconds}`;
         
-        const durationMinutes = Math.floor(duration / 60);
-        const durationSeconds = Math.floor(duration % 60);
-        durationEl.textContent = `${durationMinutes}:${durationSeconds < 10 ? '0' : ''}${durationSeconds}`;
+        if (duration) {
+            const durationMinutes = Math.floor(duration / 60);
+            const durationSeconds = Math.floor(duration % 60);
+            durationEl.textContent = `${durationMinutes}:${durationSeconds < 10 ? '0' : ''}${durationSeconds}`;
+        }
     }
     
     // Definir progresso da música
@@ -281,17 +302,24 @@ document.addEventListener('DOMContentLoaded', function() {
     function toggleShuffle() {
         isShuffle = !isShuffle;
         shuffleBtn.classList.toggle('active', isShuffle);
-        if (isShuffle) {
+        if (isShuffle && currentPlaylist.length > 0) {
             shufflePlaylist();
         }
     }
     
     // Embaralhar playlist
     function shufflePlaylist() {
-        for (let i = currentPlaylist.length - 1; i > 0; i--) {
+        // Mantém a música atual no mesmo lugar
+        const currentSong = currentPlaylist[currentTrack];
+        const shuffled = currentPlaylist.filter((_, i) => i !== currentTrack);
+        
+        for (let i = shuffled.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
-            [currentPlaylist[i], currentPlaylist[j]] = [currentPlaylist[j], currentPlaylist[i]];
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
         }
+        
+        shuffled.unshift(currentSong);
+        currentPlaylist = shuffled;
         currentTrack = 0;
     }
     
@@ -348,6 +376,10 @@ document.addEventListener('DOMContentLoaded', function() {
         playTrack();
     });
     
+    miniNextBtn.addEventListener('click', () => {
+        nextBtn.click();
+    });
+    
     miniCloseBtn.addEventListener('click', () => {
         musicPlayer.pause();
         isPlaying = false;
@@ -387,25 +419,22 @@ document.addEventListener('DOMContentLoaded', function() {
     fullscreenBtn.addEventListener('click', toggleFullscreen);
     
     // Fechar modal
-    document.querySelector('#music-modal .close-modal').addEventListener('click', () => {
-        musicModal.style.display = 'none';
-    });
+    closeModalBtn.addEventListener('click', closeMusicModal);
     
     window.addEventListener('click', (e) => {
         if (e.target === musicModal) {
-            musicModal.style.display = 'none';
+            closeMusicModal();
         }
     });
     
     // Carregar músicas quando a seção for aberta
-    document.querySelector('nav').addEventListener('click', (e) => {
-        if (e.target.dataset.section === 'openings') {
-            loadMusic('openings');
-        } else if (e.target.dataset.section === 'endings') {
-            loadMusic('endings');
-        } else if (e.target.dataset.section === 'osts') {
-            loadMusic('osts');
-        }
+    document.querySelectorAll('.music-tab').forEach(tab => {
+        tab.addEventListener('click', (e) => {
+            const type = e.target.dataset.type;
+            if (type) {
+                loadMusic(type);
+            }
+        });
     });
     
     // Inicializar
