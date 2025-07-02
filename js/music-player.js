@@ -146,12 +146,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                 `;
                 card.addEventListener('click', () => {
-                    const index = tracks.findIndex(t => t === track);
-                    if (currentTrack === index && musicModal.style.display === 'flex') {
-                        musicModal.style.display = 'flex';
-                        return;
-                    }
-                    currentTrack = index;
+                    currentTrack = tracks.findIndex(t => t === track);
                     playTrack();
                     musicModal.style.display = 'flex';
                 });
