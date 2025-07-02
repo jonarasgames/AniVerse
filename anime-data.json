@@ -564,7 +564,7 @@
         "title": "Soramimi Cake",
         "artist": "Oranges & Lemons",
         "audio": "https://kappa.vgmsite.com/soundtracks/azumanga-daiou-the-animation-utaimasho/eyugksoc/01.%20Ear-Playing-Tricks%20Cake.mp3",
-        "cover": "https://static.wikia.nocookie.net/azumanga/images/8/80/Soramimi_Cake_Raspberry_heaven.jpg/revision/latest?cb=20130811020212",
+        "cover": "https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/thumbnails/ranmanet.png",
         "type": "opening",
         "season": 1
       }
@@ -574,15 +574,16 @@
         "title": "Raspberry Heaven",
         "artist": "Oranges & Lemons",
         "audio": "https://kappa.vgmsite.com/soundtracks/azumanga-daiou-the-animation-utaimasho/ieokccdk/12.%20raspberry%20heaven.mp3",
-        "cover": "https://static.wikia.nocookie.net/azumanga/images/8/80/Soramimi_Cake_Raspberry_heaven.jpg/revision/latest?cb=20130811020212",
+        "cover": "https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/thumbnails/ranmanet.png",
         "type": "ending",
         "season": 1
       }
     ],
     "osts": {
       "Azumanga Daioh Original Soundtrack": {
+        "title": "Azumanga Daioh Original Soundtrack",
         "year": 2002,
-        "cover": "https://example.com/azumanga-ost1-cover.jpg",
+        "cover": "https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/thumbnails/ranmanet.png",
         "tracks": [
           {
             "title": "Azumanga Daioh Main Theme",
@@ -893,7 +894,7 @@
         "title": "Blue Sky Rhapsody",
         "artist": "Fhána",
         "audio": "https://dn721806.ca.archive.org/0/items/misskobayashisdragonmaidopfull/Miss_kobayashis_dragon_maidOpFull.mp3",
-        "cover": "",
+        "cover": "https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/thumbnails/ranmanet.png",
         "type": "opening",
         "season": 1
       },
@@ -901,7 +902,7 @@
         "title": "Ai no Supreme!",
         "artist": "fhána",
         "audio": "https://jonaras.s-ul.eu/ds5lZYDG",
-        "cover": "",
+        "cover": "https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/thumbnails/ranmanet.png",
         "type": "opening",
         "season": 2
       }
@@ -911,7 +912,7 @@
         "title": "Ishukan Communication",
         "artist": "Choro-gonzu",
         "audio": "https://jonaras.s-ul.eu/AQyn08dm",
-        "cover": "",
+        "cover": "https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/thumbnails/ranmanet.png",
         "type": "ending",
         "season": 1
       },
@@ -919,7 +920,7 @@
         "title": "Maid with Dragons ︎❤︎",
         "artist": "Super Chorogons",
         "audio": "https://jonaras.s-ul.eu/kvukHM8P",
-        "cover": "",
+        "cover": "https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/thumbnails/ranmanet.png",
         "type": "ending",
         "season": 2
       }
