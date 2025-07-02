@@ -26,7 +26,7 @@ body {
     background-color: var(--background-color);
     color: var(--text-color);
     line-height: 1.6;
-    padding-bottom: 60px; /* Espaço para o botão flutuante */
+    padding-bottom: 60px;
 }
 
 .container {
@@ -878,7 +878,7 @@ footer {
     gap: 10px;
 }
 
-/* Seção de Músicas */
+/* Estilos para a seção de músicas */
 .music-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -942,12 +942,7 @@ footer {
     color: #ddd;
 }
 
-/* Player de Música */
-#music-player-container {
-    width: 100%;
-    position: relative;
-}
-
+/* Player de música */
 .music-player {
     display: grid;
     grid-template-columns: 1fr 2fr;
@@ -959,13 +954,13 @@ footer {
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    max-width: 300px;
 }
 
 .music-player .music-cover img {
     width: 100%;
     height: auto;
-    max-height: 300px;
-    object-fit: cover;
+    display: block;
 }
 
 .music-controls {
@@ -983,6 +978,7 @@ footer {
 #music-progress {
     width: 100%;
     margin: 10px 0;
+    cursor: pointer;
 }
 
 #music-current-time, #music-duration {
@@ -990,19 +986,24 @@ footer {
     color: var(--text-color);
 }
 
-/* Mini Player */
+/* Mini player */
 .mini-player {
     position: fixed;
-    bottom: 20px;
+    bottom: -100px;
     left: 0;
     width: 100%;
     background-color: var(--card-bg);
     padding: 10px 20px;
-    display: none;
+    display: flex;
     align-items: center;
     justify-content: space-between;
     box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
     z-index: 1000;
+    transition: bottom 0.3s ease;
+}
+
+.mini-player.active {
+    bottom: 0;
 }
 
 .mini-cover {
@@ -1024,6 +1025,7 @@ footer {
     display: flex;
     flex-direction: column;
     font-size: 0.9rem;
+    overflow: hidden;
 }
 
 .mini-info span {
@@ -1034,9 +1036,48 @@ footer {
 
 .mini-controls {
     margin-left: 15px;
+    display: flex;
+    gap: 10px;
 }
 
-/* Seção de Informações */
+/* Álbuns de OST */
+.album-section {
+    margin-bottom: 40px;
+}
+
+.album-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.album-cover {
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-right: 20px;
+    box-shadow: var(--shadow);
+}
+
+.album-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.album-title {
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+}
+
+.album-year {
+    color: var(--text-color);
+    opacity: 0.7;
+    font-size: 0.9rem;
+}
+
+/* Seção de informações */
 #anime-info-container {
     margin-top: 30px;
 }
@@ -1208,6 +1249,16 @@ footer {
         grid-template-columns: 1fr;
     }
     
+    .album-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .album-cover {
+        margin-right: 0;
+        margin-bottom: 15px;
+    }
+    
     .anime-details {
         grid-template-columns: 1fr;
     }
@@ -1243,5 +1294,9 @@ footer {
     #custom-video-btn {
         padding: 10px 15px;
         font-size: 0.9rem;
+    }
+    
+    .char-options-grid {
+        grid-template-columns: repeat(2, 1fr);
     }
 }
