@@ -117,10 +117,9 @@ document.addEventListener('DOMContentLoaded', function() {
     searchInput.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') performSearch();
     });
-    
-    // Adicionar botão de vídeo customizado
-    addCustomVideoButton();
 });
+
+// ...existing code...
 
 function checkAnimeDBLoaded() {
     if (animeDB.animes.length > 0) {
@@ -720,94 +719,6 @@ function renderSearchResults(results) {
     
     document.getElementById('back-to-home').addEventListener('click', function() {
         location.reload();
-    });
-}
-
-function addCustomVideoButton() {
-    if (document.getElementById('custom-video-btn')) return;
-
-    const customBtn = document.createElement('button');
-    customBtn.id = 'custom-video-btn';
-    customBtn.className = 'btn btn-primary';
-    customBtn.innerHTML = '<i class="fas fa-plus"></i> Adicionar Vídeo';
-    customBtn.style.position = 'fixed';
-    customBtn.style.bottom = '20px';
-    customBtn.style.right = '20px';
-    customBtn.style.zIndex = '1000';
-    customBtn.style.padding = '10px 15px';
-    customBtn.style.borderRadius = '50px';
-    customBtn.style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.2)';
-    
-    customBtn.addEventListener('click', openCustomLinkModal);
-    document.body.appendChild(customBtn);
-}
-
-function openCustomLinkModal() {
-    const modal = document.createElement('div');
-    modal.className = 'modal';
-    modal.id = 'custom-link-modal';
-    modal.innerHTML = `
-        <div class="modal-content">
-            <span class="close-modal">&times;</span>
-            <h2>Adicionar Vídeo Externo</h2>
-            <div class="form-group">
-                <label for="custom-anime-id">ID do Anime:</label>
-                <input type="text" id="custom-anime-id" placeholder="ID único para o vídeo">
-            </div>
-            <div class="form-group">
-                <label for="custom-anime-title">Título:</label>
-                <input type="text" id="custom-anime-title" placeholder="Título do anime/vídeo">
-            </div>
-            <div class="form-group">
-                <label for="custom-season">Temporada:</label>
-                <input type="number" id="custom-season" value="1" min="1">
-            </div>
-            <div class="form-group">
-                <label for="custom-episode">Episódio:</label>
-                <input type="number" id="custom-episode" value="1" min="1">
-            </div>
-            <div class="form-group">
-                <label for="custom-video-url">URL do Vídeo:</label>
-                <input type="text" id="custom-video-url" placeholder="Cole o link do vídeo aqui">
-                <small>Links protegidos podem não funcionar devido a restrições CORS</small>
-            </div>
-            <button id="play-custom-video" class="btn btn-primary">Reproduzir</button>
-        </div>
-    `;
-
-    document.body.appendChild(modal);
-    modal.style.display = 'block';
-
-    modal.querySelector('.close-modal').addEventListener('click', function() {
-        modal.style.display = 'none';
-        document.body.removeChild(modal);
-    });
-
-    document.getElementById('play-custom-video').addEventListener('click', function() {
-        const animeId = document.getElementById('custom-anime-id').value.trim();
-        const title = document.getElementById('custom-anime-title').value.trim();
-        const seasonNumber = parseInt(document.getElementById('custom-season').value);
-        const episodeNumber = parseInt(document.getElementById('custom-episode').value);
-        const videoUrl = document.getElementById('custom-video-url').value.trim();
-
-        if (!animeId || !videoUrl) {
-            alert('Por favor, preencha o ID do anime e a URL do vídeo');
-            return;
-        }
-
-        if (!title) {
-            alert('Por favor, informe um título para o vídeo');
-            return;
-        }
-
-        animeDB.addCustomVideo(animeId, title, seasonNumber, episodeNumber, videoUrl);
-        const anime = animeDB.getAnimeById(animeId);
-        
-        if (anime) {
-            openAnimeModal(anime, seasonNumber, episodeNumber);
-            modal.style.display = 'none';
-            document.body.removeChild(modal);
-        }
     });
 }
 
