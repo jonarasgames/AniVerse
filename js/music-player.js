@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const miniArtist = document.getElementById('mini-artist');
     const musicAnime = document.getElementById('music-anime');
     const volumeControl = document.getElementById('volume-control');
+    const miniFullscreenBtn = document.getElementById('mini-fullscreen');
 
     let currentTrack = 0;
     let currentPlaylist = [];
@@ -145,7 +146,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                 `;
                 card.addEventListener('click', () => {
-                    currentTrack = tracks.findIndex(t => t === track);
+                    const index = tracks.findIndex(t => t === track);
+                    if (currentTrack === index && musicModal.style.display === 'flex') {
+                        musicModal.style.display = 'flex';
+                        return;
+                    }
+                    currentTrack = index;
                     playTrack();
                     musicModal.style.display = 'flex';
                 });
@@ -340,4 +346,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Inicialização
     loadAnimeData();
+
+    miniFullscreenBtn.addEventListener('click', () => {
+        musicModal.style.display = 'flex';
+    });
 });
