@@ -104,24 +104,21 @@
             <div class="anime-grid" id="ovas-grid"></div>
         </section>
 
-        <section id="openings-section" class="content-section">
-            <h2 class="section-title">Openings & Endings</h2>
-            <!-- Tabs de navegação para músicas -->
-            <div class="music-tabs">
-                <div class="music-tab active" data-type="themes">OP/ED</div>
-                <div class="music-tab" data-type="osts">OSTs</div>
-            </div>
+        <!-- Tabs de navegação para músicas -->
+        <div class="music-tabs">
+            <div class="music-tab active" data-section="openings">Openings/Endings</div>
+            <div class="music-tab" data-section="osts">OSTs</div>
+        </div>
 
-            <!-- Container para Themes (Openings & Endings juntos) -->
-            <div id="themes-container" class="music-grid-container active">
-                <div id="themes-grid" class="music-grid"></div>
-            </div>
+        <!-- Um único container para a lista de OP/ED -->
+        <div id="music-grid-container" class="music-grid-container active">
+            <div id="music-grid" class="music-grid"></div>
+        </div>
 
-            <!-- Container para OSTs -->
-            <div id="osts-container" class="music-grid-container">
-                <div id="osts-grid"></div>
-            </div>
-        </section>
+        <!-- Container para OSTs (separado) -->
+        <div id="osts-container" class="music-grid-container">
+            <div id="osts-grid" class="music-grid"></div>
+        </div>
 
         <section id="info-section" class="content-section">
             <h2 class="section-title">Informações</h2>
