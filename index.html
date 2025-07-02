@@ -106,12 +106,21 @@
 
         <section id="openings-section" class="content-section">
             <h2 class="section-title">Openings & Endings</h2>
-            <div class="music-grid" id="openings-grid"></div>
-        </section>
+            <!-- Tabs de navegação para músicas -->
+            <div class="music-tabs">
+                <div class="music-tab active" data-type="themes">OP/ED</div>
+                <div class="music-tab" data-type="osts">OSTs</div>
+            </div>
 
-        <section id="osts-section" class="content-section">
-            <h2 class="section-title">OSTs</h2>
-            <div class="music-grid" id="osts-grid"></div>
+            <!-- Container para Themes (Openings & Endings juntos) -->
+            <div id="themes-container" class="music-grid-container active">
+                <div id="themes-grid" class="music-grid"></div>
+            </div>
+
+            <!-- Container para OSTs -->
+            <div id="osts-container" class="music-grid-container">
+                <div id="osts-grid"></div>
+            </div>
         </section>
 
         <section id="info-section" class="content-section">
