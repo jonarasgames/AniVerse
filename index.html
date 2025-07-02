@@ -8,345 +8,6 @@
     <link rel="stylesheet" href="css/dark-mode.css" id="dark-mode-style" disabled>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="icon" href="images/logo.png" type="image/png">
-    <style>
-        /* Estilos adicionais para os controles do player */
-        .custom-video-controls {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            background-color: rgba(0, 0, 0, 0.7);
-            border-radius: 0 0 8px 8px;
-            margin-top: -5px;
-        }
-        
-        .control-btn {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.2rem;
-            cursor: pointer;
-            padding: 5px 10px;
-        }
-        
-        .time-controls {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin: 0 15px;
-        }
-        
-        .seek-slider {
-            flex: 1;
-            height: 5px;
-            cursor: pointer;
-        }
-        
-        .volume-slider {
-            width: 80px;
-            height: 5px;
-            margin-left: 5px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        
-        .volume-btn:hover .volume-slider {
-            opacity: 1;
-        }
-        
-        .seek-feedback, .volume-feedback {
-            position: absolute;
-            background-color: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-size: 0.9rem;
-            z-index: 10;
-            transition: opacity 0.3s ease;
-        }
-        
-        .volume-feedback {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .volume-bar {
-            width: 100px;
-            height: 5px;
-            background-color: rgba(255, 255, 255, 0.3);
-            border-radius: 3px;
-            overflow: hidden;
-        }
-        
-        .volume-level {
-            height: 100%;
-            background-color: var(--primary-color);
-        }
-        
-        .fade-out {
-            opacity: 0;
-        }
-        
-        .expired-warning {
-            color: #ffcc00;
-            font-size: 0.9rem;
-            margin-top: 5px;
-        }
-
-        /* Estilos para a seÃ§Ã£o de mÃºsicas */
-        .music-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 40px;
-        }
-
-        .music-card {
-            background-color: var(--card-bg);
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-            cursor: pointer;
-            aspect-ratio: 1/1;
-            position: relative;
-        }
-
-        .music-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        .music-cover {
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-        }
-
-        .music-cover img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: var(--transition);
-        }
-
-        .music-card:hover .music-cover img {
-            transform: scale(1.1);
-        }
-
-        .music-info {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
-            color: white;
-        }
-
-        .music-title {
-            font-weight: 600;
-            margin-bottom: 5px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .music-anime {
-            font-size: 0.8rem;
-            color: #ddd;
-        }
-
-        /* Player de mÃºsica */
-        .music-player {
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 30px;
-            align-items: center;
-        }
-
-        .music-player .music-cover {
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        .music-player .music-cover img {
-            width: 100%;
-            height: auto;
-            max-height: 300px;
-            object-fit: cover;
-        }
-
-        .music-controls {
-            margin-top: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .music-controls .btn-icon {
-            font-size: 1.5rem;
-            margin: 0 10px;
-        }
-
-        .music-progress {
-            width: 100%;
-            margin: 10px 0;
-        }
-
-        #music-current-time, #music-duration {
-            font-size: 0.9rem;
-            color: var(--text-color);
-        }
-
-        /* Mini player */
-        .mini-player {
-            position: fixed;
-            bottom: 20px;
-            left: 0;
-            width: 100%;
-            background-color: var(--card-bg);
-            padding: 10px 20px;
-            display: none;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-        }
-
-        .mini-cover {
-            width: 40px;
-            height: 40px;
-            border-radius: 4px;
-            overflow: hidden;
-            margin-right: 15px;
-        }
-
-        .mini-cover img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .mini-info {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            font-size: 0.9rem;
-        }
-
-        .mini-info span {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .mini-controls {
-            margin-left: 15px;
-        }
-
-        /* SeÃ§Ã£o de informaÃ§Ãµes */
-        #anime-info-container {
-            margin-top: 30px;
-        }
-
-        .anime-details {
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 30px;
-            margin-bottom: 40px;
-        }
-
-        .anime-poster {
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: var(--shadow);
-        }
-
-        .anime-poster img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-
-        .anime-meta-info {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin: 15px 0;
-        }
-
-        .meta-item {
-            background-color: var(--secondary-color);
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-size: 0.9rem;
-        }
-
-        .anime-synopsis {
-            margin: 20px 0;
-            line-height: 1.7;
-        }
-
-        .anime-characters {
-            margin-top: 30px;
-        }
-
-        .characters-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 20px;
-            margin-top: 15px;
-        }
-
-        .character-card {
-            background-color: var(--card-bg);
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: var(--shadow);
-            text-align: center;
-        }
-
-        .character-img {
-            width: 100%;
-            height: 200px;
-            overflow: hidden;
-        }
-
-        .character-img img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .character-name {
-            padding: 10px;
-            font-weight: 600;
-        }
-
-        .character-role {
-            font-size: 0.8rem;
-            color: var(--text-color);
-            opacity: 0.7;
-            padding-bottom: 10px;
-        }
-
-        @media (max-width: 768px) {
-            .anime-details {
-                grid-template-columns: 1fr;
-            }
-            
-            .music-player {
-                grid-template-columns: 1fr;
-            }
-            
-            .characters-grid {
-                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            }
-        }
-    </style>
 </head>
 <body>
     <header>
@@ -357,14 +18,14 @@
             </div>
             <nav>
                 <ul>
-                    <li><a href="#" class="active" data-section="home">InÃ­cio</a></li>
+                    <li><a href="#" class="active" data-section="home">Início</a></li>
                     <li><a href="#" data-section="animes">Animes</a></li>
                     <li><a href="#" data-section="movies">Filmes</a></li>
                     <li><a href="#" data-section="ovas">OVAs</a></li>
-                    <li><a href="#" data-section="continue">Continuar Assistindo</a></li>
                     <li><a href="#" data-section="openings">Openings</a></li>
                     <li><a href="#" data-section="osts">OSTs</a></li>
-                    <li><a href="#" data-section="info">InformaÃ§Ãµes</a></li>
+                    <li><a href="#" data-section="info">Informações</a></li>
+                    <li><a href="#" data-section="continue">Continuar Assistindo</a></li>
                 </ul>
             </nav>
             <div class="user-controls">
@@ -386,7 +47,7 @@
             <div class="hero">
                 <div class="hero-content">
                     <h2>Assista aos melhores animes</h2>
-                    <p>Milhares de episÃ³dios disponÃ­veis a qualquer momento</p>
+                    <p>Milhares de episódios disponíveis a qualquer momento</p>
                     <div class="search-bar">
                         <input type="text" id="search-input" placeholder="Buscar animes...">
                         <button class="btn btn-primary" id="search-btn"><i class="fas fa-search"></i></button>
@@ -406,12 +67,12 @@
             </section>
 
             <section class="new-releases">
-                <h2 class="section-title">Novos LanÃ§amentos</h2>
+                <h2 class="section-title">Novos Lançamentos</h2>
                 <div class="anime-grid" id="new-releases-grid"></div>
             </section>
 
             <section class="full-catalog">
-                <h2 class="section-title">CatÃ¡logo Completo</h2>
+                <h2 class="section-title">Catálogo Completo</h2>
                 <div class="anime-grid" id="full-catalog-grid"></div>
             </section>
 
@@ -419,9 +80,9 @@
                 <h2 class="section-title">Categorias</h2>
                 <div class="category-tabs">
                     <button class="category-tab active" data-category="all">Todos</button>
-                    <button class="category-tab" data-category="action">AÃ§Ã£o</button>
+                    <button class="category-tab" data-category="action">Ação</button>
                     <button class="category-tab" data-category="adventure">Aventura</button>
-                    <button class="category-tab" data-category="comedy">ComÃ©dia</button>
+                    <button class="category-tab" data-category="comedy">Comédia</button>
                     <button class="category-tab" data-category="drama">Drama</button>
                     <button class="category-tab" data-category="fantasy">Fantasia</button>
                 </div>
@@ -443,11 +104,6 @@
             <div class="anime-grid" id="ovas-grid"></div>
         </section>
 
-        <section id="continue-section" class="content-section">
-            <h2 class="section-title">Continuar Assistindo</h2>
-            <div class="anime-grid" id="continue-grid"></div>
-        </section>
-
         <section id="openings-section" class="content-section">
             <h2 class="section-title">Openings & Endings</h2>
             <div class="music-grid" id="openings-grid"></div>
@@ -455,16 +111,21 @@
 
         <section id="osts-section" class="content-section">
             <h2 class="section-title">OSTs</h2>
-            <div class="music-grid" id="osts-grid"></div>
+            <div id="osts-grid"></div>
         </section>
 
         <section id="info-section" class="content-section">
-            <h2 class="section-title">InformaÃ§Ãµes</h2>
+            <h2 class="section-title">Informações</h2>
             <div class="search-bar">
-                <input type="text" id="info-search" placeholder="Buscar informaÃ§Ãµes sobre animes...">
+                <input type="text" id="info-search" placeholder="Buscar informações sobre animes...">
                 <button class="btn btn-primary" id="info-search-btn"><i class="fas fa-search"></i></button>
             </div>
             <div id="anime-info-container"></div>
+        </section>
+
+        <section id="continue-section" class="content-section">
+            <h2 class="section-title">Continuar Assistindo</h2>
+            <div class="anime-grid" id="continue-grid"></div>
         </section>
     </main>
 
@@ -474,7 +135,7 @@
             <div id="video-player-container">
                 <video id="anime-player" controls>
                     <source src="" type="video/mp4">
-                    Seu navegador nÃ£o suporta o elemento de vÃ­deo.
+                    Seu navegador não suporta o elemento de vídeo.
                 </video>
                 <div class="video-controls">
                     <button id="like-btn" class="btn-icon"><i class="far fa-thumbs-up"></i></button>
@@ -494,30 +155,70 @@
         </div>
     </div>
 
+    <div id="music-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div id="music-player-container">
+                <div class="music-player">
+                    <div class="music-cover">
+                        <img id="music-cover-img" src="" alt="Capa do Álbum">
+                    </div>
+                    <div class="music-info">
+                        <h2 id="music-title"></h2>
+                        <p id="music-artist"></p>
+                        <p id="music-anime"></p>
+                        <div class="music-controls">
+                            <button id="music-prev" class="btn-icon"><i class="fas fa-step-backward"></i></button>
+                            <button id="music-play" class="btn-icon"><i class="fas fa-play"></i></button>
+                            <button id="music-next" class="btn-icon"><i class="fas fa-step-forward"></i></button>
+                            <input type="range" id="music-progress" min="0" max="100" value="0">
+                            <span id="music-current-time">0:00</span>
+                            <span id="music-duration">0:00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mini-player" id="mini-player">
+        <div class="mini-cover">
+            <img id="mini-cover-img" src="" alt="Capa">
+        </div>
+        <div class="mini-info">
+            <span id="mini-title"></span>
+            <span id="mini-artist"></span>
+        </div>
+        <div class="mini-controls">
+            <button id="mini-play" class="btn-icon"><i class="fas fa-play"></i></button>
+            <button id="mini-close" class="btn-icon"><i class="fas fa-times"></i></button>
+        </div>
+    </div>
+
     <div id="terms-modal" class="modal">
         <div class="modal-content" style="max-height: 80vh; overflow-y: auto;">
             <span class="close-terms">&times;</span>
-            <h2>Termos de ServiÃ§o do AniVerse</h2>
-            <p><strong>Ãšltima atualizaÃ§Ã£o: Junho 2025</strong></p>
+            <h2>Termos de Serviço do AniVerse</h2>
+            <p><strong>Última atualização: Junho 2025</strong></p>
             <h3>1. Sobre o AniVerse</h3>
-            <p>O AniVerse Ã© um projeto criado por fÃ£s para fÃ£s, sem fins lucrativos, com o objetivo de preservar e compartilhar a cultura dos animes.</p>
-            <h3>2. IsenÃ§Ã£o de Responsabilidade</h3>
-            <p>O AniVerse nÃ£o Ã© responsÃ¡vel pelo conteÃºdo dos links externos. Todos os direitos dos animes exibidos pertencem aos seus respectivos criadores.</p>
+            <p>O AniVerse é um projeto criado por fãs para fãs, sem fins lucrativos, com o objetivo de preservar e compartilhar a cultura dos animes.</p>
+            <h3>2. Isenção de Responsabilidade</h3>
+            <p>O AniVerse não é responsável pelo conteúdo dos links externos. Todos os direitos dos animes exibidos pertencem aos seus respectivos criadores.</p>
         </div>
     </div>
 
     <div id="privacy-modal" class="modal">
         <div class="modal-content" style="max-height: 80vh; overflow-y: auto;">
             <span class="close-privacy">&times;</span>
-            <h2>PolÃ­tica de Privacidade do AniVerse</h2>
-            <p><strong>Ãšltima atualizaÃ§Ã£o: Junho 2025</strong></p>
-            <h3>1. InformaÃ§Ãµes Coletadas</h3>
+            <h2>Política de Privacidade do AniVerse</h2>
+            <p><strong>Última atualização: Junho 2025</strong></p>
+            <h3>1. Informações Coletadas</h3>
             <p>O AniVerse armazena localmente no seu navegador:</p>
             <ul>
-                <li>PreferÃªncias de visualizaÃ§Ã£o</li>
-                <li>Progresso nos episÃ³dios</li>
+                <li>Preferências de visualização</li>
+                <li>Progresso nos episódios</li>
                 <li>Perfil personalizado</li>
-                <li>Links de vÃ­deos customizados adicionados pelo usuÃ¡rio</li>
+                <li>Links de vídeos customizados adicionados pelo usuário</li>
             </ul>
         </div>
     </div>
@@ -532,7 +233,7 @@
                     <input type="text" id="profile-name" placeholder="Seu nome">
                 </div>
                 <div class="form-group">
-                    <label>Pronome JaponÃªs:</label>
+                    <label>Pronome Japonês:</label>
                     <div class="pronoun-options">
                         <button class="pronoun-btn" data-pronoun="-chan">-chan</button>
                         <button class="pronoun-btn" data-pronoun="-san">-san</button>
@@ -623,7 +324,7 @@
                             </div>
                         </div>
                         <div class="avatar-preview">
-                            <h4>PrÃ©-visualizaÃ§Ã£o:</h4>
+                            <h4>Pré-visualização:</h4>
                             <div class="preview-container" id="avatar-preview">
                                 <div class="avatar-bg" style="background-color: #ff6b6b;">
                                     <img src="https://i.ibb.co/0jq7R0y/anime-bg.jpg" alt="Personagem" class="avatar-char">
@@ -638,45 +339,32 @@
         </div>
     </div>
 
-    <div id="music-modal" class="modal">
+    <div id="custom-link-modal" class="modal">
         <div class="modal-content">
             <span class="close-modal">&times;</span>
-            <div id="music-player-container">
-                <div class="music-player">
-                    <div class="music-cover">
-                        <img id="music-cover-img" src="" alt="Capa do Ãlbum">
-                    </div>
-                    <div class="music-info">
-                        <h2 id="music-title"></h2>
-                        <p id="music-artist"></p>
-                        <p id="music-anime"></p>
-                        <audio id="music-player" controls>
-                            <source src="" type="audio/mpeg">
-                            Seu navegador nÃ£o suporta o elemento de Ã¡udio.
-                        </audio>
-                        <div class="music-controls">
-                            <button id="music-prev" class="btn-icon"><i class="fas fa-step-backward"></i></button>
-                            <button id="music-play" class="btn-icon"><i class="fas fa-play"></i></button>
-                            <button id="music-next" class="btn-icon"><i class="fas fa-step-forward"></i></button>
-                            <input type="range" id="music-progress" min="0" max="100" value="0">
-                            <span id="music-current-time">0:00</span>
-                            <span id="music-duration">0:00</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="mini-player" id="mini-player">
-                    <div class="mini-cover">
-                        <img id="mini-cover-img" src="" alt="Capa">
-                    </div>
-                    <div class="mini-info">
-                        <span id="mini-title"></span>
-                        <span id="mini-artist"></span>
-                    </div>
-                    <div class="mini-controls">
-                        <button id="mini-play" class="btn-icon"><i class="fas fa-play"></i></button>
-                    </div>
-                </div>
+            <h2>Adicionar Vídeo Externo</h2>
+            <div class="form-group">
+                <label for="custom-anime-id">ID do Anime:</label>
+                <input type="text" id="custom-anime-id" placeholder="ID único para o vídeo">
             </div>
+            <div class="form-group">
+                <label for="custom-anime-title">Título:</label>
+                <input type="text" id="custom-anime-title" placeholder="Título do anime/vídeo">
+            </div>
+            <div class="form-group">
+                <label for="custom-season">Temporada:</label>
+                <input type="number" id="custom-season" value="1" min="1">
+            </div>
+            <div class="form-group">
+                <label for="custom-episode">Episódio:</label>
+                <input type="number" id="custom-episode" value="1" min="1">
+            </div>
+            <div class="form-group">
+                <label for="custom-video-url">URL do Vídeo:</label>
+                <input type="text" id="custom-video-url" placeholder="Cole o link do vídeo aqui">
+                <small>Links protegidos podem não funcionar devido a restrições CORS</small>
+            </div>
+            <button id="play-custom-video" class="btn btn-primary">Reproduzir</button>
         </div>
     </div>
 
@@ -690,8 +378,8 @@
                 <div class="footer-section">
                     <h3>Links</h3>
                     <ul>
-                        <li><a href="#" id="terms-link">Termos de ServiÃ§o</a></li>
-                        <li><a href="#" id="privacy-link">PolÃ­tica de Privacidade</a></li>
+                        <li><a href="#" id="terms-link">Termos de Serviço</a></li>
+                        <li><a href="#" id="privacy-link">Política de Privacidade</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">
@@ -704,10 +392,14 @@
                 </div>
             </div>
             <div class="copyright">
-                <p>&copy; 2025 AniVerse - Feito por fÃ£s para fÃ£s</p>
+                <p>&copy; 2025 AniVerse - Feito por fãs para fãs</p>
             </div>
         </div>
     </footer>
+
+    <button id="custom-video-btn" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Adicionar Vídeo
+    </button>
 
     <script src="js/anime-db.js"></script>
     <script src="js/script.js"></script>
