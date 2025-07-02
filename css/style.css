@@ -878,51 +878,7 @@ footer {
     gap: 10px;
 }
 
-/* Animações */
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-@keyframes fadeInDown {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateY(50px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes expandWidth {
-    from { width: 0; }
-    to { width: 60px; }
-}
-
-/* Estilos para a seção de músicas */
+/* Seção de Músicas */
 .music-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -986,7 +942,12 @@ footer {
     color: #ddd;
 }
 
-/* Player de música */
+/* Player de Música */
+#music-player-container {
+    width: 100%;
+    position: relative;
+}
+
 .music-player {
     display: grid;
     grid-template-columns: 1fr 2fr;
@@ -1019,7 +980,7 @@ footer {
     margin: 0 10px;
 }
 
-.music-progress {
+#music-progress {
     width: 100%;
     margin: 10px 0;
 }
@@ -1029,7 +990,7 @@ footer {
     color: var(--text-color);
 }
 
-/* Mini player */
+/* Mini Player */
 .mini-player {
     position: fixed;
     bottom: 20px;
@@ -1075,7 +1036,7 @@ footer {
     margin-left: 15px;
 }
 
-/* Seção de informações */
+/* Seção de Informações */
 #anime-info-container {
     margin-top: 30px;
 }
@@ -1161,12 +1122,93 @@ footer {
     padding-bottom: 10px;
 }
 
+/* Animações */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes expandWidth {
+    from { width: 0; }
+    to { width: 60px; }
+}
+
+/* Responsividade */
 @media (max-width: 768px) {
-    .anime-details {
+    header .container {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    nav ul {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .hero-content h2 {
+        font-size: 2rem;
+    }
+
+    .anime-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    }
+
+    .modal-content {
+        width: 95%;
+        margin: 5% auto;
+        padding: 10px;
+    }
+
+    #anime-player {
+        max-height: 50vh;
+    }
+
+    .avatar-selector {
         grid-template-columns: 1fr;
+    }
+
+    .char-options-grid {
+        grid-template-columns: repeat(3, 1fr);
     }
     
     .music-player {
+        grid-template-columns: 1fr;
+    }
+    
+    .anime-details {
         grid-template-columns: 1fr;
     }
     
