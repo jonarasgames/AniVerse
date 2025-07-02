@@ -563,8 +563,8 @@
       {
         "title": "Soramimi Cake",
         "artist": "Oranges & Lemons",
-        "audio": "https://example.com/azumanga-op1.mp3",
-        "cover": "https://example.com/azumanga-op1-cover.jpg",
+        "audio": "https://kappa.vgmsite.com/soundtracks/azumanga-daiou-the-animation-utaimasho/eyugksoc/01.%20Ear-Playing-Tricks%20Cake.mp3",
+        "cover": "https://static.wikia.nocookie.net/azumanga/images/8/80/Soramimi_Cake_Raspberry_heaven.jpg/revision/latest?cb=20130811020212",
         "type": "opening",
         "season": 1
       }
@@ -573,8 +573,8 @@
       {
         "title": "Raspberry Heaven",
         "artist": "Oranges & Lemons",
-        "audio": "https://example.com/azumanga-ed1.mp3",
-        "cover": "https://example.com/azumanga-ed1-cover.jpg",
+        "audio": "https://kappa.vgmsite.com/soundtracks/azumanga-daiou-the-animation-utaimasho/ieokccdk/12.%20raspberry%20heaven.mp3",
+        "cover": "https://static.wikia.nocookie.net/azumanga/images/8/80/Soramimi_Cake_Raspberry_heaven.jpg/revision/latest?cb=20130811020212",
         "type": "ending",
         "season": 1
       }
@@ -857,8 +857,73 @@
     ],
     "year": 2021,
     "rating": 7.7,
-     "openings": [],
+    "openings": [],
     "endings": [],
     "osts": []
+  },
+  {
+    "id": 10,
+    "title": "Miss Kobayashi's Dragon Maid",
+    "description": "Um funcionário de escritório contrata um dragão de coração bondoso para servir como sua empregada e entra em um mundo de desventuras cômicas.",
+    "thumbnail": "https://images.fanart.tv/fanart/miss-kobayashis-dragon-maid-63c7e19dafb01.jpg",
+    "trailer": "https://www.youtube.com/watch?v=4N6ozeZ2cA0",
+    "type": "anime",
+    "dateAdded": "2025-07-02",
+    "categories": [
+      "comedy",
+      "adventure",
+      "slice of life"
+    ],
+    "seasons": [
+      {
+        "number": 1,
+        "episodes": [
+          {
+            "title": "Episódio 1",
+            "videoUrl": "",
+            "duration": 0
+          }
+        ]
+      }
+    ],
+    "year": 2017,
+    "rating": 7.7,
+    "openings": [
+      {
+        "title": "Blue Sky Rhapsody",
+        "artist": "Fhána",
+        "audio": "https://dn721806.ca.archive.org/0/items/misskobayashisdragonmaidopfull/Miss_kobayashis_dragon_maidOpFull.mp3",
+        "cover": "https://static.wikia.nocookie.net/maid-dragon/images/d/de/108125_686683.jpg/revision/latest/scale-to-width-down/1000?cb=20180215050232",
+        "type": "opening",
+        "season": 1
+      },
+      {
+        "title": "Ai no Supreme!",
+        "artist": "fhána",
+        "audio": "https://jonaras.s-ul.eu/ds5lZYDG",
+        "cover": "https://static.wikia.nocookie.net/maid-dragon/images/b/b8/Ai_No_Supreme_CD_Cover.jpg/revision/latest?cb=20210619013346",
+        "type": "opening",
+        "season": 2
+      }
+    ],
+    "endings": [
+      {
+        "title": "Ishukan Communication",
+        "artist": "Choro-gonzu",
+        "audio": "https://jonaras.s-ul.eu/AQyn08dm",
+        "cover": "https://static.wikia.nocookie.net/maid-dragon/images/8/8c/Ishukan_Communication_Cover.jpg/revision/latest?cb=20180215050531",
+        "type": "ending",
+        "season": 1
+      },
+      {
+        "title": "Maid with Dragons ︎❤︎",
+        "artist": "Super Chorogons",
+        "audio": "https://jonaras.s-ul.eu/kvukHM8P",
+        "cover": "https://static.wikia.nocookie.net/maid-dragon/images/0/00/Maid_with_Dragons_CD_Cover.jpg/revision/latest?cb=20210702190906",
+        "type": "ending",
+        "season": 2
+      }
+    ],
+    "osts": {}
   }
 ]
