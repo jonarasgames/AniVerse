@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Modo Escuro/Claro
     const darkModeToggle = document.getElementById('dark-mode-toggle');
-    const darkModeStyle = document.getElementById('dark-mode-style');Add commentMore actions
+    const darkModeStyle = document.getElementById('dark-mode-style');
     const prefersDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
     
     // Verificar preferência do sistema ou localStorage
