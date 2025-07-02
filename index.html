@@ -111,7 +111,7 @@
 
         <section id="osts-section" class="content-section">
             <h2 class="section-title">OSTs</h2>
-            <div id="osts-grid"></div>
+            <div class="music-grid" id="osts-grid"></div>
         </section>
 
         <section id="info-section" class="content-section">
@@ -218,7 +218,6 @@
                 <li>Preferências de visualização</li>
                 <li>Progresso nos episódios</li>
                 <li>Perfil personalizado</li>
-                <li>Links de vídeos customizados adicionados pelo usuário</li>
             </ul>
         </div>
     </div>
@@ -339,35 +338,6 @@
         </div>
     </div>
 
-    <div id="custom-link-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal">&times;</span>
-            <h2>Adicionar Vídeo Externo</h2>
-            <div class="form-group">
-                <label for="custom-anime-id">ID do Anime:</label>
-                <input type="text" id="custom-anime-id" placeholder="ID único para o vídeo">
-            </div>
-            <div class="form-group">
-                <label for="custom-anime-title">Título:</label>
-                <input type="text" id="custom-anime-title" placeholder="Título do anime/vídeo">
-            </div>
-            <div class="form-group">
-                <label for="custom-season">Temporada:</label>
-                <input type="number" id="custom-season" value="1" min="1">
-            </div>
-            <div class="form-group">
-                <label for="custom-episode">Episódio:</label>
-                <input type="number" id="custom-episode" value="1" min="1">
-            </div>
-            <div class="form-group">
-                <label for="custom-video-url">URL do Vídeo:</label>
-                <input type="text" id="custom-video-url" placeholder="Cole o link do vídeo aqui">
-                <small>Links protegidos podem não funcionar devido a restrições CORS</small>
-            </div>
-            <button id="play-custom-video" class="btn btn-primary">Reproduzir</button>
-        </div>
-    </div>
-
     <footer>
         <div class="container">
             <div class="footer-content">
@@ -396,10 +366,6 @@
             </div>
         </div>
     </footer>
-
-    <button id="custom-video-btn" class="btn btn-primary">
-        <i class="fas fa-plus"></i> Adicionar Vídeo
-    </button>
 
     <script src="js/anime-db.js"></script>
     <script src="js/script.js"></script>
