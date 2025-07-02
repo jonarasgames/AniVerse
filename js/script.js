@@ -56,8 +56,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 loadContinueWatching();
             } else if (sectionId === 'openings-section') {
                 // Carregado pelo music-player.js
-            } else if (sectionId === 'osts-section') {
-                // Carregado pelo music-player.js
             } else if (sectionId === 'info-section') {
                 // Carregado pelo info-section.js
             }
