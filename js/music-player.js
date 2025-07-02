@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentPlaylist = [];
     let currentType = '';
     let isPlaying = false;
-    let animeData = []; // Armazenará os dados do anime-data.json
+    let animeData = [];
 
     // Carregar dados do anime-data.json
     fetch('anime-data.json')
@@ -33,107 +33,63 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .catch(error => console.error('Erro ao carregar anime-data.json:', error));
 
-    // Processar os dados para criar a biblioteca de músicas
-    function processMusicLibrary() {
-        const library = {
-            openings: [],
-            endings: [],
-            osts: {}
-        };
-
-        animeData.forEach(anime => {
-            // Processar openings
-            if (anime.openings && anime.openings.length > 0) {
-                anime.openings.forEach(opening => {
-                    library.openings.push({
-                        title: opening.title,
-                        artist: opening.artist,
-                        anime: anime.title,
-                        cover: opening.cover || anime.thumbnail,
-                        audio: opening.audio,
-                        type: 'opening',
-                        season: opening.season
-                    });
-                });
-            }
-
-            // Processar endings
-            if (anime.endings && anime.endings.length > 0) {
-                anime.endings.forEach(ending => {
-                    library.endings.push({
-                        title: ending.title,
-                        artist: ending.artist,
-                        anime: anime.title,
-                        cover: ending.cover || anime.thumbnail,
-                        audio: ending.audio,
-                        type: 'ending',
-                        season: ending.season
-                    });
-                });
-            }
-
-            // Processar OSTs
-            if (anime.osts && Object.keys(anime.osts).length > 0) {
-                for (const [albumName, albumData] of Object.entries(anime.osts)) {
-                    if (!library.osts[albumName]) {
-                        library.osts[albumName] = {
-                            year: albumData.year,
-                            cover: albumData.cover || anime.thumbnail,
-                            tracks: []
-                        };
-                    }
-
-                    albumData.tracks.forEach(track => {
-                        library.osts[albumName].tracks.push({
-                            title: track.title,
-                            artist: track.artist,
+    // Carregar a lista de músicas
+    function loadMusic(type) {
+        currentType = type;
+        
+        if (type === 'osts') {
+            renderAlbums();
+        } else {
+            // Criar playlist combinando todas as músicas do tipo especificado de todos os animes
+            currentPlaylist = [];
+            animeData.forEach(anime => {
+                if (anime[type] && anime[type].length > 0) {
+                    anime[type].forEach(track => {
+                        currentPlaylist.push({
+                            ...track,
                             anime: anime.title,
-                            audio: track.audio,
-                            duration: track.duration,
-                            cover: albumData.cover || anime.thumbnail
+                            cover: track.cover || anime.thumbnail
                         });
                     });
                 }
-            }
-        });
-
-        return library;
-    }
-
-    // Carregar a lista de músicas
-    function loadMusic(type) {
-        if (animeData.length === 0) return;
-        
-        currentType = type;
-        const musicLibrary = processMusicLibrary();
-        
-        if (type === 'osts') {
-            renderAlbums(musicLibrary.osts);
-        } else {
-            currentPlaylist = musicLibrary[type];
-            renderMusicGrid(type, currentPlaylist);
+            });
+            renderMusicGrid(type);
         }
     }
     
     // Renderizar álbuns (para OSTs)
-    function renderAlbums(ostsData) {
+    function renderAlbums() {
         const grid = document.getElementById('osts-grid');
         if (!grid) return;
         
         grid.innerHTML = '';
         
-        for (const [albumName, albumData] of Object.entries(ostsData)) {
+        // Coletar todos os álbuns OST de todos os animes
+        const allAlbums = {};
+        animeData.forEach(anime => {
+            if (anime.osts) {
+                for (const [albumName, albumData] of Object.entries(anime.osts)) {
+                    allAlbums[albumName] = {
+                        ...albumData,
+                        anime: anime.title,
+                        cover: albumData.cover || anime.thumbnail
+                    };
+                }
+            }
+        });
+        
+        for (const [albumName, albumData] of Object.entries(allAlbums)) {
             const albumSection = document.createElement('div');
             albumSection.className = 'album-section';
             
             albumSection.innerHTML = `
                 <div class="album-header">
                     <div class="album-cover">
-                        <img src="${albumData.cover}" alt="${albumName}" onerror="this.src='https://i.ibb.co/0jq7R0y/anime-bg.jpg'">
+                        <img src="${albumData.cover}" alt="${albumName}">
                     </div>
                     <div>
                         <h3 class="album-title">${albumName}</h3>
-                        <p class="album-year">${albumData.year}</p>
+                        <p class="album-year">${albumData.year} • ${albumData.anime}</p>
                     </div>
                 </div>
                 <div class="music-grid" id="album-${albumName.replace(/\s+/g, '-')}"></div>
@@ -151,12 +107,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 card.innerHTML = `
                     <div class="music-cover">
-                        <img src="${track.cover || albumData.cover}" alt="${track.title}" onerror="this.src='https://i.ibb.co/0jq7R0y/anime-bg.jpg'">
+                        <img src="${albumData.cover}" alt="${track.title}">
                     </div>
                     <div class="music-info">
                         <h3 class="music-title">${track.title}</h3>
-                        <p class="music-artist">${track.artist}</p>
-                        <p class="music-anime">${track.anime}</p>
+                        <p class="music-anime">${track.artist}</p>
                     </div>
                 `;
                 
@@ -173,35 +128,44 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Renderizar a grade de músicas (para openings e endings)
-    function renderMusicGrid(type, playlist) {
+    function renderMusicGrid(type) {
         const grid = document.getElementById(`${type}-grid`);
         if (!grid) return;
         
         grid.innerHTML = '';
         
-        playlist.forEach((track, index) => {
-            const card = document.createElement('div');
-            card.className = 'music-card';
-            card.dataset.index = index;
-            
-            card.innerHTML = `
-                <div class="music-cover">
-                    <img src="${track.cover}" alt="${track.title}" onerror="this.src='https://i.ibb.co/0jq7R0y/anime-bg.jpg'">
-                </div>
-                <div class="music-info">
-                    <h3 class="music-title">${track.title}</h3>
-                    <p class="music-artist">${track.artist}</p>
-                    <p class="music-anime">${track.anime}</p>
-                </div>
-            `;
-            
-            card.addEventListener('click', () => {
-                currentTrack = index;
-                playTrack();
-                musicModal.style.display = 'block';
+        // Filtrar apenas os animes que têm o tipo de música especificado
+        const animesWithMusic = animeData.filter(anime => anime[type] && anime[type].length > 0);
+        
+        animesWithMusic.forEach(anime => {
+            anime[type].forEach((track, index) => {
+                const card = document.createElement('div');
+                card.className = 'music-card';
+                card.dataset.index = index;
+                
+                card.innerHTML = `
+                    <div class="music-cover">
+                        <img src="${track.cover || anime.thumbnail}" alt="${track.title}">
+                    </div>
+                    <div class="music-info">
+                        <h3 class="music-title">${track.title}</h3>
+                        <p class="music-anime">${anime.title}</p>
+                    </div>
+                `;
+                
+                card.addEventListener('click', () => {
+                    // Encontrar a posição correta na playlist combinada
+                    currentTrack = currentPlaylist.findIndex(t => 
+                        t.title === track.title && 
+                        t.artist === track.artist && 
+                        t.anime === anime.title
+                    );
+                    playTrack();
+                    musicModal.style.display = 'block';
+                });
+                
+                grid.appendChild(card);
             });
-            
-            grid.appendChild(card);
         });
     }
     
@@ -340,5 +304,5 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Inicializar
-    // Agora é feito após o carregamento do anime-data.json
+    // loadMusic('openings'); - Agora é chamado após carregar o JSON
 });
