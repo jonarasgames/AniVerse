@@ -41,9 +41,66 @@
     ],
     "year": 2013,
     "rating": 4.8,
-    "openings": [],
-    "endings": [],
-    "osts": []
+    "openings": [
+      {
+        "title": "Guren no Yumiya",
+        "artist": "Linked Horizon",
+        "audio": "https://example.com/attack-op1.mp3",
+        "cover": "https://example.com/attack-op1-cover.jpg",
+        "type": "opening",
+        "season": 1
+      },
+      {
+        "title": "Shinzo wo Sasageyo!",
+        "artist": "Linked Horizon",
+        "audio": "https://example.com/attack-op2.mp3",
+        "cover": "https://example.com/attack-op2-cover.jpg",
+        "type": "opening",
+        "season": 2
+      }
+    ],
+    "endings": [
+      {
+        "title": "Utsukushiki Zankoku na Sekai",
+        "artist": "Yoko Hikasa",
+        "audio": "https://example.com/attack-ed1.mp3",
+        "cover": "https://example.com/attack-ed1-cover.jpg",
+        "type": "ending",
+        "season": 1
+      }
+    ],
+    "osts": {
+      "Attack on Titan Original Soundtrack": {
+        "year": 2013,
+        "cover": "https://example.com/attack-ost1-cover.jpg",
+        "tracks": [
+          {
+            "title": "ətˈæk 0N tάɪtn",
+            "artist": "Hiroyuki Sawano",
+            "audio": "https://example.com/attack-ost1.mp3",
+            "duration": 245
+          },
+          {
+            "title": "Vogel im Käfig",
+            "artist": "Hiroyuki Sawano",
+            "audio": "https://example.com/attack-ost2.mp3",
+            "duration": 328
+          }
+        ]
+      },
+      "Attack on Titan Season 2 OST": {
+        "year": 2017,
+        "cover": "https://example.com/attack-ost2-cover.jpg",
+        "tracks": [
+          {
+            "title": "Barricades",
+            "artist": "Hiroyuki Sawano",
+            "audio": "https://example.com/attack-ost3.mp3",
+            "duration": 215
+          }
+        ]
+      }
+    }
   },
   {
     "id": 2,
@@ -71,9 +128,40 @@
     ],
     "year": 2020,
     "rating": 4.9,
-     "openings": [],
-    "endings": [],
-    "osts": []
+    "openings": [
+      {
+        "title": "Homura",
+        "artist": "LiSA",
+        "audio": "https://example.com/demon-movie-op1.mp3",
+        "cover": "https://example.com/demon-movie-op1-cover.jpg",
+        "type": "opening",
+        "season": 1
+      }
+    ],
+    "endings": [
+      {
+        "title": "Kamado Tanjiro no Uta",
+        "artist": "Go Shiina",
+        "audio": "https://example.com/demon-movie-ed1.mp3",
+        "cover": "https://example.com/demon-movie-ed1-cover.jpg",
+        "type": "ending",
+        "season": 1
+      }
+    ],
+    "osts": {
+      "Demon Slayer: Mugen Train Original Soundtrack": {
+        "year": 2020,
+        "cover": "https://example.com/demon-movie-ost1-cover.jpg",
+        "tracks": [
+          {
+            "title": "Rengoku's Theme",
+            "artist": "Yuki Kajiura, Go Shiina",
+            "audio": "https://example.com/demon-movie-ost1.mp3",
+            "duration": 245
+          }
+        ]
+      }
+    }
   },
   {
     "id": 3,
@@ -101,9 +189,40 @@
     ],
     "year": 2021,
     "rating": 4.7,
-     "openings": [],
-    "endings": [],
-    "osts": []
+    "openings": [
+      {
+        "title": "Ichizu",
+        "artist": "King Gnu",
+        "audio": "https://example.com/jujutsu0-op1.mp3",
+        "cover": "https://example.com/jujutsu0-op1-cover.jpg",
+        "type": "opening",
+        "season": 1
+      }
+    ],
+    "endings": [
+      {
+        "title": "Sakayume",
+        "artist": "King Gnu",
+        "audio": "https://example.com/jujutsu0-ed1.mp3",
+        "cover": "https://example.com/jujutsu0-ed1-cover.jpg",
+        "type": "ending",
+        "season": 1
+      }
+    ],
+    "osts": {
+      "Jujutsu Kaisen 0 Original Soundtrack": {
+        "year": 2021,
+        "cover": "https://example.com/jujutsu0-ost1-cover.jpg",
+        "tracks": [
+          {
+            "title": "Yuta Okkotsu's Theme",
+            "artist": "Hiroaki Tsutsumi",
+            "audio": "https://example.com/jujutsu0-ost1.mp3",
+            "duration": 210
+          }
+        ]
+      }
+    }
   },
   {
     "id": 4,
@@ -131,9 +250,40 @@
     ],
     "year": 2019,
     "rating": 4.6,
-     "openings": [],
-    "endings": [],
-    "osts": []
+    "openings": [
+      {
+        "title": "GONG",
+        "artist": "WANIMA",
+        "audio": "https://example.com/op-stampede-op1.mp3",
+        "cover": "https://example.com/op-stampede-op1-cover.jpg",
+        "type": "opening",
+        "season": 1
+      }
+    ],
+    "endings": [
+      {
+        "title": "Memories",
+        "artist": "Maki Otsuki",
+        "audio": "https://example.com/op-stampede-ed1.mp3",
+        "cover": "https://example.com/op-stampede-ed1-cover.jpg",
+        "type": "ending",
+        "season": 1
+      }
+    ],
+    "osts": {
+      "One Piece: Stampede Original Soundtrack": {
+        "year": 2019,
+        "cover": "https://example.com/op-stampede-ost1-cover.jpg",
+        "tracks": [
+          {
+            "title": "Stampede Theme",
+            "artist": "Kohei Tanaka",
+            "audio": "https://example.com/op-stampede-ost1.mp3",
+            "duration": 245
+          }
+        ]
+      }
+    }
   },
   {
     "id": 5,
@@ -161,9 +311,40 @@
     ],
     "year": 2019,
     "rating": 4.8,
-     "openings": [],
-    "endings": [],
-    "osts": []
+    "openings": [
+      {
+        "title": "Higher Ground",
+        "artist": "Survive Said The Prophet",
+        "audio": "https://example.com/mha-movie-op1.mp3",
+        "cover": "https://example.com/mha-movie-op1-cover.jpg",
+        "type": "opening",
+        "season": 1
+      }
+    ],
+    "endings": [
+      {
+        "title": "Dakara, Hitori ja nai",
+        "artist": "Little Glee Monster",
+        "audio": "https://example.com/mha-movie-ed1.mp3",
+        "cover": "https://example.com/mha-movie-ed1-cover.jpg",
+        "type": "ending",
+        "season": 1
+      }
+    ],
+    "osts": {
+      "My Hero Academia: Heroes Rising Original Soundtrack": {
+        "year": 2019,
+        "cover": "https://example.com/mha-movie-ost1-cover.jpg",
+        "tracks": [
+          {
+            "title": "Heroes Rising Theme",
+            "artist": "Yuki Hayashi",
+            "audio": "https://example.com/mha-movie-ost1.mp3",
+            "duration": 245
+          }
+        ]
+      }
+    }
   },
   {
     "id": 6,
@@ -192,9 +373,40 @@
     ],
     "year": 1997,
     "rating": 8.1,
-     "openings": [],
-    "endings": [],
-    "osts": []
+    "openings": [
+      {
+        "title": "A Cruel Angel's Thesis",
+        "artist": "Yoko Takahashi",
+        "audio": "https://example.com/eva-op1.mp3",
+        "cover": "https://example.com/eva-op1-cover.jpg",
+        "type": "opening",
+        "season": 1
+      }
+    ],
+    "endings": [
+      {
+        "title": "Fly Me to the Moon",
+        "artist": "Claire",
+        "audio": "https://example.com/eva-ed1.mp3",
+        "cover": "https://example.com/eva-ed1-cover.jpg",
+        "type": "ending",
+        "season": 1
+      }
+    ],
+    "osts": {
+      "The End of Evangelion Original Soundtrack": {
+        "year": 1997,
+        "cover": "https://example.com/eva-movie-ost1-cover.jpg",
+        "tracks": [
+          {
+            "title": "Komm, süsser Tod",
+            "artist": "Arianne",
+            "audio": "https://example.com/eva-movie-ost1.mp3",
+            "duration": 245
+          }
+        ]
+      }
+    }
   },
   {
     "id": 7,
@@ -244,7 +456,7 @@
           },
           {
             "title": "Festival Cultural",
-            "videoUrl": "https://rr1---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751231746&ei=gjxhaP-oOeqI3rsP0_7KwAc&ip=200.106.211.8&id=a4ae57e54096e6eb&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751202946,&mh=pn&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=1&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.276&lmt=1697777500964110&mt=1751202563&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRQIhAIvHjoX_LDn_xb26RANcxQcwwNScsglGdxlxxRqwSceiAiAYgjlcbVF6Nts-cHkW1cuwz-o0hMj6COqBfADkKPC0hA%3D%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRAIgW7y5cyHT7Ima0GUcjI8TaUWrFA2gb4hQIrXeIFmwrakCIBFyoF_8KMc6HP1yQPNX3qoO79ZPGI68rfwptNH9h43s&cpn=YbOb4dlezYAmO6X2&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "videoUrl": "https://rr1---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751231746&ei=gjxhaP-oOeqI3rsP0_7KwAc&ip=200.106.211.8&id=a4ae57e54096e6eb&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751202946,&mh=pn&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=1&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.276&lmt=1697777500964110&mt=1751202563&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRQIhAIvHjoX_LDn_xb26RANcxQcwwNScsglGdxlxxRqwSceiAiAYgjlcbVF6Nts-cHkW1cuwz-o0hMj6COqBfADkKPC0hA%3D%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRAIgW7y5cyHT7Ima0GUcjI8TaUWrFA2gb4hQIrXeIFmwrakCIBY7ayI9eZcEw-XyVN-l7gcj8LlLSYjGHymjZExCFOsc&cpn=YbOb4dlezYAmO6X2&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
             "duration": 1447
           },
           {
@@ -299,7 +511,7 @@
           },
           {
             "title": "Provações da Koyomi",
-            "videoUrl": "https://rr2---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751243847&ei=x2thaNX6HOqI3rsP0_7KwAc&ip=200.106.211.8&id=fc13f9af6728f209&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751215047,&mh=J-&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=2&pcm2cms=yes&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.276&lmt=1697095940103829&mt=1751214798&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRQIhAO-joL1svqsbTWLLMPPIcEzZqShpmPAgMmemM-0i4ZmGAiBGHmMVAC7wT5AJfjI3LSYOBRVjwO6QgN9U3V_dDokgrA%3D%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pcm2cms,pl,rms&lsig=APaTxxMwRAIgWIGCEkg0mhj9ixwp-RoSvXWsLfXPaJOGLl24jRJwFHgCIHIyenFSQ80C8QPSi8KMmC2OtFINAlXDIwdJt-4g_NWE&cpn=gm-Q-LWzFcQucM7a&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "videoUrl": "https://rr2---sn-8v5oxucg-nn5l.googlevideo.com/videoplayback?expire=1751243847&ei=x2phaNX6HOqI3rsP0_7KwAc&ip=200.106.211.8&id=fc13f9af6728f209&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751215047,&mh=J-&mm=31&mn=sn-8v5oxucg-nn5l&ms=au&mv=m&mvi=2&pcm2cms=yes&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.276&lmt=1697095940103829&mt=1751214798&txp=1311224&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRQIhAO-joL1svqsbTWLLMPPIcEzZqShpmPAgMmemM-0i4ZmGAiBGHmMVAC7wT5AJfjI3LSYOBRVjwO6QgN9U3V_dDokgrA%3D%3D&lsparams=met,mh,mm,mn,ms,mv,mvi,pcm2cms,pl,rms&lsig=APaTxxMwRAIgWIGCEkg0mhj9ixwp-RoSvXWsLfXPaJOGLl24jRJwFHgCIHIyenFSQ80C8QPSi8KMmC2OtFINAlXDIwdJt-4g_NWE&cpn=gm-Q-LWzFcQucM7a&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
             "duration": 1447
           },
           {
@@ -329,7 +541,7 @@
           },
           {
             "title": "Yamamayaa",
-            "videoUrl": "https://rr3---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751244055&ei=l2xhaOa1Ja7hut0Pj5O98QU&ip=200.106.211.8&id=b846bf8f85cd0bc9&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751215255,&mh=HF&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=3&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.183&lmt=1590666642791413&mt=1751214798&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRAIgGvmz6x7bTNAZvZuIr7i74hHVMat6QJffuIAiOouchSgCIFDkO3cgUIwqvVYUjmD77NhD3Fkw6l53QyHDjwwkBmXX&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRgIhAMGiAR50rV5w0fI48-gzGxwbK_zA9A2UtKFXOUsoSrpzAiEAzDkqGwg4BfHjzJOi8fY8Lnq5o3K1TQvh-OCYnKiYRvY%3D&cpn=TgrtR_P0e75f-MBf&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
+            "videoUrl": "https://rr3---sn-8v5oxucg-nn5e.googlevideo.com/videoplayback?expire=1751244055&ei=l2xhaKb0G6SAvPIP_fKN2QE&ip=200.106.211.8&id=b846bf8f85cd0bc9&itag=18&source=blogger&xpc=Egho7Zf3LnoBAQ%3D%3D&met=1751215255,&mh=HF&mm=31&mn=sn-8v5oxucg-nn5e&ms=au&mv=m&mvi=3&pl=24&rms=au,au&susc=bl&eaua=OfoyTv86HTM&mime=video/mp4&vprv=1&rqh=1&dur=1447.183&lmt=1590666642791413&mt=1751214798&sparams=expire,ei,ip,id,itag,source,xpc,susc,eaua,mime,vprv,rqh,dur,lmt&sig=AJfQdSswRAIgGvmz6x7bTNAZvZuIr7i74hHVMat6QJffuIAiOouchSgCIFDkO3cgUIwqvVYUjmD77NhD3Fkw6l53QyHDjwwkBmXX&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRgIhAMGiAR50rV5w0fI48-gzGxwbK_zA9A2UtKFXOUsoSrpzAiEAzDkqGwg4BfHjzJOi8fY8Lnq5o3K1TQvh-OCYnKiYRvY%3D&cpn=TgrtR_P0e75f-MBf&c=WEB_EMBEDDED_PLAYER&cver=1.20250624.21.00",
             "duration": 1447
           },
           {
@@ -347,9 +559,40 @@
     ],
     "year": 2002,
     "rating": 8.1,
-     "openings": [],
-    "endings": [],
-    "osts": []
+    "openings": [
+      {
+        "title": "Soramimi Cake",
+        "artist": "Oranges & Lemons",
+        "audio": "https://example.com/azumanga-op1.mp3",
+        "cover": "https://example.com/azumanga-op1-cover.jpg",
+        "type": "opening",
+        "season": 1
+      }
+    ],
+    "endings": [
+      {
+        "title": "Raspberry Heaven",
+        "artist": "Oranges & Lemons",
+        "audio": "https://example.com/azumanga-ed1.mp3",
+        "cover": "https://example.com/azumanga-ed1-cover.jpg",
+        "type": "ending",
+        "season": 1
+      }
+    ],
+    "osts": {
+      "Azumanga Daioh Original Soundtrack": {
+        "year": 2002,
+        "cover": "https://example.com/azumanga-ost1-cover.jpg",
+        "tracks": [
+          {
+            "title": "Azumanga Daioh Main Theme",
+            "artist": "Masaki Kurihara",
+            "audio": "https://example.com/azumanga-ost1.mp3",
+            "duration": 120
+          }
+        ]
+      }
+    }
   },
   {
     "id": 8,
@@ -432,7 +675,41 @@
       }
     ],
     "year": 2024,
-    "rating": 7.9
+    "rating": 7.9,
+    "openings": [
+      {
+        "title": "Ranma 1/2 2024 Opening",
+        "artist": "Artist Name",
+        "audio": "https://example.com/ranma2024-op1.mp3",
+        "cover": "https://example.com/ranma2024-op1-cover.jpg",
+        "type": "opening",
+        "season": 1
+      }
+    ],
+    "endings": [
+      {
+        "title": "Ranma 1/2 2024 Ending",
+        "artist": "Artist Name",
+        "audio": "https://example.com/ranma2024-ed1.mp3",
+        "cover": "https://example.com/ranma2024-ed1-cover.jpg",
+        "type": "ending",
+        "season": 1
+      }
+    ],
+    "osts": {
+      "Ranma 1/2 2024 Original Soundtrack": {
+        "year": 2024,
+        "cover": "https://example.com/ranma2024-ost1-cover.jpg",
+        "tracks": [
+          {
+            "title": "Ranma 1/2 2024 Main Theme",
+            "artist": "Composer Name",
+            "audio": "https://example.com/ranma2024-ost1.mp3",
+            "duration": 180
+          }
+        ]
+      }
+    }
   },
   {
     "id": 9,
