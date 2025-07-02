@@ -22,17 +22,53 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentPlaylist = [];
     let currentType = '';
     let isPlaying = false;
-    let animeData = [];
 
-    // Carregar dados do anime-data.json
-    fetch('anime-data.json')
-        .then(response => response.json())
-        .then(data => {
-            animeData = data;
-            loadMusic('openings');
-        })
-        .catch(error => console.error('Erro ao carregar anime-data.json:', error));
-
+    // Dados de exemplo organizados por álbuns (OST)
+    const musicLibrary = {
+        openings: [
+            {
+                title: "Gurenge",
+                artist: "LiSA",
+                anime: "Demon Slayer",
+                cover: "https://i.ibb.co/0jq7R0y/anime-bg.jpg",
+                audio: "https://ia801700.us.archive.org/9/items/dragonmaid-02/01%20%E5%B0%8F%E6%9E%97%E3%81%95%E3%82%93%E3%81%A1.mp3",
+                type: "opening"
+            }
+        ],
+        osts: {
+            "Demon Slayer OST Vol.1": {
+                year: 2019,
+                cover: "https://i.ibb.co/0jq7R0y/anime-bg.jpg",
+                tracks: [
+                    {
+                        title: "Main Theme",
+                        artist: "Yuki Kajiura",
+                        anime: "Demon Slayer",
+                        audio: "https://ia801700.us.archive.org/9/items/dragonmaid-02/01%20%E5%B0%8F%E6%9E%97%E3%81%95%E3%82%93%E3%81%A1.mp3"
+                    },
+                    {
+                        title: "Battle Theme",
+                        artist: "Yuki Kajiura",
+                        anime: "Demon Slayer",
+                        audio: "https://ia801700.us.archive.org/9/items/dragonmaid-02/01%20%E5%B0%8F%E6%9E%97%E3%81%95%E3%82%93%E3%81%A1.mp3"
+                    }
+                ]
+            },
+            "Demon Slayer OST Vol.2": {
+                year: 2020,
+                cover: "https://i.ibb.co/0jq7R0y/anime-bg.jpg",
+                tracks: [
+                    {
+                        title: "Emotional Theme",
+                        artist: "Yuki Kajiura",
+                        anime: "Demon Slayer",
+                        audio: "https://ia801700.us.archive.org/9/items/dragonmaid-02/01%20%E5%B0%8F%E6%9E%97%E3%81%95%E3%82%93%E3%81%A1.mp3"
+                    }
+                ]
+            }
+        }
+    };
+    
     // Carregar a lista de músicas
     function loadMusic(type) {
         currentType = type;
@@ -40,19 +76,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (type === 'osts') {
             renderAlbums();
         } else {
-            // Criar playlist combinando todas as músicas do tipo especificado de todos os animes
-            currentPlaylist = [];
-            animeData.forEach(anime => {
-                if (anime[type] && anime[type].length > 0) {
-                    anime[type].forEach(track => {
-                        currentPlaylist.push({
-                            ...track,
-                            anime: anime.title,
-                            cover: track.cover || anime.thumbnail
-                        });
-                    });
-                }
-            });
+            currentPlaylist = musicLibrary[type];
             renderMusicGrid(type);
         }
     }
@@ -64,21 +88,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         grid.innerHTML = '';
         
-        // Coletar todos os álbuns OST de todos os animes
-        const allAlbums = {};
-        animeData.forEach(anime => {
-            if (anime.osts) {
-                for (const [albumName, albumData] of Object.entries(anime.osts)) {
-                    allAlbums[albumName] = {
-                        ...albumData,
-                        anime: anime.title,
-                        cover: albumData.cover || anime.thumbnail
-                    };
-                }
-            }
-        });
-        
-        for (const [albumName, albumData] of Object.entries(allAlbums)) {
+        for (const [albumName, albumData] of Object.entries(musicLibrary.osts)) {
             const albumSection = document.createElement('div');
             albumSection.className = 'album-section';
             
@@ -89,7 +99,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                     <div>
                         <h3 class="album-title">${albumName}</h3>
-                        <p class="album-year">${albumData.year} • ${albumData.anime}</p>
+                        <p class="album-year">${albumData.year}</p>
                     </div>
                 </div>
                 <div class="music-grid" id="album-${albumName.replace(/\s+/g, '-')}"></div>
@@ -127,45 +137,35 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Renderizar a grade de músicas (para openings e endings)
+    // Renderizar a grade de músicas (para openings)
     function renderMusicGrid(type) {
         const grid = document.getElementById(`${type}-grid`);
         if (!grid) return;
         
         grid.innerHTML = '';
         
-        // Filtrar apenas os animes que têm o tipo de música especificado
-        const animesWithMusic = animeData.filter(anime => anime[type] && anime[type].length > 0);
-        
-        animesWithMusic.forEach(anime => {
-            anime[type].forEach((track, index) => {
-                const card = document.createElement('div');
-                card.className = 'music-card';
-                card.dataset.index = index;
-                
-                card.innerHTML = `
-                    <div class="music-cover">
-                        <img src="${track.cover || anime.thumbnail}" alt="${track.title}">
-                    </div>
-                    <div class="music-info">
-                        <h3 class="music-title">${track.title}</h3>
-                        <p class="music-anime">${anime.title}</p>
-                    </div>
-                `;
-                
-                card.addEventListener('click', () => {
-                    // Encontrar a posição correta na playlist combinada
-                    currentTrack = currentPlaylist.findIndex(t => 
-                        t.title === track.title && 
-                        t.artist === track.artist && 
-                        t.anime === anime.title
-                    );
-                    playTrack();
-                    musicModal.style.display = 'block';
-                });
-                
-                grid.appendChild(card);
+        musicLibrary[type].forEach((track, index) => {
+            const card = document.createElement('div');
+            card.className = 'music-card';
+            card.dataset.index = index;
+            
+            card.innerHTML = `
+                <div class="music-cover">
+                    <img src="${track.cover}" alt="${track.title}">
+                </div>
+                <div class="music-info">
+                    <h3 class="music-title">${track.title}</h3>
+                    <p class="music-anime">${track.anime}</p>
+                </div>
+            `;
+            
+            card.addEventListener('click', () => {
+                currentTrack = index;
+                playTrack();
+                musicModal.style.display = 'block';
             });
+            
+            grid.appendChild(card);
         });
     }
     
@@ -296,13 +296,11 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelector('nav').addEventListener('click', (e) => {
         if (e.target.dataset.section === 'openings') {
             loadMusic('openings');
-        } else if (e.target.dataset.section === 'endings') {
-            loadMusic('endings');
         } else if (e.target.dataset.section === 'osts') {
             loadMusic('osts');
         }
     });
     
     // Inicializar
-    // loadMusic('openings'); - Agora é chamado após carregar o JSON
+    loadMusic('openings');
 });
