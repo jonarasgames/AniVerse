@@ -344,3 +344,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // Inicializar
     loadMusic('openings');
 });
+
+// Tabs de música (Openings/Endings e OSTs)
+document.querySelectorAll('.music-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+        document.querySelectorAll('.music-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        const type = tab.dataset.section;
+        loadMusic(type); // já existe e funciona corretamente
+    });
+});
