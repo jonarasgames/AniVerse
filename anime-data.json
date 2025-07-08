@@ -956,5 +956,35 @@
     "openings": [],
     "endings": [],
     "osts": {}
+  },
+  {
+    "id": 12,
+    "title": "Azumanga Daioh: The Very Short Movie",
+    "description": "Uma pequena compilação de esquetes humorísticos com um grupo de amigos do ensino médio.",
+    "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/thumbnails/azudaiohova.png",
+    "trailer": "num tem",
+    "type": "movie",
+    "dateAdded": "2025-07-08",
+    "categories": [
+      "comedy",
+      "slice of life"
+    ],
+    "seasons": [
+      {
+        "number": 1,
+        "episodes": [
+          {
+            "title": "Episódio 1",
+            "videoUrl": "https://www.youtube-nocookie.com/embed/TtU49eoqGbE?si=g7tyZZ6t-3AyyGqy&amp;controls=0",
+            "duration": 353
+          }
+        ]
+      }
+    ],
+    "year": 2001,
+    "rating": 7.3,
+    "openings": [],
+    "endings": [],
+    "osts": {}
   }
 ]
