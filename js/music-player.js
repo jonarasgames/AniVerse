@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 currentPlaylist = osts[album].tracks;
                 currentTrack = parseInt(this.dataset.index);
                 playTrack();
-                elements.musicModal.style.display = 'block';
+                elements.musicModal.style.display = 'flex';
             });
         });
     }
@@ -137,7 +137,7 @@ document.addEventListener('DOMContentLoaded', function() {
             card.addEventListener('click', function() {
                 currentTrack = parseInt(this.dataset.index);
                 playTrack();
-                elements.musicModal.style.display = 'block';
+                elements.musicModal.style.display = 'flex';
             });
         });
     }
