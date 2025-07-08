@@ -42,6 +42,7 @@
     </header>
 
     <main class="container">
+        <!-- Seção Home -->
         <section id="home-section" class="content-section active">
             <div class="hero">
                 <div class="hero-content">
@@ -88,21 +89,25 @@
             </section>
         </section>
 
+        <!-- Seção Animes -->
         <section id="animes-section" class="content-section">
             <h2 class="section-title">Animes</h2>
             <div class="anime-grid" id="animes-grid"></div>
         </section>
 
+        <!-- Seção Filmes -->
         <section id="movies-section" class="content-section">
             <h2 class="section-title">Filmes</h2>
             <div class="anime-grid" id="movies-grid"></div>
         </section>
 
+        <!-- Seção OVAs -->
         <section id="ovas-section" class="content-section">
             <h2 class="section-title">OVAs</h2>
             <div class="anime-grid" id="ovas-grid"></div>
         </section>
 
+        <!-- Seção Músicas (Openings/Endings e OSTs) -->
         <section id="openings-section" class="content-section">
             <div class="music-tabs">
                 <div class="music-tab active" data-section="openings">Openings/Endings</div>
@@ -118,6 +123,7 @@
             </div>
         </section>
 
+        <!-- Seção Informações -->
         <section id="info-section" class="content-section">
             <h2 class="section-title">Informações</h2>
             <div class="search-bar">
@@ -127,19 +133,20 @@
             <div id="anime-info-container"></div>
         </section>
 
+        <!-- Seção Continuar Assistindo -->
         <section id="continue-section" class="content-section">
             <h2 class="section-title">Continuar Assistindo</h2>
             <div class="anime-grid" id="continue-grid"></div>
         </section>
     </main>
 
-    <!-- Modal do Player de Música -->
+    <!-- Modal do Player de Música (CORRIGIDO) -->
     <div id="music-modal">
         <div class="music-modal-content">
-            <span class="close-modal">&times;</span>
+            <span class="close-modal" id="close-music-modal">&times;</span>
 
             <div class="music-header">
-                <div class="music-cover">
+                <div class="music-cover" style="width: 150px; height: 150px;">
                     <img id="music-cover-img" src="https://i.ibb.co/0jq7R0y/anime-bg.jpg" alt="Capa do Álbum">
                 </div>
                 <div class="music-info">
@@ -190,7 +197,7 @@
         </div>
     </div>
 
-    <!-- Mini Player -->
+    <!-- Mini Player (CORRIGIDO) -->
     <div id="mini-player">
         <div class="mini-player-info">
             <div class="mini-cover">
@@ -267,117 +274,117 @@
                 <div class="form-group">
                     <label>Avatar:</label>
                     <div class="avatar-selector">
-<div class="background-options">
-<h4>Fundo:</h4>
-<div class="bg-options-grid">
-<div class="bg-option bg-color-1 selected"></div>
-<div class="bg-option bg-color-2"></div>
-<div class="bg-option bg-color-3"></div>
-<div class="bg-option bg-color-4"></div>
-<div class="bg-option bg-color-5"></div>
-<div class="bg-option bg-color-6"></div>
-<div class="bg-option bg-color-7"></div>
-<div class="bg-option bg-color-8"></div>
-<div class="bg-option bg-color-9"></div>
-<div class="bg-option bg-color-10"></div>
-<div class="bg-option bg-color-11"></div>
-<div class="bg-option bg-color-12"></div>
-<div class="bg-option bg-color-13"></div>
-<div class="bg-option bg-color-14"></div>
-<div class="bg-option bg-color-15"></div>
-<div class="bg-option bg-color-16"></div>
-<div class="bg-option bg-color-17"></div>
-<div class="bg-option bg-color-18"></div>
-<div class="bg-option bg-color-19"></div>
-<div class="bg-option bg-color-20"></div>
-</div>
-</div>
-<div class="character-options">
-<h4>Personagem:</h4>
-<div class="char-options-grid">
-<div class="char-option selected" data-char="1">
-<img src="https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/IMG_20250628_194234.png" alt="Personagem">
-</div>
-<div class="char-option" data-char="2">
-<img src="https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/IMG_20250628_194245.png" alt="Personagem">
-</div>
-<div class="char-option" data-char="3">
-<img src="https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/IMG_20250628_194305.png" alt="Personagem">
-</div>
-<div class="char-option" data-char="4">
-<img src="https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/IMG_20250628_194357.png" alt="Personagem">
-</div>
-<div class="char-option" data-char="5">
-<img src="https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/IMG_20250628_194904.png" alt="Personagem">
-</div>
-<div class="char-option" data-char="6">
-<img src="https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/IMG_20250628_194935.png" alt="Personagem">
-</div>
-<div class="char-option" data-char="7">
-<img src="https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/IMG_20250628_194950.png" alt="Personagem">
-</div>
-<div class="char-option" data-char="8">
-<img src="https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/IMG_20250628_203536.png" alt="Personagem">
-</div>
-<div class="char-option" data-char="9">
-<img src="https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/IMG_20250628_203813.png" alt="Personagem">
-</div>
-<div class="char-option" data-char="10">
-<img src="https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/IMG_20250628_203832.png" alt="Personagem">
-</div>
-<div class="char-option" data-char="11">
-<img src="https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/IMG_20250629_103041.png" alt="Personagem">
-</div>
-<div class="char-option" data-char="12">
-<img src="https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/IMG_20250629_103055.png" alt="Personagem">
-</div>
-<div class="char-option" data-char="13">
-<img src="https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/IMG_20250629_103125.png" alt="Personagem">
-</div>
-<div class="char-option" data-char="14">
-<img src="https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/IMG_20250629_103206.png" alt="Personagem">
-</div>
-<div class="char-option" data-char="15">
-<img src="https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/IMG_20250629_103221.png" alt="Personagem">
-</div>
-<div class="char-option" data-char="16">
-<img src="https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/IMG_20250629_103234.png" alt="Personagem">
-</div>
-<div class="char-option" data-char="17">
-<img src="https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/IMG_20250701_144109.png" alt="Personagem">
-</div>
-<div class="char-option" data-char="18">
-<img src="https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/IMG_20250701_144133.png" alt="Personagem">
-</div>
-<div class="char-option" data-char="19">
-<img src="https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/IMG_20250701_144201.png" alt="Personagem">
-</div>
-<div class="char-option" data-char="20">
-<img src="https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/IMG_20250707_193349.png" alt="Personagem">
-</div>
-<div class="char-option" data-char="21">
-<img src="https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/IMG_20250707_193432.png" alt="Personagem">
-</div>
-<div class="char-option" data-char="22">
-<img src="https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/IMG_20250707_193452.png" alt="Personagem">
-</div>
-<div class="char-option" data-char="23">
-<img src="https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/IMG_20250707_193511.png" alt="Personagem">
-</div>
-<div class="char-option" data-char="24">
-<img src="https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/IMG_20250707_193600.png" alt="Personagem">
-</div>
-</div>
-</div>
-<div class="avatar-preview">
-<h4>Pré-visualização:</h4>
-<div class="preview-container" id="avatar-preview">
-<div class="avatar-bg" style="background-color: #ff6b6b;">
-<img src="https://i.ibb.co/0jq7R0y/anime-bg.jpg" alt="Personagem" class="avatar-char">
-</div>
-<span class="avatar-name">Nome-san</span>
-</div>
-</div>
+                        <div class="background-options">
+                            <h4>Fundo:</h4>
+                            <div class="bg-options-grid">
+                                <div class="bg-option bg-color-1 selected"></div>
+                                <div class="bg-option bg-color-2"></div>
+                                <div class="bg-option bg-color-3"></div>
+                                <div class="bg-option bg-color-4"></div>
+                                <div class="bg-option bg-color-5"></div>
+                                <div class="bg-option bg-color-6"></div>
+                                <div class="bg-option bg-color-7"></div>
+                                <div class="bg-option bg-color-8"></div>
+                                <div class="bg-option bg-color-9"></div>
+                                <div class="bg-option bg-color-10"></div>
+                                <div class="bg-option bg-color-11"></div>
+                                <div class="bg-option bg-color-12"></div>
+                                <div class="bg-option bg-color-13"></div>
+                                <div class="bg-option bg-color-14"></div>
+                                <div class="bg-option bg-color-15"></div>
+                                <div class="bg-option bg-color-16"></div>
+                                <div class="bg-option bg-color-17"></div>
+                                <div class="bg-option bg-color-18"></div>
+                                <div class="bg-option bg-color-19"></div>
+                                <div class="bg-option bg-color-20"></div>
+                            </div>
+                        </div>
+                        <div class="character-options">
+                            <h4>Personagem:</h4>
+                            <div class="char-options-grid">
+                                <div class="char-option selected" data-char="1">
+                                    <img src="https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/IMG_20250628_194234.png" alt="Personagem">
+                                </div>
+                                <div class="char-option" data-char="2">
+                                    <img src="https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/IMG_20250628_194245.png" alt="Personagem">
+                                </div>
+                                <div class="char-option" data-char="3">
+                                    <img src="https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/IMG_20250628_194305.png" alt="Personagem">
+                                </div>
+                                <div class="char-option" data-char="4">
+                                    <img src="https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/IMG_20250628_194357.png" alt="Personagem">
+                                </div>
+                                <div class="char-option" data-char="5">
+                                    <img src="https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/IMG_20250628_194904.png" alt="Personagem">
+                                </div>
+                                <div class="char-option" data-char="6">
+                                    <img src="https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/IMG_20250628_194935.png" alt="Personagem">
+                                </div>
+                                <div class="char-option" data-char="7">
+                                    <img src="https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/IMG_20250628_194950.png" alt="Personagem">
+                                </div>
+                                <div class="char-option" data-char="8">
+                                    <img src="https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/IMG_20250628_203536.png" alt="Personagem">
+                                </div>
+                                <div class="char-option" data-char="9">
+                                    <img src="https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/IMG_20250628_203813.png" alt="Personagem">
+                                </div>
+                                <div class="char-option" data-char="10">
+                                    <img src="https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/IMG_20250628_203832.png" alt="Personagem">
+                                </div>
+                                <div class="char-option" data-char="11">
+                                    <img src="https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/IMG_20250629_103041.png" alt="Personagem">
+                                </div>
+                                <div class="char-option" data-char="12">
+                                    <img src="https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/IMG_20250629_103055.png" alt="Personagem">
+                                </div>
+                                <div class="char-option" data-char="13">
+                                    <img src="https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/IMG_20250629_103125.png" alt="Personagem">
+                                </div>
+                                <div class="char-option" data-char="14">
+                                    <img src="https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/IMG_20250629_103206.png" alt="Personagem">
+                                </div>
+                                <div class="char-option" data-char="15">
+                                    <img src="https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/IMG_20250629_103221.png" alt="Personagem">
+                                </div>
+                                <div class="char-option" data-char="16">
+                                    <img src="https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/IMG_20250629_103234.png" alt="Personagem">
+                                </div>
+                                <div class="char-option" data-char="17">
+                                    <img src="https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/IMG_20250701_144109.png" alt="Personagem">
+                                </div>
+                                <div class="char-option" data-char="18">
+                                    <img src="https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/IMG_20250701_144133.png" alt="Personagem">
+                                </div>
+                                <div class="char-option" data-char="19">
+                                    <img src="https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/IMG_20250701_144201.png" alt="Personagem">
+                                </div>
+                                <div class="char-option" data-char="20">
+                                    <img src="https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/IMG_20250707_193349.png" alt="Personagem">
+                                </div>
+                                <div class="char-option" data-char="21">
+                                    <img src="https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/IMG_20250707_193432.png" alt="Personagem">
+                                </div>
+                                <div class="char-option" data-char="22">
+                                    <img src="https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/IMG_20250707_193452.png" alt="Personagem">
+                                </div>
+                                <div class="char-option" data-char="23">
+                                    <img src="https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/IMG_20250707_193511.png" alt="Personagem">
+                                </div>
+                                <div class="char-option" data-char="24">
+                                    <img src="https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/IMG_20250707_193600.png" alt="Personagem">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="avatar-preview">
+                            <h4>Pré-visualização:</h4>
+                            <div class="preview-container" id="avatar-preview">
+                                <div class="avatar-bg" style="background-color: #ff6b6b;">
+                                    <img src="https://i.ibb.co/0jq7R0y/anime-bg.jpg" alt="Personagem" class="avatar-char">
+                                </div>
+                                <span class="avatar-name">Nome-san</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <button id="save-profile" class="btn btn-primary">Salvar Perfil</button>
