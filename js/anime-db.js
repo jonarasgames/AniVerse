@@ -9,6 +9,7 @@ class AnimeDatabase {
         this.customVideos = JSON.parse(localStorage.getItem('customVideos')) || {};
         
         this.loadData().then(() => {
+            console.log("Dados dos animes carregados com sucesso!");
             window.dispatchEvent(new Event('animeDataLoaded'));
         });
     }
@@ -16,12 +17,102 @@ class AnimeDatabase {
     async loadData() {
         try {
             const response = await fetch('anime-data.json');
+            if (!response.ok) throw new Error("Falha ao carregar anime-data.json");
+            
             this.animes = await response.json();
             this.sortAnimesByDate();
+            console.log(`Carregados ${this.animes.length} animes`);
+            
+            // Pré-processar músicas para acesso rápido
+            this.processMusicData();
         } catch (error) {
-            console.error("Erro ao carregar dados dos animes:", error);
+            console.error("Erro ao carregar dados:", error);
             this.animes = [];
         }
+    }
+
+    processMusicData() {
+        console.log("Processando dados musicais...");
+        this.musicLibrary = { themes: [], osts: {} };
+
+        this.animes.forEach(anime => {
+            // Processar openings
+            if (anime.openings && Array.isArray(anime.openings)) {
+                anime.openings.forEach(op => {
+                    if (op.audio) {
+                        this.musicLibrary.themes.push({
+                            title: op.title || `Opening ${anime.title}`,
+                            artist: op.artist || "Artista Desconhecido",
+                            anime: anime.title,
+                            cover: op.cover || anime.thumbnail || 'https://i.ibb.co/0jq7R0y/anime-bg.jpg',
+                            audio: op.audio,
+                            type: "opening"
+                        });
+                    }
+                });
+            }
+
+            // Processar endings
+            if (anime.endings && Array.isArray(anime.endings)) {
+                anime.endings.forEach(ed => {
+                    if (ed.audio) {
+                        this.musicLibrary.themes.push({
+                            title: ed.title || `Ending ${anime.title}`,
+                            artist: ed.artist || "Artista Desconhecido",
+                            anime: anime.title,
+                            cover: ed.cover || anime.thumbnail || 'https://i.ibb.co/0jq7R0y/anime-bg.jpg',
+                            audio: ed.audio,
+                            type: "ending"
+                        });
+                    }
+                });
+            }
+
+            // Processar OSTs
+            if (anime.osts && typeof anime.osts === 'object') {
+                for (const [albumName, albumData] of Object.entries(anime.osts)) {
+                    if (!this.musicLibrary.osts[albumName]) {
+                        this.musicLibrary.osts[albumName] = {
+                            year: albumData.year || "",
+                            cover: albumData.cover || anime.thumbnail || 'https://i.ibb.co/0jq7R0y/anime-bg.jpg',
+                            tracks: []
+                        };
+                    }
+
+                    if (albumData.tracks && Array.isArray(albumData.tracks)) {
+                        albumData.tracks.forEach(track => {
+                            if (track.audio) {
+                                this.musicLibrary.osts[albumName].tracks.push({
+                                    title: track.title || "Trilha sem nome",
+                                    artist: track.artist || "Artista Desconhecido",
+                                    anime: anime.title,
+                                    audio: track.audio
+                                });
+                            }
+                        });
+                    }
+                }
+            }
+        });
+
+        console.log("Biblioteca musical processada:", this.musicLibrary);
+    }
+
+    // Métodos de música (novos)
+    getMusicLibrary() {
+        return this.musicLibrary || { themes: [], osts: {} };
+    }
+
+    getOpenings() {
+        return this.musicLibrary?.themes.filter(t => t.type === 'opening') || [];
+    }
+
+    getEndings() {
+        return this.musicLibrary?.themes.filter(t => t.type === 'ending') || [];
+    }
+
+    getOSTs() {
+        return this.musicLibrary?.osts || {};
     }
 
     sortAnimesByDate() {
@@ -203,3 +294,6 @@ window.addEventListener('animeDataLoaded', () => {
     if (typeof loadContinueWatching === 'function') loadContinueWatching();
     if (typeof loadFullCatalog === 'function') loadFullCatalog();
 });
+
+// Cria e exporta a instância global
+window.animeDB = new AnimeDatabase();
