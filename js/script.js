@@ -250,9 +250,36 @@ function renderAnimeGrid(animes, containerId) {
         `;
         
         animeCard.addEventListener('click', function() {
-            openAnimeModal(anime);
+            openAnimeModal(anime, anime.season, anime.episode);
         });
         
+        
+        animeCard.addEventListener('mouseenter', () => {
+            const trailerUrl = anime.trailerUrl;
+            if (trailerUrl) {
+                const video = document.createElement('video');
+                video.src = trailerUrl;
+                video.autoplay = true;
+                video.muted = true;
+                video.loop = true;
+                video.playsInline = true;
+                video.className = 'anime-trailer-preview';
+                video.style.position = 'absolute';
+                video.style.top = '0';
+                video.style.left = '0';
+                video.style.width = '100%';
+                video.style.height = '100%';
+                video.style.objectFit = 'cover';
+                video.style.zIndex = '1';
+
+                animeCard.querySelector('.anime-thumbnail').appendChild(video);
+            }
+        });
+        animeCard.addEventListener('mouseleave', () => {
+            const preview = animeCard.querySelector('.anime-trailer-preview');
+            if (preview) preview.remove();
+        });
+    
         container.appendChild(animeCard);
     });
 }
@@ -292,6 +319,33 @@ function renderContinueWatchingGrid(animes, containerId) {
             openAnimeModal(anime, anime.season, anime.episode);
         });
         
+        
+        animeCard.addEventListener('mouseenter', () => {
+            const trailerUrl = anime.trailerUrl;
+            if (trailerUrl) {
+                const video = document.createElement('video');
+                video.src = trailerUrl;
+                video.autoplay = true;
+                video.muted = true;
+                video.loop = true;
+                video.playsInline = true;
+                video.className = 'anime-trailer-preview';
+                video.style.position = 'absolute';
+                video.style.top = '0';
+                video.style.left = '0';
+                video.style.width = '100%';
+                video.style.height = '100%';
+                video.style.objectFit = 'cover';
+                video.style.zIndex = '1';
+
+                animeCard.querySelector('.anime-thumbnail').appendChild(video);
+            }
+        });
+        animeCard.addEventListener('mouseleave', () => {
+            const preview = animeCard.querySelector('.anime-trailer-preview');
+            if (preview) preview.remove();
+        });
+    
         container.appendChild(animeCard);
     });
 }
