@@ -23,15 +23,12 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentType = '';
     let isPlaying = false;
 
-    // Substitua a definição de musicLibrary e carregamento por:
     let musicLibrary = { themes: [], osts: {} };
 
-    // Supondo que animeData já está disponível (importado do anime-db.js)
     function processMusicLibrary() {
         musicLibrary = { themes: [], osts: {} };
 
         animeData.forEach(anime => {
-            // Openings e endings juntos em 'themes'
             if (anime.openings && anime.openings.length > 0) {
                 anime.openings.forEach(opening => {
                     musicLibrary.themes.push({
@@ -56,7 +53,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
                 });
             }
-            // OSTs (mantém igual)
             if (anime.osts && Array.isArray(anime.osts)) {
                 anime.osts.forEach(ost => {
                     if (!musicLibrary.osts[ost.album]) {
@@ -76,7 +72,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        // Ordenar por anime e tipo
         musicLibrary.themes.sort((a, b) => {
             if (a.anime < b.anime) return -1;
             if (a.anime > b.anime) return 1;
@@ -84,19 +79,15 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Chame o processamento ao iniciar
     processMusicLibrary();
 
-    // Carregar a lista de músicas
     function loadMusic(type) {
         currentType = type;
 
-        // Esconde todas as grids
         document.querySelectorAll('.music-grid-container').forEach(el => {
             el.style.display = 'none';
         });
 
-        // Mostra a grid selecionada
         const gridContainer = document.getElementById(`${type}-container`);
         if (gridContainer) gridContainer.style.display = 'block';
 
@@ -107,8 +98,7 @@ document.addEventListener('DOMContentLoaded', function() {
             renderMusicGrid(type, musicLibrary.themes);
         }
     }
-    
-    // Renderizar álbuns (para OSTs)
+
     function renderAlbums() {
         const grid = document.getElementById('osts-grid');
         if (!grid) return;
@@ -134,7 +124,6 @@ document.addEventListener('DOMContentLoaded', function() {
             
             grid.appendChild(albumSection);
             
-            // Renderizar músicas do álbum
             const albumGrid = albumSection.querySelector('.music-grid');
             albumData.tracks.forEach((track, index) => {
                 const card = document.createElement('div');
@@ -163,8 +152,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     }
-    
-    // Renderizar a grid de músicas (openings + endings)
+
     function renderMusicGrid(type, tracks) {
         const grid = document.getElementById(`${type}-grid`);
         if (!grid) return;
@@ -208,8 +196,7 @@ document.addEventListener('DOMContentLoaded', function() {
             grid.appendChild(card);
         });
     }
-    
-    // Tocar música
+
     function playTrack() {
         const track = currentPlaylist[currentTrack];
         
@@ -230,8 +217,7 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .catch(e => console.error("Erro ao reproduzir:", e));
     }
-    
-    // Atualizar botões de play/pause
+
     function updatePlayButtons() {
         if (isPlaying) {
             playBtn.innerHTML = '<i class="fas fa-pause"></i>';
@@ -241,14 +227,12 @@ document.addEventListener('DOMContentLoaded', function() {
             miniPlayBtn.innerHTML = '<i class="fas fa-play"></i>';
         }
     }
-    
-    // Atualizar barra de progresso
+
     function updateProgress() {
         const { currentTime, duration } = musicPlayer;
         const progressPercent = (currentTime / duration) * 100;
         progressBar.value = progressPercent;
         
-        // Formatar tempo
         const currentMinutes = Math.floor(currentTime / 60);
         const currentSeconds = Math.floor(currentTime % 60);
         currentTimeEl.textContent = `${currentMinutes}:${currentSeconds < 10 ? '0' : ''}${currentSeconds}`;
@@ -257,19 +241,17 @@ document.addEventListener('DOMContentLoaded', function() {
         const durationSeconds = Math.floor(duration % 60);
         durationEl.textContent = `${durationMinutes}:${durationSeconds < 10 ? '0' : ''}${durationSeconds}`;
     }
-    
-    // Definir progresso da música
+
     function setProgress(e) {
         const width = this.clientWidth;
         const clickX = e.offsetX;
         const duration = musicPlayer.duration;
         musicPlayer.currentTime = (clickX / width) * duration;
     }
-    
-    // Event listeners
+
     playBtn.addEventListener('click', togglePlay);
     miniPlayBtn.addEventListener('click', togglePlay);
-    
+
     function togglePlay() {
         if (musicPlayer.paused) {
             musicPlayer.play()
@@ -283,56 +265,50 @@ document.addEventListener('DOMContentLoaded', function() {
             updatePlayButtons();
         }
     }
-    
+
     prevBtn.addEventListener('click', () => {
         currentTrack--;
         if (currentTrack < 0) currentTrack = currentPlaylist.length - 1;
         playTrack();
     });
-    
+
     nextBtn.addEventListener('click', () => {
         currentTrack++;
         if (currentTrack > currentPlaylist.length - 1) currentTrack = 0;
         playTrack();
     });
-    
+
     miniCloseBtn.addEventListener('click', () => {
         musicPlayer.pause();
         isPlaying = false;
         updatePlayButtons();
         miniPlayer.classList.remove('active');
     });
-    
+
     musicPlayer.addEventListener('timeupdate', updateProgress);
-    musicPlayer.addEventListener('ended', () => {
-        nextBtn.click();
-    });
-    
+    musicPlayer.addEventListener('ended', () => nextBtn.click());
     musicPlayer.addEventListener('play', () => {
         isPlaying = true;
         updatePlayButtons();
         miniPlayer.classList.add('active');
     });
-    
     musicPlayer.addEventListener('pause', () => {
         isPlaying = false;
         updatePlayButtons();
     });
-    
+
     progressBar.addEventListener('click', setProgress);
-    
-    // Fechar modal
+
     document.querySelector('#music-modal .close-modal').addEventListener('click', () => {
         musicModal.style.display = 'none';
     });
-    
+
     window.addEventListener('click', (e) => {
         if (e.target === musicModal) {
             musicModal.style.display = 'none';
         }
     });
-    
-    // Carregar músicas quando a seção for aberta
+
     document.querySelector('nav').addEventListener('click', (e) => {
         if (e.target.dataset.section === 'openings') {
             loadMusic('openings');
@@ -340,61 +316,18 @@ document.addEventListener('DOMContentLoaded', function() {
             loadMusic('osts');
         }
     });
-    
-    // Inicializar
-    loadMusic('openings');
-});
 
-// Tabs de música (Openings/Endings e OSTs)
-document.querySelectorAll('.music-tab').forEach(tab => {
-    tab.addEventListener('click', () => {
+    // Tabs de música (Openings/Endings e OSTs)
+    document.querySelectorAll('.music-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
         document.querySelectorAll('.music-tab').forEach(t => t.classList.remove('active'));
         tab.classList.add('active');
 
         const type = tab.dataset.section;
-        loadMusic(type); // já existe e funciona corretamente
+        loadMusic(type); // chama a função que já existe no script
+      });
     });
+
+    // Inicial
+    loadMusic('openings');
 });
-
-function loadMusic(type) {
-    const container = type === 'osts'
-        ? document.getElementById('osts-grid')
-        : document.getElementById('music-grid');
-
-    if (!container) return;
-    container.innerHTML = '';
-
-    if (!window.animeDB || !animeDB.animes) {
-        console.warn("animeDB não carregado ainda.");
-        return;
-    }
-
-    animeDB.animes.forEach(anime => {
-        if (!anime.music || !Array.isArray(anime.music)) return;
-
-        anime.music.forEach(track => {
-            if (track.type !== type) return;
-
-            const card = document.createElement('div');
-            card.className = 'music-card';
-
-            card.innerHTML = `
-                <div class="music-cover">
-                    <img src="${track.cover}" alt="${track.title}">
-                </div>
-                <div class="music-info">
-                    <h4 class="music-title">${track.title}</h4>
-                    <p class="music-artist">${track.artist}</p>
-                    <p class="music-anime">${anime.title}</p>
-                </div>
-            `;
-
-            card.addEventListener('click', () => {
-                playMusic(track, anime.title);
-            });
-
-            container.appendChild(card);
-        });
-    });
-}
-
