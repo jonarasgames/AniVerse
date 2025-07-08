@@ -1,46 +1,36 @@
-// music-player.js - VERSÃO MELHORADA E COMPLETA
+// music-player.js - VERSÃO CORRIGIDA E FUNCIONAL
 document.addEventListener('DOMContentLoaded', function() {
-    console.log("Iniciando player de música melhorado...");
+    console.log("Iniciando player de música...");
 
     // Elementos do DOM
     const elements = {
         musicModal: document.getElementById('music-modal'),
         miniPlayer: document.getElementById('mini-player'),
         playBtn: document.getElementById('music-play'),
-        miniPlayBtn: document.querySelector('#mini-player .mini-control-btn'),
+        miniPlayBtn: document.getElementById('mini-play'),
         prevBtn: document.getElementById('music-prev'),
         nextBtn: document.getElementById('music-next'),
-        progressBar: document.querySelector('.progress-bar'),
-        progress: document.querySelector('.progress'),
-        currentTimeEl: document.querySelector('.time-display span:first-child'),
-        durationEl: document.querySelector('.time-display span:last-child'),
-        coverImg: document.querySelector('.music-cover-container img'),
-        miniCoverImg: document.querySelector('.mini-cover img'),
-        musicTitle: document.querySelector('.music-title'),
-        miniTitle: document.querySelector('.mini-title'),
-        musicArtist: document.querySelector('.music-artist'),
-        miniArtist: document.querySelector('.mini-artist'),
-        musicAnime: document.querySelector('.music-anime'),
-        volumeControl: document.getElementById('volume-control'),
-        closeModal: document.querySelector('.music-modal-content .close-modal'),
-        miniCloseBtn: document.querySelector('#mini-player .mini-control-btn:last-child'),
-        shuffleBtn: document.getElementById('shuffle-btn'),
-        repeatBtn: document.getElementById('repeat-btn'),
-        fullscreenBtn: document.getElementById('fullscreen-btn'),
+        progressBar: document.getElementById('music-progress'),
+        currentTimeEl: document.getElementById('music-current-time'),
+        durationEl: document.getElementById('music-duration'),
+        coverImg: document.getElementById('music-cover-img'),
+        miniCoverImg: document.getElementById('mini-cover-img'),
+        musicTitle: document.getElementById('music-title'),
+        miniTitle: document.getElementById('mini-title'),
+        musicArtist: document.getElementById('music-artist'),
+        miniArtist: document.getElementById('mini-artist'),
+        musicAnime: document.getElementById('music-anime'),
         musicTabs: document.querySelectorAll('.music-tab'),
         musicGrid: document.getElementById('music-grid'),
-        ostsGrid: document.getElementById('osts-grid')
+        ostsGrid: document.getElementById('osts-grid'),
+        musicContainer: document.getElementById('music-grid-container'),
+        ostsContainer: document.getElementById('osts-container')
     };
 
     const musicPlayer = new Audio();
     let currentTrack = 0;
     let currentPlaylist = [];
     let isPlaying = false;
-    let isShuffle = false;
-    let isRepeat = false;
-    let updateInterval;
-    let playlistHistory = [];
-    let originalPlaylistOrder = [];
 
     // Verifica se o animeDB está pronto
     function waitForAnimeDB(callback) {
@@ -59,10 +49,13 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (type === 'osts') {
             currentPlaylist = [];
+            elements.musicContainer.classList.remove('active');
+            elements.ostsContainer.classList.add('active');
             renderAlbums(library.osts);
         } else {
             currentPlaylist = library.themes;
-            originalPlaylistOrder = [...library.themes];
+            elements.ostsContainer.classList.remove('active');
+            elements.musicContainer.classList.add('active');
             renderMusicGrid(library.themes);
         }
     }
@@ -85,10 +78,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                     <div class="music-grid">
                         ${data.tracks.map((track, index) => `
-                            <div class="music-card" data-index="${index}" data-album="${album}">
+                            <div class="music-card" data-index="${index}">
                                 <div class="music-cover">
                                     <img src="${data.cover}" loading="lazy">
-                                    <span class="music-type ost">OST</span>
                                 </div>
                                 <div class="music-info">
                                     <h3>${track.title}</h3>
@@ -105,12 +97,11 @@ document.addEventListener('DOMContentLoaded', function() {
         // Adiciona eventos aos cards
         elements.ostsGrid.querySelectorAll('.music-card').forEach(card => {
             card.addEventListener('click', function() {
-                const album = this.dataset.album;
+                const album = this.closest('.album-section').querySelector('h3').textContent;
                 currentPlaylist = osts[album].tracks;
-                originalPlaylistOrder = [...currentPlaylist];
                 currentTrack = parseInt(this.dataset.index);
                 playTrack();
-                openMusicModal();
+                elements.musicModal.style.display = 'block';
             });
         });
     }
@@ -126,6 +117,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 elements.musicGrid.innerHTML += `
                     <div class="anime-header">
                         <h2>${currentAnime}</h2>
+                        <span class="theme-badge ${track.type}">${track.type === 'opening' ? 'OP' : 'ED'}</span>
                     </div>
                 `;
             }
@@ -134,7 +126,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="music-card" data-index="${index}">
                     <div class="music-cover">
                         <img src="${track.cover}" loading="lazy">
-                        <span class="music-type ${track.type}">${track.type === 'opening' ? 'OP' : 'ED'}</span>
+                        <span class="theme-badge ${track.type}">${track.type === 'opening' ? 'OP' : 'ED'}</span>
                     </div>
                     <div class="music-info">
                         <h3>${track.title}</h3>
@@ -149,7 +141,7 @@ document.addEventListener('DOMContentLoaded', function() {
             card.addEventListener('click', function() {
                 currentTrack = parseInt(this.dataset.index);
                 playTrack();
-                openMusicModal();
+                elements.musicModal.style.display = 'block';
             });
         });
     }
@@ -158,10 +150,6 @@ document.addEventListener('DOMContentLoaded', function() {
     function playTrack() {
         const track = currentPlaylist[currentTrack];
         if (!track) return;
-
-        // Adiciona ao histórico
-        playlistHistory.push(currentTrack);
-        if (playlistHistory.length > 10) playlistHistory.shift();
 
         musicPlayer.src = track.audio;
         elements.coverImg.src = track.cover;
@@ -176,40 +164,21 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(() => {
                 isPlaying = true;
                 updatePlayButtons();
-                updateMiniPlayer();
-                startProgressUpdate();
+                elements.miniPlayer.classList.add('active');
+                
+                // Atualiza o tempo da música
+                updateTimeInfo();
+                setInterval(updateTimeInfo, 1000);
             })
             .catch(e => console.error("Erro ao reproduzir:", e));
     }
 
-    // Atualiza os botões de play/pause
-    function updatePlayButtons() {
-        const playIcon = isPlaying ? 'pause' : 'play';
-        elements.playBtn.innerHTML = `<i class="fas fa-${playIcon}"></i>`;
-        elements.miniPlayBtn.innerHTML = `<i class="fas fa-${playIcon}"></i>`;
-    }
-
-    // Atualiza o mini player
-    function updateMiniPlayer() {
-        elements.miniPlayer.classList.add('active');
-    }
-
-    // Inicia a atualização do progresso
-    function startProgressUpdate() {
-        clearInterval(updateInterval);
-        updateInterval = setInterval(updateProgress, 1000);
-        updateProgress();
-    }
-
-    // Atualiza a barra de progresso
-    function updateProgress() {
-        if (musicPlayer.duration) {
-            const progressPercent = (musicPlayer.currentTime / musicPlayer.duration) * 100;
-            elements.progress.style.width = `${progressPercent}%`;
-            
-            // Formatando o tempo
+    // Atualiza o tempo da música
+    function updateTimeInfo() {
+        if (!isNaN(musicPlayer.duration)) {
             elements.currentTimeEl.textContent = formatTime(musicPlayer.currentTime);
             elements.durationEl.textContent = formatTime(musicPlayer.duration);
+            elements.progressBar.value = (musicPlayer.currentTime / musicPlayer.duration) * 100;
         }
     }
 
@@ -220,7 +189,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
     }
 
-    // Alterna entre play/pause
+    // Controles do player
     function togglePlay() {
         if (musicPlayer.paused) {
             musicPlayer.play().then(() => {
@@ -234,113 +203,37 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Próxima música
+    function updatePlayButtons() {
+        const icon = isPlaying ? 'pause' : 'play';
+        elements.playBtn.innerHTML = `<i class="fas fa-${icon}"></i>`;
+        elements.miniPlayBtn.innerHTML = `<i class="fas fa-${icon}"></i>`;
+    }
+
     function nextTrack() {
-        if (isShuffle) {
-            currentTrack = Math.floor(Math.random() * currentPlaylist.length);
-        } else {
-            currentTrack = (currentTrack + 1) % currentPlaylist.length;
-        }
+        currentTrack = (currentTrack + 1) % currentPlaylist.length;
         playTrack();
     }
 
-    // Música anterior
     function prevTrack() {
-        if (playlistHistory.length > 1) {
-            playlistHistory.pop(); // Remove o atual
-            currentTrack = playlistHistory.pop(); // Pega o anterior
-        } else {
-            currentTrack = (currentTrack - 1 + currentPlaylist.length) % currentPlaylist.length;
-        }
+        currentTrack = (currentTrack - 1 + currentPlaylist.length) % currentPlaylist.length;
         playTrack();
     }
 
-    // Alterna o modo shuffle
-    function toggleShuffle() {
-        isShuffle = !isShuffle;
-        elements.shuffleBtn.classList.toggle('active', isShuffle);
-        
-        if (isShuffle) {
-            // Embaralha a playlist
-            currentPlaylist = [...originalPlaylistOrder].sort(() => Math.random() - 0.5);
-        } else {
-            // Volta para a ordem original
-            currentPlaylist = [...originalPlaylistOrder];
-        }
-    }
+    // Barra de progresso
+    elements.progressBar.addEventListener('click', function(e) {
+        const percent = e.offsetX / this.offsetWidth;
+        musicPlayer.currentTime = percent * musicPlayer.duration;
+        elements.progressBar.value = percent * 100;
+    });
 
-    // Alterna o modo repeat
-    function toggleRepeat() {
-        isRepeat = !isRepeat;
-        elements.repeatBtn.classList.toggle('active', isRepeat);
-        musicPlayer.loop = isRepeat;
-    }
+    // Evento quando a música termina
+    musicPlayer.addEventListener('ended', function() {
+        nextTrack();
+    });
 
-    // Abre o modal de música
-    function openMusicModal() {
-        elements.musicModal.style.display = 'block';
-        document.body.style.overflow = 'hidden';
-    }
-
-    // Fecha o modal de música
-    function closeMusicModal() {
-        elements.musicModal.style.display = 'none';
-        document.body.style.overflow = '';
-    }
-
-    // Configura os eventos
-    function setupEventListeners() {
-        // Controles principais
-        elements.playBtn.addEventListener('click', togglePlay);
-        elements.miniPlayBtn.addEventListener('click', togglePlay);
-        elements.nextBtn.addEventListener('click', nextTrack);
-        elements.prevBtn.addEventListener('click', prevTrack);
-        
-        // Barra de progresso
-        elements.progressBar.addEventListener('click', (e) => {
-            const clickPosition = e.offsetX;
-            const progressBarWidth = elements.progressBar.clientWidth;
-            const seekTime = (clickPosition / progressBarWidth) * musicPlayer.duration;
-            musicPlayer.currentTime = seekTime;
-        });
-        
-        // Volume
-        elements.volumeControl.addEventListener('input', () => {
-            musicPlayer.volume = elements.volumeControl.value;
-        });
-        
-        // Shuffle e Repeat
-        elements.shuffleBtn.addEventListener('click', toggleShuffle);
-        elements.repeatBtn.addEventListener('click', toggleRepeat);
-        
-        // Fechar modal
-        elements.closeModal.addEventListener('click', closeMusicModal);
-        elements.miniCloseBtn.addEventListener('click', () => {
-            elements.miniPlayer.classList.remove('active');
-            musicPlayer.pause();
-            isPlaying = false;
-            updatePlayButtons();
-        });
-        
-        // Tela cheia
-        elements.fullscreenBtn.addEventListener('click', () => {
-            if (!document.fullscreenElement) {
-                document.querySelector('.music-modal-content').requestFullscreen();
-            } else {
-                document.exitFullscreen();
-            }
-        });
-        
-        // Eventos do player
-        musicPlayer.addEventListener('ended', () => {
-            if (!isRepeat) {
-                nextTrack();
-            }
-        });
-        
-        musicPlayer.addEventListener('timeupdate', updateProgress);
-        
-        // Tabs de navegação
+    // Inicialização
+    waitForAnimeDB(() => {
+        // Configura as tabs
         elements.musicTabs.forEach(tab => {
             tab.addEventListener('click', function() {
                 elements.musicTabs.forEach(t => t.classList.remove('active'));
@@ -348,16 +241,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 loadMusic(this.dataset.section);
             });
         });
-    }
 
-    // Inicialização
-    waitForAnimeDB(() => {
-        setupEventListeners();
-        
+        // Configura os botões de controle
+        elements.playBtn.addEventListener('click', togglePlay);
+        elements.miniPlayBtn.addEventListener('click', togglePlay);
+        elements.nextBtn.addEventListener('click', nextTrack);
+        elements.prevBtn.addEventListener('click', prevTrack);
+
         // Carrega a primeira tab
         document.querySelector('.music-tab').click();
-        
-        // Configura o volume inicial
-        musicPlayer.volume = elements.volumeControl.value;
     });
 });
