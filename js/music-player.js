@@ -355,3 +355,46 @@ document.querySelectorAll('.music-tab').forEach(tab => {
         loadMusic(type); // já existe e funciona corretamente
     });
 });
+
+function loadMusic(type) {
+    const container = type === 'osts'
+        ? document.getElementById('osts-grid')
+        : document.getElementById('music-grid');
+
+    if (!container) return;
+    container.innerHTML = '';
+
+    if (!window.animeDB || !animeDB.animes) {
+        console.warn("animeDB não carregado ainda.");
+        return;
+    }
+
+    animeDB.animes.forEach(anime => {
+        if (!anime.music || !Array.isArray(anime.music)) return;
+
+        anime.music.forEach(track => {
+            if (track.type !== type) return;
+
+            const card = document.createElement('div');
+            card.className = 'music-card';
+
+            card.innerHTML = `
+                <div class="music-cover">
+                    <img src="${track.cover}" alt="${track.title}">
+                </div>
+                <div class="music-info">
+                    <h4 class="music-title">${track.title}</h4>
+                    <p class="music-artist">${track.artist}</p>
+                    <p class="music-anime">${anime.title}</p>
+                </div>
+            `;
+
+            card.addEventListener('click', () => {
+                playMusic(track, anime.title);
+            });
+
+            container.appendChild(card);
+        });
+    });
+}
+
