@@ -1,4 +1,6 @@
+// music-player.js - Versão Final Funcional
 document.addEventListener('DOMContentLoaded', function() {
+    // Elementos do DOM
     const musicModal = document.getElementById('music-modal');
     const musicPlayer = new Audio();
     const miniPlayer = document.getElementById('mini-player');
@@ -18,55 +20,56 @@ document.addEventListener('DOMContentLoaded', function() {
     const miniArtist = document.getElementById('mini-artist');
     const musicAnime = document.getElementById('music-anime');
     
+    // Variáveis de estado
     let currentTrack = 0;
     let currentPlaylist = [];
     let currentType = '';
     let isPlaying = false;
     let musicLibrary = { themes: [], osts: {} };
 
-    // Função principal para inicializar
-    function initMusicPlayer() {
-        // Verificar se animeDB está disponível e tem dados
+    // Função para verificar se os dados estão prontos
+    function waitForAnimeDB(callback) {
         if (window.animeDB && animeDB.animes && animeDB.animes.length > 0) {
-            processMusicLibrary(animeDB.animes);
-            loadMusic('openings');
-            setupEventListeners();
+            callback();
         } else {
-            // Tentar novamente após um breve delay
-            setTimeout(initMusicPlayer, 100);
+            setTimeout(() => waitForAnimeDB(callback), 100);
         }
     }
 
-    // Processar os dados dos animes para a biblioteca musical
-    function processMusicLibrary(animes) {
+    // Processar dados dos animes para a biblioteca musical
+    function processMusicLibrary() {
         musicLibrary = { themes: [], osts: {} };
         
-        animes.forEach(anime => {
+        animeDB.animes.forEach(anime => {
             // Processar openings
             if (anime.openings && Array.isArray(anime.openings)) {
                 anime.openings.forEach(op => {
-                    musicLibrary.themes.push({
-                        title: op.title || `Opening ${musicLibrary.themes.length + 1}`,
-                        artist: op.artist || "Artista Desconhecido",
-                        anime: anime.title,
-                        cover: op.cover || anime.thumbnail || 'https://i.ibb.co/0jq7R0y/anime-bg.jpg',
-                        audio: op.audio,
-                        type: "opening"
-                    });
+                    if (op.audio) { // Só adiciona se tiver URL de áudio
+                        musicLibrary.themes.push({
+                            title: op.title || `Opening ${anime.openings.indexOf(op) + 1}`,
+                            artist: op.artist || "Artista Desconhecido",
+                            anime: anime.title,
+                            cover: op.cover || anime.thumbnail || 'https://i.ibb.co/0jq7R0y/anime-bg.jpg',
+                            audio: op.audio,
+                            type: "opening"
+                        });
+                    }
                 });
             }
             
             // Processar endings
             if (anime.endings && Array.isArray(anime.endings)) {
                 anime.endings.forEach(ed => {
-                    musicLibrary.themes.push({
-                        title: ed.title || `Ending ${musicLibrary.themes.length + 1}`,
-                        artist: ed.artist || "Artista Desconhecido",
-                        anime: anime.title,
-                        cover: ed.cover || anime.thumbnail || 'https://i.ibb.co/0jq7R0y/anime-bg.jpg',
-                        audio: ed.audio,
-                        type: "ending"
-                    });
+                    if (ed.audio) { // Só adiciona se tiver URL de áudio
+                        musicLibrary.themes.push({
+                            title: ed.title || `Ending ${anime.endings.indexOf(ed) + 1}`,
+                            artist: ed.artist || "Artista Desconhecido",
+                            anime: anime.title,
+                            cover: ed.cover || anime.thumbnail || 'https://i.ibb.co/0jq7R0y/anime-bg.jpg',
+                            audio: ed.audio,
+                            type: "ending"
+                        });
+                    }
                 });
             }
             
@@ -83,27 +86,24 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                     if (albumData.tracks && Array.isArray(albumData.tracks)) {
                         albumData.tracks.forEach(track => {
-                            musicLibrary.osts[albumName].tracks.push({
-                                title: track.title || "Faixa sem título",
-                                artist: track.artist || "Artista Desconhecido",
-                                anime: anime.title,
-                                audio: track.audio
-                            });
+                            if (track.audio) { // Só adiciona se tiver URL de áudio
+                                musicLibrary.osts[albumName].tracks.push({
+                                    title: track.title || "Faixa sem título",
+                                    artist: track.artist || "Artista Desconhecido",
+                                    anime: anime.title,
+                                    audio: track.audio
+                                });
+                            }
                         });
                     }
                 }
             }
         });
         
-        // Ordenar por anime e tipo
-        musicLibrary.themes.sort((a, b) => {
-            if (a.anime < b.anime) return -1;
-            if (a.anime > b.anime) return 1;
-            return a.type === 'opening' ? -1 : 1;
-        });
+        console.log("Biblioteca musical processada:", musicLibrary);
     }
 
-    // Carregar a seção de músicas
+    // Carregar seção de músicas
     function loadMusic(type) {
         currentType = type;
         
@@ -115,14 +115,16 @@ document.addEventListener('DOMContentLoaded', function() {
         // Mostrar a grid correta
         const gridId = type === 'osts' ? 'osts-container' : 'music-grid-container';
         const gridContainer = document.getElementById(gridId);
-        if (gridContainer) gridContainer.style.display = 'block';
-        
-        if (type === 'osts') {
-            currentPlaylist = [];
-            renderAlbums();
-        } else {
-            currentPlaylist = musicLibrary.themes;
-            renderMusicGrid();
+        if (gridContainer) {
+            gridContainer.style.display = 'block';
+            
+            if (type === 'osts') {
+                currentPlaylist = [];
+                renderAlbums();
+            } else {
+                currentPlaylist = musicLibrary.themes;
+                renderMusicGrid();
+            }
         }
     }
 
@@ -134,6 +136,8 @@ document.addEventListener('DOMContentLoaded', function() {
         grid.innerHTML = '';
         
         for (const [albumName, albumData] of Object.entries(musicLibrary.osts)) {
+            if (!albumData.tracks || albumData.tracks.length === 0) continue;
+            
             const albumSection = document.createElement('div');
             albumSection.className = 'album-section';
             albumSection.innerHTML = `
@@ -176,6 +180,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 albumGrid.appendChild(card);
             });
+        }
+        
+        if (grid.innerHTML === '') {
+            grid.innerHTML = '<p class="no-results">Nenhuma OST encontrada.</p>';
         }
     }
 
@@ -224,15 +232,21 @@ document.addEventListener('DOMContentLoaded', function() {
             
             grid.appendChild(card);
         });
+        
+        if (grid.innerHTML === '') {
+            grid.innerHTML = '<p class="no-results">Nenhuma música encontrada.</p>';
+        }
     }
 
     // Tocar a música selecionada
     function playTrack() {
         const track = currentPlaylist[currentTrack];
         if (!track || !track.audio) {
-            console.error('Música ou URL de áudio não encontrada');
+            console.error('Música ou URL de áudio não encontrada:', track);
             return;
         }
+        
+        console.log('Tocando:', track);
         
         musicPlayer.src = track.audio;
         coverImg.src = track.cover || 'https://i.ibb.co/0jq7R0y/anime-bg.jpg';
@@ -249,7 +263,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 updatePlayButtons();
                 miniPlayer.classList.add('active');
             })
-            .catch(e => console.error("Erro ao reproduzir:", e));
+            .catch(e => {
+                console.error("Erro ao reproduzir:", e);
+                alert('Erro ao reproduzir a música. Verifique o console para detalhes.');
+            });
     }
 
     // Controles de reprodução
@@ -296,17 +313,18 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function updateProgress() {
         const { currentTime, duration } = musicPlayer;
-        const progressPercent = (currentTime / duration) * 100;
+        const progressPercent = (currentTime / duration) * 100 || 0;
         progressBar.value = progressPercent;
         
         const formatTime = (seconds) => {
+            if (isNaN(seconds)) return "0:00";
             const mins = Math.floor(seconds / 60);
             const secs = Math.floor(seconds % 60);
             return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
         };
         
         currentTimeEl.textContent = formatTime(currentTime);
-        durationEl.textContent = formatTime(duration || 0);
+        durationEl.textContent = formatTime(duration);
     }
     
     function setProgress(e) {
@@ -351,6 +369,27 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Iniciar o player
-    initMusicPlayer();
+    // Inicialização completa
+    function initializeMusicPlayer() {
+        console.log("Iniciando player de música...");
+        
+        // 1. Aguardar animeDB estar pronto
+        waitForAnimeDB(() => {
+            console.log("animeDB carregado, processando biblioteca musical...");
+            
+            // 2. Processar dados musicais
+            processMusicLibrary();
+            
+            // 3. Configurar eventos
+            setupEventListeners();
+            
+            // 4. Carregar a primeira seção
+            loadMusic('openings');
+            
+            console.log("Player de música inicializado com sucesso!");
+        });
+    }
+
+    // Iniciar tudo
+    initializeMusicPlayer();
 });
