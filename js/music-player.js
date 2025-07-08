@@ -1,4 +1,4 @@
-// music-player.js - VERSÃO CORRIGIDA E FUNCIONAL
+// music-player.js - VERSÃO COMPLETA E FUNCIONAL
 document.addEventListener('DOMContentLoaded', function() {
     console.log("Iniciando player de música...");
 
@@ -23,8 +23,8 @@ document.addEventListener('DOMContentLoaded', function() {
         musicTabs: document.querySelectorAll('.music-tab'),
         musicGrid: document.getElementById('music-grid'),
         ostsGrid: document.getElementById('osts-grid'),
-        musicContainer: document.getElementById('music-grid-container'),
-        ostsContainer: document.getElementById('osts-container')
+        closeModalBtn: document.getElementById('close-music-modal'),
+        miniCloseBtn: document.getElementById('mini-close')
     };
 
     const musicPlayer = new Audio();
@@ -49,13 +49,9 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (type === 'osts') {
             currentPlaylist = [];
-            elements.musicContainer.classList.remove('active');
-            elements.ostsContainer.classList.add('active');
             renderAlbums(library.osts);
         } else {
             currentPlaylist = library.themes;
-            elements.ostsContainer.classList.remove('active');
-            elements.musicContainer.classList.add('active');
             renderMusicGrid(library.themes);
         }
     }
@@ -165,28 +161,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 isPlaying = true;
                 updatePlayButtons();
                 elements.miniPlayer.classList.add('active');
-                
-                // Atualiza o tempo da música
-                updateTimeInfo();
-                setInterval(updateTimeInfo, 1000);
+                elements.miniPlayer.style.bottom = '0';
             })
             .catch(e => console.error("Erro ao reproduzir:", e));
-    }
-
-    // Atualiza o tempo da música
-    function updateTimeInfo() {
-        if (!isNaN(musicPlayer.duration)) {
-            elements.currentTimeEl.textContent = formatTime(musicPlayer.currentTime);
-            elements.durationEl.textContent = formatTime(musicPlayer.duration);
-            elements.progressBar.value = (musicPlayer.currentTime / musicPlayer.duration) * 100;
-        }
-    }
-
-    // Formata o tempo (mm:ss)
-    function formatTime(seconds) {
-        const mins = Math.floor(seconds / 60);
-        const secs = Math.floor(seconds % 60);
-        return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
     }
 
     // Controles do player
@@ -219,17 +196,17 @@ document.addEventListener('DOMContentLoaded', function() {
         playTrack();
     }
 
-    // Barra de progresso
-    elements.progressBar.addEventListener('click', function(e) {
-        const percent = e.offsetX / this.offsetWidth;
-        musicPlayer.currentTime = percent * musicPlayer.duration;
-        elements.progressBar.value = percent * 100;
-    });
+    function closeMusicModal() {
+        elements.musicModal.style.display = 'none';
+    }
 
-    // Evento quando a música termina
-    musicPlayer.addEventListener('ended', function() {
-        nextTrack();
-    });
+    function closeMiniPlayer() {
+        elements.miniPlayer.classList.remove('active');
+        elements.miniPlayer.style.bottom = '-100px';
+        musicPlayer.pause();
+        isPlaying = false;
+        updatePlayButtons();
+    }
 
     // Inicialização
     waitForAnimeDB(() => {
@@ -247,6 +224,32 @@ document.addEventListener('DOMContentLoaded', function() {
         elements.miniPlayBtn.addEventListener('click', togglePlay);
         elements.nextBtn.addEventListener('click', nextTrack);
         elements.prevBtn.addEventListener('click', prevTrack);
+        elements.closeModalBtn.addEventListener('click', closeMusicModal);
+        elements.miniCloseBtn.addEventListener('click', closeMiniPlayer);
+
+        // Barra de progresso
+        elements.progressBar.addEventListener('click', function(e) {
+            const percent = e.offsetX / this.offsetWidth;
+            musicPlayer.currentTime = percent * musicPlayer.duration;
+        });
+
+        // Evento quando a música termina
+        musicPlayer.addEventListener('ended', nextTrack);
+
+        // Atualiza o tempo da música
+        musicPlayer.addEventListener('timeupdate', function() {
+            if (!isNaN(musicPlayer.duration)) {
+                const mins = Math.floor(musicPlayer.currentTime / 60);
+                const secs = Math.floor(musicPlayer.currentTime % 60);
+                elements.currentTimeEl.textContent = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+                
+                const totalMins = Math.floor(musicPlayer.duration / 60);
+                const totalSecs = Math.floor(musicPlayer.duration % 60);
+                elements.durationEl.textContent = `${totalMins}:${totalSecs < 10 ? '0' : ''}${totalSecs}`;
+                
+                elements.progressBar.value = (musicPlayer.currentTime / musicPlayer.duration) * 100;
+            }
+        });
 
         // Carrega a primeira tab
         document.querySelector('.music-tab').click();
