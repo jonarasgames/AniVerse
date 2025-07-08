@@ -1,298 +1,272 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AniVerse - Seu Universo de Animes</title>
-<link rel="stylesheet" href="css/style.css">
-<link rel="stylesheet" href="css/dark-mode.css" id="dark-mode-style" disabled>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-<link rel="icon" href="images/logo.png" type="image/png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AniVerse - Seu Universo de Animes</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dark-mode.css" id="dark-mode-style" disabled>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="icon" href="images/logo.png" type="image/png">
 </head>
 <body>
-<header>
-<div class="container">
-<div class="logo-container">
-<img src="images/logo.png" alt="AniVerse Logo" class="logo">
-<h1>AniVerse</h1>
-</div>
-<nav>
-<ul>
-<li><a href="#" class="active" data-section="home">Início</a></li>
-<li><a href="#" data-section="animes">Animes</a></li>
-<li><a href="#" data-section="movies">Filmes</a></li>
-<li><a href="#" data-section="ovas">OVAs</a></li>
-<li><a href="#" data-section="openings">Músicas</a></li>
-<li><a href="#" data-section="info">Informações</a></li>
-<li><a href="#" data-section="continue">Continuar Assistindo</a></li>
-</ul>
-</nav>
-<div class="user-controls">
-<button id="dark-mode-toggle" class="btn-icon">
-<i class="fas fa-moon"></i>
-</button>
-<div class="user-profile">
-<div class="user-avatar" id="header-avatar">
-<img src="" alt="Avatar">
-</div>
-<button class="btn btn-primary" id="login-btn"><i class="fas fa-user"></i> Entrar</button>
-</div>
-</div>
-</div>
-</header>
-
-<main class="container">
-<section id="home-section" class="content-section active">
-<div class="hero">
-<div class="hero-content">
-<h2>Assista aos melhores animes</h2>
-<p>Milhares de episódios disponíveis a qualquer momento</p>
-<div class="search-bar">
-<input type="text" id="search-input" placeholder="Buscar animes...">
-<button class="btn btn-primary" id="search-btn"><i class="fas fa-search"></i></button>
-</div>
-</div>
-</div>
-
-<section class="user-welcome">
-<div class="container">
-<div id="user-welcome-container"></div>
-</div>
-</section>
-
-<section class="continue-watching">
-<h2 class="section-title">Continuar Assistindo</h2>
-<div class="anime-grid" id="continue-watching-grid"></div>
-</section>
-
-<section class="new-releases">
-<h2 class="section-title">Novos Lançamentos</h2>
-<div class="anime-grid" id="new-releases-grid"></div>
-</section>
-
-<section class="full-catalog">
-<h2 class="section-title">Catálogo Completo</h2>
-<div class="anime-grid" id="full-catalog-grid"></div>
-</section>
-
-<section class="categories">
-<h2 class="section-title">Categorias</h2>
-<div class="category-tabs">
-<button class="category-tab active" data-category="all">Todos</button>
-<button class="category-tab" data-category="action">Ação</button>
-<button class="category-tab" data-category="adventure">Aventura</button>
-<button class="category-tab" data-category="comedy">Comédia</button>
-<button class="category-tab" data-category="drama">Drama</button>
-<button class="category-tab" data-category="fantasy">Fantasia</button>
-</div>
-</section>
-</section>
-
-<section id="animes-section" class="content-section">
-<h2 class="section-title">Animes</h2>
-<div class="anime-grid" id="animes-grid"></div>
-</section>
-
-<section id="movies-section" class="content-section">
-<h2 class="section-title">Filmes</h2>
-<div class="anime-grid" id="movies-grid"></div>
-</section>
-
-<section id="ovas-section" class="content-section">
-<h2 class="section-title">OVAs</h2>
-<div class="anime-grid" id="ovas-grid"></div>
-</section>
-
-<!-- Tabs de navegação para músicas -->
-<div class="music-tabs">
-<div class="music-tab active" data-section="openings">Openings/Endings</div>
-<div class="music-tab" data-section="osts">OSTs</div>
-</div>
-
-<!-- Um único container para a lista de OP/ED -->
-<div id="music-grid-container" class="music-grid-container active">
-<div id="music-grid" class="music-grid"></div>
-</div>
-
-<!-- Container para OSTs (separado) -->
-<div id="osts-container" class="music-grid-container">
-<div id="osts-grid" class="music-grid"></div>
-</div>
-
-<section id="info-section" class="content-section">
-<h2 class="section-title">Informações</h2>
-<div class="search-bar">
-<input type="text" id="info-search" placeholder="Buscar informações sobre animes...">
-<button class="btn btn-primary" id="info-search-btn"><i class="fas fa-search"></i></button>
-</div>
-<div id="anime-info-container"></div>
-</section>
-
-<section id="continue-section" class="content-section">
-<h2 class="section-title">Continuar Assistindo</h2>
-<div class="anime-grid" id="continue-grid"></div>
-</section>
-</main>
-
-<div id="video-modal" class="modal">
-<div class="modal-content">
-<span class="close-modal">&times;</span>
-<div id="video-player-container">
-<video id="anime-player" controls playsinline>
-<source src="" type="video/mp4">
-Seu navegador não suporta o elemento de vídeo.
-</video>
-<div class="video-controls">
-<button id="like-btn" class="btn-icon"><i class="far fa-thumbs-up"></i></button>
-<span id="likes-count">0</span>
-<button id="dislike-btn" class="btn-icon"><i class="far fa-thumbs-down"></i></button>
-<span id="dislikes-count">0</span>
-</div>
-<div class="video-info">
-<h2 id="video-title"></h2>
-<p id="video-description"></p>
-<div class="episode-selector">
-<select id="season-select"></select>
-<select id="episode-select"></select>
-</div>
-</div>
-</div>
-</div>
-</div>
-
-<!-- Substitua o conteúdo do music-modal por este: -->
-<div id="music-modal">
-    <div class="music-modal-content">
-        <span class="close-modal">&times;</span>
-        
-        <div class="music-header">
-            <div class="music-cover-container">
-                <img id="music-cover-img" src="https://i.ibb.co/0jq7R0y/anime-bg.jpg" alt="Capa do Álbum">
+    <header>
+        <div class="container">
+            <div class="logo-container">
+                <img src="images/logo.png" alt="AniVerse Logo" class="logo">
+                <h1>AniVerse</h1>
             </div>
-            <div class="music-info">
-                <h1 id="music-title">Título da Música</h1>
-                <p id="music-artist">Artista</p>
-                <p id="music-anime">Anime</p>
+            <nav>
+                <ul>
+                    <li><a href="#" class="active" data-section="home">Início</a></li>
+                    <li><a href="#" data-section="animes">Animes</a></li>
+                    <li><a href="#" data-section="movies">Filmes</a></li>
+                    <li><a href="#" data-section="ovas">OVAs</a></li>
+                    <li><a href="#" data-section="openings">Músicas</a></li>
+                    <li><a href="#" data-section="info">Informações</a></li>
+                    <li><a href="#" data-section="continue">Continuar Assistindo</a></li>
+                </ul>
+            </nav>
+            <div class="user-controls">
+                <button id="dark-mode-toggle" class="btn-icon">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <div class="user-profile">
+                    <div class="user-avatar" id="header-avatar">
+                        <img src="" alt="Avatar">
+                    </div>
+                    <button class="btn btn-primary" id="login-btn"><i class="fas fa-user"></i> Entrar</button>
+                </div>
             </div>
         </div>
-        
-        <div class="music-controls">
-            <div class="progress-container">
-                <div class="time-display">
-                    <span id="music-current-time">0:00</span>
-                    <span id="music-duration">0:00</span>
-                </div>
-                <div class="progress-bar">
-                    <div class="progress"></div>
+    </header>
+
+    <main class="container">
+        <section id="home-section" class="content-section active">
+            <div class="hero">
+                <div class="hero-content">
+                    <h2>Assista aos melhores animes</h2>
+                    <p>Milhares de episódios disponíveis a qualquer momento</p>
+                    <div class="search-bar">
+                        <input type="text" id="search-input" placeholder="Buscar animes...">
+                        <button class="btn btn-primary" id="search-btn"><i class="fas fa-search"></i></button>
+                    </div>
                 </div>
             </div>
-            
-            <div class="controls-main">
-                <button id="shuffle-btn" class="control-btn" title="Embaralhar">
-                    <i class="fas fa-random"></i>
-                </button>
-                <button id="music-prev" class="control-btn" title="Anterior">
-                    <i class="fas fa-step-backward"></i>
-                </button>
-                <button id="music-play" class="control-btn" title="Play/Pause">
-                    <i class="fas fa-play"></i>
-                </button>
-                <button id="music-next" class="control-btn" title="Próxima">
-                    <i class="fas fa-step-forward"></i>
-                </button>
-                <button id="repeat-btn" class="control-btn" title="Repetir">
-                    <i class="fas fa-redo"></i>
-                </button>
-            </div>
-            
-            <div class="controls-secondary">
-                <div class="volume-control">
-                    <i class="fas fa-volume-up"></i>
-                    <input type="range" id="volume-control" min="0" max="1" step="0.01" value="0.7">
+
+            <section class="user-welcome">
+                <div class="container">
+                    <div id="user-welcome-container"></div>
                 </div>
-                
-                <button id="fullscreen-btn" class="control-btn" title="Tela Cheia">
-                    <i class="fas fa-expand"></i>
-                </button>
+            </section>
+
+            <section class="continue-watching">
+                <h2 class="section-title">Continuar Assistindo</h2>
+                <div class="anime-grid" id="continue-watching-grid"></div>
+            </section>
+
+            <section class="new-releases">
+                <h2 class="section-title">Novos Lançamentos</h2>
+                <div class="anime-grid" id="new-releases-grid"></div>
+            </section>
+
+            <section class="full-catalog">
+                <h2 class="section-title">Catálogo Completo</h2>
+                <div class="anime-grid" id="full-catalog-grid"></div>
+            </section>
+
+            <section class="categories">
+                <h2 class="section-title">Categorias</h2>
+                <div class="category-tabs">
+                    <button class="category-tab active" data-category="all">Todos</button>
+                    <button class="category-tab" data-category="action">Ação</button>
+                    <button class="category-tab" data-category="adventure">Aventura</button>
+                    <button class="category-tab" data-category="comedy">Comédia</button>
+                    <button class="category-tab" data-category="drama">Drama</button>
+                    <button class="category-tab" data-category="fantasy">Fantasia</button>
+                </div>
+            </section>
+        </section>
+
+        <section id="animes-section" class="content-section">
+            <h2 class="section-title">Animes</h2>
+            <div class="anime-grid" id="animes-grid"></div>
+        </section>
+
+        <section id="movies-section" class="content-section">
+            <h2 class="section-title">Filmes</h2>
+            <div class="anime-grid" id="movies-grid"></div>
+        </section>
+
+        <section id="ovas-section" class="content-section">
+            <h2 class="section-title">OVAs</h2>
+            <div class="anime-grid" id="ovas-grid"></div>
+        </section>
+
+        <section id="openings-section" class="content-section">
+            <div class="music-tabs">
+                <div class="music-tab active" data-section="openings">Openings/Endings</div>
+                <div class="music-tab" data-section="osts">OSTs</div>
+            </div>
+
+            <div id="music-grid-container" class="music-grid-container active">
+                <div id="music-grid" class="music-grid"></div>
+            </div>
+
+            <div id="osts-container" class="music-grid-container">
+                <div id="osts-grid" class="music-grid"></div>
+            </div>
+        </section>
+
+        <section id="info-section" class="content-section">
+            <h2 class="section-title">Informações</h2>
+            <div class="search-bar">
+                <input type="text" id="info-search" placeholder="Buscar informações sobre animes...">
+                <button class="btn btn-primary" id="info-search-btn"><i class="fas fa-search"></i></button>
+            </div>
+            <div id="anime-info-container"></div>
+        </section>
+
+        <section id="continue-section" class="content-section">
+            <h2 class="section-title">Continuar Assistindo</h2>
+            <div class="anime-grid" id="continue-grid"></div>
+        </section>
+    </main>
+
+    <!-- Modal do Player de Música -->
+    <div id="music-modal">
+        <div class="music-modal-content">
+            <span class="close-modal">&times;</span>
+
+            <div class="music-header">
+                <div class="music-cover">
+                    <img id="music-cover-img" src="https://i.ibb.co/0jq7R0y/anime-bg.jpg" alt="Capa do Álbum">
+                </div>
+                <div class="music-info">
+                    <h1 id="music-title">Título da Música</h1>
+                    <p id="music-artist">Artista</p>
+                    <p id="music-anime">Anime</p>
+                </div>
+            </div>
+
+            <div class="music-controls">
+                <div class="progress-container">
+                    <div class="time-display">
+                        <span id="music-current-time">0:00</span>
+                        <span id="music-duration">0:00</span>
+                    </div>
+                    <progress id="music-progress" class="progress-bar" value="0" max="100"></progress>
+                </div>
+
+                <div class="controls-row">
+                    <div class="volume-control">
+                        <i class="fas fa-volume-up"></i>
+                        <input type="range" id="volume-control" min="0" max="1" step="0.01" value="1">
+                    </div>
+
+                    <div class="main-controls">
+                        <button id="shuffle-btn" class="control-btn" title="Embaralhar">
+                            <i class="fas fa-random"></i>
+                        </button>
+                        <button id="music-prev" class="control-btn" title="Anterior">
+                            <i class="fas fa-step-backward"></i>
+                        </button>
+                        <button id="music-play" class="control-btn" title="Play/Pause">
+                            <i class="fas fa-play"></i>
+                        </button>
+                        <button id="music-next" class="control-btn" title="Próxima">
+                            <i class="fas fa-step-forward"></i>
+                        </button>
+                        <button id="repeat-btn" class="control-btn" title="Repetir">
+                            <i class="fas fa-redo"></i>
+                        </button>
+                    </div>
+
+                    <button id="fullscreen-btn" class="control-btn" title="Tela Cheia">
+                        <i class="fas fa-expand"></i>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Substitua o mini-player por este: -->
-<div id="mini-player">
-    <div class="mini-player-info">
-        <div class="mini-cover">
-            <img id="mini-cover-img" src="https://i.ibb.co/0jq7R0y/anime-bg.jpg" alt="Capa">
+    <!-- Mini Player -->
+    <div id="mini-player">
+        <div class="mini-player-info">
+            <div class="mini-cover">
+                <img id="mini-cover-img" src="https://i.ibb.co/0jq7R0y/anime-bg.jpg" alt="Capa">
+            </div>
+            <div class="mini-text">
+                <h4 id="mini-title">Título da Música</h4>
+                <p id="mini-artist">Artista</p>
+            </div>
         </div>
-        <div class="mini-text">
-            <h4 id="mini-title">Título da Música</h4>
-            <p id="mini-artist">Artista</p>
+
+        <div class="mini-controls">
+            <button id="mini-play" class="mini-control-btn">
+                <i class="fas fa-play"></i>
+            </button>
+            <button id="mini-next" class="mini-control-btn">
+                <i class="fas fa-step-forward"></i>
+            </button>
+            <button id="mini-close" class="mini-control-btn mini-close-btn">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
     </div>
-    
-    <div class="mini-controls">
-        <button id="mini-play" class="mini-control-btn">
-            <i class="fas fa-play"></i>
-        </button>
-        <button id="mini-next" class="mini-control-btn">
-            <i class="fas fa-step-forward"></i>
-        </button>
-        <button id="mini-close" class="mini-control-btn">
-            <i class="fas fa-times"></i>
-        </button>
+
+    <!-- Modal de Termos -->
+    <div id="terms-modal" class="modal">
+        <div class="modal-content" style="max-height: 80vh; overflow-y: auto;">
+            <span class="close-terms">&times;</span>
+            <h2>Termos de Serviço do AniVerse</h2>
+            <p><strong>Última atualização: Junho 2025</strong></p>
+            <h3>1. Sobre o AniVerse</h3>
+            <p>O AniVerse é um projeto criado por fãs para fãs, sem fins lucrativos, com o objetivo de preservar e compartilhar a cultura dos animes.</p>
+            <h3>2. Isenção de Responsabilidade</h3>
+            <p>O AniVerse não é responsável pelo conteúdo dos links externos. Todos os direitos dos animes exibidos pertencem aos seus respectivos criadores.</p>
+        </div>
     </div>
-</div>
 
-<div id="terms-modal" class="modal">
-<div class="modal-content" style="max-height: 80vh; overflow-y: auto;">
-<span class="close-terms">&times;</span>
-<h2>Termos de Serviço do AniVerse</h2>
-<p><strong>Última atualização: Junho 2025</strong></p>
-<h3>1. Sobre o AniVerse</h3>
-<p>O AniVerse é um projeto criado por fãs para fãs, sem fins lucrativos, com o objetivo de preservar e compartilhar a cultura dos animes.</p>
-<h3>2. Isenção de Responsabilidade</h3>
-<p>O AniVerse não é responsável pelo conteúdo dos links externos. Todos os direitos dos animes exibidos pertencem aos seus respectivos criadores.</p>
-</div>
-</div>
+    <!-- Modal de Privacidade -->
+    <div id="privacy-modal" class="modal">
+        <div class="modal-content" style="max-height: 80vh; overflow-y: auto;">
+            <span class="close-privacy">&times;</span>
+            <h2>Política de Privacidade do AniVerse</h2>
+            <p><strong>Última atualização: Junho 2025</strong></p>
+            <h3>1. Informações Coletadas</h3>
+            <p>O AniVerse armazena localmente no seu navegador:</p>
+            <ul>
+                <li>Preferências de visualização</li>
+                <li>Progresso nos episódios</li>
+                <li>Perfil personalizado</li>
+            </ul>
+        </div>
+    </div>
 
-<div id="privacy-modal" class="modal">
-<div class="modal-content" style="max-height: 80vh; overflow-y: auto;">
-<span class="close-privacy">&times;</span>
-<h2>Política de Privacidade do AniVerse</h2>
-<p><strong>Última atualização: Junho 2025</strong></p>
-<h3>1. Informações Coletadas</h3>
-<p>O AniVerse armazena localmente no seu navegador:</p>
-<ul>
-<li>Preferências de visualização</li>
-<li>Progresso nos episódios</li>
-<li>Perfil personalizado</li>
-</ul>
-</div>
-</div>
-
-<div id="profile-modal" class="modal">
-<div class="modal-content">
-<span class="close-profile">&times;</span>
-<h2>Criar Perfil</h2>
-<div class="profile-form">
-<div class="form-group">
-<label for="profile-name">Nome:</label>
-<input type="text" id="profile-name" placeholder="Seu nome">
-</div>
-<div class="form-group">
-<label>Pronome Japonês:</label>
-<div class="pronoun-options">
-<button class="pronoun-btn" data-pronoun="-chan">-chan</button>
-<button class="pronoun-btn" data-pronoun="-san">-san</button>
-<button class="pronoun-btn" data-pronoun="-kun">-kun</button>
-<button class="pronoun-btn" data-pronoun="-sama">-sama</button>
-</div>
-<input type="hidden" id="selected-pronoun" value="-san">
-</div>
-<div class="form-group">
-<label>Avatar:</label>
-<div class="avatar-selector">
+    <!-- Modal de Perfil -->
+    <div id="profile-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-profile">&times;</span>
+            <h2>Criar Perfil</h2>
+            <div class="profile-form">
+                <div class="form-group">
+                    <label for="profile-name">Nome:</label>
+                    <input type="text" id="profile-name" placeholder="Seu nome">
+                </div>
+                <div class="form-group">
+                    <label>Pronome Japonês:</label>
+                    <div class="pronoun-options">
+                        <button class="pronoun-btn" data-pronoun="-chan">-chan</button>
+                        <button class="pronoun-btn" data-pronoun="-san">-san</button>
+                        <button class="pronoun-btn" data-pronoun="-kun">-kun</button>
+                        <button class="pronoun-btn" data-pronoun="-sama">-sama</button>
+                    </div>
+                    <input type="hidden" id="selected-pronoun" value="-san">
+                </div>
+                <div class="form-group">
+                    <label>Avatar:</label>
+                    <div class="avatar-selector">
 <div class="background-options">
 <h4>Fundo:</h4>
 <div class="bg-options-grid">
@@ -404,46 +378,46 @@ Seu navegador não suporta o elemento de vídeo.
 <span class="avatar-name">Nome-san</span>
 </div>
 </div>
-</div>
-</div>
-<button id="save-profile" class="btn btn-primary">Salvar Perfil</button>
-</div>
-</div>
-</div>
+                    </div>
+                </div>
+                <button id="save-profile" class="btn btn-primary">Salvar Perfil</button>
+            </div>
+        </div>
+    </div>
 
-<footer>
-<div class="container">
-<div class="footer-content">
-<div class="footer-section">
-<h3>AniVerse</h3>
-<p>O melhor lugar para assistir animes online.</p>
-</div>
-<div class="footer-section">
-<h3>Links</h3>
-<ul>
-<li><a href="#" id="terms-link">Termos de Serviço</a></li>
-<li><a href="#" id="privacy-link">Política de Privacidade</a></li>
-</ul>
-</div>
-<div class="footer-section">
-<h3>Redes Sociais</h3>
-<div class="social-icons">
-<a href="#"><i class="fab fa-twitter"></i></a>
-<a href="#"><i class="fab fa-instagram"></i></a>
-<a href="#"><i class="fab fa-discord"></i></a>
-</div>
-</div>
-</div>
-<div class="copyright">
-<p>&copy; 2025 AniVerse - Feito por fãs para fãs</p>
-</div>
-</div>
-</footer>
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>AniVerse</h3>
+                    <p>O melhor lugar para assistir animes online.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Links</h3>
+                    <ul>
+                        <li><a href="#" id="terms-link">Termos de Serviço</a></li>
+                        <li><a href="#" id="privacy-link">Política de Privacidade</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Redes Sociais</h3>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-discord"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2025 AniVerse - Feito por fãs para fãs</p>
+            </div>
+        </div>
+    </footer>
 
-<script src="js/anime-db.js"></script>
-<script src="js/script.js"></script>
-<script src="js/video-player.js"></script>
-<script src="js/music-player.js"></script>
-<script src="js/info-section.js"></script>
+    <script src="js/anime-db.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/video-player.js"></script>
+    <script src="js/music-player.js"></script>
+    <script src="js/info-section.js"></script>
 </body>
 </html>
