@@ -12,7 +12,9 @@ document.addEventListener('DOMContentLoaded', function() {
         shuffleBtn: document.getElementById('shuffle-btn'),
         repeatBtn: document.getElementById('repeat-btn'),
         progressBar: document.getElementById('music-progress'),
+        progressContainer: document.querySelector('.progress-container'),
         miniProgressBar: document.querySelector('.mini-progress-bar'),
+        miniProgressContainer: document.querySelector('.mini-progress-container'),
         currentTimeEl: document.getElementById('music-current-time'),
         durationEl: document.getElementById('music-duration'),
         coverImg: document.getElementById('music-cover-img'),
@@ -298,6 +300,14 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Função para pular para um momento específico na música
+    function setProgress(e) {
+        const width = this.clientWidth;
+        const clickX = e.offsetX;
+        const duration = musicPlayer.duration;
+        musicPlayer.currentTime = (clickX / width) * duration;
+    }
+
     // Inicialização
     waitForAnimeDB(() => {
         // Configura as tabs
@@ -326,23 +336,17 @@ document.addEventListener('DOMContentLoaded', function() {
             hideMiniPlayer();
         });
 
-        // Barra de progresso
+        // Barra de progresso - clique para pular
+        elements.progressContainer.addEventListener('click', setProgress);
+        elements.miniProgressContainer.addEventListener('click', setProgress);
+
+        // Barra de progresso - arrastar
         elements.progressBar.addEventListener('input', function() {
             const seekTime = (this.value / 100) * musicPlayer.duration;
             musicPlayer.currentTime = seekTime;
         });
 
-        elements.progressBar.addEventListener('change', function() {
-            const seekTime = (this.value / 100) * musicPlayer.duration;
-            musicPlayer.currentTime = seekTime;
-        });
-
         elements.miniProgressBar.addEventListener('input', function() {
-            const seekTime = (this.value / 100) * musicPlayer.duration;
-            musicPlayer.currentTime = seekTime;
-        });
-
-        elements.miniProgressBar.addEventListener('change', function() {
             const seekTime = (this.value / 100) * musicPlayer.duration;
             musicPlayer.currentTime = seekTime;
         });
