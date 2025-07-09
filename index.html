@@ -110,8 +110,9 @@
         <!-- Seção Músicas (Openings/Endings e OSTs) -->
         <section id="openings-section" class="content-section">
             <div class="music-tabs">
-                <div class="music-tab active" data-section="openings">Openings/Endings</div>
-                <div class="music-tab" data-section="osts">OSTs</div>
+                <button class="music-tab active" data-section="openings">Openings</button>
+                <button class="music-tab" data-section="endings">Endings</button>
+                <button class="music-tab" data-section="osts">OSTs</button>
             </div>
 
             <div id="music-grid-container" class="music-grid-container active">
@@ -140,83 +141,88 @@
         </section>
     </main>
 
-    <!-- Modal do Player de Música (CORRIGIDO) -->
+    <!-- Modal do Player de Música -->
     <div id="music-modal">
         <div class="music-modal-content">
-            <span class="close-modal" id="close-music-modal">&times;</span>
-
-            <div class="music-header">
-                <div class="music-cover" style="width: 150px; height: 150px;">
-                    <img id="music-cover-img" src="https://i.ibb.co/0jq7R0y/anime-bg.jpg" alt="Capa do Álbum">
-                </div>
-                <div class="music-info">
-                    <h1 id="music-title">Título da Música</h1>
-                    <p id="music-artist">Artista</p>
-                    <p id="music-anime">Anime</p>
-                </div>
+            <div class="music-cover-container">
+                <img id="music-cover-img" class="music-cover" src="" alt="Capa do Álbum">
             </div>
-
-            <div class="music-controls">
-                <div class="progress-container">
-                    <div class="time-display">
-                        <span id="music-current-time">0:00</span>
-                        <span id="music-duration">0:00</span>
+            
+            <div class="music-info-container">
+                <h1 id="music-title">Título da Música</h1>
+                <p id="music-artist">Artista</p>
+                <p id="music-anime">Anime</p>
+                
+                <div class="music-controls">
+                    <div class="progress-container">
+                        <progress id="music-progress" value="0" max="100"></progress>
+                        <div class="time-display">
+                            <span id="music-current-time">0:00</span>
+                            <span id="music-duration">0:00</span>
+                        </div>
                     </div>
-                    <progress id="music-progress" class="progress-bar" value="0" max="100"></progress>
-                </div>
-
-                <div class="controls-row">
-                    <div class="volume-control">
-                        <i class="fas fa-volume-up"></i>
-                        <input type="range" id="volume-control" min="0" max="1" step="0.01" value="1">
-                    </div>
-
-                    <div class="main-controls">
-                        <button id="shuffle-btn" class="control-btn" title="Embaralhar">
+                    
+                    <div class="controls-main">
+                        <button id="music-shuffle" class="control-btn" title="Embaralhar">
                             <i class="fas fa-random"></i>
                         </button>
                         <button id="music-prev" class="control-btn" title="Anterior">
                             <i class="fas fa-step-backward"></i>
                         </button>
-                        <button id="music-play" class="control-btn" title="Play/Pause">
+                        <button id="music-play" class="control-btn">
                             <i class="fas fa-play"></i>
                         </button>
                         <button id="music-next" class="control-btn" title="Próxima">
                             <i class="fas fa-step-forward"></i>
                         </button>
-                        <button id="repeat-btn" class="control-btn" title="Repetir">
+                        <button id="music-repeat" class="control-btn" title="Repetir">
                             <i class="fas fa-redo"></i>
                         </button>
                     </div>
-
-                    <button id="fullscreen-btn" class="control-btn" title="Tela Cheia">
-                        <i class="fas fa-expand"></i>
-                    </button>
+                </div>
+                
+                <div id="music-grid-container" class="music-grid-container active">
+                    <div id="music-grid" class="music-grid"></div>
+                    <div id="osts-grid" class="music-grid"></div>
                 </div>
             </div>
+            
+            <button id="close-music-modal" class="close-modal">&times;</button>
         </div>
     </div>
 
-    <!-- Mini Player (CORRIGIDO) -->
+    <!-- Mini Player -->
     <div id="mini-player">
         <div class="mini-player-info">
             <div class="mini-cover">
-                <img id="mini-cover-img" src="https://i.ibb.co/0jq7R0y/anime-bg.jpg" alt="Capa">
+                <img id="mini-cover-img" src="" alt="Capa Mini">
             </div>
             <div class="mini-text">
-                <h4 id="mini-title">Título da Música</h4>
+                <h3 id="mini-title">Título</h3>
                 <p id="mini-artist">Artista</p>
+                <div class="mini-progress-container">
+                    <progress id="mini-progress" value="0" max="100" class="mini-progress-bar"></progress>
+                </div>
             </div>
         </div>
-
+        
         <div class="mini-controls">
+            <button id="mini-shuffle" class="mini-control-btn" title="Embaralhar">
+                <i class="fas fa-random"></i>
+            </button>
+            <button id="mini-prev" class="mini-control-btn" title="Anterior">
+                <i class="fas fa-step-backward"></i>
+            </button>
             <button id="mini-play" class="mini-control-btn">
                 <i class="fas fa-play"></i>
             </button>
-            <button id="mini-next" class="mini-control-btn">
+            <button id="mini-next" class="mini-control-btn" title="Próxima">
                 <i class="fas fa-step-forward"></i>
             </button>
-            <button id="mini-close" class="mini-control-btn mini-close-btn">
+            <button id="mini-repeat" class="mini-control-btn" title="Repetir">
+                <i class="fas fa-redo"></i>
+            </button>
+            <button id="mini-close" class="mini-control-btn" title="Fechar">
                 <i class="fas fa-times"></i>
             </button>
         </div>
