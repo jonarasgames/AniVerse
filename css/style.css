@@ -21,7 +21,6 @@
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: var(--background-color);
     color: var(--text-color);
     line-height: 1.6;
@@ -35,7 +34,6 @@ body {
     padding: 0 15px;
 }
 
-/* Header */
 header {
     background-color: var(--header-bg);
     color: white;
@@ -130,7 +128,6 @@ nav a:hover, nav a.active {
     transform: scale(1.1);
 }
 
-/* Hero Section */
 .hero {
     background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://i.ibb.co/0jq7R0y/anime-bg.jpg');
     background-size: cover;
@@ -194,7 +191,6 @@ nav a:hover, nav a.active {
     border-radius: 0 4px 4px 0;
 }
 
-/* User Welcome Section */
 .user-welcome {
     background-color: var(--secondary-color);
     padding: 15px 0;
@@ -232,7 +228,6 @@ nav a:hover, nav a.active {
     font-weight: 600;
 }
 
-/* Content Sections */
 .content-section {
     display: none;
     animation: fadeIn 0.5s ease;
@@ -260,7 +255,6 @@ nav a:hover, nav a.active {
     animation: expandWidth 0.5s ease-out;
 }
 
-/* Anime Grid */
 .anime-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -388,7 +382,6 @@ nav a:hover, nav a.active {
     transition: width 0.3s ease;
 }
 
-/* Category Tabs */
 .category-tabs {
     display: flex;
     flex-wrap: wrap;
@@ -427,7 +420,6 @@ nav a:hover, nav a.active {
     display: grid;
 }
 
-/* Modal de Vídeo */
 .modal {
     display: none;
     position: fixed;
@@ -870,73 +862,442 @@ footer {
     gap: 10px;
 }
 
-/* Player de Música */
+.music-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.music-card {
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+    cursor: pointer;
+    aspect-ratio: 1/1;
+    position: relative;
+}
+
+.music-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.music-cover {
+    max-width: 200px;
+    margin: 0 auto 20px;
+}
+
+.music-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: var(--transition);
+}
+
+.music-card:hover .music-cover img {
+    transform: scale(1.1);
+}
+
+.music-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+    color: white;
+}
+
+.music-title {
+    font-weight: 600;
+    margin-bottom: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.music-anime {
+    font-size: 0.8rem;
+    color: #ddd;
+}
+
+.music-player {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 30px;
+    align-items: center;
+}
+
+.music-player .music-cover {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    max-width: 300px;
+}
+
+.music-player .music-cover img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.music-controls {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.music-controls .btn-icon {
+    font-size: 1.5rem;
+    margin: 0 10px;
+}
+
+#music-progress {
+    width: 100%;
+    margin: 10px 0;
+    cursor: pointer;
+}
+
+#music-current-time, #music-duration {
+    font-size: 0.9rem;
+    color: var(--text-color);
+}
+
+.mini-player {
+    position: fixed;
+    bottom: -100px;
+    left: 0;
+    width: 100%;
+    background-color: var(--card-bg);
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    transition: bottom 0.3s ease;
+}
+
+.mini-player.active {
+    bottom: 0;
+}
+
+.mini-cover {
+    width: 40px;
+    height: 40px;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-right: 15px;
+}
+
+.mini-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.mini-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    font-size: 0.9rem;
+    overflow: hidden;
+}
+
+.mini-info span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.mini-controls {
+    margin-left: 15px;
+    display: flex;
+    gap: 10px;
+}
+
+.album-section {
+    margin-bottom: 40px;
+}
+
+.album-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.album-cover {
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-right: 20px;
+    box-shadow: var(--shadow);
+}
+
+.album-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.album-title {
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+}
+
+.album-year {
+    color: var(--text-color);
+    opacity: 0.7;
+    font-size: 0.9rem;
+}
+
+#anime-info-container {
+    margin-top: 30px;
+}
+
+.anime-details {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+.anime-poster {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+}
+
+.anime-poster img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.anime-meta-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin: 15px 0;
+}
+
+.meta-item {
+    background-color: var(--secondary-color);
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.anime-synopsis {
+    margin: 20px 0;
+    line-height: 1.7;
+}
+
+.anime-characters {
+    margin-top: 30px;
+}
+
+.characters-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 20px;
+    margin-top: 15px;
+}
+
+.character-card {
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    text-align: center;
+}
+
+.character-img {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+}
+
+.character-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.character-name {
+    padding: 10px;
+    font-weight: 600;
+}
+
+.character-role {
+    font-size: 0.8rem;
+    color: var(--text-color);
+    opacity: 0.7;
+    padding-bottom: 10px;
+}
+
+.anime-header {
+    display: flex;
+    align-items: center;
+    padding: 15px 10px 5px;
+    grid-column: 1 / -1;
+    border-bottom: 1px solid #333;
+    margin-bottom: 10px;
+    color: white;
+    margin: 15px 0 5px;
+    padding-bottom: 5px;
+}
+
+.anime-header h2 {
+    font-size: 1.2rem;
+    color: #fff;
+    margin: 0;
+}
+
+.anime-theme-badge {
+    margin-left: 10px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.anime-theme-badge.opening {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.anime-theme-badge.ending {
+    background-color: #3498db;
+    color: white;
+}
+
+.music-cover {
+    position: relative;
+}
+
+.theme-badge {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    padding: 2px 5px;
+    border-radius: 3px;
+    font-size: 0.6rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.theme-badge.opening {
+    color: #e74c3c;
+}
+
+.theme-badge.ending {
+    color: #3498db;
+}
+
+.music-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 15px;
+    padding: 10px;
+}
+
 #music-modal {
     display: none;
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
     background-color: rgba(0, 0, 0, 0.9);
     z-index: 1000;
+    color: white;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
 }
 
 .music-modal-content {
-    width: 90%;
+    width: 95%;
     max-width: 800px;
-    background-color: #1a1a2e;
+    max-height: 90vh;
+    background-color: #1a1a1a;
     border-radius: 10px;
     overflow: hidden;
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 20px;
-    padding: 20px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
     position: relative;
 }
 
-.music-cover-container {
+.music-header {
     display: flex;
     align-items: center;
-    justify-content: center;
+    padding: 20px;
+    background: linear-gradient(135deg, #2c3e50, #1a1a1a);
+    flex-shrink: 0;
 }
 
 .music-cover {
-    width: 100%;
-    max-width: 250px;
-    border-radius: 8px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    width: 150px;
+    height: 150px;
+    margin-right: 20px;
+    flex-shrink: 0;
 }
 
-.music-info-container {
-    display: flex;
-    flex-direction: column;
-    color: white;
-    padding: 10px;
+.music-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.music-info {
+    flex-grow: 1;
+    min-width: 0;
 }
 
 .music-title {
-    font-size: 1.8rem;
-    margin-bottom: 5px;
+    font-size: 1.5rem;
+    margin: 0 0 5px;
     color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .music-artist {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
+    margin: 0 0 5px;
     color: #aaa;
-    margin-bottom: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .music-anime {
     font-size: 1rem;
+    margin: 0;
     color: #777;
-    margin-bottom: 20px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .music-controls {
-    margin-top: 20px;
+    padding: 20px;
+    background-color: #222;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
 }
 
 .progress-container {
@@ -969,17 +1330,22 @@ footer {
     display: flex;
     justify-content: space-between;
     width: 100%;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     color: #aaa;
-    margin-bottom: 20px;
 }
 
-.controls-main {
+.controls-row {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.main-controls {
+    display: flex;
     align-items: center;
     gap: 15px;
-    margin-bottom: 15px;
 }
 
 .control-btn {
@@ -988,7 +1354,7 @@ footer {
     color: white;
     font-size: 1.2rem;
     cursor: pointer;
-    padding: 10px;
+    padding: 8px;
     border-radius: 50%;
     transition: all 0.2s;
     width: 40px;
@@ -1007,131 +1373,32 @@ footer {
 }
 
 #music-play {
-    background-color: #e74c3c;
     width: 50px;
     height: 50px;
-    font-size: 1.5rem;
 }
 
-#music-play:hover {
-    background-color: #c0392b;
-    transform: scale(1.05);
-}
-
-.controls-secondary {
+.volume-control {
     display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 10px;
+    align-items: center;
+    gap: 8px;
+    width: 120px;
 }
 
-.music-tabs {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
-    gap: 10px;
+.volume-control i {
+    font-size: 1rem;
 }
 
-.music-tab {
-    padding: 8px 16px;
-    background-color: #333;
-    border: none;
-    border-radius: 20px;
-    color: white;
-    cursor: pointer;
-    font-weight: bold;
-    transition: all 0.2s;
-}
-
-.music-tab:hover {
-    background-color: #444;
-}
-
-.music-tab.active {
-    background-color: #e74c3c;
-}
-
-.music-grid-container {
-    max-height: 400px;
-    overflow-y: auto;
-    padding: 10px;
-}
-
-.music-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 15px;
-}
-
-.music-card {
-    background-color: #2a2a2a;
-    border-radius: 8px;
-    overflow: hidden;
-    cursor: pointer;
-    transition: transform 0.3s;
-}
-
-.music-card:hover {
-    transform: translateY(-5px);
-}
-
-.music-card-cover {
+.volume-control input {
     width: 100%;
-    height: 0;
-    padding-bottom: 100%;
-    position: relative;
 }
 
-.music-card-cover img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.music-card-info {
-    padding: 10px;
-}
-
-.music-card-title {
-    font-size: 0.9rem;
-    color: white;
-    margin-bottom: 5px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.music-card-artist {
-    font-size: 0.8rem;
-    color: #aaa;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.music-type-badge {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    background-color: rgba(0, 0, 0, 0.7);
-    color: white;
-    padding: 3px 6px;
-    border-radius: 3px;
-    font-size: 0.7rem;
-    font-weight: bold;
-}
-
-/* Mini Player */
 #mini-player {
     position: fixed;
     bottom: -100px;
     left: 0;
     width: 100%;
     background-color: #222;
-    padding: 10px 20px;
+    padding: 10px 15px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -1148,15 +1415,16 @@ footer {
 .mini-player-info {
     display: flex;
     align-items: center;
-    gap: 15px;
-    flex: 1;
+    gap: 10px;
+    flex-grow: 1;
     min-width: 0;
+    overflow: hidden;
 }
 
 .mini-cover {
-    width: 50px;
-    height: 50px;
-    border-radius: 5px;
+    width: 40px;
+    height: 40px;
+    border-radius: 3px;
     overflow: hidden;
     flex-shrink: 0;
 }
@@ -1165,61 +1433,36 @@ footer {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    border-radius: 3px;
 }
 
 .mini-text {
     min-width: 0;
-    flex: 1;
+    overflow: hidden;
 }
 
 .mini-title {
     font-size: 0.9rem;
-    color: white;
     margin: 0;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    color: #fff;
 }
 
 .mini-artist {
     font-size: 0.8rem;
-    color: #aaa;
     margin: 0;
+    color: #aaa;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-}
-
-.mini-progress-container {
-    width: 100%;
-    margin: 5px 0;
-}
-
-.mini-progress-bar {
-    width: 100%;
-    height: 3px;
-    background-color: #444;
-    border-radius: 3px;
-    cursor: pointer;
-    -webkit-appearance: none;
-    appearance: none;
-}
-
-.mini-progress-bar::-webkit-progress-bar {
-    background-color: #444;
-    border-radius: 3px;
-}
-
-.mini-progress-bar::-webkit-progress-value {
-    background-color: #e74c3c;
-    border-radius: 3px;
 }
 
 .mini-controls {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-left: 15px;
 }
 
 .mini-control-btn {
@@ -1234,14 +1477,197 @@ footer {
 }
 
 .mini-control-btn:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.1);
 }
 
-.mini-control-btn.active {
+.music-grid-container {
+    padding: 15px;
+    display: none;
+    overflow-y: auto;
+    max-height: calc(100vh - 150px);
+}
+
+.music-grid-container.active {
+    display: block;
+}
+
+.music-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 15px;
+    padding: 10px;
+}
+
+.music-card {
+    background-color: #2a2a2a;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.music-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.music-cover {
+    width: 100%;
+    height: 0;
+    padding-bottom: 100%;
+    position: relative;
+}
+
+.music-cover img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.music-info {
+    padding: 12px;
+}
+
+.music-title {
+    font-size: 0.95rem;
+    margin: 0 0 5px;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.music-artist {
+    font-size: 0.85rem;
+    margin: 0 0 3px;
+    color: #aaa;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.music-anime {
+    font-size: 0.75rem;
+    margin: 0;
+    color: #777;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.album-section {
+    margin-bottom: 20px;
+    background-color: #2a2a2a;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.album-header {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    background: linear-gradient(135deg, #2c3e50, #1a1a1a);
+    cursor: pointer;
+}
+
+.album-cover {
+    width: 70px;
+    height: 70px;
+    margin-right: 15px;
+    flex-shrink: 0;
+}
+
+.album-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.album-info {
+    min-width: 0;
+}
+
+.album-title {
+    font-size: 1rem;
+    margin: 0 0 5px;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.album-year {
+    font-size: 0.85rem;
+    margin: 0;
+    color: #aaa;
+}
+
+.music-tabs {
+    display: flex;
+    background-color: #222;
+    border-bottom: 1px solid #333;
+}
+
+.music-tab {
+    padding: 12px 20px;
+    cursor: pointer;
+    color: #aaa;
+    font-weight: bold;
+    transition: all 0.2s;
+    border-bottom: 3px solid transparent;
+}
+
+.music-tab:hover {
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.music-tab.active {
     color: #e74c3c;
+    border-bottom-color: #e74c3c;
 }
 
-/* Responsividade */
+.music-type {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    padding: 2px 5px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: bold;
+}
+
+.music-type.opening {
+    background: #e74c3c;
+}
+
+.music-type.ending {
+    background: #3498db;
+}
+
+.anime-thumbnail {
+  position: relative;
+  overflow: hidden;
+}
+
+.anime-trailer-preview {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 1;
+}
+
 @media (max-width: 768px) {
     header .container {
         flex-direction: column;
@@ -1279,32 +1705,54 @@ footer {
         grid-template-columns: repeat(3, 1fr);
     }
 
-    .music-modal-content {
+    .music-player {
         grid-template-columns: 1fr;
-        padding: 15px;
     }
-    
+
+    .album-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .album-cover {
+        margin-right: 0;
+        margin-bottom: 15px;
+    }
+
+    .anime-details {
+        grid-template-columns: 1fr;
+    }
+
+    .characters-grid {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    }
+
+    .music-header {
+        flex-direction: column;
+        text-align: center;
+    }
+
     .music-cover {
-        max-width: 200px;
-        margin: 0 auto;
+        margin: 0 0 15px;
     }
-    
+
     .music-grid {
         grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     }
-    
-    .mini-player-info {
-        gap: 10px;
-    }
-    
-    .mini-cover {
-        width: 40px;
-        height: 40px;
-    }
-    
+
     .controls-row {
         flex-direction: column;
         gap: 15px;
+    }
+
+    .main-controls {
+        order: 2;
+    }
+
+    .volume-control {
+        order: 1;
+        width: 100%;
+        max-width: 200px;
     }
 }
 
@@ -1336,35 +1784,21 @@ footer {
         font-size: 0.9rem;
     }
 
-    .music-modal-content {
-        width: 95%;
-        padding: 10px;
-    }
-    
     .music-grid {
         grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
         gap: 10px;
     }
-    
+
     .music-info {
         padding: 8px;
     }
-    
+
     .music-title {
         font-size: 0.85rem;
     }
-    
+
     .music-artist, .music-anime {
         font-size: 0.75rem;
-    }
-    
-    .mini-controls {
-        gap: 5px;
-    }
-    
-    .mini-control-btn {
-        padding: 5px;
-        font-size: 0.9rem;
     }
 }
 
