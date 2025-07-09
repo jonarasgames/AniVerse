@@ -119,7 +119,11 @@
                 <div id="music-grid" class="music-grid"></div>
             </div>
 
-            <div id="osts-container" class="music-grid-container">
+            <div id="endings-grid-container" class="music-grid-container">
+                <div id="endings-grid" class="music-grid"></div>
+            </div>
+
+            <div id="osts-grid-container" class="music-grid-container">
                 <div id="osts-grid" class="music-grid"></div>
             </div>
         </section>
@@ -141,7 +145,7 @@
         </section>
     </main>
 
-    <!-- Modal do Player de Música -->
+    <!-- Modal do Player de Música (FULLSCREEN) -->
     <div id="music-modal">
         <div class="music-modal-content">
             <div class="music-cover-container">
@@ -155,7 +159,7 @@
                 
                 <div class="music-controls">
                     <div class="progress-container">
-                        <progress id="music-progress" value="0" max="100"></progress>
+                        <input type="range" id="music-progress" value="0" max="100" class="progress-bar">
                         <div class="time-display">
                             <span id="music-current-time">0:00</span>
                             <span id="music-duration">0:00</span>
@@ -179,19 +183,31 @@
                             <i class="fas fa-redo"></i>
                         </button>
                     </div>
+                    
+                    <div class="controls-secondary">
+                        <button id="fullscreen-btn" class="control-btn" title="Tela Cheia">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                        <button id="close-music-modal" class="control-btn" title="Fechar">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
                 </div>
                 
-                <div id="music-grid-container" class="music-grid-container active">
-                    <div id="music-grid" class="music-grid"></div>
-                    <div id="osts-grid" class="music-grid"></div>
+                <div class="music-tabs">
+                    <button class="music-tab active" data-section="openings">Openings</button>
+                    <button class="music-tab" data-section="endings">Endings</button>
+                    <button class="music-tab" data-section="osts">OSTs</button>
+                </div>
+                
+                <div id="current-music-grid" class="music-grid-container active">
+                    <div id="current-music-grid-content" class="music-grid"></div>
                 </div>
             </div>
-            
-            <button id="close-music-modal" class="close-modal">&times;</button>
         </div>
     </div>
 
-    <!-- Mini Player -->
+    <!-- Mini Player (COMPLETO) -->
     <div id="mini-player">
         <div class="mini-player-info">
             <div class="mini-cover">
@@ -201,7 +217,7 @@
                 <h3 id="mini-title">Título</h3>
                 <p id="mini-artist">Artista</p>
                 <div class="mini-progress-container">
-                    <progress id="mini-progress" value="0" max="100" class="mini-progress-bar"></progress>
+                    <input type="range" id="mini-progress" value="0" max="100" class="mini-progress-bar">
                 </div>
             </div>
         </div>
@@ -221,6 +237,9 @@
             </button>
             <button id="mini-repeat" class="mini-control-btn" title="Repetir">
                 <i class="fas fa-redo"></i>
+            </button>
+            <button id="mini-fullscreen" class="mini-control-btn" title="Tela Cheia">
+                <i class="fas fa-expand"></i>
             </button>
             <button id="mini-close" class="mini-control-btn" title="Fechar">
                 <i class="fas fa-times"></i>
