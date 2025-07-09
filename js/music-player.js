@@ -31,8 +31,6 @@ document.addEventListener('DOMContentLoaded', function() {
         miniCloseBtn: document.getElementById('mini-close'),
         fullscreenBtn: document.getElementById('fullscreen-btn'),
         miniFullscreenBtn: document.getElementById('mini-fullscreen'),
-        miniPrevBtn: document.getElementById('mini-prev'),
-        miniNextBtn: document.getElementById('mini-next'),
         volumeControl: document.getElementById('volume-control')
     };
 
@@ -127,43 +125,42 @@ document.addEventListener('DOMContentLoaded', function() {
     // Renderiza a grid de músicas
     function renderMusicGrid(tracks) {
         elements.musicGrid.innerHTML = '';
-        const animeGroups = {};
+        let currentAnime = '';
 
         // Agrupa por anime
-        tracks.forEach(track => {
+        const animeGroups = {};
+        tracks.forEach((track, index) => {
             if (!animeGroups[track.anime]) {
                 animeGroups[track.anime] = [];
             }
-            animeGroups[track.anime].push(track);
+            animeGroups[track.anime].push({...track, originalIndex: index});
         });
 
-        // Renderiza cada grupo
+        // Renderiza cada grupo de anime
         for (const [anime, tracks] of Object.entries(animeGroups)) {
-            // Encontra o índice inicial deste anime na lista completa
-            const firstIndex = currentPlaylist.findIndex(t => t.anime === anime);
-            
-            const groupHTML = `
-                <div class="anime-group">
-                    <div class="anime-header">
-                        <h2>${anime}</h2>
-                    </div>
-                    <div class="anime-musics">
-                        ${tracks.map((track, index) => `
-                            <div class="music-card" data-index="${firstIndex + index}">
-                                <div class="music-cover">
-                                    <img src="${track.cover}" loading="lazy">
-                                    <span class="music-type ${track.type}">${track.type === 'opening' ? 'OP' : 'ED'}</span>
-                                </div>
-                                <div class="music-info">
-                                    <h3 class="music-title">${track.title}</h3>
-                                    <p class="music-artist">${track.artist}</p>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
+            // Cabeçalho do anime
+            elements.musicGrid.innerHTML += `
+                <div class="anime-header">
+                    <h2>${anime}</h2>
                 </div>
             `;
-            elements.musicGrid.innerHTML += groupHTML;
+
+            // Músicas do anime
+            tracks.forEach(track => {
+                elements.musicGrid.innerHTML += `
+                    <div class="music-card" data-index="${track.originalIndex}">
+                        <div class="music-cover">
+                            <img src="${track.cover}" loading="lazy">
+                            <span class="music-type ${track.type}">${track.type === 'opening' ? 'OP' : 'ED'}</span>
+                        </div>
+                        <div class="music-info">
+                            <h3 class="music-title">${track.title}</h3>
+                            <p class="music-artist">${track.artist}</p>
+                            <p class="music-anime">${track.anime}</p>
+                        </div>
+                    </div>
+                `;
+            });
         }
 
         // Adiciona eventos aos cards
@@ -315,12 +312,9 @@ document.addEventListener('DOMContentLoaded', function() {
         elements.miniPlayBtn.addEventListener('click', togglePlay);
         elements.nextBtn.addEventListener('click', nextTrack);
         elements.prevBtn.addEventListener('click', prevTrack);
-        elements.miniNextBtn.addEventListener('click', nextTrack);
-        elements.miniPrevBtn.addEventListener('click', prevTrack);
         elements.shuffleBtn.addEventListener('click', toggleShuffle);
         elements.repeatBtn.addEventListener('click', toggleRepeat);
         elements.fullscreenBtn.addEventListener('click', toggleFullscreen);
-        elements.miniFullscreenBtn.addEventListener('click', showMusicModal);
         elements.closeModalBtn.addEventListener('click', hideMusicModal);
         elements.miniCloseBtn.addEventListener('click', () => {
             musicPlayer.pause();
@@ -329,7 +323,7 @@ document.addEventListener('DOMContentLoaded', function() {
             hideMiniPlayer();
         });
 
-        // Barras de progresso
+        // Barra de progresso
         elements.progressBar.addEventListener('input', function() {
             const percent = this.value / 100;
             musicPlayer.currentTime = percent * musicPlayer.duration;
