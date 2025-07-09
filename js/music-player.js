@@ -125,10 +125,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Renderiza a grid de músicas
     function renderMusicGrid(tracks) {
         elements.musicGrid.innerHTML = '';
-        let currentAnime = '';
+        const animeGroups = {};
 
         // Agrupa por anime
-        const animeGroups = {};
         tracks.forEach((track, index) => {
             if (!animeGroups[track.anime]) {
                 animeGroups[track.anime] = [];
@@ -136,31 +135,34 @@ document.addEventListener('DOMContentLoaded', function() {
             animeGroups[track.anime].push({...track, originalIndex: index});
         });
 
-        // Renderiza cada grupo de anime
+        // Renderiza cada grupo de anime em uma seção separada
         for (const [anime, tracks] of Object.entries(animeGroups)) {
+            const animeSection = document.createElement('div');
+            animeSection.className = 'anime-music-section';
+            
             // Cabeçalho do anime
-            elements.musicGrid.innerHTML += `
+            animeSection.innerHTML = `
                 <div class="anime-header">
                     <h2>${anime}</h2>
                 </div>
+                <div class="anime-music-grid">
+                    ${tracks.map(track => `
+                        <div class="music-card" data-index="${track.originalIndex}">
+                            <div class="music-cover">
+                                <img src="${track.cover}" loading="lazy">
+                                <span class="music-type ${track.type}">${track.type === 'opening' ? 'OP' : 'ED'}</span>
+                            </div>
+                            <div class="music-info">
+                                <h3 class="music-title">${track.title}</h3>
+                                <p class="music-artist">${track.artist}</p>
+                                <p class="music-anime">${track.anime}</p>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
             `;
-
-            // Músicas do anime
-            tracks.forEach(track => {
-                elements.musicGrid.innerHTML += `
-                    <div class="music-card" data-index="${track.originalIndex}">
-                        <div class="music-cover">
-                            <img src="${track.cover}" loading="lazy">
-                            <span class="music-type ${track.type}">${track.type === 'opening' ? 'OP' : 'ED'}</span>
-                        </div>
-                        <div class="music-info">
-                            <h3 class="music-title">${track.title}</h3>
-                            <p class="music-artist">${track.artist}</p>
-                            <p class="music-anime">${track.anime}</p>
-                        </div>
-                    </div>
-                `;
-            });
+            
+            elements.musicGrid.appendChild(animeSection);
         }
 
         // Adiciona eventos aos cards
@@ -315,6 +317,7 @@ document.addEventListener('DOMContentLoaded', function() {
         elements.shuffleBtn.addEventListener('click', toggleShuffle);
         elements.repeatBtn.addEventListener('click', toggleRepeat);
         elements.fullscreenBtn.addEventListener('click', toggleFullscreen);
+        elements.miniFullscreenBtn.addEventListener('click', showMusicModal);
         elements.closeModalBtn.addEventListener('click', hideMusicModal);
         elements.miniCloseBtn.addEventListener('click', () => {
             musicPlayer.pause();
@@ -325,13 +328,23 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Barra de progresso
         elements.progressBar.addEventListener('input', function() {
-            const percent = this.value / 100;
-            musicPlayer.currentTime = percent * musicPlayer.duration;
+            const seekTime = (this.value / 100) * musicPlayer.duration;
+            musicPlayer.currentTime = seekTime;
+        });
+
+        elements.progressBar.addEventListener('change', function() {
+            const seekTime = (this.value / 100) * musicPlayer.duration;
+            musicPlayer.currentTime = seekTime;
         });
 
         elements.miniProgressBar.addEventListener('input', function() {
-            const percent = this.value / 100;
-            musicPlayer.currentTime = percent * musicPlayer.duration;
+            const seekTime = (this.value / 100) * musicPlayer.duration;
+            musicPlayer.currentTime = seekTime;
+        });
+
+        elements.miniProgressBar.addEventListener('change', function() {
+            const seekTime = (this.value / 100) * musicPlayer.duration;
+            musicPlayer.currentTime = seekTime;
         });
 
         // Controle de volume
