@@ -12,9 +12,6 @@ document.addEventListener('DOMContentLoaded', function() {
         shuffleBtn: document.getElementById('shuffle-btn'),
         repeatBtn: document.getElementById('repeat-btn'),
         progressBar: document.getElementById('music-progress'),
-        progressContainer: document.querySelector('.progress-container'),
-        miniProgressBar: document.querySelector('.mini-progress-bar'),
-        miniProgressContainer: document.querySelector('.mini-progress-container'),
         currentTimeEl: document.getElementById('music-current-time'),
         durationEl: document.getElementById('music-duration'),
         coverImg: document.getElementById('music-cover-img'),
@@ -33,7 +30,8 @@ document.addEventListener('DOMContentLoaded', function() {
         miniCloseBtn: document.getElementById('mini-close'),
         fullscreenBtn: document.getElementById('fullscreen-btn'),
         miniFullscreenBtn: document.getElementById('mini-fullscreen'),
-        volumeControl: document.getElementById('volume-control')
+        volumeControl: document.getElementById('volume-control'),
+        progressContainer: document.querySelector('.progress-container')
     };
 
     const musicPlayer = new Audio();
@@ -142,7 +140,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const animeSection = document.createElement('div');
             animeSection.className = 'anime-music-section';
             
-            // Cabeçalho do anime
             animeSection.innerHTML = `
                 <div class="anime-header">
                     <h2>${anime}</h2>
@@ -272,15 +269,12 @@ document.addEventListener('DOMContentLoaded', function() {
         elements.shuffleBtn.classList.toggle('active', isShuffled);
         
         if (isShuffled) {
-            // Cria uma lista embaralhada
             shuffledPlaylist = [...Array(currentPlaylist.length).keys()];
             for (let i = shuffledPlaylist.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [shuffledPlaylist[i], shuffledPlaylist[j]] = [shuffledPlaylist[j], shuffledPlaylist[i]];
             }
-            // Remove a música atual da lista embaralhada
             shuffledPlaylist = shuffledPlaylist.filter(idx => idx !== currentTrack);
-            // Adiciona a música atual no início
             shuffledPlaylist.unshift(currentTrack);
         }
     }
@@ -338,23 +332,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Barra de progresso - clique para pular
         elements.progressContainer.addEventListener('click', setProgress);
-        elements.miniProgressContainer.addEventListener('click', setProgress);
-
-        // Barra de progresso - arrastar
-        elements.progressBar.addEventListener('input', function() {
-            const seekTime = (this.value / 100) * musicPlayer.duration;
-            musicPlayer.currentTime = seekTime;
-        });
-
-        elements.miniProgressBar.addEventListener('input', function() {
-            const seekTime = (this.value / 100) * musicPlayer.duration;
-            musicPlayer.currentTime = seekTime;
-        });
 
         // Controle de volume
         elements.volumeControl.addEventListener('input', function() {
             musicPlayer.volume = this.value;
+            // Atualiza o ícone do volume
+            updateVolumeIcon(this.value);
         });
+
+        // Configura volume inicial
+        musicPlayer.volume = elements.volumeControl.value;
+        updateVolumeIcon(elements.volumeControl.value);
 
         // Evento quando a música termina
         musicPlayer.addEventListener('ended', () => {
@@ -379,11 +367,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 const progressPercent = (musicPlayer.currentTime / musicPlayer.duration) * 100;
                 elements.progressBar.value = progressPercent;
-                elements.miniProgressBar.value = progressPercent;
             }
         });
 
         // Carrega a primeira tab
         document.querySelector('.music-tab').click();
     });
+
+    // Atualiza o ícone do volume
+    function updateVolumeIcon(volume) {
+        const volumeIcon = document.querySelector('.volume-control i');
+        if (volumeIcon) {
+            if (volume == 0) {
+                volumeIcon.className = 'fas fa-volume-mute';
+            } else if (volume < 0.5) {
+                volumeIcon.className = 'fas fa-volume-down';
+            } else {
+                volumeIcon.className = 'fas fa-volume-up';
+            }
+        }
+    }
 });
