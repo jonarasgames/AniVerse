@@ -140,6 +140,42 @@
         </section>
     </main>
 
+    <!-- Modal de Vídeo -->
+    <div id="video-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div id="video-player-container">
+                <video id="anime-player" controls>
+                    Seu navegador não suporta o elemento de vídeo.
+                </video>
+            </div>
+            <div class="video-info">
+                <h2 id="video-title">Título do Anime</h2>
+                <p id="video-description">Descrição do anime...</p>
+                
+                <div class="video-controls">
+                    <div class="season-episode-selectors">
+                        <select id="season-select" class="form-control">
+                            <option value="1">Temporada 1</option>
+                        </select>
+                        <select id="episode-select" class="form-control">
+                            <option value="1">Episódio 1</option>
+                        </select>
+                    </div>
+                    
+                    <div class="rating-controls">
+                        <button id="like-btn" class="btn-rating">
+                            <i class="fas fa-thumbs-up"></i> <span id="likes-count">0</span>
+                        </button>
+                        <button id="dislike-btn" class="btn-rating">
+                            <i class="fas fa-thumbs-down"></i> <span id="dislikes-count">0</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal do Player de Música -->
     <div id="music-modal">
         <div class="music-modal-content">
