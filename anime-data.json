@@ -881,7 +881,7 @@
         "episodes": [
           {
             "title": "Episódio 1",
-            "videoUrl": "",
+            "videoUrl": "a",
             "duration": 0
           }
         ]
@@ -894,7 +894,7 @@
         "title": "Blue Sky Rhapsody",
         "artist": "Fhána",
         "audio": "https://dn721806.ca.archive.org/0/items/misskobayashisdragonmaidopfull/Miss_kobayashis_dragon_maidOpFull.mp3",
-        "cover": "https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/thumbnails/ranmanet.png",
+        "cover": "https://static.wikia.nocookie.net/maid-dragon/images/d/de/108125_686683.jpg",
         "type": "opening",
         "season": 1
       },
@@ -902,7 +902,7 @@
         "title": "Ai no Supreme!",
         "artist": "fhána",
         "audio": "https://jonaras.s-ul.eu/ds5lZYDG",
-        "cover": "https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/thumbnails/ranmanet.png",
+        "cover": "https://static.wikia.nocookie.net/maid-dragon/images/b/b8/Ai_No_Supreme_CD_Cover.jpg",
         "type": "opening",
         "season": 2
       }
@@ -912,7 +912,7 @@
         "title": "Ishukan Communication",
         "artist": "Choro-gonzu",
         "audio": "https://jonaras.s-ul.eu/AQyn08dm",
-        "cover": "https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/thumbnails/ranmanet.png",
+        "cover": "https://static.wikia.nocookie.net/maid-dragon/images/8/8c/Ishukan_Communication_Cover.jpg",
         "type": "ending",
         "season": 1
       },
@@ -920,7 +920,7 @@
         "title": "Maid with Dragons ︎❤︎",
         "artist": "Super Chorogons",
         "audio": "https://jonaras.s-ul.eu/kvukHM8P",
-        "cover": "https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/thumbnails/ranmanet.png",
+        "cover": "https://static.wikia.nocookie.net/maid-dragon/images/0/00/Maid_with_Dragons_CD_Cover.jpg",
         "type": "ending",
         "season": 2
       }
