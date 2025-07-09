@@ -1,10 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Modo Escuro/Claro
     const darkModeToggle = document.getElementById('dark-mode-toggle');
     const darkModeStyle = document.getElementById('dark-mode-style');
     const prefersDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
     
-    // Verificar preferência do sistema ou localStorage
     const currentMode = localStorage.getItem('darkMode') || (prefersDarkMode ? 'enabled' : 'disabled');
     
     if (currentMode === 'enabled') {
@@ -24,7 +22,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Navegação entre seções
     const navLinks = document.querySelectorAll('nav a');
     const contentSections = document.querySelectorAll('.content-section');
     
@@ -33,11 +30,9 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             const sectionId = this.getAttribute('data-section') + '-section';
             
-            // Atualizar navegação ativa
             navLinks.forEach(navLink => navLink.classList.remove('active'));
             this.classList.add('active');
             
-            // Mostrar seção correspondente
             contentSections.forEach(section => {
                 section.classList.remove('active');
                 if (section.id === sectionId) {
@@ -45,7 +40,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
             
-            // Carregar conteúdo específico da seção
             if (sectionId === 'animes-section') {
                 loadAnimeSection('anime');
             } else if (sectionId === 'movies-section') {
@@ -55,14 +49,11 @@ document.addEventListener('DOMContentLoaded', function() {
             } else if (sectionId === 'continue-section') {
                 loadContinueWatching();
             } else if (sectionId === 'openings-section') {
-                // Carregado pelo music-player.js
             } else if (sectionId === 'info-section') {
-                // Carregado pelo info-section.js
             }
         });
     });
     
-    // Mostrar mensagem de carregamento
     const grids = document.querySelectorAll('.anime-grid');
     grids.forEach(grid => {
         grid.innerHTML = `
@@ -73,13 +64,11 @@ document.addEventListener('DOMContentLoaded', function() {
         `;
     });
 
-    // Carregar conteúdo inicial
     setTimeout(() => {
         checkAnimeDBLoaded();
         updateProfileDisplay();
     }, 300);
     
-    // Modais de Termos e Privacidade
     document.getElementById('terms-link')?.addEventListener('click', function(e) {
         e.preventDefault();
         document.getElementById('terms-modal').style.display = 'block';
@@ -98,16 +87,13 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('privacy-modal').style.display = 'none';
     });
     
-    // Sistema de Perfil
     document.getElementById('login-btn')?.addEventListener('click', function(e) {
         e.preventDefault();
         openProfileModal();
     });
     
-    // Configurar eventos do modal de perfil
     setupProfileModal();
     
-    // Busca
     const searchInput = document.getElementById('search-input');
     const searchBtn = document.getElementById('search-btn');
     
@@ -158,11 +144,9 @@ function setupCategoryTabs() {
     
     categoryTabs.forEach(tab => {
         tab.addEventListener('click', function() {
-            // Ativar aba selecionada
             categoryTabs.forEach(t => t.classList.remove('active'));
             this.classList.add('active');
             
-            // Mostrar animes da categoria
             const category = this.getAttribute('data-category');
             showCategoryAnimes(category);
         });
@@ -182,18 +166,15 @@ function showCategoryAnimes(category) {
         return;
     }
     
-    // Verificar se a seção já existe
     let categorySection = document.getElementById(`${category}-section`);
     
     if (!categorySection) {
-        // Filtrar animes por categoria
         const filteredAnimes = animeDB.animes.filter(anime => 
             anime.categories && anime.categories.includes(category)
         );
         
         if (filteredAnimes.length === 0) return;
         
-        // Criar nova seção
         categorySection = document.createElement('section');
         categorySection.className = 'category-section';
         categorySection.id = `${category}-section`;
@@ -204,7 +185,6 @@ function showCategoryAnimes(category) {
         
         document.querySelector('main').appendChild(categorySection);
         
-        // Renderizar animes
         renderAnimeGrid(filteredAnimes, `${category}-animes`);
     }
 }
@@ -225,11 +205,9 @@ function renderAnimeGrid(animes, containerId) {
         animeCard.className = 'anime-card';
         animeCard.dataset.id = anime.id;
         
-        // Verificar se há progresso de assistir
         const continueData = animeDB.continueWatching[anime.id];
         const progressBar = continueData ? `<div class="progress-bar" style="width: ${continueData.progress}%"></div>` : '';
         
-        // Verificar se há episódios assistidos
         const watchedCount = getWatchedEpisodesCount(anime.id);
         const watchedBadge = watchedCount > 0 ? `<div class="watched-badge">${watchedCount}/${getTotalEpisodes(anime)}</div>` : '';
         
@@ -375,11 +353,9 @@ function openAnimeModal(anime, seasonNumber = 1, episodeNumber = 1) {
         return;
     }
     
-    // Configurar informações do anime
     videoTitle.textContent = anime.title;
     videoDescription.textContent = anime.description || "Descrição não disponível";
     
-    // Configurar temporadas
     seasonSelect.innerHTML = '';
     if (anime.seasons && anime.seasons.length > 0) {
         anime.seasons.forEach((season, index) => {
@@ -391,7 +367,6 @@ function openAnimeModal(anime, seasonNumber = 1, episodeNumber = 1) {
         });
     }
     
-    // Configurar episódios
     function updateEpisodes() {
         episodeSelect.innerHTML = '';
         const selectedSeason = seasonSelect.value;
@@ -409,12 +384,10 @@ function openAnimeModal(anime, seasonNumber = 1, episodeNumber = 1) {
                 episodeSelect.appendChild(option);
             });
             
-            // Atualizar contagem de likes/dislikes
             const rating = animeDB.getEpisodeRating(anime.id, selectedSeason, episodeNumber);
             likesCount.textContent = rating.likes;
             dislikesCount.textContent = rating.dislikes;
             
-            // Verificar avaliação do usuário
             const userRating = animeDB.getUserRating(anime.id, selectedSeason, episodeNumber);
             if (userRating === 'like') {
                 likeBtn.classList.add('active');
@@ -440,7 +413,6 @@ function openAnimeModal(anime, seasonNumber = 1, episodeNumber = 1) {
         loadEpisode(anime, seasonSelect.value, episodeNumber);
     });
     
-    // Configurar botões de like/dislike
     likeBtn.addEventListener('click', function() {
         const currentRating = animeDB.getUserRating(anime.id, seasonSelect.value, episodeSelect.value);
         
@@ -475,11 +447,9 @@ function openAnimeModal(anime, seasonNumber = 1, episodeNumber = 1) {
         dislikesCount.textContent = rating.dislikes;
     });
     
-    // Carregar episódio inicial
     updateEpisodes();
     loadEpisode(anime, seasonNumber, episodeNumber);
     
-    // Mostrar modal
     modal.style.display = 'block';
     
     function loadEpisode(anime, seasonNum, episodeNum) {
@@ -500,7 +470,6 @@ function openAnimeModal(anime, seasonNumber = 1, episodeNumber = 1) {
             return;
         }
 
-        // Verificar se o link expirou
         if (animeDB.isLinkExpired(episode.videoUrl)) {
             showVideoError('Este link expirou e não pode mais ser reproduzido');
             return;
@@ -548,7 +517,6 @@ function openAnimeModal(anime, seasonNumber = 1, episodeNumber = 1) {
         });
     }
     
-    // Salvar progresso periodicamente
     const saveInterval = setInterval(() => {
         if (!videoPlayer.paused) {
             animeDB.saveContinueWatching(
@@ -560,7 +528,6 @@ function openAnimeModal(anime, seasonNumber = 1, episodeNumber = 1) {
         }
     }, 5000);
     
-    // Quando o vídeo terminar
     videoPlayer.onended = function() {
         animeDB.markEpisodeWatched(anime.id, seasonSelect.value, episodeSelect.value);
         clearInterval(saveInterval);
@@ -574,7 +541,6 @@ function openAnimeModal(anime, seasonNumber = 1, episodeNumber = 1) {
         }
     };
     
-    // Fechar modal
     const closeModal = document.querySelector('.close-modal');
     
     closeModal?.addEventListener('click', function() {
@@ -803,7 +769,6 @@ function renderSearchResults(results) {
     });
 }
 
-// Evento para carregar dados quando estiverem prontos
 window.addEventListener('animeDataLoaded', () => {
     if (typeof loadNewReleases === 'function') loadNewReleases();
     if (typeof loadContinueWatching === 'function') loadContinueWatching();
