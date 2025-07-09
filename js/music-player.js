@@ -1,7 +1,4 @@
-// music-player.js - VERSÃO COMPLETA E FUNCIONAL
 document.addEventListener('DOMContentLoaded', function() {
-    console.log("Iniciando player de música...");
-
     // Elementos do DOM
     const elements = {
         musicModal: document.getElementById('music-modal'),
@@ -10,7 +7,14 @@ document.addEventListener('DOMContentLoaded', function() {
         miniPlayBtn: document.getElementById('mini-play'),
         prevBtn: document.getElementById('music-prev'),
         nextBtn: document.getElementById('music-next'),
+        shuffleBtn: document.getElementById('music-shuffle'),
+        repeatBtn: document.getElementById('music-repeat'),
+        miniPrevBtn: document.getElementById('mini-prev'),
+        miniNextBtn: document.getElementById('mini-next'),
+        miniShuffleBtn: document.getElementById('mini-shuffle'),
+        miniRepeatBtn: document.getElementById('mini-repeat'),
         progressBar: document.getElementById('music-progress'),
+        miniProgressBar: document.getElementById('mini-progress'),
         currentTimeEl: document.getElementById('music-current-time'),
         durationEl: document.getElementById('music-duration'),
         coverImg: document.getElementById('music-cover-img'),
@@ -31,6 +35,9 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentTrack = 0;
     let currentPlaylist = [];
     let isPlaying = false;
+    let isShuffle = false;
+    let isRepeat = false;
+    let originalPlaylist = [];
 
     // Verifica se o animeDB está pronto
     function waitForAnimeDB(callback) {
@@ -51,8 +58,10 @@ document.addEventListener('DOMContentLoaded', function() {
             currentPlaylist = [];
             renderAlbums(library.osts);
         } else {
-            currentPlaylist = library.themes;
-            renderMusicGrid(library.themes);
+            currentPlaylist = type === 'openings' 
+                ? library.themes.filter(t => t.type === 'opening') 
+                : library.themes.filter(t => t.type === 'ending');
+            renderMusicGrid(currentPlaylist);
         }
     }
 
@@ -75,12 +84,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="music-grid">
                         ${data.tracks.map((track, index) => `
                             <div class="music-card" data-index="${index}">
-                                <div class="music-cover">
+                                <div class="music-card-cover">
                                     <img src="${data.cover}" loading="lazy">
+                                    <span class="music-type-badge">OST</span>
                                 </div>
-                                <div class="music-info">
-                                    <h3>${track.title}</h3>
-                                    <p>${track.artist}</p>
+                                <div class="music-card-info">
+                                    <h3 class="music-card-title">${track.title}</h3>
+                                    <p class="music-card-artist">${track.artist}</p>
                                 </div>
                             </div>
                         `).join('')}
@@ -95,6 +105,7 @@ document.addEventListener('DOMContentLoaded', function() {
             card.addEventListener('click', function() {
                 const album = this.closest('.album-section').querySelector('h3').textContent;
                 currentPlaylist = osts[album].tracks;
+                originalPlaylist = [...currentPlaylist];
                 currentTrack = parseInt(this.dataset.index);
                 playTrack();
                 elements.musicModal.style.display = 'flex';
@@ -105,28 +116,19 @@ document.addEventListener('DOMContentLoaded', function() {
     // Renderiza a grid de músicas
     function renderMusicGrid(tracks) {
         elements.musicGrid.innerHTML = '';
-        let currentAnime = '';
-
+        
         tracks.forEach((track, index) => {
-            if (track.anime !== currentAnime) {
-                currentAnime = track.anime;
-                elements.musicGrid.innerHTML += `
-                    <div class="anime-header">
-                        <h2>${currentAnime}</h2>
-                        <span class="theme-badge ${track.type}">${track.type === 'opening' ? 'OP' : 'ED'}</span>
-                    </div>
-                `;
-            }
-
+            const type = track.type === 'opening' ? 'OP' : 'ED';
+            
             elements.musicGrid.innerHTML += `
                 <div class="music-card" data-index="${index}">
-                    <div class="music-cover">
+                    <div class="music-card-cover">
                         <img src="${track.cover}" loading="lazy">
-                        <span class="theme-badge ${track.type}">${track.type === 'opening' ? 'OP' : 'ED'}</span>
+                        <span class="music-type-badge">${type}</span>
                     </div>
-                    <div class="music-info">
-                        <h3>${track.title}</h3>
-                        <p>${track.artist}</p>
+                    <div class="music-card-info">
+                        <h3 class="music-card-title">${track.title}</h3>
+                        <p class="music-card-artist">${track.artist}</p>
                     </div>
                 </div>
             `;
@@ -154,14 +156,13 @@ document.addEventListener('DOMContentLoaded', function() {
         elements.miniTitle.textContent = track.title;
         elements.musicArtist.textContent = track.artist;
         elements.miniArtist.textContent = track.artist;
-        elements.musicAnime.textContent = track.anime;
+        elements.musicAnime.textContent = track.anime || 'Unknown Anime';
 
         musicPlayer.play()
             .then(() => {
                 isPlaying = true;
                 updatePlayButtons();
                 elements.miniPlayer.classList.add('active');
-                elements.miniPlayer.style.bottom = '0';
             })
             .catch(e => console.error("Erro ao reproduzir:", e));
     }
@@ -187,13 +188,57 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function nextTrack() {
-        currentTrack = (currentTrack + 1) % currentPlaylist.length;
+        if (isShuffle && currentPlaylist.length > 1) {
+            let newIndex;
+            do {
+                newIndex = Math.floor(Math.random() * currentPlaylist.length);
+            } while (newIndex === currentTrack);
+            currentTrack = newIndex;
+        } else {
+            currentTrack = (currentTrack + 1) % currentPlaylist.length;
+        }
         playTrack();
     }
 
     function prevTrack() {
-        currentTrack = (currentTrack - 1 + currentPlaylist.length) % currentPlaylist.length;
-        playTrack();
+        if (musicPlayer.currentTime > 3) {
+            musicPlayer.currentTime = 0;
+        } else {
+            currentTrack = (currentTrack - 1 + currentPlaylist.length) % currentPlaylist.length;
+            playTrack();
+        }
+    }
+
+    function toggleShuffle() {
+        isShuffle = !isShuffle;
+        elements.shuffleBtn.classList.toggle('active', isShuffle);
+        elements.miniShuffleBtn.classList.toggle('active', isShuffle);
+        
+        if (isShuffle) {
+            originalPlaylist = [...currentPlaylist];
+            // Embaralha a playlist atual
+            for (let i = currentPlaylist.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [currentPlaylist[i], currentPlaylist[j]] = [currentPlaylist[j], currentPlaylist[i]];
+            }
+            // Garante que a música atual continue sendo a primeira
+            const currentSong = currentPlaylist[currentTrack];
+            currentPlaylist = currentPlaylist.filter((_, index) => index !== currentTrack);
+            currentPlaylist.unshift(currentSong);
+            currentTrack = 0;
+        } else {
+            currentPlaylist = [...originalPlaylist];
+            // Encontra a posição da música atual na playlist original
+            currentTrack = originalPlaylist.findIndex(
+                song => song.audio === currentPlaylist[0].audio
+            );
+        }
+    }
+
+    function toggleRepeat() {
+        isRepeat = !isRepeat;
+        elements.repeatBtn.classList.toggle('active', isRepeat);
+        elements.miniRepeatBtn.classList.toggle('active', isRepeat);
     }
 
     function closeMusicModal() {
@@ -202,7 +247,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function closeMiniPlayer() {
         elements.miniPlayer.classList.remove('active');
-        elements.miniPlayer.style.bottom = '-100px';
         musicPlayer.pause();
         isPlaying = false;
         updatePlayButtons();
@@ -224,17 +268,35 @@ document.addEventListener('DOMContentLoaded', function() {
         elements.miniPlayBtn.addEventListener('click', togglePlay);
         elements.nextBtn.addEventListener('click', nextTrack);
         elements.prevBtn.addEventListener('click', prevTrack);
+        elements.shuffleBtn.addEventListener('click', toggleShuffle);
+        elements.repeatBtn.addEventListener('click', toggleRepeat);
+        elements.miniNextBtn.addEventListener('click', nextTrack);
+        elements.miniPrevBtn.addEventListener('click', prevTrack);
+        elements.miniShuffleBtn.addEventListener('click', toggleShuffle);
+        elements.miniRepeatBtn.addEventListener('click', toggleRepeat);
         elements.closeModalBtn.addEventListener('click', closeMusicModal);
         elements.miniCloseBtn.addEventListener('click', closeMiniPlayer);
 
         // Barra de progresso
-        elements.progressBar.addEventListener('click', function(e) {
-            const percent = e.offsetX / this.offsetWidth;
+        elements.progressBar.addEventListener('input', function() {
+            const percent = this.value / 100;
+            musicPlayer.currentTime = percent * musicPlayer.duration;
+        });
+
+        elements.miniProgressBar.addEventListener('input', function() {
+            const percent = this.value / 100;
             musicPlayer.currentTime = percent * musicPlayer.duration;
         });
 
         // Evento quando a música termina
-        musicPlayer.addEventListener('ended', nextTrack);
+        musicPlayer.addEventListener('ended', function() {
+            if (isRepeat) {
+                musicPlayer.currentTime = 0;
+                musicPlayer.play();
+            } else {
+                nextTrack();
+            }
+        });
 
         // Atualiza o tempo da música
         musicPlayer.addEventListener('timeupdate', function() {
@@ -247,11 +309,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 const totalSecs = Math.floor(musicPlayer.duration % 60);
                 elements.durationEl.textContent = `${totalMins}:${totalSecs < 10 ? '0' : ''}${totalSecs}`;
                 
-                elements.progressBar.value = (musicPlayer.currentTime / musicPlayer.duration) * 100;
+                const progressPercent = (musicPlayer.currentTime / musicPlayer.duration) * 100;
+                elements.progressBar.value = progressPercent;
+                elements.miniProgressBar.value = progressPercent;
             }
         });
 
-        // Carrega a primeira tab
-        document.querySelector('.music-tab').click();
+        // Carrega as openings por padrão
+        document.querySelector('.music-tab[data-section="openings"]').click();
     });
 });
