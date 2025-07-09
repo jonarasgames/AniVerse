@@ -302,6 +302,20 @@ document.addEventListener('DOMContentLoaded', function() {
         musicPlayer.currentTime = (clickX / width) * duration;
     }
 
+    // Atualiza o ícone do volume
+    function updateVolumeIcon(volume) {
+        const volumeIcon = elements.volumeControl.querySelector('i');
+        if (volumeIcon) {
+            if (volume == 0) {
+                volumeIcon.className = 'fas fa-volume-mute';
+            } else if (volume < 0.5) {
+                volumeIcon.className = 'fas fa-volume-down';
+            } else {
+                volumeIcon.className = 'fas fa-volume-up';
+            }
+        }
+    }
+
     // Inicialização
     waitForAnimeDB(() => {
         // Configura as tabs
@@ -336,7 +350,6 @@ document.addEventListener('DOMContentLoaded', function() {
         // Controle de volume
         elements.volumeControl.addEventListener('input', function() {
             musicPlayer.volume = this.value;
-            // Atualiza o ícone do volume
             updateVolumeIcon(this.value);
         });
 
@@ -366,25 +379,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 elements.durationEl.textContent = `${totalMins}:${totalSecs < 10 ? '0' : ''}${totalSecs}`;
                 
                 const progressPercent = (musicPlayer.currentTime / musicPlayer.duration) * 100;
-                elements.progressBar.value = progressPercent;
+                elements.progressBar.style.width = `${progressPercent}%`;
             }
         });
 
         // Carrega a primeira tab
         document.querySelector('.music-tab').click();
     });
-
-    // Atualiza o ícone do volume
-    function updateVolumeIcon(volume) {
-        const volumeIcon = document.querySelector('.volume-control i');
-        if (volumeIcon) {
-            if (volume == 0) {
-                volumeIcon.className = 'fas fa-volume-mute';
-            } else if (volume < 0.5) {
-                volumeIcon.className = 'fas fa-volume-down';
-            } else {
-                volumeIcon.className = 'fas fa-volume-up';
-            }
-        }
-    }
 });
