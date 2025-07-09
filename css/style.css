@@ -256,7 +256,6 @@ nav a:hover, nav a.active {
     animation: expandWidth 0.5s ease-out;
 }
 
-/* Seção de músicas por anime */
 .anime-music-section {
     margin-bottom: 40px;
 }
@@ -378,7 +377,7 @@ nav a:hover, nav a.active {
 .anime-meta {
     display: flex;
     justify-content: space-between;
-    color: #ddd;
+    color: #ddd";
     font-size: 0.9rem;
 }
 
@@ -829,7 +828,7 @@ footer {
 }
 
 .footer-section a {
-    color: #ddd;
+    color: #ddd";
     text-decoration: none;
     transition: var(--transition);
 }
@@ -885,7 +884,6 @@ footer {
     gap: 10px;
 }
 
-/* Estilos para o Player de Música */
 #music-modal {
     display: none;
     position: fixed;
@@ -1084,8 +1082,21 @@ footer {
     color: white;
 }
 
-.volume-control input {
+.volume-control input[type="range"] {
     width: 100%;
+    cursor: pointer;
+    -webkit-appearance: none;
+    height: 4px;
+    background: #555;
+    border-radius: 2px;
+}
+
+.volume-control input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--primary-color);
     cursor: pointer;
 }
 
@@ -1113,7 +1124,6 @@ footer {
     transform: rotate(90deg);
 }
 
-/* Mini Player */
 #mini-player {
     position: fixed;
     bottom: -100px;
@@ -1269,7 +1279,6 @@ footer {
     transform: scale(1.1);
 }
 
-/* Music Tabs */
 .music-tabs {
     display: flex;
     background-color: #222;
@@ -1397,7 +1406,6 @@ footer {
     background-color: #3498db;
 }
 
-/* Album Sections */
 .album-section {
     margin-bottom: 30px;
     background-color: #2a2a2a;
@@ -1499,7 +1507,6 @@ footer {
     margin-left: 15px;
 }
 
-/* Responsividade */
 @media (max-width: 768px) {
     .music-modal-content {
         grid-template-columns: 1fr;
@@ -1573,7 +1580,6 @@ footer {
     }
 }
 
-/* Animações */
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
