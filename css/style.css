@@ -1228,7 +1228,7 @@ footer {
     width: 12px;
     height: 12px;
     border-radius: 50%;
-    background: var(--primary-color);
+    background: #ff0000;
     cursor: pointer;
     opacity: 0;
     transition: opacity 0.2s;
