@@ -564,7 +564,7 @@
         "title": "Soramimi Cake",
         "artist": "Oranges & Lemons",
         "audio": "https://kappa.vgmsite.com/soundtracks/azumanga-daiou-the-animation-utaimasho/eyugksoc/01.%20Ear-Playing-Tricks%20Cake.mp3",
-        "cover": "https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/thumbnails/ranmanet.png",
+        "cover": "https://static.wikia.nocookie.net/azumanga/images/8/80/Soramimi_Cake_Raspberry_heaven.jpg",
         "type": "opening",
         "season": 1
       }
@@ -574,7 +574,7 @@
         "title": "Raspberry Heaven",
         "artist": "Oranges & Lemons",
         "audio": "https://kappa.vgmsite.com/soundtracks/azumanga-daiou-the-animation-utaimasho/ieokccdk/12.%20raspberry%20heaven.mp3",
-        "cover": "https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/thumbnails/ranmanet.png",
+        "cover": "https://static.wikia.nocookie.net/azumanga/images/8/80/Soramimi_Cake_Raspberry_heaven.jpg",
         "type": "ending",
         "season": 1
       }
@@ -985,6 +985,54 @@
     "rating": 7.3,
     "openings": [],
     "endings": [],
+    "osts": {}
+  },
+  {
+    "id": 13,
+    "title": "Joshiraku",
+    "description": "Marii, Kigurumi, Tetora, Gankyou e Kukuru merecem uma salva de palmas por manterem viva a arte do Rakugo! Qual é o segredo delas? Uma brincadeira espirituosa e absurda, é claro! Essas cinco amigas sempre têm assunto para conversar, não importa quão bobo seja ele.",
+    "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/refs/heads/main/images/thumbnails/joshiraku.png",
+    "trailer": "https://www.w3schools.com/html/mov_bbb.mp4",
+    "type": "anime",
+    "dateAdded": "2025-07-10",
+    "categories": [
+      "slice of life",
+      "comedy"
+    ],
+    "seasons": [
+      {
+        "number": 1,
+        "episodes": [
+          {
+            "title": "Episódio 1",
+            "videoUrl": "aaaaaatem12",
+            "duration": 0
+          }
+        ]
+      }
+    ],
+    "year": 2012,
+    "rating": 7,
+    "openings": [
+      {
+        "title": "Oato ga Yoroshikutte... yo!",
+        "artist": "Gokuraku Jokai",
+        "audio": "https://files.catbox.moe/ouerl4.mp3",
+        "cover": "https://m.media-amazon.com/images/I/715ax108MTL._UF1000,1000_QL80_.jpg",
+        "type": "opening",
+        "season": 1
+      }
+    ],
+    "endings": [
+      {
+        "title": "Nippon Egao Hyakkei",
+        "artist": "Momokurotei Ichimon",
+        "audio": "https://files.catbox.moe/pzb0yb.mp3",
+        "cover": "https://i.scdn.co/image/ab67616d0000b273d4a4f25d06fa3717eb4b2193",
+        "type": "ending",
+        "season": 1
+      }
+    ],
     "osts": {}
   }
 ]
