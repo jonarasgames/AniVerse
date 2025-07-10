@@ -986,12 +986,12 @@ footer {
 }
 
 #music-progress::-webkit-progress-value {
-    background-color: var(--primary-color);
+    background-color: #ff0000;
     border-radius: 3px;
 }
 
 #music-progress::-moz-progress-bar {
-    background-color: var(--primary-color);
+    background-color: #ff0000;
     border-radius: 3px;
 }
 
@@ -1214,12 +1214,12 @@ footer {
 }
 
 .mini-progress-bar::-webkit-progress-value {
-    background-color: var(--primary-color);
+    background-color: #ff0000;
     border-radius: 3px;
 }
 
 .mini-progress-bar::-moz-progress-bar {
-    background-color: var(--primary-color);
+    background-color: #ff0000;
     border-radius: 3px;
 }
 
