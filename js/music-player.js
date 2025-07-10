@@ -1,7 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-    console.log("Iniciando player de música...");
-
-    // Elementos do DOM
     const elements = {
         musicModal: document.getElementById('music-modal'),
         miniPlayer: document.getElementById('mini-player'),
@@ -42,18 +39,14 @@ document.addEventListener('DOMContentLoaded', function() {
     let isRepeated = false;
     let shuffledPlaylist = [];
 
-    // Verifica se o animeDB está pronto
     function waitForAnimeDB(callback) {
         if (window.animeDB && animeDB.getMusicLibrary) {
-            console.log("animeDB pronto!");
             callback();
         } else {
-            console.log("Aguardando animeDB...");
             setTimeout(() => waitForAnimeDB(callback), 100);
         }
     }
 
-    // Carrega a seção de músicas
     function loadMusic(type) {
         const library = animeDB.getMusicLibrary();
         
@@ -70,7 +63,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Renderiza os álbuns
     function renderAlbums(osts) {
         elements.ostsGrid.innerHTML = '';
         
@@ -103,7 +95,6 @@ document.addEventListener('DOMContentLoaded', function() {
             elements.ostsGrid.innerHTML += albumHTML;
         }
 
-        // Adiciona eventos aos tracks
         elements.ostsGrid.querySelectorAll('.track-item').forEach(track => {
             track.addEventListener('click', function() {
                 const album = this.dataset.album;
@@ -115,19 +106,16 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Formata o tempo (mm:ss)
     function formatTime(seconds) {
         const mins = Math.floor(seconds / 60);
         const secs = Math.floor(seconds % 60);
         return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
     }
 
-    // Renderiza a grid de músicas
     function renderMusicGrid(tracks) {
         elements.musicGrid.innerHTML = '';
         const animeGroups = {};
 
-        // Agrupa por anime
         tracks.forEach((track, index) => {
             if (!animeGroups[track.anime]) {
                 animeGroups[track.anime] = [];
@@ -135,7 +123,6 @@ document.addEventListener('DOMContentLoaded', function() {
             animeGroups[track.anime].push({...track, originalIndex: index});
         });
 
-        // Renderiza cada grupo de anime em uma seção separada
         for (const [anime, tracks] of Object.entries(animeGroups)) {
             const animeSection = document.createElement('div');
             animeSection.className = 'anime-music-section';
@@ -164,7 +151,6 @@ document.addEventListener('DOMContentLoaded', function() {
             elements.musicGrid.appendChild(animeSection);
         }
 
-        // Adiciona eventos aos cards
         elements.musicGrid.querySelectorAll('.music-card').forEach(card => {
             card.addEventListener('click', function() {
                 currentTrack = parseInt(this.dataset.index);
@@ -174,19 +160,16 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Mostra o modal de música
     function showMusicModal() {
         elements.musicModal.style.display = 'flex';
         document.body.style.overflow = 'hidden';
     }
 
-    // Esconde o modal de música
     function hideMusicModal() {
         elements.musicModal.style.display = 'none';
         document.body.style.overflow = '';
     }
 
-    // Toca a música selecionada
     function playTrack() {
         const track = currentPlaylist[currentTrack];
         if (!track) return;
@@ -209,17 +192,14 @@ document.addEventListener('DOMContentLoaded', function() {
             .catch(e => console.error("Erro ao reproduzir:", e));
     }
 
-    // Mostra o mini player
     function showMiniPlayer() {
         elements.miniPlayer.classList.add('active');
     }
 
-    // Esconde o mini player
     function hideMiniPlayer() {
         elements.miniPlayer.classList.remove('active');
     }
 
-    // Controles do player
     function togglePlay() {
         if (musicPlayer.paused) {
             musicPlayer.play().then(() => {
@@ -294,7 +274,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Função para pular para um momento específico na música
     function setProgress(e) {
         const width = this.clientWidth;
         const clickX = e.offsetX;
@@ -302,7 +281,6 @@ document.addEventListener('DOMContentLoaded', function() {
         musicPlayer.currentTime = (clickX / width) * duration;
     }
 
-    // Atualiza o ícone do volume
     function updateVolumeIcon(volume) {
         const volumeIcon = elements.volumeControl.querySelector('i');
         if (volumeIcon) {
@@ -316,9 +294,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Inicialização
     waitForAnimeDB(() => {
-        // Configura as tabs
         elements.musicTabs.forEach(tab => {
             tab.addEventListener('click', function() {
                 elements.musicTabs.forEach(t => t.classList.remove('active'));
@@ -327,7 +303,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
 
-        // Configura os botões de controle
         elements.playBtn.addEventListener('click', togglePlay);
         elements.miniPlayBtn.addEventListener('click', togglePlay);
         elements.nextBtn.addEventListener('click', nextTrack);
@@ -344,20 +319,16 @@ document.addEventListener('DOMContentLoaded', function() {
             hideMiniPlayer();
         });
 
-        // Barra de progresso - clique para pular
         elements.progressContainer.addEventListener('click', setProgress);
 
-        // Controle de volume
         elements.volumeControl.addEventListener('input', function() {
             musicPlayer.volume = this.value;
             updateVolumeIcon(this.value);
         });
 
-        // Configura volume inicial
         musicPlayer.volume = elements.volumeControl.value;
         updateVolumeIcon(elements.volumeControl.value);
 
-        // Evento quando a música termina
         musicPlayer.addEventListener('ended', () => {
             if (isRepeated) {
                 musicPlayer.currentTime = 0;
@@ -367,7 +338,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        // Atualiza o tempo da música
         musicPlayer.addEventListener('timeupdate', function() {
             if (!isNaN(musicPlayer.duration)) {
                 const mins = Math.floor(musicPlayer.currentTime / 60);
@@ -383,7 +353,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        // Carrega a primeira tab
         document.querySelector('.music-tab').click();
     });
 });
