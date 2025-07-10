@@ -1004,9 +1004,69 @@
         "number": 1,
         "episodes": [
           {
-            "title": "Episódio 1",
-            "videoUrl": "aaaaaatem12",
-            "duration": 0
+            "title": "Diálogo Normal",
+            "videoUrl": "https://files.catbox.moe/92hv4d.mp4",
+            "duration": 1466
+          },
+          {
+            "title": "Bastidores Riquezas",
+            "videoUrl": "https://files.catbox.moe/uq7zzt.mp4",
+            "duration": 1448
+          },
+          {
+            "title": "Um Banho Para Além",
+            "videoUrl": "https://files.catbox.moe/i1jqug.mp4",
+            "duration": 1448
+          },
+          {
+            "title": "Garota Óculos",
+            "videoUrl": "https://files.catbox.moe/rxq9oi.mp4",
+            "duration": 1448
+          },
+          {
+            "title": "Elogie A Menina",
+            "videoUrl": "https://files.catbox.moe/wixj9n.mp4",
+            "duration": 1450
+          },
+          {
+            "title": "Quatro Emociona",
+            "videoUrl": "https://files.catbox.moe/bbwx07.mp4",
+            "duration": 1450
+          },
+          {
+            "title": "Yankees São Assustadores",
+            "videoUrl": "https://files.catbox.moe/kfks7k.mp4",
+            "duration": 1434
+          },
+          {
+            "title": "Saco De Ouro",
+            "videoUrl": "https://files.catbox.moe/jv1iwc.mp4",
+            "duration": 1434
+          },
+          {
+            "title": "Butttofu",
+            "videoUrl": "https://files.catbox.moe/n2zhs2.mp4",
+            "duration": 1434
+          },
+          {
+            "title": "Banda De Abóbora",
+            "videoUrl": "https://files.catbox.moe/snrxyv.mp4",
+            "duration": 1434
+          },
+          {
+            "title": "Jogo Família",
+            "videoUrl": "https://files.catbox.moe/pfgpz0.mp4",
+            "duration": 1434
+          },
+          {
+            "title": "O Sonhador Contra Ataca!",
+            "videoUrl": "https://files.catbox.moe/bply33.mp4",
+            "duration": 1434
+          },
+          {
+            "title": "Coragem Do Personagem",
+            "videoUrl": "https://files.catbox.moe/9yhua2.mp4",
+            "duration": 1419
           }
         ]
       }
@@ -1033,6 +1093,36 @@
         "season": 1
       }
     ],
+    "osts": {}
+  },
+  {
+    "id": 14,
+    "title": "Joshiraku OVA",
+    "description": "Episódio OVA incluído no quinto volume do mangá.",
+    "thumbnail": "https://simkl.in/fanart/67/678476efef177c6c_w.jpg",
+    "trailer": "assasina",
+    "type": "ova",
+    "dateAdded": "2025-07-10",
+    "categories": [
+      "comedy",
+      "slice of life"
+    ],
+    "seasons": [
+      {
+        "number": 1,
+        "episodes": [
+          {
+            "title": "Episódio 14",
+            "videoUrl": "https://files.catbox.moe/rzewv2.mp4",
+            "duration": 1420
+          }
+        ]
+      }
+    ],
+    "year": 2013,
+    "rating": 7.3,
+    "openings": [],
+    "endings": [],
     "osts": {}
   }
 ]
