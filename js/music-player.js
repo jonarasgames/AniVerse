@@ -28,8 +28,18 @@ document.addEventListener('DOMContentLoaded', function() {
         fullscreenBtn: document.getElementById('fullscreen-btn'),
         miniFullscreenBtn: document.getElementById('mini-fullscreen'),
         volumeControl: document.getElementById('volume-control'),
-        progressContainer: document.querySelector('.progress-container')
+        progressContainer: document.querySelector('.progress-container'),
+        miniProgressContainer: document.querySelector('.mini-progress-container'),
+        progressBarFill: document.createElement('div'),
+        miniProgressBarFill: document.createElement('div')
     };
+
+    // Adiciona as barras de progresso visuais
+    elements.progressContainer.appendChild(elements.progressBarFill);
+    elements.progressBarFill.classList.add('progress-bar');
+    
+    elements.miniProgressContainer.appendChild(elements.miniProgressBarFill);
+    elements.miniProgressBarFill.classList.add('mini-progress-bar');
 
     const musicPlayer = new Audio();
     let currentTrack = 0;
@@ -320,6 +330,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         elements.progressContainer.addEventListener('click', setProgress);
+        elements.miniProgressContainer.addEventListener('click', setProgress);
 
         elements.volumeControl.addEventListener('input', function() {
             musicPlayer.volume = this.value;
@@ -349,7 +360,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 elements.durationEl.textContent = `${totalMins}:${totalSecs < 10 ? '0' : ''}${totalSecs}`;
                 
                 const progressPercent = (musicPlayer.currentTime / musicPlayer.duration) * 100;
-                elements.progressBar.style.width = `${progressPercent}%`;
+                elements.progressBarFill.style.width = `${progressPercent}%`;
+                elements.miniProgressBarFill.style.width = `${progressPercent}%`;
             }
         });
 
