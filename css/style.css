@@ -406,7 +406,7 @@ nav a:hover, nav a.active {
 
 /* Barra de progresso NOS CARDS DE ANIME (mais transparente) */
 .anime-card .progress-bar {
-    opacity: 1; /* 50% transparente */
+    opacity: 0.1; /* 50% transparente */
 
 }
 
