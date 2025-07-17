@@ -1143,7 +1143,82 @@
         "number": 1,
         "episodes": [
           {
-            "title": "Episódio 1",
+            "title": "É Assim Que um Amor Começa!",
+            "videoUrl": "",
+            "duration": 0
+          },
+          {
+            "title": "Isso Aí É um Alienígena, Né?!",
+            "videoUrl": "https://files.catbox.moe/tbstae.mp4",
+            "duration": 1477
+          },
+          {
+            "title": "Uma Disputa de Velha contra Velha",
+            "videoUrl": "https://files.catbox.moe/rtt8bk.mp4",
+            "duration": 1483
+          },
+          {
+            "title": "Hora de Arrebentar Com a Velha Turbo",
+            "videoUrl": "",
+            "duration": 0
+          },
+          {
+            "title": "Cadê Tuas Bolas, Cara?",
+            "videoUrl": "https://files.catbox.moe/veucsu.mp4",
+            "duration": 1485
+          },
+          {
+            "title": "Surge uma Mulher Perigosa",
+            "videoUrl": "",
+            "duration": 0
+          },
+          {
+            "title": "Rumo a um Mundo Gentil",
+            "videoUrl": "",
+            "duration": 0
+          },
+          {
+            "title": "Ela Tá Meio Bolada",
+            "videoUrl": "https://files.catbox.moe/779gfr.mp4",
+            "duration": 1470
+          },
+          {
+            "title": "Fusão! Serpiano Demônio de Dover Nessie!",
+            "videoUrl": "",
+            "duration": 0
+          },
+          {
+            "title": "Você Já Viu uma Abdução de Gado?",
+            "videoUrl": "https://files.catbox.moe/ayu0q7.mp4",
+            "duration": 1470
+          },
+          {
+            "title": "O Primeiro Amor",
+            "videoUrl": "https://files.catbox.moe/br7lxd.mp4",
+            "duration": 1470
+          },
+          {
+            "title": "Simbora Pra Casa Amaldiçoada!",
+            "videoUrl": "https://files.catbox.moe/xsfqa8.mp4",
+            "duration": 1455
+          }
+        ]
+      },
+      {
+        "number": 2,
+        "episodes": [
+          {
+            "title": "Então essa é a lendária cobra gigante?",
+            "videoUrl": "",
+            "duration": 0
+          },
+          {
+            "title": "O Olho Demoníaco",
+            "videoUrl": "",
+            "duration": 0
+          },
+          {
+            "title": "Imperdoável",
             "videoUrl": "",
             "duration": 0
           }
