@@ -1512,6 +1512,39 @@ footer {
     }
 }
 
+.menu-hamburger {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  nav ul {
+    display: none;
+    position: absolute;
+    top: 70px; /* ajuste conforme seu header */
+    left: 0;
+    width: 100vw;
+    background: #222;
+    flex-direction: column;
+    padding: 20px 0;
+    z-index: 999;
+  }
+  nav ul.active {
+    display: flex;
+  }
+  .menu-hamburger {
+    display: block;
+  }
+  .logo-container h1 {
+    font-size: 1.2rem;
+  }
+}
+
 @media (max-width: 480px) {
     .music-cover {
         width: 100%;
