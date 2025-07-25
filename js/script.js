@@ -771,11 +771,6 @@ function renderSearchResults(results) {
     });
 }
 
-document.getElementById('menu-hamburger').addEventListener('click', function() {
-  var navList = document.querySelector('nav ul');
-  navList.classList.toggle('active');
-});
-
 window.addEventListener('animeDataLoaded', () => {
     if (typeof loadNewReleases === 'function') loadNewReleases();
     if (typeof loadContinueWatching === 'function') loadContinueWatching();
