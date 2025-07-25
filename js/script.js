@@ -782,3 +782,4 @@ window.addEventListener('animeDataLoaded', () => {
     if (typeof loadContinueWatching === 'function') loadContinueWatching();
     if (typeof loadFullCatalog === 'function') loadFullCatalog();
 });
+}
