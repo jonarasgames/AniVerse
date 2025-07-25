@@ -336,7 +336,8 @@ function openAnimeModal(anime, seasonNumber = 1, episodeNumber = 1) {
     if (!modal) {
         console.error('Modal de vídeo não encontrado');
         return;
-    
+    }
+
     const videoPlayer = document.getElementById('anime-player');
     const videoTitle = document.getElementById('video-title');
     const videoDescription = document.getElementById('video-description');
