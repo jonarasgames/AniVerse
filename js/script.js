@@ -331,12 +331,14 @@ function renderContinueWatchingGrid(animes, containerId) {
     });
 }
 
-function openAnimeModal(anime, seasonNumber = 1, episodeNumber = 1) {
-    const modal = document.getElementById('video-modal');
-    if (!modal) {
-        console.error('Modal de vídeo não encontrado');
-        return;
+function openAnimeModalWithProgress(anime) {
+    const last = animeDB.continueWatching[anime.id];
+    if (last) {
+        openAnimeModal(anime, last.season, last.episode);
+    } else {
+        openAnimeModal(anime, 1, 1);
     }
+}
     
     const videoPlayer = document.getElementById('anime-player');
     const videoTitle = document.getElementById('video-title');
