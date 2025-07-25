@@ -331,15 +331,7 @@ function renderContinueWatchingGrid(animes, containerId) {
     });
 }
 
-function openAnimeModal(anime, seasonNumber, episodeNumber) {
-    const continueData = animeDB.continueWatching[anime.id];
-    if (continueData) {
-        seasonNumber = continueData.season;
-        episodeNumber = continueData.episode;
-    } else {
-        seasonNumber = seasonNumber || 1;
-        episodeNumber = episodeNumber || 1;
-    } {
+function openAnimeModal(anime, seasonNumber = 1, episodeNumber = 1) {
     const modal = document.getElementById('video-modal');
     if (!modal) {
         console.error('Modal de vídeo não encontrado');
@@ -782,30 +774,3 @@ window.addEventListener('animeDataLoaded', () => {
     if (typeof loadContinueWatching === 'function') loadContinueWatching();
     if (typeof loadFullCatalog === 'function') loadFullCatalog();
 });
-
-
-
-function setupProfileModal() {
-    console.log("setupProfileModal chamado, mas ainda não implementado.");
-}
-
-function updateProfileDisplay() {
-    console.log("updateProfileDisplay chamado, mas ainda não implementado.");
-}
-
-function getWatchedEpisodesCount(animeId) {
-    if (!animeDB) return 0;
-    let count = 0;
-    const anime = animeDB.getAnimeById(animeId);
-    if (!anime || !anime.seasons) return 0;
-
-    anime.seasons.forEach((season, seasonIndex) => {
-        season.episodes.forEach((episode, episodeIndex) => {
-            const watched = animeDB.isEpisodeWatched(animeId, seasonIndex + 1, episodeIndex + 1);
-            if (watched) count++;
-        });
-    });
-
-    return count;
-}
-}
