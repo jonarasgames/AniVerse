@@ -452,6 +452,7 @@ function openAnimeModal(anime, seasonNumber = 1, episodeNumber = 1) {
     
     modal.style.display = 'block';
     
+    // Substitua a função loadEpisode dentro de openAnimeModal por esta versão:
     function loadEpisode(anime, seasonNum, episodeNum) {
         const season = anime.seasons[seasonNum - 1];
         if (!season) {
@@ -470,10 +471,9 @@ function openAnimeModal(anime, seasonNumber = 1, episodeNumber = 1) {
             return;
         }
 
-        if (animeDB.isLinkExpired(episode.videoUrl)) {
-            showVideoError('Este link expirou e não pode mais ser reproduzido');
-            return;
-        }
+        // ⭐⭐ NOVO: Passa os dados da abertura para o player ⭐⭐
+        window.currentOpeningData = episode.opening || null;
+        console.log("Dados da abertura:", window.currentOpeningData); // Para debug
 
         videoPlayer.src = episode.videoUrl;
         videoTitle.textContent = `${anime.title} - ${episode.title || `Episódio ${episodeNum}`}`;
