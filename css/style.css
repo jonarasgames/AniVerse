@@ -14,6 +14,46 @@
     --error-color: #ff4757;
 }
 
+/* Estilos para feedbacks */
+.player-feedback {
+    animation: fadeInOut 1.5s ease-out;
+    pointer-events: none;
+}
+
+.volume-feedback {
+    position: absolute;
+    bottom: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.7);
+    padding: 10px 15px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.volume-bar {
+    width: 100px;
+    height: 5px;
+    background: #444;
+    border-radius: 3px;
+}
+
+.volume-level {
+    height: 100%;
+    background: #e63946;
+    border-radius: 3px;
+    transition: width 0.2s;
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translate(-50%, -40%); }
+    20% { opacity: 1; transform: translate(-50%, -50%); }
+    80% { opacity: 1; transform: translate(-50%, -50%); }
+    100% { opacity: 0; transform: translate(-50%, -60%); }
+}
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -1642,166 +1682,58 @@ footer {
 }
 
 #skip-opening-btn {
-    display: none;
-    position: absolute;
-    right: 20px;
-    top: 20px;
-    background: #e63946 !important;
-    color: white !important;
-    padding: 8px 15px;
-    border-radius: 20px;
-    z-index: 1000;
-    cursor: pointer;
-    font-weight: bold;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-    transition: all 0.3s;
-}
-
-#skip-opening-btn {
-    /* Estilo base */
-    position: absolute;
-    right: 20px;
-    top: 20px;
-    background: #e63946;
-    color: white;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 20px;
-    font-weight: bold;
-    z-index: 100;
-    cursor: pointer;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-    
-    /* Estado inicial */
-    display: none !important; /* Sobrescreve qualquer outro estilo */
-    
-    /* Transição suave */
-    transition: opacity 0.3s;
-}
-
-/* Efeito quando visível */
-#skip-opening-btn:not([style*="display: none"]) {
-    opacity: 1;
-    animation: pulse 1.5s infinite;
-}
-
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
-}
-/* Animação para o botão */
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
-}
-
-.skip-opening-btn.pulse {
-  animation: pulse 1.5s infinite;
-}
-
-@media (max-width: 768px) {
-    nav ul {
-        flex-direction: column;
-        gap: 10px;
-        align-items: center;
-        padding: 10px 0;
-    }
-
-    header .container {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .user-controls {
-        margin-top: 10px;
-        justify-content: flex-start;
-        flex-wrap: wrap;
-    }
-
-    .logo-container {
-        justify-content: center;
-        width: 100%;
-    }
-}
-
-/* ESTILO DO BOTÃO SKIP */
-.skip-btn {
-  position: absolute;
-  right: 20px;
-  top: 20px;
-  background: rgba(0, 0, 0, 0.7);
-  color: white;
-  border: none;
-  padding: 8px 15px;
-  border-radius: 20px;
-  cursor: pointer;
-  z-index: 100;
-  display: none;
-  font-size: 14px;
-  backdrop-filter: blur(5px);
-  transition: all 0.3s ease;
-}
-
-.skip-btn:hover {
-  background: #e63946;
-}
-
-#skip-counter {
-  color: #e63946;
-  font-weight: bold;
-}
-
-/* ANIMAÇÃO DE PULSAR */
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-  100% { transform: scale(1); }
-}
-
-.skip-btn.pulse {
-  animation: pulse 1s infinite;
-}
-
-#skip-opening-btn {
-    /* Posicionamento emergencial para aberturas no 0s */
-    right: 50% !important;
-    transform: translateX(50%) !important;
-    top: 70% !important;
-    animation: bounce 2s infinite;
+  /* Posicionamento emergencial para aberturas no 0s */
+  right: 50% !important;
+  transform: translateX(50%) !important;
+  top: 70% !important;
+  animation: bounce 2s infinite;
 }
 
 @keyframes bounce {
-    0%, 100% { transform: translateX(50%) translateY(0); }
-    50% { transform: translateX(50%) translateY(-10px); }
+  0%,
+  100% {
+    transform: translateX(50%) translateY(0);
+  }
+
+  50% {
+    transform: translateX(50%) translateY(-10px);
+  }
 }
 
 /* Botão de skip - Estilo emergencial */
 #skip-opening-btn {
-    display: none; /* Inicialmente oculto */
-    position: absolute;
-    right: 20px;
-    top: 20px;
-    background: #e63946 !important;
-    color: white !important;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 20px;
-    font-weight: bold;
-    z-index: 1000;
-    cursor: pointer;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+  display: none;
+  /* Inicialmente oculto */
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  background: #e63946 !important;
+  color: white !important;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-weight: bold;
+  z-index: 1000;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
 /* Para aberturas no 0s */
 #skip-opening-btn.instant-display {
-    display: block !important;
-    animation: pulse 1.5s infinite;
+  display: block !important;
+  animation: pulse 1.5s infinite;
 }
 
 @keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-    100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
