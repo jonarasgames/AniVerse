@@ -308,4 +308,75 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Inicializar controles customizados
     addCustomControls();
+
+    // Adicione estas funções ao seu video-player.js
+
+    // Variável global para armazenar os dados da abertura
+    let currentOpeningData = null;
+
+    // Função para verificar se deve mostrar o botão de pular
+    function checkSkipOpeningButton() {
+        const videoPlayer = document.getElementById('anime-player');
+        const skipBtn = document.getElementById('skip-opening-btn');
+        const counter = skipBtn.querySelector('.skip-counter');
+
+        if (!currentOpeningData || !videoPlayer) return;
+
+        const currentTime = videoPlayer.currentTime;
+        const { start, end } = currentOpeningData;
+
+        // Mostrar botão 5 segundos antes da abertura começar
+        if (currentTime >= start - 5 && currentTime < end) {
+            const remaining = Math.ceil(end - currentTime);
+            counter.textContent = remaining;
+
+            skipBtn.style.display = 'block';
+
+            // Efeito de pulsação nos últimos 10 segundos
+            if (remaining <= 10) {
+                skipBtn.classList.add('pulse');
+            } else {
+                skipBtn.classList.remove('pulse');
+            }
+        } else {
+            skipBtn.style.display = 'none';
+            skipBtn.classList.remove('pulse');
+        }
+    }
+
+    // Função para pular a abertura
+    function skipOpening() {
+        const videoPlayer = document.getElementById('anime-player');
+        if (currentOpeningData && videoPlayer) {
+            videoPlayer.currentTime = currentOpeningData.end;
+
+            // Feedback visual
+            const feedback = document.createElement('div');
+            feedback.className = 'seek-feedback';
+            feedback.textContent = 'Abertura pulada!';
+            feedback.style.color = '#2ecc71';
+            document.getElementById('video-player-container').appendChild(feedback);
+
+            setTimeout(() => {
+                feedback.classList.add('fade-out');
+                setTimeout(() => feedback.remove(), 300);
+            }, 1000);
+        }
+    }
+
+    // Atualize o evento que carrega um novo episódio
+    function loadEpisode(episodeData) {
+        // ... seu código existente ...
+
+        // Armazene os dados da abertura
+        currentOpeningData = episodeData.opening || null;
+
+        // Configure o listener para verificar o botão
+        videoPlayer.addEventListener('timeupdate', checkSkipOpeningButton);
+
+        // ... continue com o resto do seu código ...
+    }
+
+    // Adicione o evento de clique ao botão
+    document.getElementById('skip-opening-btn').addEventListener('click', skipOpening);
 });
