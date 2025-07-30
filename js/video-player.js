@@ -25,10 +25,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const currentTime = videoPlayer.currentTime;
         const { start, end } = currentOpening;
-        
-        if (currentTime >= start - 5 && currentTime < end) {
+
+        // Mostra imediatamente se a abertura começa no 0
+        const shouldShow = (start === 0 && currentTime < end) || 
+                          (start > 0 && currentTime >= start - 5 && currentTime < end);
+
+        if (shouldShow) {
+            const remaining = Math.ceil(end - currentTime);
+            document.getElementById('skip-counter').textContent = remaining;
             skipBtn.style.display = 'block';
-            skipBtn.querySelector('#skip-counter').textContent = Math.ceil(end - currentTime);
+        
+        // Efeito visual nos últimos 10s
+        skipBtn.classList.toggle('pulse', remaining <= 10);
         } else {
             skipBtn.style.display = 'none';
         }
