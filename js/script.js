@@ -784,15 +784,18 @@ window.addEventListener('animeDataLoaded', () => {
     if (typeof loadFullCatalog === 'function') loadFullCatalog();
 });
 
-
-
 function loadEpisode(anime, seasonNum, episodeNum) {
-    const episode = anime.seasons[seasonNum - 1]?.episodes[episodeNum - 1];
+    const episode = anime.seasons[seasonNum-1]?.episodes[episodeNum-1];
     if (!episode) return;
 
-    // ⭐⭐ Garante que os dados sejam passados mesmo para abertura no 0s ⭐⭐
-    window.updateOpeningData(episode.opening || null);
-    console.log("Enviando dados para o player:", episode.opening);
+    // ⭐⭐ Garante que o player está pronto antes de enviar dados ⭐⭐
+    const waitForPlayer = setInterval(() => {
+        if (window.updateOpeningData) {
+            clearInterval(waitForPlayer);
+            window.updateOpeningData(episode.opening || null);
+            console.log("Dados enviados ao player:", episode.opening);
+        }
+    }, 50);
 
-    // Restante do seu código de carregamento...
+    // Restante do seu código...
 }
