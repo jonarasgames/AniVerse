@@ -788,9 +788,12 @@ function loadEpisode(anime, seasonNum, episodeNum) {
     const episode = anime.seasons[seasonNum-1]?.episodes[episodeNum-1];
     if (!episode) return;
 
-    // ⭐⭐ Garante que os dados cheguem ao player ⭐⭐
-    if (window.updateOpeningData) {
-        window.updateOpeningData(episode.opening || null);
-        console.log("Dados enviados:", episode.opening);
+    // ⭐⭐ Envia dados APENAS se existir abertura definida ⭐⭐
+    if (episode.opening?.start !== undefined) {
+        window.updateOpeningData(episode.opening);
+    } else {
+        window.updateOpeningData(null); // Limpa dados anteriores
     }
+
+    // Restante do seu código de carregamento...
 }
