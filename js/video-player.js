@@ -1,76 +1,82 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const videoPlayer = document.getElementById('anime-player');
-    const skipBtn = document.getElementById('skip-opening-btn');
-    
-    if (!videoPlayer || !skipBtn) {
-        console.error("❌ Elementos essenciais não encontrados!");
-        return;
+class VideoPlayerController {
+    constructor() {
+        this.player = null;
+        this.skipBtn = null;
+        this.currentOpening = null;
+        this.init();
     }
 
-    // Estado global
-    let currentOpening = null;
+    init() {
+        // Espera os elementos existirem no DOM
+        const checkElements = setInterval(() => {
+            this.player = document.getElementById('anime-player');
+            this.skipBtn = document.getElementById('skip-opening-btn');
+            
+            if (this.player && this.skipBtn) {
+                clearInterval(checkElements);
+                this.setupEvents();
+                console.log("🎬 Player inicializado com sucesso!");
+            }
+        }, 100);
+    }
 
-    // Função principal de atualização
-    const updateSkipButton = () => {
-        if (!currentOpening) {
-            skipBtn.style.display = 'none';
+    setupEvents() {
+        // Atualização em tempo real
+        this.player.addEventListener('timeupdate', () => this.updateSkipButton());
+        
+        // Garante atualização em todos os estados
+        ['play', 'seeking', 'loadedmetadata'].forEach(event => {
+            this.player.addEventListener(event, () => this.updateSkipButton());
+        });
+
+        // Botão de skip
+        this.skipBtn.addEventListener('click', () => {
+            if (this.currentOpening) {
+                this.player.currentTime = this.currentOpening.end;
+                this.showFeedback();
+            }
+        });
+
+        // Interface global
+        window.updateOpeningData = (data) => {
+            this.currentOpening = data;
+            console.log("📊 Dados recebidos:", data);
+            this.updateSkipButton();
+        };
+    }
+
+    updateSkipButton() {
+        if (!this.currentOpening || this.player.paused) {
+            this.skipBtn.style.display = 'none';
             return;
         }
 
-        const currentTime = videoPlayer.currentTime;
-        const { start, end } = currentOpening;
+        const currentTime = this.player.currentTime;
+        const { start, end } = this.currentOpening;
 
-        // Lógica adaptada para aberturas no 0s
+        // Lógica adaptada para qualquer cenário
         const shouldShow = (start === 0 && currentTime < end) || 
-                         (start > 0 && currentTime >= start - 5 && currentTime < end);
+                         (currentTime >= start - 3 && currentTime < end);
 
+        this.skipBtn.style.display = shouldShow ? 'block' : 'none';
+        
         if (shouldShow) {
             const remaining = Math.ceil(end - currentTime);
-            skipBtn.innerHTML = `⏩ Pular abertura (<span id="skip-counter">${remaining}</span>s)`;
-            skipBtn.style.display = 'block';
-            
-            // Efeito visual nos últimos 10s
-            skipBtn.classList.toggle('pulse', remaining <= 10);
-        } else {
-            skipBtn.style.display = 'none';
+            this.skipBtn.innerHTML = `⏩ Pular (${remaining}s)`;
+            this.skipBtn.classList.toggle('pulse', remaining <= 10);
         }
-    };
+    }
 
-    // Configura eventos
-    videoPlayer.addEventListener('timeupdate', updateSkipButton);
-    videoPlayer.addEventListener('play', updateSkipButton); // Atualiza ao play
-    videoPlayer.addEventListener('seeking', updateSkipButton); // Atualiza ao buscar
+    showFeedback() {
+        const feedback = document.createElement('div');
+        feedback.textContent = "Abertura pulada!";
+        feedback.className = 'skip-feedback';
+        this.player.parentElement.appendChild(feedback);
+        setTimeout(() => feedback.remove(), 1000);
+    }
+}
 
-    // Ação de pular
-    skipBtn.addEventListener('click', () => {
-        if (currentOpening) {
-            videoPlayer.currentTime = currentOpening.end;
-            // Feedback visual
-            const feedback = document.createElement('div');
-            feedback.textContent = "⏩ Abertura pulada!";
-            feedback.style.cssText = `
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                background: rgba(0,0,0,0.8);
-                color: #2ecc71;
-                padding: 10px 20px;
-                border-radius: 5px;
-                z-index: 1000;
-                font-size: 1.2rem;
-            `;
-            videoPlayer.parentElement.appendChild(feedback);
-            setTimeout(() => feedback.remove(), 1000);
-        }
-    });
-
-    // Interface global para receber dados
-    window.updateOpeningData = (data) => {
-        currentOpening = data;
-        console.log("📊 Dados da abertura recebidos:", data);
-        updateSkipButton(); // Força atualização imediata
-    };
-
-    console.log("✅ Player configurado com sucesso!");
+// Inicialização automática quando o DOM estiver pronto
+document.addEventListener('DOMContentLoaded', () => {
+    new VideoPlayerController();
 });
