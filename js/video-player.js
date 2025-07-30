@@ -1,52 +1,43 @@
-class VideoPlayerController {
+class SkipButtonController {
     constructor() {
-        this.player = null;
-        this.skipBtn = null;
+        this.player = document.getElementById('anime-player');
+        this.skipBtn = document.getElementById('skip-opening-btn');
         this.currentOpening = null;
+        
+        if (!this.player || !this.skipBtn) {
+            console.error("Elementos essenciais não encontrados!");
+            return;
+        }
+
         this.init();
     }
 
     init() {
-        // Espera os elementos existirem no DOM
-        const checkElements = setInterval(() => {
-            this.player = document.getElementById('anime-player');
-            this.skipBtn = document.getElementById('skip-opening-btn');
-            
-            if (this.player && this.skipBtn) {
-                clearInterval(checkElements);
-                this.setupEvents();
-                console.log("🎬 Player inicializado com sucesso!");
-            }
-        }, 100);
-    }
-
-    setupEvents() {
-        // Atualização em tempo real
-        this.player.addEventListener('timeupdate', () => this.updateSkipButton());
+        // Configuração inicial
+        this.skipBtn.style.display = 'none'; // Garante estado inicial
         
-        // Garante atualização em todos os estados
-        ['play', 'seeking', 'loadedmetadata'].forEach(event => {
-            this.player.addEventListener(event, () => this.updateSkipButton());
-        });
-
-        // Botão de skip
+        // Monitora alterações de tempo
+        this.player.addEventListener('timeupdate', () => this.updateButton());
+        
+        // Configura o clique
         this.skipBtn.addEventListener('click', () => {
             if (this.currentOpening) {
                 this.player.currentTime = this.currentOpening.end;
-                this.showFeedback();
             }
         });
 
-        // Interface global
+        // Interface global para receber dados
         window.updateOpeningData = (data) => {
-            this.currentOpening = data;
-            console.log("📊 Dados recebidos:", data);
-            this.updateSkipButton();
+            this.currentOpening = data?.start !== undefined ? data : null;
+            console.log("Dados recebidos:", this.currentOpening);
+            this.updateButton();
         };
+
+        console.log("✅ Controle de skip configurado!");
     }
 
-    updateSkipButton() {
-        if (!this.currentOpening || this.player.paused) {
+    updateButton() {
+        if (!this.currentOpening) {
             this.skipBtn.style.display = 'none';
             return;
         }
@@ -54,29 +45,19 @@ class VideoPlayerController {
         const currentTime = this.player.currentTime;
         const { start, end } = this.currentOpening;
 
-        // Lógica adaptada para qualquer cenário
-        const shouldShow = (start === 0 && currentTime < end) || 
-                         (currentTime >= start - 3 && currentTime < end);
-
+        // Mostra apenas durante a abertura
+        const shouldShow = currentTime >= start && currentTime < end;
+        
         this.skipBtn.style.display = shouldShow ? 'block' : 'none';
         
         if (shouldShow) {
             const remaining = Math.ceil(end - currentTime);
             this.skipBtn.innerHTML = `⏩ Pular (${remaining}s)`;
-            this.skipBtn.classList.toggle('pulse', remaining <= 10);
         }
-    }
-
-    showFeedback() {
-        const feedback = document.createElement('div');
-        feedback.textContent = "Abertura pulada!";
-        feedback.className = 'skip-feedback';
-        this.player.parentElement.appendChild(feedback);
-        setTimeout(() => feedback.remove(), 1000);
     }
 }
 
-// Inicialização automática quando o DOM estiver pronto
+// Inicializa quando o DOM estiver pronto
 document.addEventListener('DOMContentLoaded', () => {
-    new VideoPlayerController();
+    new SkipButtonController();
 });
