@@ -331,6 +331,7 @@ function renderContinueWatchingGrid(animes, containerId) {
     });
 }
 
+
 function openAnimeModal(anime, seasonNumber = 1, episodeNumber = 1) {
     const modal = document.getElementById('video-modal');
     if (!modal) {
@@ -558,6 +559,7 @@ function openAnimeModal(anime, seasonNumber = 1, episodeNumber = 1) {
     });
 }
 
+
 function getWatchedEpisodesCount(animeId) {
     if (!window.animeDB) return 0;
     
@@ -583,6 +585,7 @@ function getTotalEpisodes(anime) {
     if (!anime || !anime.seasons) return 0;
     return anime.seasons.reduce((total, season) => total + (season.episodes ? season.episodes.length : 0), 0);
 }
+
 
 function openProfileModal() {
     if (!window.animeDB) return;
@@ -621,6 +624,7 @@ function openProfileModal() {
     
     modal.style.display = 'block';
 }
+
 
 function setupProfileModal() {
     document.querySelectorAll('.pronoun-btn').forEach(btn => {
@@ -677,6 +681,7 @@ function setupProfileModal() {
     });
 }
 
+
 function updateAvatarPreview() {
     const name = document.getElementById('profile-name')?.value || 'Nome';
     const pronoun = document.getElementById('selected-pronoun')?.value || '-san';
@@ -695,6 +700,7 @@ function updateAvatarPreview() {
     if (avatarChar) avatarChar.src = charImg;
     if (avatarName) avatarName.textContent = `${name}${pronoun}`;
 }
+
 
 function updateProfileDisplay() {
     if (!window.animeDB) return;
@@ -733,19 +739,21 @@ function updateProfileDisplay() {
     }
 }
 
+
 function performSearch() {
     if (!window.animeDB) return;
     
     const query = document.getElementById('search-input')?.value.trim().toLowerCase();
     if (query) {
         const results = animeDB.animes.filter(anime => 
-            anime.title.toLowerCase().includes(query) || 
+            anime.title.toLowerCase().includes(query) ||
             (anime.description && anime.description.toLowerCase().includes(query))
         );
         
         renderSearchResults(results);
     }
 }
+
 
 function renderSearchResults(results) {
     const homeSection = document.getElementById('home-section');
@@ -769,9 +777,22 @@ function renderSearchResults(results) {
     });
 }
 
+
 window.addEventListener('animeDataLoaded', () => {
     if (typeof loadNewReleases === 'function') loadNewReleases();
     if (typeof loadContinueWatching === 'function') loadContinueWatching();
     if (typeof loadFullCatalog === 'function') loadFullCatalog();
 });
 
+
+
+function loadEpisode(anime, seasonNum, episodeNum) {
+    const episode = anime.seasons[seasonNum - 1]?.episodes[episodeNum - 1];
+    if (!episode) return;
+
+    // ⭐⭐ Garante que os dados sejam passados mesmo para abertura no 0s ⭐⭐
+    window.updateOpeningData(episode.opening || null);
+    console.log("Enviando dados para o player:", episode.opening);
+
+    // Restante do seu código de carregamento...
+}
