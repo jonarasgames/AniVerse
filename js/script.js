@@ -452,6 +452,9 @@ function openAnimeModal(anime, seasonNumber = 1, episodeNumber = 1) {
     loadEpisode(anime, seasonNumber, episodeNumber);
     
     modal.style.display = 'block';
+
+    // Configurar controles customizados
+    setupCustomControls();
     
     // Substitua a função loadEpisode dentro de openAnimeModal por esta versão:
     function loadEpisode(anime, seasonNum, episodeNum) {
@@ -796,4 +799,49 @@ function loadEpisode(anime, seasonNum, episodeNum) {
     }
 
     // Restante do seu código de carregamento...
+}
+
+// Controles customizados
+function setupCustomControls() {
+    const player = document.getElementById('anime-player');
+    const playBtn = document.querySelector('.play-pause-btn');
+    const seekSlider = document.querySelector('.seek-slider');
+    const currentTimeEl = document.querySelector('.current-time');
+    const durationEl = document.querySelector('.duration');
+    const fullscreenBtn = document.querySelector('.fullscreen-btn');
+
+    // Play/Pause
+    playBtn.addEventListener('click', () => {
+        if (player.paused) {
+            player.play();
+            playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+        } else {
+            player.pause();
+            playBtn.innerHTML = '<i class="fas fa-play"></i>';
+        }
+    });
+
+    // Atualiza tempo
+    player.addEventListener('timeupdate', () => {
+        const minutes = Math.floor(player.currentTime / 60);
+        const seconds = Math.floor(player.currentTime % 60);
+        currentTimeEl.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        
+        seekSlider.value = (player.currentTime / player.duration) * 100;
+    });
+
+    // Seek
+    seekSlider.addEventListener('input', () => {
+        const seekTo = player.duration * (seekSlider.value / 100);
+        player.currentTime = seekTo;
+    });
+
+    // Fullscreen
+    fullscreenBtn.addEventListener('click', () => {
+        if (!document.fullscreenElement) {
+            player.requestFullscreen();
+        } else {
+            document.exitFullscreen();
+        }
+    });
 }
