@@ -1642,19 +1642,20 @@ footer {
 }
 
 #skip-opening-btn {
-    display: none;
-    position: absolute;
-    right: 20px;
-    top: 20px;
-    background: #e63946 !important;
+    display: block !important; /* Força a exibição */
+    visibility: visible !important;
+    opacity: 1 !important;
+    background: #e63946 !important; /* Vermelho escuro */
     color: white !important;
-    padding: 8px 15px;
-    border-radius: 20px;
-    z-index: 1000;
-    cursor: pointer;
-    font-weight: bold;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-    transition: all 0.3s;
+    border: none !important;
+    padding: 8px 15px !important;
+    border-radius: 20px !important;
+    font-weight: bold !important;
+    position: absolute !important;
+    right: 20px !important;
+    top: 20px !important;
+    z-index: 1000 !important;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.5) !important;
 }
 
 #skip-opening-btn.pulse {
