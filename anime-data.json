@@ -1114,7 +1114,11 @@
           {
             "title": "Episódio 14",
             "videoUrl": "https://files.catbox.moe/rzewv2.mp4",
-            "duration": 1420
+            "duration": 1420,
+            "opening": {
+              "start": 0,
+              "end": 90
+            }
           }
         ]
       }
