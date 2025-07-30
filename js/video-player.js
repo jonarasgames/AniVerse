@@ -56,7 +56,83 @@ document.addEventListener('DOMContentLoaded', function() {
                     break;
             }
         }
-    });
+});
+
+// Variável global para armazenar os tempos da abertura
+let currentOpening = null;
+
+// Função para ATIVAR o botão de skip
+function setupSkipOpening() {
+  const videoPlayer = document.getElementById('anime-player');
+  const skipBtn = document.getElementById('skip-opening-btn');
+  
+  if (!videoPlayer || !skipBtn) {
+    console.error("Elementos não encontrados!");
+    return;
+  }
+
+  // Atualiza o botão a cada mudança de tempo no vídeo
+  videoPlayer.addEventListener('timeupdate', () => {
+    if (!currentOpening) {
+      skipBtn.style.display = 'none';
+      return;
+    }
+
+    const currentTime = videoPlayer.currentTime;
+    const remainingTime = Math.ceil(currentOpening.end - currentTime);
+
+    // Mostra o botão 5s antes da abertura começar
+    if (currentTime >= currentOpening.start - 5 && currentTime < currentOpening.end) {
+      document.getElementById('skip-counter').textContent = remainingTime;
+      skipBtn.style.display = 'block';
+      
+      // Adiciona efeito de pulsar nos últimos 10s
+      skipBtn.classList.toggle('pulse', remainingTime <= 10);
+    } else {
+      skipBtn.style.display = 'none';
+    }
+  });
+
+  // Configura o clique do botão
+  skipBtn.addEventListener('click', () => {
+    if (currentOpening) {
+      videoPlayer.currentTime = currentOpening.end;
+      
+      // Feedback visual
+      const feedback = document.createElement('div');
+      feedback.textContent = "Abertura pulada!";
+      feedback.style.cssText = `
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: #2ecc71;
+        background: rgba(0,0,0,0.8);
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-size: 1.2rem;
+        z-index: 100;
+      `;
+      document.getElementById('video-player-container').appendChild(feedback);
+      
+      setTimeout(() => feedback.remove(), 1000);
+    }
+  });
+}
+
+// CHAME ESTA FUNÇÃO QUANDO CARREGAR UM EPISÓDIO
+function loadEpisode(episodeData) {
+  // Seu código normal de carregar vídeo aqui...
+  
+  // Atualiza os tempos da abertura
+  currentOpening = episodeData.opening || null;
+  
+  // Configura o botão (executa apenas uma vez)
+  if (!window.skipSetupDone) {
+    setupSkipOpening();
+    window.skipSetupDone = true;
+  }
+}
 
     // Função para play/pause
     function togglePlayPause() {
