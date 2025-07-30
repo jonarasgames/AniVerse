@@ -1694,3 +1694,16 @@ footer {
 .skip-btn.pulse {
   animation: pulse 1s infinite;
 }
+
+#skip-opening-btn {
+    /* Posicionamento emergencial para aberturas no 0s */
+    right: 50% !important;
+    transform: translateX(50%) !important;
+    top: 70% !important;
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateX(50%) translateY(0); }
+    50% { transform: translateX(50%) translateY(-10px); }
+}
