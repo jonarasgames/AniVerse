@@ -18,23 +18,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Verifica se deve mostrar o botão
     function checkSkipButton() {
-        if (!currentOpening) {
+        if (!currentOpening || videoPlayer.paused) {
             skipBtn.style.display = 'none';
             return;
         }
 
         const currentTime = videoPlayer.currentTime;
         const { start, end } = currentOpening;
-        const counter = skipBtn.querySelector('#skip-counter');
-
-        // Mostra o botão 5s antes até o final da abertura
+        
         if (currentTime >= start - 5 && currentTime < end) {
-            const remaining = Math.ceil(end - currentTime);
-            counter.textContent = remaining;
             skipBtn.style.display = 'block';
-            
-            // Efeito de pulsar nos últimos 10s
-            skipBtn.classList.toggle('pulse', remaining <= 10);
+            skipBtn.querySelector('#skip-counter').textContent = Math.ceil(end - currentTime);
         } else {
             skipBtn.style.display = 'none';
         }
@@ -60,7 +54,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Configura os eventos
-    videoPlayer.addEventListener('timeupdate', checkSkipButton);
+    videoPlayer.addEventListener('play', () => {
+        // Força a verificação do botão quando o vídeo inicia
+        checkSkipButton();
+    });
     skipBtn.addEventListener('click', skipOpening);
 
     // ⭐⭐ Permite atualização externa dos dados ⭐⭐
