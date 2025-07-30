@@ -1642,24 +1642,53 @@ footer {
 }
 
 #skip-opening-btn {
-    display: block !important; /* Força a exibição */
-    visibility: visible !important;
-    opacity: 1 !important;
-    background: #e63946 !important; /* Vermelho escuro */
+    display: none;
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    background: #e63946 !important;
     color: white !important;
-    border: none !important;
-    padding: 8px 15px !important;
-    border-radius: 20px !important;
-    font-weight: bold !important;
-    position: absolute !important;
-    right: 20px !important;
-    top: 20px !important;
-    z-index: 1000 !important;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.5) !important;
+    padding: 8px 15px;
+    border-radius: 20px;
+    z-index: 1000;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    transition: all 0.3s;
 }
 
-#skip-opening-btn.pulse {
-    animation: pulse 1s infinite;
+#skip-opening-btn {
+    /* Estilo base */
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    background: #e63946;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: bold;
+    z-index: 100;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    
+    /* Estado inicial */
+    display: none !important; /* Sobrescreve qualquer outro estilo */
+    
+    /* Transição suave */
+    transition: opacity 0.3s;
+}
+
+/* Efeito quando visível */
+#skip-opening-btn:not([style*="display: none"]) {
+    opacity: 1;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
 }
 /* Animação para o botão */
 @keyframes pulse {
