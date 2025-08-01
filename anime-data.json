@@ -1230,6 +1230,15 @@
             "title": "A gente tá muito ferrado!",
             "videoUrl": "https://seed171.bitchute.com/8xBkY2iNMQ05/KK42xU3JqPsn.mp4",
             "duration": 1499
+          },
+          {
+            "title": "Vamos todos morar juntos",
+            "videoUrl": "https://seed122.bitchute.com/8xBkY2iNMQ05/uEv56IaF1pgq.mp4",
+            "duration": 1499,
+            "opening": {
+              "start": 83,
+              "end": 173
+            }
           }
         ]
       }
