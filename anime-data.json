@@ -1239,6 +1239,15 @@
               "start": 83,
               "end": 173
             }
+          },
+          {
+            "title": "Viramos uma família",
+            "videoUrl": "https://seed306.bitchute.com/8xBkY2iNMQ05/bw3J04tUEh0X.mp4",
+            "duration": 1497,
+            "opening": {
+              "start": 144,
+              "end": 234
+            }
           }
         ]
       }
@@ -1279,6 +1288,88 @@
         "cover": "https://static.wikia.nocookie.net/dandadan/images/d/d4/Doukashiteru_Cover.png",
         "type": "ending",
         "season": 2
+      }
+    ],
+    "osts": {}
+  },
+  {
+    "id": 16,
+    "title": "FLCL - Fã Dublagem",
+    "description": "Coisas misteriosas começam a acontecer com Naota, um jovem de 12 anos, encontra uma mulher estranha em uma Vespa junto com seu grande baixo.",
+    "thumbnail": "https://files.catbox.moe/77hqc3.png",
+    "trailer": "tenao",
+    "type": "ova",
+    "dateAdded": "2025-08-07",
+    "categories": [
+      "action",
+      "comedy",
+      "horror",
+      "psychological"
+    ],
+    "seasons": [
+      {
+        "number": 1,
+        "episodes": [
+          {
+            "title": "Fooly Cooly",
+            "videoUrl": "https://seed167.bitchute.com/8xBkY2iNMQ05/1z8u42Q8eP53.mp4",
+            "duration": 1497
+          }
+        ]
+      }
+    ],
+    "year": 2000,
+    "rating": 8.1,
+    "openings": [
+      {
+        "title": "One Life",
+        "artist": "The Pillows",
+        "audio": "https://files.catbox.moe/zstsbu.mp3",
+        "cover": "https://images.genius.com/a8a5e93fea230d6fd840d135e5258193.465x465x1.jpg",
+        "type": "opening",
+        "season": 1
+      },
+      {
+        "title": "Instant Music",
+        "artist": "The Pillows",
+        "audio": "https://files.catbox.moe/7y6tnj.mp3",
+        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/ae/9e/9f/ae9e9f26-a0e2-88bd-28f5-23586a42527f/8720766609171.png/1200x630bb.jpg",
+        "type": "opening",
+        "season": 1
+      },
+      {
+        "title": "Happy Bivouac",
+        "artist": "The Pillows",
+        "audio": "https://files.catbox.moe/4zf7nj.mp3",
+        "cover": "https://cdn-images.dzcdn.net/images/cover/32599ab5f37ed18c1a811d55ea14d144/0x1900-000000-80-0-0.jpg",
+        "type": "opening",
+        "season": 1
+      },
+      {
+        "title": "Runners High",
+        "artist": "The Pillows",
+        "audio": "https://files.catbox.moe/mohuj9.mp3",
+        "cover": "https://i.scdn.co/image/ab67616d0000b2731c1f2c36b568473ec546d691",
+        "type": "opening",
+        "season": 1
+      },
+      {
+        "title": "Carnival",
+        "artist": "The Pillows",
+        "audio": "https://files.catbox.moe/yp0xup.mp3",
+        "cover": "https://i.scdn.co/image/ab67616d0000b273c03a29523ae9543551f8b4c3",
+        "type": "opening",
+        "season": 1
+      }
+    ],
+    "endings": [
+      {
+        "title": "Ride on Shooting Star",
+        "artist": "The Pillows",
+        "audio": "https://files.catbox.moe/31mdu3.mp3",
+        "cover": "https://i.scdn.co/image/ab67616d0000b2735c75c417c99ccf9139ce546c",
+        "type": "ending",
+        "season": 1
       }
     ],
     "osts": {}
