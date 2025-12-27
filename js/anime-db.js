@@ -25,6 +25,9 @@ class AnimeDatabase {
             
             // Pré-processar músicas para acesso rápido
             this.processMusicData();
+            
+            // Set global reference
+            window.animeDB = this;
         } catch (error) {
             console.error("Erro ao carregar dados:", error);
             this.animes = [];
