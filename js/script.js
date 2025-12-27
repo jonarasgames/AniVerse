@@ -69,22 +69,56 @@ document.addEventListener('DOMContentLoaded', function() {
         updateProfileDisplay();
     }, 300);
     
-    document.getElementById('terms-link')?.addEventListener('click', function(e) {
-        e.preventDefault();
-        document.getElementById('terms-modal').style.display = 'block';
+    document.querySelectorAll('.terms-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const modal = document.getElementById('terms-modal');
+            if (modal) {
+                modal.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+            }
+        });
     });
     
-    document.getElementById('privacy-link')?.addEventListener('click', function(e) {
-        e.preventDefault();
-        document.getElementById('privacy-modal').style.display = 'block';
+    document.querySelectorAll('.privacy-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const modal = document.getElementById('privacy-modal');
+            if (modal) {
+                modal.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+            }
+        });
     });
     
     document.querySelector('.close-terms')?.addEventListener('click', function() {
-        document.getElementById('terms-modal').style.display = 'none';
+        const modal = document.getElementById('terms-modal');
+        if (modal) {
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+        }
     });
     
     document.querySelector('.close-privacy')?.addEventListener('click', function() {
-        document.getElementById('privacy-modal').style.display = 'none';
+        const modal = document.getElementById('privacy-modal');
+        if (modal) {
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+    });
+    
+    // Close modals on outside click
+    window.addEventListener('click', function(e) {
+        const termsModal = document.getElementById('terms-modal');
+        const privacyModal = document.getElementById('privacy-modal');
+        if (e.target === termsModal) {
+            termsModal.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+        if (e.target === privacyModal) {
+            privacyModal.style.display = 'none';
+            document.body.style.overflow = '';
+        }
     });
     
     document.getElementById('login-btn')?.addEventListener('click', function(e) {
@@ -147,8 +181,13 @@ function loadContinueWatching() {
 
 // Clear history handler
 document.addEventListener('DOMContentLoaded', function() {
-    const clearHistoryBtn = document.getElementById('clear-history-btn');
-    if (clearHistoryBtn) {
+    // Handler for both clear history buttons
+    const clearHistoryBtns = [
+        document.getElementById('clear-history-btn'),
+        document.getElementById('clear-history-btn-2')
+    ].filter(Boolean);
+    
+    clearHistoryBtns.forEach(clearHistoryBtn => {
         clearHistoryBtn.addEventListener('click', function() {
             if (confirm('Tem certeza que deseja limpar todo o histórico de visualização?')) {
                 // Clear continue watching
@@ -161,19 +200,24 @@ document.addEventListener('DOMContentLoaded', function() {
                     animeDB.watchedEpisodes = {};
                 }
                 
-                // Re-render the grid
-                const grid = document.getElementById('continue-watching-grid');
-                if (grid) {
-                    grid.innerHTML = '<p class="no-results">Você ainda não começou a assistir nenhum anime.</p>';
-                }
+                // Re-render the grids
+                const grids = ['continue-watching-grid', 'continue-grid'];
+                grids.forEach(gridId => {
+                    const grid = document.getElementById(gridId);
+                    if (grid) {
+                        grid.innerHTML = '<p class="no-results">Você ainda não começou a assistir nenhum anime.</p>';
+                    }
+                });
                 
-                // Hide the button
-                this.style.display = 'none';
+                // Hide all clear history buttons
+                clearHistoryBtns.forEach(btn => {
+                    btn.style.display = 'none';
+                });
                 
                 alert('Histórico limpo com sucesso!');
             }
         });
-    }
+    });
 });
 
 function setupCategoryTabs() {
