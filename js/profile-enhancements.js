@@ -90,7 +90,7 @@
         preview.innerHTML = `
             <div class="avatar-bg" style="background-color: #ff6b6b;">
                 <div class="avatar-layer-bg"></div>
-                <img src="https://i.ibb.co/0jq7R0y/anime-bg.jpg" alt="Personagem" class="avatar-char" style="object-fit:cover; width:100%; height:100%;">
+                <img src="images/bg-default.jpg" alt="Personagem" class="avatar-char" style="object-fit:cover; width:100%; height:100%;">
                 <div class="avatar-frame-overlay"></div>
             </div>
             <div>
@@ -322,6 +322,168 @@
         }
         // If the compact markup isn't present, we assume index.html already contains the structure.
     }
+
+    // Expose bindProfileModalControls globally
+    window.bindProfileModalControls = function() {
+        const modal = document.getElementById('profile-modal');
+        if (!modal) return;
+
+        // Relocate character options to char-list-placeholder
+        const charPlaceholder = modal.querySelector('.char-list-placeholder');
+        const charContainer = modal.querySelector('.character-options-container');
+        if (charPlaceholder && charContainer) {
+            const charOptions = Array.from(charContainer.querySelectorAll('.char-option'));
+            charOptions.forEach(option => {
+                charPlaceholder.appendChild(option);
+            });
+        }
+
+        // Bind pronoun buttons
+        modal.querySelectorAll('.pronoun-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                modal.querySelectorAll('.pronoun-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                const pronounInput = modal.querySelector('#selected-pronoun');
+                if (pronounInput) pronounInput.value = this.dataset.pronoun || '';
+                updateAvatarPreviewInModal();
+            });
+        });
+
+        // Bind bg-option (color swatches)
+        modal.querySelectorAll('.bg-option').forEach(option => {
+            option.addEventListener('click', function() {
+                modal.querySelectorAll('.bg-option').forEach(o => o.classList.remove('selected'));
+                this.classList.add('selected');
+                updateAvatarPreviewInModal();
+            });
+        });
+
+        // Bind gradient-option
+        modal.querySelectorAll('.gradient-option').forEach(option => {
+            option.addEventListener('click', function() {
+                modal.querySelectorAll('.gradient-option').forEach(o => o.classList.remove('selected'));
+                this.classList.add('selected');
+                const preview = modal.querySelector('#avatar-preview');
+                if (!preview) return;
+                const avatarBg = preview.querySelector('.avatar-bg');
+                if (!avatarBg) return;
+                const css = this.dataset.css || '';
+                avatarBg.style.backgroundImage = css;
+                const layer = avatarBg.querySelector('.avatar-layer-bg');
+                if (layer) layer.style.backgroundImage = '';
+            });
+        });
+
+        // Bind frame-option
+        modal.querySelectorAll('.frame-option').forEach(option => {
+            option.addEventListener('click', function() {
+                modal.querySelectorAll('.frame-option').forEach(o => o.classList.remove('selected'));
+                this.classList.add('selected');
+                const preview = modal.querySelector('#avatar-preview');
+                if (!preview) return;
+                const overlay = preview.querySelector('.avatar-frame-overlay');
+                if (!overlay) return;
+                overlay.className = 'avatar-frame-overlay';
+                const frame = this.dataset.frame || '';
+                if (frame) overlay.classList.add(frame);
+            });
+        });
+
+        // Bind char-option
+        modal.querySelectorAll('.char-option').forEach(option => {
+            option.addEventListener('click', function() {
+                modal.querySelectorAll('.char-option').forEach(o => o.classList.remove('selected'));
+                this.classList.add('selected');
+                updateAvatarPreviewInModal();
+            });
+        });
+
+        // Bind profile name input
+        const nameInput = modal.querySelector('#profile-name');
+        if (nameInput) {
+            nameInput.addEventListener('input', updateAvatarPreviewInModal);
+        }
+
+        // Bind save button
+        const saveBtn = modal.querySelector('#save-profile');
+        if (saveBtn) {
+            saveBtn.addEventListener('click', function() {
+                const name = (nameInput?.value || '').trim();
+                const pronounInput = modal.querySelector('#selected-pronoun');
+                const pronoun = pronounInput?.value || '-san';
+                const selectedBgOption = modal.querySelector('.bg-option.selected');
+                const bgColor = selectedBgOption ? window.getComputedStyle(selectedBgOption).backgroundColor : '#ff6b6b';
+                const selectedChar = modal.querySelector('.char-option.selected');
+                const char = selectedChar?.dataset.char || '1';
+                const charImg = selectedChar?.querySelector('img')?.src || '';
+                
+                const selectedGradient = modal.querySelector('.gradient-option.selected');
+                const gradientCss = selectedGradient?.dataset.css || '';
+                
+                const selectedFrame = modal.querySelector('.frame-option.selected');
+                const frame = selectedFrame?.dataset.frame || '';
+
+                if (name && window.animeDB) {
+                    const profile = {
+                        name,
+                        pronoun,
+                        avatarBg: gradientCss || bgColor,
+                        avatarChar: char,
+                        avatarCharImg: charImg,
+                        avatarFrame: frame
+                    };
+                    
+                    localStorage.setItem('userProfile', JSON.stringify(profile));
+                    animeDB.saveProfile(profile);
+                    
+                    modal.style.display = 'none';
+                    
+                    // Update header UI
+                    const loginBtn = document.getElementById('login-btn');
+                    const headerAvatar = document.getElementById('header-avatar');
+                    if (loginBtn) {
+                        loginBtn.innerHTML = `<i class="fas fa-user"></i> ${name}${pronoun}`;
+                    }
+                    if (headerAvatar) {
+                        headerAvatar.style.display = 'block';
+                        headerAvatar.style.backgroundColor = bgColor;
+                        const img = headerAvatar.querySelector('img');
+                        if (img) img.src = charImg;
+                    }
+                    
+                    if (typeof updateProfileDisplay === 'function') {
+                        updateProfileDisplay();
+                    }
+                } else {
+                    alert('Por favor, preencha o nome do perfil.');
+                }
+            });
+        }
+
+        function updateAvatarPreviewInModal() {
+            const preview = modal.querySelector('#avatar-preview');
+            if (!preview) return;
+            
+            const name = nameInput?.value || 'Nome';
+            const pronounInput = modal.querySelector('#selected-pronoun');
+            const pronoun = pronounInput?.value || '-san';
+            const selectedBgOption = modal.querySelector('.bg-option.selected');
+            const bgColor = selectedBgOption ? window.getComputedStyle(selectedBgOption).backgroundColor : '#ff6b6b';
+            const selectedChar = modal.querySelector('.char-option.selected');
+            const charImg = selectedChar?.querySelector('img')?.src || '';
+            
+            const avatarBg = preview.querySelector('.avatar-bg');
+            const avatarChar = preview.querySelector('.avatar-char');
+            const avatarName = preview.querySelector('.avatar-name');
+            
+            if (avatarBg && !modal.querySelector('.gradient-option.selected')) {
+                avatarBg.style.backgroundColor = bgColor;
+                avatarBg.style.backgroundImage = '';
+            }
+            if (avatarChar) avatarChar.src = charImg;
+            if (avatarName) avatarName.textContent = `${name}${pronoun}`;
+        }
+    };
 
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
     else init();

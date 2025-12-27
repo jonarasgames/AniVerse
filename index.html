@@ -6,6 +6,7 @@
     <title>AniVerse - Seu Universo de Animes</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/profile-enhancements.css">
+    <link rel="stylesheet" href="css/hero-video-rotator.css">
     <link rel="stylesheet" href="css/dark-mode.css" id="dark-mode-style" disabled>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="icon" href="images/logo.png" type="image/png">
@@ -61,7 +62,12 @@
             </section>
 
             <section class="continue-watching">
-                <h2 class="section-title">Continuar Assistindo</h2>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 class="section-title" style="margin: 0;">Continuar Assistindo</h2>
+                    <button id="clear-history-btn" class="btn btn-secondary" style="display: none;">
+                        <i class="fas fa-trash"></i> Limpar Histórico
+                    </button>
+                </div>
                 <div class="anime-grid" id="continue-watching-grid"></div>
             </section>
 
@@ -104,6 +110,9 @@
                     <button class="btn-icon" id="dislike-btn" title="Não gostei">
                         <i class="fas fa-thumbs-down"></i>
                         <span id="dislikes-count">0</span>
+                    </button>
+                    <button class="btn-icon" id="pip-btn" title="Picture-in-Picture">
+                        <i class="fas fa-tv"></i>
                     </button>
                 </div>
             </div>
@@ -317,6 +326,7 @@
     <script src="js/video-player.js"></script>
     <script src="js/music-player.js"></script>
     <script src="js/info-section.js"></script>
+    <script src="js/fixes.js"></script>
     <script src="js/script.js"></script>
     <script src="js/profile-enhancements.js"></script>
     <script src="js/hero-video-rotator.js"></script>

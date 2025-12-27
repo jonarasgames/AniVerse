@@ -31,6 +31,12 @@
 }
 
 /* Pronouns */
+.pronoun-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
 .pronoun-btn {
     padding: 6px 10px;
     border-radius: 999px;
@@ -43,6 +49,22 @@
     background: linear-gradient(90deg, var(--primary-color), #ff9ff3);
     color: white;
     box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+}
+
+/* Background and gradient options grids */
+.bg-options-grid, .gradient-options-grid, .frame-options-grid {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.char-list-placeholder {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 5px;
 }
 
 /* swatches */
@@ -59,10 +81,25 @@
     justify-content: center;
     overflow: hidden;
 }
+
+.gradient-option:nth-child(1) { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+.gradient-option:nth-child(2) { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+.gradient-option:nth-child(3) { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+.gradient-option:nth-child(4) { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+.gradient-option:nth-child(5) { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+.gradient-option:nth-child(6) { background: linear-gradient(135deg, #30cfd0 0%, #330867 100%); }
+
 .bg-option.selected, .gradient-option.selected, .bg-image-option.selected, .frame-option.selected {
     border-color: var(--primary-color);
     transform: translateY(-4px);
     box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+
+.frame-option {
+    background: rgba(255, 255, 255, 0.1);
+    font-size: 10px;
+    text-align: center;
+    padding: 2px;
 }
 
 .bg-image-option img { width:100%; height:100%; object-fit:cover; }
