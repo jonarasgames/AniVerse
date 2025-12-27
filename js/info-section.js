@@ -1,4 +1,4 @@
-// js/info-section.js - defensive init
+// js/info-section.js - inicialização defensiva da seção "info"
 (function(){
   try {
     const infoSection = document.getElementById('info-section');
