@@ -19,6 +19,8 @@ class SkipButtonController {
         // Monitora alterações de tempo
         if (this.player) {
             this.player.addEventListener('timeupdate', () => this.updateButton());
+            // Also update when seeking into opening
+            this.player.addEventListener('seeked', () => this.updateButton());
         }
         
         // Configura o clique
@@ -227,7 +229,19 @@ document.addEventListener('DOMContentLoaded', () => {
     
     if (!player) return;
     
-    // Play/Pause
+    // Click on video to pause/resume (ignore clicks on controls)
+    player.addEventListener('click', (e) => {
+        // Only toggle if clicking directly on the video, not controls
+        if (e.target === player) {
+            if (player.paused) {
+                player.play();
+            } else {
+                player.pause();
+            }
+        }
+    });
+    
+    // Play/Pause button
     if (playPauseBtn) {
         playPauseBtn.addEventListener('click', () => {
             if (player.paused) {
@@ -300,13 +314,19 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    // Fullscreen
+    // Fullscreen - YouTube style (container goes fullscreen)
     if (fullscreenBtn) {
         fullscreenBtn.addEventListener('click', () => {
             const container = document.getElementById('video-player-container');
+            if (!container) return;
+            
             if (!document.fullscreenElement) {
                 if (container.requestFullscreen) {
-                    container.requestFullscreen();
+                    container.requestFullscreen().then(() => {
+                        container.classList.add('is-fullscreen');
+                    }).catch(err => {
+                        console.warn('Fullscreen request failed:', err);
+                    });
                 }
             } else {
                 document.exitFullscreen();
@@ -314,7 +334,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    // Picture-in-Picture
+    // Listen for fullscreen changes to remove class when exiting
+    document.addEventListener('fullscreenchange', () => {
+        const container = document.getElementById('video-player-container');
+        if (!document.fullscreenElement && container) {
+            container.classList.remove('is-fullscreen');
+        }
+    });
+    
+    // Picture-in-Picture - Only native API, no custom fallback
     if (pipBtn) {
         pipBtn.addEventListener('click', async () => {
             try {
@@ -323,87 +351,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else if (player.requestPictureInPicture) {
                     await player.requestPictureInPicture();
                 } else {
-                    // Fallback: create mini player with real video (not cloned)
-                    showCustomMiniPlayer(player);
+                    console.warn('PiP not supported by this browser');
                 }
             } catch (error) {
                 console.error('PiP error:', error);
-                showCustomMiniPlayer(player);
             }
         });
     }
 });
 
-// Custom mini-player that moves the real video element
-function showCustomMiniPlayer(player) {
-    // Check if mini-player already exists
-    let miniPlayer = document.getElementById('mini-player');
-    if (miniPlayer) {
-        return; // Already showing mini-player
-    }
-    
-    // Store original container for later restoration
-    const originalContainer = player.parentElement;
-    const originalControls = document.getElementById('custom-video-controls');
-    
-    // Create mini-player container
-    miniPlayer = document.createElement('div');
-    miniPlayer.id = 'mini-player';
-    miniPlayer.style.cssText = `
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        width: 320px;
-        height: 180px;
-        z-index: 10000;
-        background: black;
-        border: 2px solid white;
-        border-radius: 8px;
-        overflow: hidden;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-    `;
-    
-    // Move the real video into mini-player
-    player.style.width = '100%';
-    player.style.height = '100%';
-    miniPlayer.appendChild(player);
-    document.body.appendChild(miniPlayer);
-    
-    // Hide original controls while in mini-player
-    if (originalControls) {
-        originalControls.style.display = 'none';
-    }
-    
-    // Close button
-    const closeBtn = document.createElement('button');
-    closeBtn.innerHTML = '&times;';
-    closeBtn.style.cssText = `
-        position: absolute;
-        top: 5px;
-        right: 5px;
-        background: rgba(0,0,0,0.8);
-        color: white;
-        border: none;
-        border-radius: 50%;
-        width: 30px;
-        height: 30px;
-        cursor: pointer;
-        font-size: 20px;
-        z-index: 10001;
-    `;
-    closeBtn.addEventListener('click', () => {
-        // Move video back to original container
-        if (originalContainer) {
-            originalContainer.insertBefore(player, originalContainer.firstChild);
-            player.style.width = '100%';
-            player.style.height = 'auto';
-        }
-        // Show original controls again
-        if (originalControls) {
-            originalControls.style.display = 'block';
-        }
-        // Remove mini-player container
-        miniPlayer.remove();
-    });
-    miniPlayer.appendChild(closeBtn);
-}
