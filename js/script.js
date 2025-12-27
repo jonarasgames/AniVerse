@@ -573,6 +573,8 @@ function openAnimeModal(anime, seasonNumber = 1, episodeNumber = 1) {
     setupCustomControls();
     
     // Substitua a função loadEpisode dentro de openAnimeModal por esta versão:
+    let videoLoadTimeout = null;
+    
     function loadEpisode(anime, seasonNum, episodeNum) {
         const season = anime.seasons[seasonNum - 1];
         if (!season) {
@@ -589,6 +591,15 @@ function openAnimeModal(anime, seasonNumber = 1, episodeNumber = 1) {
         if (!episode.videoUrl) {
             showVideoError('URL do vídeo não disponível');
             return;
+        }
+
+        // Clear any existing error
+        clearVideoError();
+        
+        // Clear any existing timeout
+        if (videoLoadTimeout) {
+            clearTimeout(videoLoadTimeout);
+            videoLoadTimeout = null;
         }
 
         // ⭐⭐ NOVO: Passa os dados da abertura para o player ⭐⭐
@@ -610,6 +621,7 @@ function openAnimeModal(anime, seasonNumber = 1, episodeNumber = 1) {
         videoPlayer.src = episode.videoUrl;
         videoTitle.textContent = `${anime.title} - ${episode.title || `Episódio ${episodeNum}`}`;
         
+        // Restore saved time if continuing
         if (animeDB.continueWatching[anime.id] && 
             animeDB.continueWatching[anime.id].season == seasonNum && 
             animeDB.continueWatching[anime.id].episode == episodeNum) {
@@ -618,33 +630,87 @@ function openAnimeModal(anime, seasonNumber = 1, episodeNumber = 1) {
             videoPlayer.currentTime = 0;
         }
         
+        // Set 15s timeout for loading
+        videoLoadTimeout = setTimeout(() => {
+            if (videoPlayer.readyState < 2 && videoPlayer.paused) { // HAVE_CURRENT_DATA
+                showVideoError('Tempo limite excedido. Verifique sua conexão.');
+            }
+        }, 15000);
+        
         videoPlayer.load();
-        videoPlayer.play().catch(e => {
-            console.log("Autoplay bloqueado:", e);
-            showVideoError('Erro ao reproduzir. Clique no botão de play para tentar novamente.');
+        
+        // Only show error on real failure or timeout
+        videoPlayer.play().then(() => {
+            // Success - clear timeout
+            if (videoLoadTimeout) {
+                clearTimeout(videoLoadTimeout);
+                videoLoadTimeout = null;
+            }
+            clearVideoError();
+        }).catch(e => {
+            console.log("Play error:", e);
+            // Don't show error immediately - let user click play button
+            // Only show error if still not playing after timeout
         });
+        
+        // Clear error once video starts playing
+        videoPlayer.addEventListener('playing', () => {
+            clearVideoError();
+            if (videoLoadTimeout) {
+                clearTimeout(videoLoadTimeout);
+                videoLoadTimeout = null;
+            }
+        }, { once: false });
+    }
+    
+    function clearVideoError() {
+        const container = document.getElementById('video-player-container');
+        if (!container) return;
+        
+        const errorMsg = container.querySelector('.video-error');
+        if (errorMsg) {
+            errorMsg.remove();
+        }
     }
     
     function showVideoError(message) {
         const container = document.getElementById('video-player-container');
         if (!container) return;
         
-        let errorMsg = container.querySelector('.video-error');
-        
-        if (!errorMsg) {
-            errorMsg = document.createElement('div');
-            errorMsg.className = 'video-error';
-            container.appendChild(errorMsg);
+        // Don't show error if video is already playing
+        const videoPlayer = document.getElementById('anime-player');
+        if (videoPlayer && !videoPlayer.paused) {
+            return;
         }
         
+        clearVideoError();
+        
+        const errorMsg = document.createElement('div');
+        errorMsg.className = 'video-error';
+        errorMsg.style.cssText = `
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 71, 87, 0.95);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 8px;
+            text-align: center;
+            z-index: 100;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+        `;
+        
         errorMsg.innerHTML = `
-            <p>${message}</p>
+            <p style="margin-bottom: 15px; font-size: 16px;">${message}</p>
             <button id="try-reload" class="btn btn-primary">Tentar novamente</button>
         `;
         
+        container.appendChild(errorMsg);
+        
         document.getElementById('try-reload')?.addEventListener('click', function() {
+            clearVideoError();
             videoPlayer.load();
-            errorMsg.remove();
             videoPlayer.play().catch(e => console.log("Erro ao reproduzir:", e));
         });
     }

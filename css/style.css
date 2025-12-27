@@ -535,6 +535,19 @@ nav a:hover, nav a.active {
     position: relative;
 }
 
+/* Banner with proper aspect ratio (1000x185 = 5.41:1) */
+#player-banner {
+    width: 100%;
+    height: 0;
+    padding-bottom: 18.5%; /* 185/1000 = 18.5% */
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    border-radius: 8px 8px 0 0;
+    margin-bottom: 0;
+    position: relative;
+}
+
 #anime-player {
     width: 100%;
     height: auto;
@@ -1793,33 +1806,36 @@ footer {
   }
 }
 
-/* Fullscreen styles - make video fill screen properly */
-#video-player-container:fullscreen {
+/* Fullscreen styles - YouTube-style (controls overlay on video) */
+#video-player-container:fullscreen,
+#video-player-container.is-fullscreen {
   width: 100vw !important;
   height: 100vh !important;
   background: black;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  position: relative;
 }
 
-#video-player-container:fullscreen #player-banner {
+#video-player-container:fullscreen #player-banner,
+#video-player-container.is-fullscreen #player-banner {
   display: none;
 }
 
-#video-player-container:fullscreen #anime-player {
+#video-player-container:fullscreen #anime-player,
+#video-player-container.is-fullscreen #anime-player {
   width: 100% !important;
-  height: calc(100vh - 80px) !important;
+  height: 100vh !important;
   object-fit: contain;
 }
 
-#video-player-container:fullscreen #custom-video-controls {
-  position: fixed;
+#video-player-container:fullscreen #custom-video-controls,
+#video-player-container.is-fullscreen #custom-video-controls {
+  position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
   z-index: 10000;
-  background: rgba(0,0,0,0.9);
+  background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%);
+  padding: 20px 15px 15px;
 }
 
 /* Webkit fullscreen */
@@ -1827,9 +1843,7 @@ footer {
   width: 100vw !important;
   height: 100vh !important;
   background: black;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  position: relative;
 }
 
 #video-player-container:-webkit-full-screen #player-banner {
@@ -1838,15 +1852,16 @@ footer {
 
 #video-player-container:-webkit-full-screen #anime-player {
   width: 100% !important;
-  height: calc(100vh - 80px) !important;
+  height: 100vh !important;
   object-fit: contain;
 }
 
 #video-player-container:-webkit-full-screen #custom-video-controls {
-  position: fixed;
+  position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
   z-index: 10000;
-  background: rgba(0,0,0,0.9);
+  background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%);
+  padding: 20px 15px 15px;
 }
