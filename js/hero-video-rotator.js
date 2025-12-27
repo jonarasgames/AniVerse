@@ -1,142 +1,83 @@
-(function() {
-    // Array of 12 background video URLs for the hero section
-    const HERO_VIDEOS = [
-        "https://files.catbox.moe/9sqmzv.mp4",
-        "https://files.catbox.moe/tff74x.mp4",
-        "https://files.catbox.moe/i1qpqg.mp4",
-        "https://files.catbox.moe/0cadkg.mp4",
-        "https://files.catbox.moe/kevo22.mp4",
-        "https://files.catbox.moe/mzs9xm.mp4",
-        "https://files.catbox.moe/m7wj5i.mp4",
-        "https://files.catbox.moe/uztzgt.mp4",
-        "https://files.catbox.moe/uvvlf1.mp4",
-        "https://files.catbox.moe/ftmfgn.mp4",
-        "https://files.catbox.moe/9jmrp0.mp4",
-        "https://files.catbox.moe/s0fowe.mp4"
-    ];
+(function(){
+  const VIDEO_BG_URLS = [
+    "https://cdn.pixabay.com/video/2023/03/07/131772-813033870_large.mp4",
+    "https://cdn.pixabay.com/video/2022/08/05/126858-827650220_large.mp4",
+    "https://cdn.pixabay.com/video/2023/06/15/164244-828306808_large.mp4",
+    "https://cdn.pixabay.com/video/2023/09/22/177474-866787937_large.mp4",
+    "https://cdn.pixabay.com/video/2023/01/05/140554-857498760_large.mp4",
+    "https://cdn.pixabay.com/video/2023/02/04/143992-858159773_large.mp4",
+    "https://cdn.pixabay.com/video/2022/11/15/123672-839180416_large.mp4",
+    "https://cdn.pixabay.com/video/2023/06/25/164732-831518729_large.mp4",
+    "https://cdn.pixabay.com/video/2022/03/09/107251-805541893_large.mp4",
+    "https://cdn.pixabay.com/video/2021/07/21/86281-573046068_large.mp4",
+    "https://cdn.pixabay.com/video/2022/06/15/117882-818220407_large.mp4",
+    "https://cdn.pixabay.com/video/2022/05/20/116389-814689065_large.mp4"
+  ];
 
-    let currentVideoIndex = 0;
-    let video1, video2;
-    let currentVideo, nextVideo;
+  const ROTATE_INTERVAL = 8000;
+  const MOBILE_MAX_WIDTH = 700;
 
-    function init() {
-        const heroSection = document.querySelector('.hero');
-        if (!heroSection) {
-            console.warn('Hero section not found, skipping video rotator');
-            return;
-        }
+  function isMobile() {
+    return window.matchMedia && window.matchMedia(`(max-width: ${MOBILE_MAX_WIDTH}px)`).matches;
+  }
 
-        // Create video container
-        const videoContainer = document.createElement('div');
-        videoContainer.className = 'hero-video-container';
-        videoContainer.style.cssText = `
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            z-index: 0;
-        `;
+  function createVideoEl(src) {
+    const v = document.createElement('video');
+    v.src = src;
+    v.autoplay = true;
+    v.muted = true;
+    v.loop = true;
+    v.playsInline = true;
+    v.preload = 'auto';
+    v.className = 'hero-video-layer';
+    v.style.objectFit = 'cover';
+    v.style.width = '100%';
+    v.style.height = '100%';
+    v.style.pointerEvents = 'none';
+    v.removeAttribute('controls');
+    return v;
+  }
 
-        // Create two video elements for crossfade effect
-        video1 = createVideoElement();
-        video2 = createVideoElement();
+  function init() {
+    const hero = document.querySelector('.hero');
+    if (!hero) return;
+    if (isMobile()) { hero.classList.add('hero-static-fallback'); return; }
 
-        videoContainer.appendChild(video1);
-        videoContainer.appendChild(video2);
-        heroSection.insertBefore(videoContainer, heroSection.firstChild);
+    const layerA = document.createElement('div');
+    const layerB = document.createElement('div');
+    layerA.className = 'hero-video-container layer-a';
+    layerB.className = 'hero-video-container layer-b';
+    Object.assign(layerA.style, { position:'absolute', inset:'0', zIndex:'0', opacity:'0', transition:'opacity 1200ms ease' });
+    Object.assign(layerB.style, { position:'absolute', inset:'0', zIndex:'0', opacity:'0', transition:'opacity 1200ms ease' });
+    hero.appendChild(layerA);
+    hero.appendChild(layerB);
 
-        // Set initial videos
-        currentVideo = video1;
-        nextVideo = video2;
+    let currentIndex = 0;
+    let showingA = true;
+    const aVideo = createVideoEl(VIDEO_BG_URLS[0]);
+    layerA.appendChild(aVideo);
+    aVideo.play().catch(()=>{});
 
-        // Start first video
-        loadVideo(currentVideo, HERO_VIDEOS[0]);
-        currentVideo.style.opacity = '1';
-
-        // Preload next video
-        preloadNextVideo();
-
-        // Set up rotation when video ends
-        currentVideo.addEventListener('ended', rotateVideo);
-
-        console.log('✅ Hero video rotator initialized');
+    function crossfadeNext() {
+      const nextIndex = (currentIndex + 1) % VIDEO_BG_URLS.length;
+      const targetLayer = showingA ? layerB : layerA;
+      targetLayer.innerHTML = '';
+      const nextVideo = createVideoEl(VIDEO_BG_URLS[nextIndex]);
+      targetLayer.appendChild(nextVideo);
+      nextVideo.play().catch(()=>{});
+      setTimeout(()=> {
+        targetLayer.style.opacity = '1';
+        (showingA ? layerA : layerB).style.opacity = '0';
+        showingA = !showingA;
+        currentIndex = nextIndex;
+      }, 50);
     }
 
-    function createVideoElement() {
-        const video = document.createElement('video');
-        video.style.cssText = `
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            min-width: 100%;
-            min-height: 100%;
-            width: auto;
-            height: auto;
-            transform: translate(-50%, -50%);
-            object-fit: cover;
-            opacity: 0;
-            transition: opacity 1.5s ease-in-out;
-        `;
-        video.muted = true;
-        video.playsInline = true;
-        return video;
-    }
+    setTimeout(()=> { layerA.style.opacity = '1'; }, 200);
+    const rotator = setInterval(crossfadeNext, ROTATE_INTERVAL);
+    window.addEventListener('beforeunload', () => clearInterval(rotator));
+  }
 
-    function loadVideo(videoElement, url) {
-        videoElement.src = url;
-        videoElement.load();
-    }
-
-    function preloadNextVideo() {
-        const nextIndex = (currentVideoIndex + 1) % HERO_VIDEOS.length;
-        loadVideo(nextVideo, HERO_VIDEOS[nextIndex]);
-    }
-
-    function rotateVideo() {
-        // Move to next video index
-        currentVideoIndex = (currentVideoIndex + 1) % HERO_VIDEOS.length;
-
-        // Start playing next video
-        nextVideo.play().catch(err => {
-            console.warn('Error playing video:', err);
-        });
-
-        // Crossfade effect
-        nextVideo.style.opacity = '1';
-        currentVideo.style.opacity = '0';
-
-        // Swap references
-        const temp = currentVideo;
-        currentVideo = nextVideo;
-        nextVideo = temp;
-
-        // Set up event listener for the new current video
-        currentVideo.addEventListener('ended', rotateVideo);
-
-        // Preload the next video in sequence
-        preloadNextVideo();
-    }
-
-    // Auto-start when DOM is ready
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
-    } else {
-        init();
-    }
-
-    // Attempt to play first video when user interacts (for autoplay restrictions)
-    function attemptAutoplay() {
-        if (currentVideo && currentVideo.paused) {
-            currentVideo.play().catch(err => {
-                console.log('Autoplay prevented, will start on user interaction');
-            });
-        }
-    }
-
-    document.addEventListener('click', attemptAutoplay, { once: true });
-    document.addEventListener('touchstart', attemptAutoplay, { once: true });
-    document.addEventListener('scroll', attemptAutoplay, { once: true });
-
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
 })();
