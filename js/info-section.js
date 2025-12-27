@@ -3,6 +3,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const searchBtn = document.getElementById('info-search-btn');
     const infoContainer = document.getElementById('anime-info-container');
     
+    // Guard against missing elements
+    if (!searchBtn || !searchInput || !infoContainer) {
+        console.warn('Info section elements not found, skipping info-section initialization');
+        return;
+    }
+    
     // Exemplo de dados (substitua com dados reais)
     const animeInfoData = {
         "Attack on Titan": {

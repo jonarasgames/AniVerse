@@ -211,3 +211,161 @@ function showVolumeFeedback() {
         if (feedback.parentNode) feedback.remove();
     }, 1000);
 }
+
+// Custom Video Controls
+document.addEventListener('DOMContentLoaded', () => {
+    const player = document.getElementById('anime-player');
+    const playPauseBtn = document.getElementById('play-pause-btn');
+    const timeline = document.querySelector('.timeline-container');
+    const timelineProgress = document.getElementById('timeline-progress');
+    const timeDisplay = document.getElementById('time-display');
+    const volumeBtn = document.getElementById('volume-btn');
+    const volumeContainer = document.querySelector('.volume-container');
+    const volumeProgress = document.getElementById('volume-progress');
+    const fullscreenBtn = document.getElementById('fullscreen-btn');
+    const pipBtn = document.getElementById('pip-btn');
+    
+    if (!player) return;
+    
+    // Play/Pause
+    if (playPauseBtn) {
+        playPauseBtn.addEventListener('click', () => {
+            if (player.paused) {
+                player.play();
+            } else {
+                player.pause();
+            }
+        });
+    }
+    
+    // Update play/pause icon
+    player.addEventListener('play', () => {
+        if (playPauseBtn) {
+            playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+        }
+    });
+    
+    player.addEventListener('pause', () => {
+        if (playPauseBtn) {
+            playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+        }
+    });
+    
+    // Timeline
+    player.addEventListener('timeupdate', () => {
+        if (!timeline || !timelineProgress || !timeDisplay) return;
+        
+        const percent = (player.currentTime / player.duration) * 100;
+        timelineProgress.style.width = percent + '%';
+        
+        const currentMin = Math.floor(player.currentTime / 60);
+        const currentSec = Math.floor(player.currentTime % 60);
+        const durationMin = Math.floor(player.duration / 60);
+        const durationSec = Math.floor(player.duration % 60);
+        
+        timeDisplay.textContent = `${currentMin}:${currentSec.toString().padStart(2, '0')} / ${durationMin}:${durationSec.toString().padStart(2, '0')}`;
+    });
+    
+    if (timeline) {
+        timeline.addEventListener('click', (e) => {
+            const rect = timeline.getBoundingClientRect();
+            const percent = (e.clientX - rect.left) / rect.width;
+            player.currentTime = percent * player.duration;
+        });
+    }
+    
+    // Volume
+    if (volumeBtn) {
+        volumeBtn.addEventListener('click', () => {
+            player.muted = !player.muted;
+            volumeBtn.innerHTML = player.muted ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>';
+            if (volumeProgress) {
+                volumeProgress.style.width = player.muted ? '0%' : (player.volume * 100) + '%';
+            }
+        });
+    }
+    
+    if (volumeContainer) {
+        volumeContainer.addEventListener('click', (e) => {
+            const rect = volumeContainer.getBoundingClientRect();
+            const percent = (e.clientX - rect.left) / rect.width;
+            player.volume = percent;
+            player.muted = false;
+            if (volumeProgress) {
+                volumeProgress.style.width = (percent * 100) + '%';
+            }
+            if (volumeBtn) {
+                volumeBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+            }
+        });
+    }
+    
+    // Fullscreen
+    if (fullscreenBtn) {
+        fullscreenBtn.addEventListener('click', () => {
+            const container = document.getElementById('video-player-container');
+            if (!document.fullscreenElement) {
+                if (container.requestFullscreen) {
+                    container.requestFullscreen();
+                }
+            } else {
+                document.exitFullscreen();
+            }
+        });
+    }
+    
+    // Picture-in-Picture
+    if (pipBtn) {
+        pipBtn.addEventListener('click', async () => {
+            try {
+                if (document.pictureInPictureElement) {
+                    await document.exitPictureInPicture();
+                } else if (player.requestPictureInPicture) {
+                    await player.requestPictureInPicture();
+                } else {
+                    // Fallback: create mini player
+                    const miniPlayer = document.createElement('div');
+                    miniPlayer.id = 'mini-player';
+                    miniPlayer.style.cssText = `
+                        position: fixed;
+                        bottom: 20px;
+                        right: 20px;
+                        width: 320px;
+                        height: 180px;
+                        z-index: 10000;
+                        background: black;
+                        border: 2px solid white;
+                        border-radius: 8px;
+                        overflow: hidden;
+                    `;
+                    const clonedPlayer = player.cloneNode(true);
+                    clonedPlayer.style.width = '100%';
+                    clonedPlayer.style.height = '100%';
+                    clonedPlayer.currentTime = player.currentTime;
+                    miniPlayer.appendChild(clonedPlayer);
+                    document.body.appendChild(miniPlayer);
+                    
+                    // Close button
+                    const closeBtn = document.createElement('button');
+                    closeBtn.innerHTML = '&times;';
+                    closeBtn.style.cssText = `
+                        position: absolute;
+                        top: 5px;
+                        right: 5px;
+                        background: rgba(0,0,0,0.5);
+                        color: white;
+                        border: none;
+                        border-radius: 50%;
+                        width: 25px;
+                        height: 25px;
+                        cursor: pointer;
+                    `;
+                    closeBtn.addEventListener('click', () => miniPlayer.remove());
+                    miniPlayer.appendChild(closeBtn);
+                }
+            } catch (error) {
+                console.error('PiP error:', error);
+            }
+        });
+    }
+});

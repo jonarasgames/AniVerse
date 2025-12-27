@@ -77,19 +77,88 @@
             </section>
 
             <section class="full-catalog">
+                <h2 class="section-title">Catálogo Completo</h2>
+                <div class="anime-grid" id="full-catalog-grid"></div>
+            </section>
+        </section>
 
-            <p>Não compartilhamos suas informações com terceiros. Todos os dados permanecem no seu navegador.</p>
-        </div>
-    </div>
+        <!-- Animes Section -->
+        <section id="animes-section" class="content-section">
+            <h2 class="section-title">Animes</h2>
+            <div class="anime-grid" id="animes-grid"></div>
+        </section>
+
+        <!-- Movies Section -->
+        <section id="movies-section" class="content-section">
+            <h2 class="section-title">Filmes</h2>
+            <div class="anime-grid" id="movies-grid"></div>
+        </section>
+
+        <!-- OVAs Section -->
+        <section id="ovas-section" class="content-section">
+            <h2 class="section-title">OVAs</h2>
+            <div class="anime-grid" id="ovas-grid"></div>
+        </section>
+
+        <!-- Openings Section -->
+        <section id="openings-section" class="content-section">
+            <h2 class="section-title">Músicas</h2>
+            <div id="music-player-container"></div>
+        </section>
+
+        <!-- Continue Watching Section -->
+        <section id="continue-section" class="content-section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 class="section-title" style="margin: 0;">Continuar Assistindo</h2>
+                <button id="clear-history-btn-2" class="btn btn-secondary" style="display: none;">
+                    <i class="fas fa-trash"></i> Limpar Histórico
+                </button>
+            </div>
+            <div class="anime-grid" id="continue-grid"></div>
+        </section>
+    </main>
 
     <div id="video-modal" class="modal">
         <div class="modal-content">
             <span class="close-modal" id="close-video">&times;</span>
             <div id="video-player-container">
-                <video id="anime-player" controls>
+                <!-- Banner above video -->
+                <div id="player-banner" style="width: 100%; height: 80px; background-image: url('https://images.fanart.tv/fanart/dandadan-65696ef40774b.jpg'); background-size: cover; background-position: center; border-radius: 8px 8px 0 0; margin-bottom: 0;"></div>
+                
+                <!-- Video element (hidden native controls) -->
+                <video id="anime-player" style="width: 100%; display: block;">
                     Seu navegador não suporta vídeos.
                 </video>
-                <button id="skip-opening-btn" style="display: none;">⏩ Pular Abertura</button>
+                
+                <!-- Custom controls overlay -->
+                <div id="custom-video-controls" style="position: relative; background: rgba(0,0,0,0.8); padding: 10px; border-radius: 0 0 8px 8px;">
+                    <div class="controls-row" style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                        <button id="play-pause-btn" class="btn-icon" title="Play/Pause">
+                            <i class="fas fa-play"></i>
+                        </button>
+                        <div class="timeline-container" style="flex: 1; height: 6px; background: rgba(255,255,255,0.3); border-radius: 3px; cursor: pointer; position: relative;">
+                            <div id="timeline-progress" style="height: 100%; background: var(--primary-color, #007bff); border-radius: 3px; width: 0%;"></div>
+                        </div>
+                        <span id="time-display" style="color: white; font-size: 12px; min-width: 90px; text-align: right;">0:00 / 0:00</span>
+                    </div>
+                    <div class="controls-row" style="display: flex; align-items: center; gap: 10px;">
+                        <button id="volume-btn" class="btn-icon" title="Volume">
+                            <i class="fas fa-volume-up"></i>
+                        </button>
+                        <div class="volume-container" style="width: 80px; height: 6px; background: rgba(255,255,255,0.3); border-radius: 3px; cursor: pointer; position: relative;">
+                            <div id="volume-progress" style="height: 100%; background: var(--primary-color, #007bff); border-radius: 3px; width: 100%;"></div>
+                        </div>
+                        <button id="skip-opening-btn" class="btn btn-secondary" style="display: none; margin-left: auto;">
+                            ⏩ Pular Abertura
+                        </button>
+                        <button id="pip-btn" class="btn-icon" title="Picture-in-Picture" style="margin-left: auto;">
+                            <i class="fas fa-tv"></i>
+                        </button>
+                        <button id="fullscreen-btn" class="btn-icon" title="Tela Cheia">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
             <div class="video-info">
                 <h2 id="video-title">Título do Anime</h2>
@@ -110,9 +179,6 @@
                     <button class="btn-icon" id="dislike-btn" title="Não gostei">
                         <i class="fas fa-thumbs-down"></i>
                         <span id="dislikes-count">0</span>
-                    </button>
-                    <button class="btn-icon" id="pip-btn" title="Picture-in-Picture">
-                        <i class="fas fa-tv"></i>
                     </button>
                 </div>
             </div>
@@ -308,6 +374,81 @@
                 </div>
 
                 <button id="save-profile" class="btn btn-primary">Salvar Perfil</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Terms Modal -->
+    <div id="terms-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal close-terms">&times;</span>
+            <h2>Termos de Serviço</h2>
+            <div class="terms-content">
+                <h3>1. Aceitação dos Termos</h3>
+                <p>Ao acessar e usar o AniVerse, você concorda em estar vinculado a estes Termos de Serviço e a todas as leis e regulamentos aplicáveis.</p>
+                
+                <h3>2. Uso do Serviço</h3>
+                <p>O AniVerse é uma plataforma de streaming de anime fornecida "como está". Você concorda em usar o serviço apenas para fins legais e de acordo com estes termos.</p>
+                
+                <h3>3. Propriedade Intelectual</h3>
+                <p>Todo o conteúdo disponível no AniVerse, incluindo mas não limitado a textos, gráficos, logos, ícones, imagens, clipes de áudio e vídeo, está protegido por direitos autorais.</p>
+                
+                <h3>4. Conduta do Usuário</h3>
+                <p>Você concorda em não usar o serviço para:</p>
+                <ul>
+                    <li>Violar qualquer lei local, estadual, nacional ou internacional</li>
+                    <li>Transmitir material prejudicial, ameaçador, abusivo ou difamatório</li>
+                    <li>Interferir ou interromper o serviço ou servidores</li>
+                </ul>
+                
+                <h3>5. Modificações dos Termos</h3>
+                <p>Reservamo-nos o direito de modificar estes termos a qualquer momento. Continuando a usar o serviço após tais modificações, você concorda com os termos revisados.</p>
+                
+                <h3>6. Limitação de Responsabilidade</h3>
+                <p>O AniVerse não será responsável por quaisquer danos diretos, indiretos, incidentais, consequenciais ou punitivos resultantes do uso ou incapacidade de usar o serviço.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Privacy Policy Modal -->
+    <div id="privacy-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal close-privacy">&times;</span>
+            <h2>Política de Privacidade</h2>
+            <div class="privacy-content">
+                <h3>1. Informações que Coletamos</h3>
+                <p>O AniVerse coleta informações limitadas para melhorar sua experiência. Todas as informações são armazenadas localmente no seu navegador usando localStorage.</p>
+                
+                <h3>2. Como Usamos Suas Informações</h3>
+                <p>As informações coletadas são usadas para:</p>
+                <ul>
+                    <li>Personalizar sua experiência de visualização</li>
+                    <li>Lembrar suas preferências e progresso de visualização</li>
+                    <li>Manter suas configurações de perfil</li>
+                </ul>
+                
+                <h3>3. Armazenamento de Dados</h3>
+                <p>Todos os seus dados são armazenados localmente no seu dispositivo usando a tecnologia localStorage do navegador. Não enviamos ou compartilhamos suas informações com terceiros.</p>
+                
+                <h3>4. Cookies e Tecnologias Similares</h3>
+                <p>Utilizamos localStorage para armazenar suas preferências e progresso. Você pode limpar esses dados a qualquer momento através das configurações do seu navegador.</p>
+                
+                <h3>5. Seus Direitos</h3>
+                <p>Você tem o direito de:</p>
+                <ul>
+                    <li>Acessar seus dados armazenados</li>
+                    <li>Excluir seus dados a qualquer momento</li>
+                    <li>Optar por não usar certas funcionalidades</li>
+                </ul>
+                
+                <h3>6. Segurança</h3>
+                <p>Como todos os dados são armazenados localmente no seu dispositivo, a segurança depende das configurações de segurança do seu navegador e dispositivo.</p>
+                
+                <h3>7. Alterações na Política</h3>
+                <p>Podemos atualizar esta política de privacidade periodicamente. Recomendamos revisar esta página regularmente para estar ciente de quaisquer alterações.</p>
+                
+                <h3>8. Contato</h3>
+                <p>Se você tiver dúvidas sobre esta política de privacidade, entre em contato através do formulário de sugestões.</p>
             </div>
         </div>
     </div>
