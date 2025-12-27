@@ -459,6 +459,9 @@ function openAnimeModal(anime, seasonNumber = 1, episodeNumber = 1) {
         });
     }
     
+    // Force select value to ensure it's set correctly
+    seasonSelect.value = seasonNumber;
+    
     function updateEpisodes() {
         episodeSelect.innerHTML = '';
         const selectedSeason = seasonSelect.value;
@@ -476,6 +479,8 @@ function openAnimeModal(anime, seasonNumber = 1, episodeNumber = 1) {
                 episodeSelect.appendChild(option);
             });
             
+            // Force select value to ensure it's set correctly
+            episodeSelect.value = episodeNumber;            
             const rating = animeDB.getEpisodeRating(anime.id, selectedSeason, episodeNumber);
             likesCount.textContent = rating.likes;
             dislikesCount.textContent = rating.dislikes;
@@ -589,8 +594,11 @@ function openAnimeModal(anime, seasonNumber = 1, episodeNumber = 1) {
         // ⭐⭐ NOVO: Passa os dados da abertura para o player ⭐⭐
         if (window.updateOpeningData && typeof window.updateOpeningData === 'function') {
             window.updateOpeningData(episode.opening || null);
+            console.log("✅ updateOpeningData chamado com:", episode.opening);
+        } else {
+            console.warn("❌ window.updateOpeningData não está disponível!");
         }
-        console.log("Dados da abertura:", episode.opening); // Para debug
+        console.log("Dados da abertura do episódio:", episode.opening); // Para debug
 
         // Update banner
         const banner = document.getElementById('player-banner');
