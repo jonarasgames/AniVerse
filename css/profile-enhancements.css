@@ -151,76 +151,77 @@
 
 .avatar-frame-overlay { pointer-events:none; position:absolute; inset:0; z-index:4; border-radius:50%; }
 
-/* frames - Discord-like styles with high visibility */
+/* frames - Discord-like styles with high visibility - using pseudo-elements for better support */
 .avatar-frame-overlay {
     pointer-events: none;
     position: absolute;
     inset: -6px; /* Extend beyond avatar to create border effect */
-    z-index: 4;
+    z-index: 10;
     border-radius: 50%;
-    box-sizing: border-box;
 }
 
 /* Glow frame - Purple gradient with pulsing glow */
-.frame-glow {
-    border: 5px solid;
-    border-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%) 1;
+.avatar-frame-overlay.frame-glow {
+    border: 6px solid transparent;
+    background: linear-gradient(#fff, #fff) padding-box,
+                linear-gradient(135deg, #667eea 0%, #764ba2 100%) border-box;
     box-shadow: 
-        0 0 15px rgba(102, 126, 234, 0.8),
-        0 0 25px rgba(118, 75, 162, 0.6),
-        inset 0 0 15px rgba(102, 126, 234, 0.3);
+        0 0 20px rgba(102, 126, 234, 0.9),
+        0 0 30px rgba(118, 75, 162, 0.7),
+        inset 0 0 20px rgba(102, 126, 234, 0.3);
     animation: framePulse 2.5s ease-in-out infinite;
 }
 
 @keyframes framePulse {
     0%, 100% { 
         box-shadow: 
-            0 0 15px rgba(102, 126, 234, 0.8),
-            0 0 25px rgba(118, 75, 162, 0.6),
-            inset 0 0 15px rgba(102, 126, 234, 0.3);
+            0 0 20px rgba(102, 126, 234, 0.9),
+            0 0 30px rgba(118, 75, 162, 0.7),
+            inset 0 0 20px rgba(102, 126, 234, 0.3);
     }
     50% { 
         box-shadow: 
-            0 0 25px rgba(102, 126, 234, 1),
-            0 0 35px rgba(118, 75, 162, 0.8),
-            inset 0 0 20px rgba(102, 126, 234, 0.5);
+            0 0 30px rgba(102, 126, 234, 1),
+            0 0 40px rgba(118, 75, 162, 0.9),
+            inset 0 0 25px rgba(102, 126, 234, 0.5);
     }
 }
 
 /* Rainbow frame - Rotating rainbow border */
-.frame-rainbow {
-    border: 5px solid;
-    border-image: conic-gradient(from 0deg, #ff6b6b, #ffd56b, #6bffce, #6bbdff, #d96bff, #ff6b6b) 1;
-    box-shadow: 0 0 20px rgba(255, 107, 107, 0.6);
+.avatar-frame-overlay.frame-rainbow {
+    border: 6px solid transparent;
+    background: linear-gradient(#fff, #fff) padding-box,
+                conic-gradient(from 0deg, #ff6b6b, #ffd56b, #6bffce, #6bbdff, #d96bff, #ff6b6b) border-box;
+    box-shadow: 0 0 25px rgba(255, 107, 107, 0.7);
     animation: rainbowRotate 4s linear infinite;
 }
 
 @keyframes rainbowRotate {
-    0% { filter: hue-rotate(0deg); }
-    100% { filter: hue-rotate(360deg); }
+    0% { filter: hue-rotate(0deg) brightness(1.1); }
+    100% { filter: hue-rotate(360deg) brightness(1.1); }
 }
 
 /* Dash frame - Pink dashed border with pulse */
-.frame-dash {
-    border: 5px dashed #f5576c;
+.avatar-frame-overlay.frame-dash {
+    border: 6px dashed #f5576c;
     box-shadow: 
-        0 0 15px rgba(245, 87, 108, 0.7),
-        inset 0 0 10px rgba(240, 147, 251, 0.3);
+        0 0 20px rgba(245, 87, 108, 0.8),
+        inset 0 0 15px rgba(240, 147, 251, 0.4);
     animation: dashPulse 2s ease-in-out infinite;
 }
 
 @keyframes dashPulse {
     0%, 100% { 
-        border-width: 5px;
-        box-shadow: 
-            0 0 15px rgba(245, 87, 108, 0.7),
-            inset 0 0 10px rgba(240, 147, 251, 0.3);
-    }
-    50% { 
         border-width: 6px;
         box-shadow: 
-            0 0 25px rgba(245, 87, 108, 0.9),
-            inset 0 0 15px rgba(240, 147, 251, 0.5);
+            0 0 20px rgba(245, 87, 108, 0.8),
+            inset 0 0 15px rgba(240, 147, 251, 0.4);
+    }
+    50% { 
+        border-width: 7px;
+        box-shadow: 
+            0 0 30px rgba(245, 87, 108, 1),
+            inset 0 0 20px rgba(240, 147, 251, 0.6);
     }
 }
 
