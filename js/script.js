@@ -1,3 +1,94 @@
+// Module-level variable for video load timeout
+let videoLoadTimeout = null;
+
+// Helper function to show video error
+function showVideoError(message) {
+    const container = document.getElementById('video-player-container');
+    if (!container) return;
+    
+    // Don't show error if video is already playing
+    const videoPlayer = document.getElementById('anime-player');
+    if (videoPlayer && !videoPlayer.paused) {
+        return;
+    }
+    
+    clearVideoError();
+    
+    const errorMsg = document.createElement('div');
+    errorMsg.className = 'video-error';
+    errorMsg.style.cssText = `
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(255, 71, 87, 0.95);
+        color: white;
+        padding: 20px 30px;
+        border-radius: 8px;
+        text-align: center;
+        z-index: 100;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    `;
+    
+    errorMsg.innerHTML = `
+        <p style="margin-bottom: 15px; font-size: 16px;">${message}</p>
+        <button id="try-reload" class="btn btn-primary">Tentar novamente</button>
+    `;
+    
+    container.appendChild(errorMsg);
+    
+    document.getElementById('try-reload')?.addEventListener('click', function() {
+        clearVideoError();
+        if (videoPlayer) {
+            videoPlayer.load();
+            videoPlayer.play().catch(e => console.log("Erro ao reproduzir:", e));
+        }
+    });
+}
+
+// Helper function to clear video error
+function clearVideoError() {
+    const container = document.getElementById('video-player-container');
+    if (!container) return;
+    
+    const errorMsg = container.querySelector('.video-error');
+    if (errorMsg) {
+        errorMsg.remove();
+    }
+}
+
+// Helper function to handle video source changes with timeout monitoring
+// Sets up a 15-second timeout to detect video loading failures
+function setupVideoTimeout(player) {
+    // Clear any existing timeout
+    if (videoLoadTimeout) {
+        clearTimeout(videoLoadTimeout);
+        videoLoadTimeout = null;
+    }
+    
+    // Clear any existing error
+    clearVideoError();
+    
+    // Set 15s timeout for loading
+    videoLoadTimeout = setTimeout(() => {
+        if (player && player.readyState < 2 && player.paused) { // HAVE_CURRENT_DATA
+            showVideoError('Tempo limite excedido. Verifique sua conexão.');
+        }
+    }, 15000);
+    
+    // Clear timeout and error once video starts playing
+    const handlePlaying = () => {
+        clearVideoError();
+        if (videoLoadTimeout) {
+            clearTimeout(videoLoadTimeout);
+            videoLoadTimeout = null;
+        }
+    };
+    
+    // Use { once: true } to ensure listener fires only once per source change
+    player.addEventListener('playing', handlePlaying, { once: true });
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     const darkModeToggle = document.getElementById('dark-mode-toggle');
     const darkModeStyle = document.getElementById('dark-mode-style');
@@ -544,7 +635,7 @@ function openAnimeModal(anime, seasonNumber = 1, episodeNumber = 1) {
         dislikesCount.textContent = rating.dislikes;
     });
     
-    // PiP button handler
+    // PiP button handler - Only native browser PiP
     const pipBtn = document.getElementById('pip-btn');
     if (pipBtn && videoPlayer) {
         pipBtn.addEventListener('click', async function() {
@@ -554,12 +645,10 @@ function openAnimeModal(anime, seasonNumber = 1, episodeNumber = 1) {
                 } else if (videoPlayer.requestPictureInPicture) {
                     await videoPlayer.requestPictureInPicture();
                 } else {
-                    // Fallback: create custom mini-player
-                    createCustomMiniPlayer(videoPlayer);
+                    console.warn('PiP não suportado neste navegador');
                 }
             } catch (err) {
-                console.warn('PiP not supported or failed:', err);
-                createCustomMiniPlayer(videoPlayer);
+                console.warn('PiP não disponível:', err);
             }
         });
     }
@@ -568,12 +657,7 @@ function openAnimeModal(anime, seasonNumber = 1, episodeNumber = 1) {
     loadEpisode(anime, seasonNumber, episodeNumber);
     
     modal.style.display = 'block';
-
-    // Configurar controles customizados
-    setupCustomControls();
-    
-    // Substitua a função loadEpisode dentro de openAnimeModal por esta versão:
-    let videoLoadTimeout = null;
+}
     
     function loadEpisode(anime, seasonNum, episodeNum) {
         const season = anime.seasons[seasonNum - 1];
@@ -593,15 +677,6 @@ function openAnimeModal(anime, seasonNumber = 1, episodeNumber = 1) {
             return;
         }
 
-        // Clear any existing error
-        clearVideoError();
-        
-        // Clear any existing timeout
-        if (videoLoadTimeout) {
-            clearTimeout(videoLoadTimeout);
-            videoLoadTimeout = null;
-        }
-
         // ⭐⭐ NOVO: Passa os dados da abertura para o player ⭐⭐
         if (window.updateOpeningData && typeof window.updateOpeningData === 'function') {
             window.updateOpeningData(episode.opening || null);
@@ -618,7 +693,10 @@ function openAnimeModal(anime, seasonNumber = 1, episodeNumber = 1) {
             banner.style.backgroundImage = `url('${bannerUrl}')`;
         }
 
+        // Set video source and start timeout monitoring
         videoPlayer.src = episode.videoUrl;
+        setupVideoTimeout(videoPlayer);
+        
         videoTitle.textContent = `${anime.title} - ${episode.title || `Episódio ${episodeNum}`}`;
         
         // Restore saved time if continuing
@@ -630,88 +708,17 @@ function openAnimeModal(anime, seasonNumber = 1, episodeNumber = 1) {
             videoPlayer.currentTime = 0;
         }
         
-        // Set 15s timeout for loading
-        videoLoadTimeout = setTimeout(() => {
-            if (videoPlayer.readyState < 2 && videoPlayer.paused) { // HAVE_CURRENT_DATA
-                showVideoError('Tempo limite excedido. Verifique sua conexão.');
-            }
-        }, 15000);
-        
         videoPlayer.load();
         
-        // Only show error on real failure or timeout
+        // Attempt to play the video
+        // Errors are handled by the timeout mechanism set up in setupVideoTimeout()
+        // This allows the user to manually click play if autoplay is blocked
         videoPlayer.play().then(() => {
-            // Success - clear timeout
-            if (videoLoadTimeout) {
-                clearTimeout(videoLoadTimeout);
-                videoLoadTimeout = null;
-            }
             clearVideoError();
         }).catch(e => {
-            console.log("Play error:", e);
-            // Don't show error immediately - let user click play button
-            // Only show error if still not playing after timeout
-        });
-        
-        // Clear error once video starts playing
-        videoPlayer.addEventListener('playing', () => {
-            clearVideoError();
-            if (videoLoadTimeout) {
-                clearTimeout(videoLoadTimeout);
-                videoLoadTimeout = null;
-            }
-        }, { once: false });
-    }
-    
-    function clearVideoError() {
-        const container = document.getElementById('video-player-container');
-        if (!container) return;
-        
-        const errorMsg = container.querySelector('.video-error');
-        if (errorMsg) {
-            errorMsg.remove();
-        }
-    }
-    
-    function showVideoError(message) {
-        const container = document.getElementById('video-player-container');
-        if (!container) return;
-        
-        // Don't show error if video is already playing
-        const videoPlayer = document.getElementById('anime-player');
-        if (videoPlayer && !videoPlayer.paused) {
-            return;
-        }
-        
-        clearVideoError();
-        
-        const errorMsg = document.createElement('div');
-        errorMsg.className = 'video-error';
-        errorMsg.style.cssText = `
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(255, 71, 87, 0.95);
-            color: white;
-            padding: 20px 30px;
-            border-radius: 8px;
-            text-align: center;
-            z-index: 100;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-        `;
-        
-        errorMsg.innerHTML = `
-            <p style="margin-bottom: 15px; font-size: 16px;">${message}</p>
-            <button id="try-reload" class="btn btn-primary">Tentar novamente</button>
-        `;
-        
-        container.appendChild(errorMsg);
-        
-        document.getElementById('try-reload')?.addEventListener('click', function() {
-            clearVideoError();
-            videoPlayer.load();
-            videoPlayer.play().catch(e => console.log("Erro ao reproduzir:", e));
+            console.log("Play error (autoplay may be blocked):", e);
+            // Don't show error immediately - user can click play button
+            // If video doesn't start within 15s, timeout will show error
         });
     }
     
@@ -1027,142 +1034,3 @@ window.addEventListener('animeDataLoaded', () => {
         console.warn('Error binding profile modal controls:', e);
     }
 });
-
-// Custom mini-player fallback for browsers without PiP support
-function createCustomMiniPlayer(videoPlayer) {
-    // Remove existing mini-player if any
-    const existing = document.getElementById('custom-mini-player');
-    if (existing) {
-        return; // Already showing mini-player
-    }
-    
-    // Store original container for restoration
-    const originalContainer = videoPlayer.parentElement;
-    const originalControls = document.getElementById('custom-video-controls');
-    
-    const miniPlayer = document.createElement('div');
-    miniPlayer.id = 'custom-mini-player';
-    miniPlayer.style.cssText = `
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        width: 400px;
-        max-width: 90vw;
-        background: black;
-        border: 2px solid #333;
-        border-radius: 8px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-        z-index: 10000;
-        overflow: hidden;
-    `;
-    
-    // Move the real video (don't clone)
-    videoPlayer.style.width = '100%';
-    videoPlayer.style.height = 'auto';
-    videoPlayer.controls = true;
-    miniPlayer.appendChild(videoPlayer);
-    
-    // Hide original controls
-    if (originalControls) {
-        originalControls.style.display = 'none';
-    }
-    
-    const closeBtn = document.createElement('button');
-    closeBtn.textContent = '×';
-    closeBtn.style.cssText = `
-        position: absolute;
-        top: 5px;
-        right: 5px;
-        background: rgba(0,0,0,0.7);
-        color: white;
-        border: none;
-        border-radius: 50%;
-        width: 30px;
-        height: 30px;
-        cursor: pointer;
-        font-size: 20px;
-        z-index: 10001;
-    `;
-    
-    closeBtn.addEventListener('click', () => {
-        // Move video back
-        if (originalContainer) {
-            originalContainer.insertBefore(videoPlayer, originalContainer.firstChild);
-            videoPlayer.style.width = '100%';
-            videoPlayer.style.height = 'auto';
-            videoPlayer.controls = false;
-        }
-        // Show original controls again
-        if (originalControls) {
-            originalControls.style.display = 'block';
-        }
-        miniPlayer.remove();
-    });
-    
-    miniPlayer.appendChild(closeBtn);
-    document.body.appendChild(miniPlayer);
-}
-
-function loadEpisode(anime, seasonNum, episodeNum) {
-    const episode = anime.seasons[seasonNum-1]?.episodes[episodeNum-1];
-    if (!episode) return;
-
-    // ⭐⭐ Envia dados APENAS se existir abertura definida ⭐⭐
-    if (episode.opening?.start !== undefined) {
-        window.updateOpeningData(episode.opening);
-    } else {
-        window.updateOpeningData(null); // Limpa dados anteriores
-    }
-
-    // Restante do seu código de carregamento...
-}
-
-// Controles customizados
-function setupCustomControls() {
-    const player = document.getElementById('anime-player');
-    const playBtn = document.querySelector('.play-pause-btn');
-    const seekSlider = document.querySelector('.seek-slider');
-    const currentTimeEl = document.querySelector('.current-time');
-    const durationEl = document.querySelector('.duration');
-    const fullscreenBtn = document.querySelector('.fullscreen-btn');
-
-    // Return early if custom controls don't exist (using default browser controls)
-    if (!playBtn || !seekSlider || !currentTimeEl || !durationEl || !fullscreenBtn) {
-        return;
-    }
-
-    // Play/Pause
-    playBtn.addEventListener('click', () => {
-        if (player.paused) {
-            player.play();
-            playBtn.innerHTML = '<i class="fas fa-pause"></i>';
-        } else {
-            player.pause();
-            playBtn.innerHTML = '<i class="fas fa-play"></i>';
-        }
-    });
-
-    // Atualiza tempo
-    player.addEventListener('timeupdate', () => {
-        const minutes = Math.floor(player.currentTime / 60);
-        const seconds = Math.floor(player.currentTime % 60);
-        currentTimeEl.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-        
-        seekSlider.value = (player.currentTime / player.duration) * 100;
-    });
-
-    // Seek
-    seekSlider.addEventListener('input', () => {
-        const seekTo = player.duration * (seekSlider.value / 100);
-        player.currentTime = seekTo;
-    });
-
-    // Fullscreen
-    fullscreenBtn.addEventListener('click', () => {
-        if (!document.fullscreenElement) {
-            player.requestFullscreen();
-        } else {
-            document.exitFullscreen();
-        }
-    });
-}

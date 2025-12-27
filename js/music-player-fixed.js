@@ -119,10 +119,19 @@
             return;
         }
         
-        const musicGrid = document.getElementById('music-grid');
+        let musicGrid = document.getElementById('music-grid');
         if (!musicGrid) {
-            console.warn('Music grid not found');
-            return;
+            // Create music grid if it doesn't exist
+            const container = document.getElementById('music-player-container');
+            if (container) {
+                musicGrid = document.createElement('div');
+                musicGrid.id = 'music-grid';
+                musicGrid.className = 'music-grid';
+                container.appendChild(musicGrid);
+            } else {
+                console.warn('Music player container not found');
+                return;
+            }
         }
         
         musicGrid.innerHTML = '';
@@ -190,8 +199,37 @@
         }
     });
     
+    /**
+     * Load and render music library
+     * @param {string} type - Music type to load. Currently only 'themes' is supported.
+     * @returns {void}
+     * @note Only 'themes' type is currently implemented. Other types will log a warning.
+     */
+    function loadMusic(type) {
+        try {
+            if (type !== 'themes') {
+                console.warn(`loadMusic: Type "${type}" not supported, only "themes" is available`);
+                return;
+            }
+            
+            if (window.animeDB && window.animeDB.getMusicLibrary) {
+                const musicLibrary = window.animeDB.getMusicLibrary();
+                if (musicLibrary && musicLibrary.themes) {
+                    renderMusicLibrary(musicLibrary);
+                } else {
+                    console.warn('loadMusic: Music library or themes not available');
+                }
+            } else {
+                console.warn('loadMusic: animeDB or getMusicLibrary not available');
+            }
+        } catch (error) {
+            console.error('Error loading music:', error);
+        }
+    }
+    
     // Expose functions globally
     window.renderMusicLibrary = renderMusicLibrary;
     window.playMusicUrl = playMusicUrl;
+    window.loadMusic = loadMusic;
     
 })();
