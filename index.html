@@ -268,4 +268,68 @@
             <h2>Política de Privacidade do AniVerse</h2>
             <p><strong>Última atualização: Junho 2025</strong></p>
             <h3>1. Informações Coletadas</h3>
-            <p>O AniVerse armazena localmente no seu navegador:
+            <p>O AniVerse armazena localmente no seu navegador:</p>
+            <ul>
+                <li>Preferências de visualização</li>
+                <li>Histórico de reprodução</li>
+                <li>Perfil do usuário (nome, pronome, avatar)</li>
+            </ul>
+            <h3>2. Uso de Dados</h3>
+            <p>Todos os dados são armazenados localmente e não são enviados para servidores externos.</p>
+        </div>
+    </div>
+
+    <div id="profile-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-profile close-modal">&times;</span>
+            <h2>Configurar Perfil</h2>
+            
+            <div id="avatar-preview" class="preview-container">
+                <div class="avatar-bg" style="background-color: #ff6b6b;">
+                    <img src="https://i.ibb.co/0jq7R0y/anime-bg.jpg" alt="Personagem" class="avatar-char">
+                </div>
+                <div>
+                    <div class="avatar-name">Nome-san</div>
+                    <small class="muted">Escolha seu personagem</small>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="profile-name">Nome:</label>
+                <input type="text" id="profile-name" placeholder="Seu nome" class="form-control">
+            </div>
+            
+            <div class="character-selection">
+                <label>Escolha seu personagem:</label>
+                <div class="char-grid">
+                    <div class="char-option" data-char="naruto">
+                        <img src="https://i.ibb.co/0jq7R0y/anime-bg.jpg" alt="Naruto">
+                    </div>
+                    <div class="char-option" data-char="luffy">
+                        <img src="https://i.ibb.co/0jq7R0y/anime-bg.jpg" alt="Luffy">
+                    </div>
+                    <div class="char-option" data-char="goku">
+                        <img src="https://i.ibb.co/0jq7R0y/anime-bg.jpg" alt="Goku">
+                    </div>
+                </div>
+            </div>
+            
+            <button id="save-profile" class="btn btn-primary">Salvar Perfil</button>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 AniVerse. Todos os direitos reservados.</p>
+            <p><a href="#" class="open-terms">Termos de Serviço</a> | <a href="#" class="open-privacy">Política de Privacidade</a></p>
+        </div>
+    </footer>
+
+    <script src="js/anime-db.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/info-section.js"></script>
+    <script src="js/music-player.js"></script>
+    <script src="js/video-player.js"></script>
+    <script src="js/profile-enhancements.js"></script>
+</body>
+</html>
