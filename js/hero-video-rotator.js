@@ -81,7 +81,6 @@
         `;
         video.muted = true;
         video.playsInline = true;
-        video.setAttribute('playsinline', ''); // For iOS compatibility
         return video;
     }
 
@@ -114,7 +113,6 @@
         nextVideo = temp;
 
         // Set up event listener for the new current video
-        currentVideo.removeEventListener('ended', rotateVideo);
         currentVideo.addEventListener('ended', rotateVideo);
 
         // Preload the next video in sequence
@@ -135,10 +133,6 @@
                 console.log('Autoplay prevented, will start on user interaction');
             });
         }
-        // Remove listeners after first attempt
-        document.removeEventListener('click', attemptAutoplay);
-        document.removeEventListener('touchstart', attemptAutoplay);
-        document.removeEventListener('scroll', attemptAutoplay);
     }
 
     document.addEventListener('click', attemptAutoplay, { once: true });
