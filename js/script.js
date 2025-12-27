@@ -3,24 +3,26 @@ document.addEventListener('DOMContentLoaded', function() {
     const darkModeStyle = document.getElementById('dark-mode-style');
     const prefersDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
     
-    const currentMode = localStorage.getItem('darkMode') || (prefersDarkMode ? 'enabled' : 'disabled');
-    
-    if (currentMode === 'enabled') {
-        darkModeStyle.removeAttribute('disabled');
-        darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-    }
-    
-    darkModeToggle.addEventListener('click', function() {
-        if (darkModeStyle.disabled) {
+    if (darkModeToggle && darkModeStyle) {
+        const currentMode = localStorage.getItem('darkMode') || (prefersDarkMode ? 'enabled' : 'disabled');
+        
+        if (currentMode === 'enabled') {
             darkModeStyle.removeAttribute('disabled');
-            localStorage.setItem('darkMode', 'enabled');
             darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-        } else {
-            darkModeStyle.setAttribute('disabled', 'true');
-            localStorage.setItem('darkMode', 'disabled');
-            darkModeToggle.innerHTML = '<i class="fas fa-moon"></i>';
         }
-    });
+        
+        darkModeToggle.addEventListener('click', function() {
+            if (darkModeStyle.disabled) {
+                darkModeStyle.removeAttribute('disabled');
+                localStorage.setItem('darkMode', 'enabled');
+                darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+            } else {
+                darkModeStyle.setAttribute('disabled', 'true');
+                localStorage.setItem('darkMode', 'disabled');
+                darkModeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+            }
+        });
+    }
     
     const navLinks = document.querySelectorAll('nav a');
     const contentSections = document.querySelectorAll('.content-section');
@@ -379,7 +381,7 @@ function renderContinueWatchingGrid(animes, containerId) {
             <div class="anime-info">
                 <h3 class="anime-title">${anime.title}</h3>
                 <div class="anime-meta">
-                    <span>Episódio ${anime.episode}</span>
+                    <span>T${anime.season} E${anime.episode}</span>
                     <span>${Math.round(anime.progress)}%</span>
                 </div>
             </div>
@@ -457,6 +459,9 @@ function openAnimeModal(anime, seasonNumber = 1, episodeNumber = 1) {
         });
     }
     
+    // Force select value to ensure it's set correctly
+    seasonSelect.value = seasonNumber;
+    
     function updateEpisodes() {
         episodeSelect.innerHTML = '';
         const selectedSeason = seasonSelect.value;
@@ -474,6 +479,8 @@ function openAnimeModal(anime, seasonNumber = 1, episodeNumber = 1) {
                 episodeSelect.appendChild(option);
             });
             
+            // Force select value to ensure it's set correctly
+            episodeSelect.value = episodeNumber;            
             const rating = animeDB.getEpisodeRating(anime.id, selectedSeason, episodeNumber);
             likesCount.textContent = rating.likes;
             dislikesCount.textContent = rating.dislikes;
@@ -585,8 +592,20 @@ function openAnimeModal(anime, seasonNumber = 1, episodeNumber = 1) {
         }
 
         // ⭐⭐ NOVO: Passa os dados da abertura para o player ⭐⭐
-        window.currentOpeningData = episode.opening || null;
-        console.log("Dados da abertura:", window.currentOpeningData); // Para debug
+        if (window.updateOpeningData && typeof window.updateOpeningData === 'function') {
+            window.updateOpeningData(episode.opening || null);
+            console.log("✅ updateOpeningData chamado com:", episode.opening);
+        } else {
+            console.warn("❌ window.updateOpeningData não está disponível!");
+        }
+        console.log("Dados da abertura do episódio:", episode.opening); // Para debug
+
+        // Update banner
+        const banner = document.getElementById('player-banner');
+        if (banner) {
+            const bannerUrl = anime.banner || 'https://files.catbox.moe/fhnk72.jpg';
+            banner.style.backgroundImage = `url('${bannerUrl}')`;
+        }
 
         videoPlayer.src = episode.videoUrl;
         videoTitle.textContent = `${anime.title} - ${episode.title || `Episódio ${episodeNum}`}`;
@@ -947,7 +966,13 @@ window.addEventListener('animeDataLoaded', () => {
 function createCustomMiniPlayer(videoPlayer) {
     // Remove existing mini-player if any
     const existing = document.getElementById('custom-mini-player');
-    if (existing) existing.remove();
+    if (existing) {
+        return; // Already showing mini-player
+    }
+    
+    // Store original container for restoration
+    const originalContainer = videoPlayer.parentElement;
+    const originalControls = document.getElementById('custom-video-controls');
     
     const miniPlayer = document.createElement('div');
     miniPlayer.id = 'custom-mini-player';
@@ -965,11 +990,16 @@ function createCustomMiniPlayer(videoPlayer) {
         overflow: hidden;
     `;
     
-    const clonedVideo = videoPlayer.cloneNode(true);
-    clonedVideo.style.width = '100%';
-    clonedVideo.style.height = 'auto';
-    clonedVideo.currentTime = videoPlayer.currentTime;
-    clonedVideo.controls = true;
+    // Move the real video (don't clone)
+    videoPlayer.style.width = '100%';
+    videoPlayer.style.height = 'auto';
+    videoPlayer.controls = true;
+    miniPlayer.appendChild(videoPlayer);
+    
+    // Hide original controls
+    if (originalControls) {
+        originalControls.style.display = 'none';
+    }
     
     const closeBtn = document.createElement('button');
     closeBtn.textContent = '×';
@@ -989,15 +1019,22 @@ function createCustomMiniPlayer(videoPlayer) {
     `;
     
     closeBtn.addEventListener('click', () => {
-        videoPlayer.currentTime = clonedVideo.currentTime;
+        // Move video back
+        if (originalContainer) {
+            originalContainer.insertBefore(videoPlayer, originalContainer.firstChild);
+            videoPlayer.style.width = '100%';
+            videoPlayer.style.height = 'auto';
+            videoPlayer.controls = false;
+        }
+        // Show original controls again
+        if (originalControls) {
+            originalControls.style.display = 'block';
+        }
         miniPlayer.remove();
     });
     
-    miniPlayer.appendChild(clonedVideo);
     miniPlayer.appendChild(closeBtn);
     document.body.appendChild(miniPlayer);
-    
-    clonedVideo.play().catch(e => console.log('Autoplay blocked:', e));
 }
 
 function loadEpisode(anime, seasonNum, episodeNum) {

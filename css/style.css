@@ -1792,3 +1792,61 @@ footer {
     transform: scale(1);
   }
 }
+
+/* Fullscreen styles - make video fill screen properly */
+#video-player-container:fullscreen {
+  width: 100vw !important;
+  height: 100vh !important;
+  background: black;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+#video-player-container:fullscreen #player-banner {
+  display: none;
+}
+
+#video-player-container:fullscreen #anime-player {
+  width: 100% !important;
+  height: calc(100vh - 80px) !important;
+  object-fit: contain;
+}
+
+#video-player-container:fullscreen #custom-video-controls {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 10000;
+  background: rgba(0,0,0,0.9);
+}
+
+/* Webkit fullscreen */
+#video-player-container:-webkit-full-screen {
+  width: 100vw !important;
+  height: 100vh !important;
+  background: black;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+#video-player-container:-webkit-full-screen #player-banner {
+  display: none;
+}
+
+#video-player-container:-webkit-full-screen #anime-player {
+  width: 100% !important;
+  height: calc(100vh - 80px) !important;
+  object-fit: contain;
+}
+
+#video-player-container:-webkit-full-screen #custom-video-controls {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 10000;
+  background: rgba(0,0,0,0.9);
+}
