@@ -76,6 +76,40 @@
         </div>
     </div>
 
+    <div id="video-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" id="close-video">&times;</span>
+            <div id="video-player-container">
+                <video id="anime-player" controls>
+                    Seu navegador não suporta vídeos.
+                </video>
+                <button id="skip-opening-btn" style="display: none;">⏩ Pular Abertura</button>
+            </div>
+            <div class="video-info">
+                <h2 id="video-title">Título do Anime</h2>
+                <p id="video-description">Descrição do anime...</p>
+                <div class="episode-selector">
+                    <select id="season-select">
+                        <option>Temporada 1</option>
+                    </select>
+                    <select id="episode-select">
+                        <option>Episódio 1</option>
+                    </select>
+                </div>
+                <div class="video-controls">
+                    <button class="btn-icon" id="like-btn" title="Gostei">
+                        <i class="fas fa-thumbs-up"></i>
+                        <span id="likes-count">0</span>
+                    </button>
+                    <button class="btn-icon" id="dislike-btn" title="Não gostei">
+                        <i class="fas fa-thumbs-down"></i>
+                        <span id="dislikes-count">0</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="profile-modal" class="modal">
         <div class="modal-content">
             <span class="close-modal close-profile">&times;</span>
@@ -216,5 +250,6 @@
     <script src="js/info-section.js"></script>
     <script src="js/script.js"></script>
     <script src="js/profile-enhancements.js"></script>
+    <script src="js/hero-video-rotator.js"></script>
 </body>
 </html>

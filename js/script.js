@@ -545,7 +545,7 @@ function openAnimeModal(anime, seasonNumber = 1, episodeNumber = 1) {
         }
     };
     
-    const closeModal = document.querySelector('.close-modal');
+    const closeModal = modal.querySelector('.close-modal');
     
     closeModal?.addEventListener('click', function() {
         modal.style.display = 'none';
@@ -809,6 +809,11 @@ function setupCustomControls() {
     const currentTimeEl = document.querySelector('.current-time');
     const durationEl = document.querySelector('.duration');
     const fullscreenBtn = document.querySelector('.fullscreen-btn');
+
+    // Return early if custom controls don't exist (using default browser controls)
+    if (!playBtn || !seekSlider || !currentTimeEl || !durationEl || !fullscreenBtn) {
+        return;
+    }
 
     // Play/Pause
     playBtn.addEventListener('click', () => {
