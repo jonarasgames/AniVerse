@@ -84,9 +84,8 @@ function onVideoSetSource(player) {
         }
     };
     
-    // Remove old listener if exists to avoid duplicates
-    player.removeEventListener('playing', handlePlaying);
-    player.addEventListener('playing', handlePlaying, { once: false });
+    // Use { once: true } to ensure listener fires only once per source change
+    player.addEventListener('playing', handlePlaying, { once: true });
 }
 
 document.addEventListener('DOMContentLoaded', function() {

@@ -124,8 +124,10 @@
             // Create music grid if it doesn't exist
             const container = document.getElementById('music-player-container');
             if (container) {
-                container.innerHTML = '<div id="music-grid" class="music-grid"></div>';
-                musicGrid = document.getElementById('music-grid');
+                musicGrid = document.createElement('div');
+                musicGrid.id = 'music-grid';
+                musicGrid.className = 'music-grid';
+                container.appendChild(musicGrid);
             } else {
                 console.warn('Music player container not found');
                 return;
