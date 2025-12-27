@@ -308,19 +308,9 @@
         replaceAvatarPreviewIfNeeded();
         // small delay to ensure modal existing markup is present
         setTimeout(() => {
-            injectCompactSelectors();
             bindDynamicSelectors();
             setupSkipButton();
         }, 120);
-    }
-
-    // Ensure we don't break if original injectCompactSelectors doesn't exist
-    function injectCompactSelectors() {
-        // try to run existing function if present
-        if (typeof window.injectCompactSelectorsOriginal === 'function') {
-            try { window.injectCompactSelectorsOriginal(); } catch (e) { console.warn('original inject failed', e); }
-        }
-        // If the compact markup isn't present, we assume index.html already contains the structure.
     }
 
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
