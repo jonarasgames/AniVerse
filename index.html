@@ -71,212 +71,7 @@
             </section>
 
             <section class="full-catalog">
-                <h2 class="section-title">Catálogo Completo</h2>
-                <div class="anime-grid" id="full-catalog-grid"></div>
-            </section>
 
-            <section class="categories">
-                <h2 class="section-title">Categorias</h2>
-                <div class="category-tabs">
-                    <button class="category-tab active" data-category="all">Todos</button>
-                    <button class="category-tab" data-category="action">Ação</button>
-                    <button class="category-tab" data-category="adventure">Aventura</button>
-                    <button class="category-tab" data-category="comedy">Comédia</button>
-                    <button class="category-tab" data-category="drama">Drama</button>
-                    <button class="category-tab" data-category="fantasy">Fantasia</button>
-                </div>
-            </section>
-        </section>
-
-        <section id="animes-section" class="content-section">
-            <h2 class="section-title">Animes</h2>
-            <div class="anime-grid" id="animes-grid"></div>
-        </section>
-
-        <section id="movies-section" class="content-section">
-            <h2 class="section-title">Filmes</h2>
-            <div class="anime-grid" id="movies-grid"></div>
-        </section>
-
-        <section id="ovas-section" class="content-section">
-            <h2 class="section-title">OVAs</h2>
-            <div class="anime-grid" id="ovas-grid"></div>
-        </section>
-
-        <section id="openings-section" class="content-section">
-            <div class="music-tabs">
-                <div class="music-tab active" data-section="openings">Openings/Endings</div>
-                <div class="music-tab" data-section="osts">OSTs</div>
-            </div>
-            <div id="music-grid-container" class="music-grid-container active">
-                <div id="music-grid" class="music-grid"></div>
-            </div>
-            <div id="osts-container" class="music-grid-container">
-                <div id="osts-grid" class="music-grid"></div>
-            </div>
-        </section>
-
-        <section id="info-section" class="content-section">
-            <h2 class="section-title">Informações</h2>
-            <div class="search-bar">
-                <input type="text" id="info-search" placeholder="Buscar informações sobre animes...">
-                <button class="btn btn-primary" id="info-search-btn"><i class="fas fa-search"></i></button>
-            </div>
-            <div id="anime-info-container"></div>
-        </section>
-
-        <section id="continue-section" class="content-section">
-            <h2 class="section-title">Continuar Assistindo</h2>
-            <div class="anime-grid" id="continue-grid"></div>
-        </section>
-    </main>
-
-    <div id="video-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal">&times;</span>
-            <div id="video-player-container">
-                <video id="anime-player" controls></video>
-
-                <!-- BOTÃO DE SKIP - ADICIONE ESTA LINHA -->
-                <button id="skip-opening-btn" class="skip-btn">
-                    ⏩ Pular abertura (<span id="skip-counter">0</span>s)
-                </button>
-            </div>
-            <div class="video-info">
-                <h2 id="video-title">Título do Anime</h2>
-                <p id="video-description">Descrição do anime...</p>
-                <div class="video-controls">
-                    <div class="season-episode-selectors">
-                        <select id="season-select" class="form-control">
-                            <option value="1">Temporada 1</option>
-                        </select>
-                        <select id="episode-select" class="form-control">
-                            <option value="1">Episódio 1</option>
-                        </select>
-                    </div>
-                    <div class="rating-controls">
-                        <button id="like-btn" class="btn-rating">
-                            <i class="fas fa-thumbs-up"></i> <span id="likes-count">0</span>
-                        </button>
-                        <button id="dislike-btn" class="btn-rating">
-                            <i class="fas fa-thumbs-down"></i> <span id="dislikes-count">0</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="music-modal">
-        <div class="music-modal-content">
-            <span class="close-modal" id="close-music-modal">&times;</span>
-            <div class="music-cover">
-                <img id="music-cover-img" src="https://i.ibb.co/0jq7R0y/anime-bg.jpg" alt="Capa do Álbum">
-            </div>
-            <div class="music-info-container">
-                <div class="music-info">
-                    <h1 id="music-title">Título da Música</h1>
-                    <p id="music-artist">Artista</p>
-                    <p id="music-anime">Anime</p>
-                </div>
-                <div class="music-controls">
-                    <div class="progress-container">
-                        <div id="music-progress" class="progress-bar"></div>
-                        <div class="time-display">
-                            <span id="music-current-time">0:00</span>
-                            <span id="music-duration">0:00</span>
-                        </div>
-                    </div>
-                    <div class="controls-row">
-                        <div class="volume-control">
-                            <i class="fas fa-volume-up"></i>
-                            <input type="range" id="volume-control" min="0" max="1" step="0.01" value="1">
-                        </div>
-                        <div class="main-controls">
-                            <button id="shuffle-btn" class="control-btn" title="Embaralhar">
-                                <i class="fas fa-random"></i>
-                            </button>
-                            <button id="music-prev" class="control-btn" title="Anterior">
-                                <i class="fas fa-step-backward"></i>
-                            </button>
-                            <button id="music-play" class="control-btn" title="Play/Pause">
-                                <i class="fas fa-play"></i>
-                            </button>
-                            <button id="music-next" class="control-btn" title="Próxima">
-                                <i class="fas fa-step-forward"></i>
-                            </button>
-                            <button id="repeat-btn" class="control-btn" title="Repetir">
-                                <i class="fas fa-redo"></i>
-                            </button>
-                        </div>
-                        <button id="fullscreen-btn" class="control-btn" title="Tela Cheia">
-                            <i class="fas fa-expand"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="mini-player">
-        <div class="mini-player-content">
-            <div class="mini-cover">
-                <img id="mini-cover-img" src="https://i.ibb.co/0jq7R0y/anime-bg.jpg" alt="Capa">
-            </div>
-            <div class="mini-info">
-                <h4 id="mini-title">Título da Música</h4>
-                <p id="mini-artist">Artista</p>
-            </div>
-            <div class="mini-progress-container">
-                <progress class="mini-progress-bar" value="0" max="100"></progress>
-            </div>
-            <div class="mini-controls">
-                <button id="mini-prev" class="mini-control-btn">
-                    <i class="fas fa-step-backward"></i>
-                </button>
-                <button id="mini-play" class="mini-control-btn">
-                    <i class="fas fa-play"></i>
-                </button>
-                <button id="mini-next" class="mini-control-btn">
-                    <i class="fas fa-step-forward"></i>
-                </button>
-                <button id="mini-fullscreen" class="mini-control-btn">
-                    <i class="fas fa-expand"></i>
-                </button>
-                <button id="mini-close" class="mini-control-btn">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <div id="terms-modal" class="modal">
-        <div class="modal-content" style="max-height: 80vh; overflow-y: auto;">
-            <span class="close-terms">&times;</span>
-            <h2>Termos de Serviço do AniVerse</h2>
-            <p><strong>Última atualização: Junho 2025</strong></p>
-            <h3>1. Sobre o AniVerse</h3>
-            <p>O AniVerse é um projeto criado por fãs para fãs, sem fins lucrativos, com o objetivo de preservar e compartilhar a cultura dos animes.</p>
-            <h3>2. Isenção de Responsabilidade</h3>
-            <p>O AniVerse não é responsável pelo conteúdo dos links externos. Todos os direitos dos animes exibidos pertencem aos seus respectivos criadores.</p>
-        </div>
-    </div>
-
-    <div id="privacy-modal" class="modal">
-        <div class="modal-content" style="max-height: 80vh; overflow-y: auto;">
-            <span class="close-privacy">&times;</span>
-            <h2>Política de Privacidade do AniVerse</h2>
-            <p><strong>Última atualização: Junho 2025</strong></p>
-            <h3>1. Informações Coletadas</h3>
-            <p>O AniVerse armazena localmente no seu navegador:</p>
-            <ul>
-                <li>Seu perfil de usuário (nome, pronome, avatar)</li>
-                <li>Animes favoritos e histórico de visualização</li>
-                <li>Preferências de tema (modo claro/escuro)</li>
-            </ul>
-            <h3>2. Uso das Informações</h3>
-            <p>As informações são usadas exclusivamente para personalizar sua experiência no site.</p>
-            <h3>3. Compartilhamento</h3>
             <p>Não compartilhamos suas informações com terceiros. Todos os dados permanecem no seu navegador.</p>
         </div>
     </div>
@@ -303,27 +98,102 @@
                     </div>
                 </div>
 
-                <!-- Character options that will be relocated by profile-enhancements.js -->
-                <div class="character-options-container">
-                    <div class="char-option selected" data-char="char1">
-                        <img src="images/IMG_20250628_194234.png" alt="Personagem 1">
-                    </div>
-                    <div class="char-option" data-char="char2">
-                        <img src="images/IMG_20250628_194245.png" alt="Personagem 2">
-                    </div>
-                    <div class="char-option" data-char="char3">
-                        <img src="images/IMG_20250628_194305.png" alt="Personagem 3">
-                    </div>
-                    <div class="char-option" data-char="char4">
-                        <img src="images/IMG_20250628_194357.png" alt="Personagem 4">
-                    </div>
-                    <div class="char-option" data-char="char5">
-                        <img src="images/IMG_20250628_194904.png" alt="Personagem 5">
-                    </div>
-                    <div class="char-option" data-char="char6">
-                        <img src="images/IMG_20250628_194935.png" alt="Personagem 6">
-                    </div>
-                </div>
+                <!-- Restored character options -->
+                <div class="char-list">
+  <div class="char-option selected" data-char="1">
+    <img src="images/IMG_20250628_194234.png" alt="Personagem">
+  </div>
+  <div class="char-option" data-char="2">
+    <img src="images/IMG_20250628_194245.png" alt="Personagem">
+  </div>
+  <div class="char-option" data-char="3">
+    <img src="images/IMG_20250628_194305.png" alt="Personagem">
+  </div>
+  <div class="char-option" data-char="4">
+    <img src="images/IMG_20250628_194357.png" alt="Personagem">
+  </div>
+  <div class="char-option" data-char="5">
+    <img src="images/IMG_20250628_194904.png" alt="Personagem">
+  </div>
+  <div class="char-option" data-char="6">
+    <img src="images/IMG_20250628_194935.png" alt="Personagem">
+  </div>
+  <div class="char-option" data-char="7">
+    <img src="images/IMG_20250628_194950.png" alt="Personagem">
+  </div>
+  <div class="char-option" data-char="8">
+    <img src="images/IMG_20250628_203536.png" alt="Personagem">
+  </div>
+  <div class="char-option" data-char="9">
+    <img src="images/IMG_20250628_203813.png" alt="Personagem">
+  </div>
+  <div class="char-option" data-char="10">
+    <img src="images/IMG_20250628_203832.png" alt="Personagem">
+  </div>
+  <div class="char-option" data-char="11">
+    <img src="images/IMG_20250629_103041.png" alt="Personagem">
+  </div>
+  <div class="char-option" data-char="12">
+    <img src="images/IMG_20250629_103055.png" alt="Personagem">
+  </div>
+  <div class="char-option" data-char="13">
+    <img src="images/IMG_20250629_103125.png" alt="Personagem">
+  </div>
+  <div class="char-option" data-char="14">
+    <img src="images/IMG_20250629_103206.png" alt="Personagem">
+  </div>
+  <div class="char-option" data-char="15">
+    <img src="images/IMG_20250629_103221.png" alt="Personagem">
+  </div>
+  <div class="char-option" data-char="16">
+    <img src="images/IMG_20250629_103234.png" alt="Personagem">
+  </div>
+  <div class="char-option" data-char="17">
+    <img src="images/IMG_20250701_144109.png" alt="Personagem">
+  </div>
+  <div class="char-option" data-char="18">
+    <img src="images/IMG_20250701_144133.png" alt="Personagem">
+  </div>
+  <div class="char-option" data-char="19">
+    <img src="images/IMG_20250701_144201.png" alt="Personagem">
+  </div>
+  <div class="char-option" data-char="20">
+    <img src="images/IMG_20250707_193349.png" alt="Personagem">
+  </div>
+  <div class="char-option" data-char="21">
+    <img src="images/IMG_20250707_193432.png" alt="Personagem">
+  </div>
+  <div class="char-option" data-char="22">
+    <img src="images/IMG_20250707_193452.png" alt="Personagem">
+  </div>
+  <div class="char-option" data-char="23">
+    <img src="images/IMG_20250707_193511.png" alt="Personagem">
+  </div>
+  <div class="char-option" data-char="24">
+    <img src="images/IMG_20250707_193600.png" alt="Personagem">
+  </div>
+  <div class="char-option" data-char="25">
+    <img src="images/dan-da-dan-66bb02e694458_waifu2x_art_scan_noise3_scale%20(1).png" alt="Personagem">
+  </div>
+  <div class="char-option" data-char="26">
+    <img src="images/dan-da-dan-66bb02e93a299_waifu2x_art_scan_noise3_scale%20(1).png" alt="Personagem">
+  </div>
+  <div class="char-option" data-char="27">
+    <img src="images/dan-da-dan-66bb02eb45d02_waifu2x_art_scan_noise3_scale%20(1).png" alt="Personagem">
+  </div>
+  <div class="char-option" data-char="28">
+    <img src="images/dan-da-dan-66bb02ed34fe2_waifu2x_art_scan_noise3_scale%20(1).png" alt="Personagem">
+  </div>
+  <div class="char-option" data-char="29">
+    <img src="https://files.catbox.moe/hzfakv.png" alt="Personagem">
+  </div>
+  <div class="char-option" data-char="30">
+    <img src="https://files.catbox.moe/y9vkdp.png" alt="Personagem">
+  </div>
+  <div class="char-option" data-char="31">
+    <img src="https://files.catbox.moe/brb24b.png" alt="Personagem">
+  </div>
+</div>
 
                 <button id="save-profile" class="btn btn-primary">Salvar Perfil</button>
             </div>
