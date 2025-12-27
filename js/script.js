@@ -496,11 +496,11 @@ function openAnimeModal(anime, seasonNumber = 1, episodeNumber = 1) {
                     await videoPlayer.requestPictureInPicture();
                 } else {
                     // Fallback: create custom mini-player
-                    createCustomMiniPlayer(videoPlayer, anime, seasonSelect.value, episodeSelect.value);
+                    createCustomMiniPlayer(videoPlayer);
                 }
             } catch (err) {
                 console.warn('PiP not supported or failed:', err);
-                createCustomMiniPlayer(videoPlayer, anime, seasonSelect.value, episodeSelect.value);
+                createCustomMiniPlayer(videoPlayer);
             }
         });
     }
@@ -892,7 +892,7 @@ window.addEventListener('animeDataLoaded', () => {
 });
 
 // Custom mini-player fallback for browsers without PiP support
-function createCustomMiniPlayer(videoPlayer, anime, season, episode) {
+function createCustomMiniPlayer(videoPlayer) {
     // Remove existing mini-player if any
     const existing = document.getElementById('custom-mini-player');
     if (existing) existing.remove();

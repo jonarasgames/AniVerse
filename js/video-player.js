@@ -191,13 +191,16 @@ function showVolumeFeedback() {
         return;
     }
     
+    // Check if player is actually a video element
+    const isVideo = player instanceof HTMLVideoElement || player instanceof HTMLAudioElement;
+    
     const feedback = document.createElement('div');
     feedback.className = 'volume-feedback';
     feedback.innerHTML = `
-        <i class="fas fa-volume-${player && player.muted ? 'mute' : 'up'}"></i>
+        <i class="fas fa-volume-${isVideo && player.muted ? 'mute' : 'up'}"></i>
         <div class="volume-bar">
             <div class="volume-level" 
-                 style="width: ${player && !player.muted ? player.volume * 100 : 0}%">
+                 style="width: ${isVideo && !player.muted ? player.volume * 100 : 0}%">
             </div>
         </div>
     `;
