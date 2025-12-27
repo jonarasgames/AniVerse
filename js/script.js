@@ -810,6 +810,11 @@ function setupCustomControls() {
     const durationEl = document.querySelector('.duration');
     const fullscreenBtn = document.querySelector('.fullscreen-btn');
 
+    // Return early if custom controls don't exist (using default browser controls)
+    if (!playBtn || !seekSlider || !currentTimeEl || !durationEl || !fullscreenBtn) {
+        return;
+    }
+
     // Play/Pause
     playBtn.addEventListener('click', () => {
         if (player.paused) {
