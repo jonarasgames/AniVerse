@@ -6,7 +6,7 @@
 
   function SkipController(player, skipId){
     this.player = player; this.skipBtn = safe(skipId); this.opening = null;
-    if(!this.player || !this.skipBtn){ console.warn('SkipController: missing elements'); return; }
+    if(!this.player || !this.skipBtn){ console.warn('SkipController: elements missing'); return; }
     this.player.addEventListener('timeupdate', ()=> this.update());
     this.skipBtn.addEventListener('click', ()=> { if (this.opening) this.player.currentTime = this.opening.end; });
   }
@@ -37,16 +37,16 @@
 
   document.addEventListener('DOMContentLoaded', ()=>{
     const player = safe('anime-player'); if(!player){ console.warn('#anime-player not found'); return; }
-    player.addEventListener('click', (e)=> { if(e.target!==player) return; if(player.paused) player.play().catch(()=>{}); else player.pause(); });
+    player.addEventListener('click', (e) => { if (e.target !== player) return; if (player.paused) player.play().catch(()=>{}); else player.pause(); });
 
     const skipCtrl = new SkipController(player, 'skip-opening-btn');
     window.updateOpeningData = function(data){ window.currentOpeningData = data && typeof data.start === 'number' ? data : null; if(skipCtrl && typeof skipCtrl.setOpening === 'function') skipCtrl.setOpening(window.currentOpeningData); };
 
     const pipBtn = safe('pip-btn');
-    if(pipBtn) pipBtn.addEventListener('click', async ()=>{ try{ if(player.requestPictureInPicture) await player.requestPictureInPicture(); else showCustomMiniPlayer(player); } catch(e){ console.warn('PiP error', e); showCustomMiniPlayer(player); } });
+    if (pipBtn) pipBtn.addEventListener('click', async ()=>{ try { if (player.requestPictureInPicture) await player.requestPictureInPicture(); else showCustomMiniPlayer(player); } catch(e){ console.warn('PiP error', e); showCustomMiniPlayer(player); } });
 
     const fsBtn = safe('fullscreen-btn'); if (fsBtn) fsBtn.addEventListener('click', toggleFullscreen);
-    document.addEventListener('fullscreenchange', ()=>{ const cont=document.getElementById('video-player-container'); if(!document.fullscreenElement && cont) cont.classList.remove('is-fullscreen'); });
+    document.addEventListener('fullscreenchange', ()=> { const cont=document.getElementById('video-player-container'); if(!document.fullscreenElement && cont) cont.classList.remove('is-fullscreen'); });
   });
 
   window.showCustomMiniPlayer = showCustomMiniPlayer;
