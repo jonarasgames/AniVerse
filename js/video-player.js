@@ -19,6 +19,8 @@ class SkipButtonController {
         // Monitora alterações de tempo
         if (this.player) {
             this.player.addEventListener('timeupdate', () => this.updateButton());
+            // Also update when seeking into opening
+            this.player.addEventListener('seeked', () => this.updateButton());
         }
         
         // Configura o clique
