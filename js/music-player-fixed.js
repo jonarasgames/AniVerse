@@ -119,10 +119,17 @@
             return;
         }
         
-        const musicGrid = document.getElementById('music-grid');
+        let musicGrid = document.getElementById('music-grid');
         if (!musicGrid) {
-            console.warn('Music grid not found');
-            return;
+            // Create music grid if it doesn't exist
+            const container = document.getElementById('music-player-container');
+            if (container) {
+                container.innerHTML = '<div id="music-grid" class="music-grid"></div>';
+                musicGrid = document.getElementById('music-grid');
+            } else {
+                console.warn('Music player container not found');
+                return;
+            }
         }
         
         musicGrid.innerHTML = '';
@@ -190,8 +197,23 @@
         }
     });
     
+    // loadMusic wrapper function for compatibility
+    function loadMusic(type) {
+        try {
+            if (window.animeDB && window.animeDB.getMusicLibrary) {
+                const musicLibrary = window.animeDB.getMusicLibrary();
+                if (type === 'themes' && musicLibrary && musicLibrary.themes) {
+                    renderMusicLibrary(musicLibrary);
+                }
+            }
+        } catch (error) {
+            console.error('Error loading music:', error);
+        }
+    }
+    
     // Expose functions globally
     window.renderMusicLibrary = renderMusicLibrary;
     window.playMusicUrl = playMusicUrl;
+    window.loadMusic = loadMusic;
     
 })();
