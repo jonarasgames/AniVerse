@@ -67,17 +67,27 @@ document.addEventListener('DOMContentLoaded', function() {
         if (type === 'osts') {
             currentPlaylist = [];
             renderAlbums(library.osts);
-            elements.musicGridContainer.classList.remove('active');
-            elements.ostsContainer.classList.add('active');
+            if (elements.musicGridContainer) {
+                elements.musicGridContainer.classList.remove('active');
+            }
+            if (elements.ostsContainer) {
+                elements.ostsContainer.classList.add('active');
+            }
         } else {
             currentPlaylist = library.themes;
             renderMusicGrid(library.themes);
-            elements.musicGridContainer.classList.add('active');
-            elements.ostsContainer.classList.remove('active');
+            if (elements.musicGridContainer) {
+                elements.musicGridContainer.classList.add('active');
+            }
+            if (elements.ostsContainer) {
+                elements.ostsContainer.classList.remove('active');
+            }
         }
     }
 
     function renderAlbums(osts) {
+        if (!elements.ostsGrid) return;
+        
         elements.ostsGrid.innerHTML = '';
         
         for (const [album, data] of Object.entries(osts)) {
@@ -127,6 +137,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function renderMusicGrid(tracks) {
+        if (!elements.musicGrid) return;
+        
         elements.musicGrid.innerHTML = '';
         const animeGroups = {};
 
@@ -175,13 +187,17 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function showMusicModal() {
-        elements.musicModal.style.display = 'flex';
-        document.body.style.overflow = 'hidden';
+        if (elements.musicModal) {
+            elements.musicModal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
     }
 
     function hideMusicModal() {
-        elements.musicModal.style.display = 'none';
-        document.body.style.overflow = '';
+        if (elements.musicModal) {
+            elements.musicModal.style.display = 'none';
+            document.body.style.overflow = '';
+        }
     }
 
     function playTrack() {
@@ -189,13 +205,13 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!track) return;
 
         musicPlayer.src = track.audio;
-        elements.coverImg.src = track.cover;
-        elements.miniCoverImg.src = track.cover;
-        elements.musicTitle.textContent = track.title;
-        elements.miniTitle.textContent = track.title;
-        elements.musicArtist.textContent = track.artist;
-        elements.miniArtist.textContent = track.artist;
-        elements.musicAnime.textContent = track.anime;
+        if (elements.coverImg) elements.coverImg.src = track.cover;
+        if (elements.miniCoverImg) elements.miniCoverImg.src = track.cover;
+        if (elements.musicTitle) elements.musicTitle.textContent = track.title;
+        if (elements.miniTitle) elements.miniTitle.textContent = track.title;
+        if (elements.musicArtist) elements.musicArtist.textContent = track.artist;
+        if (elements.miniArtist) elements.miniArtist.textContent = track.artist;
+        if (elements.musicAnime) elements.musicAnime.textContent = track.anime;
 
         musicPlayer.play()
             .then(() => {
@@ -207,11 +223,15 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function showMiniPlayer() {
-        elements.miniPlayer.classList.add('active');
+        if (elements.miniPlayer) {
+            elements.miniPlayer.classList.add('active');
+        }
     }
 
     function hideMiniPlayer() {
-        elements.miniPlayer.classList.remove('active');
+        if (elements.miniPlayer) {
+            elements.miniPlayer.classList.remove('active');
+        }
     }
 
     function togglePlay() {
@@ -229,8 +249,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function updatePlayButtons() {
         const icon = isPlaying ? 'pause' : 'play';
-        elements.playBtn.innerHTML = `<i class="fas fa-${icon}"></i>`;
-        elements.miniPlayBtn.innerHTML = `<i class="fas fa-${icon}"></i>`;
+        if (elements.playBtn) elements.playBtn.innerHTML = `<i class="fas fa-${icon}"></i>`;
+        if (elements.miniPlayBtn) elements.miniPlayBtn.innerHTML = `<i class="fas fa-${icon}"></i>`;
     }
 
     function nextTrack() {
@@ -260,7 +280,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function toggleShuffle() {
         isShuffled = !isShuffled;
-        elements.shuffleBtn.classList.toggle('active', isShuffled);
+        if (elements.shuffleBtn) {
+            elements.shuffleBtn.classList.toggle('active', isShuffled);
+        }
         
         if (isShuffled) {
             shuffledPlaylist = [...Array(currentPlaylist.length).keys()];
@@ -275,14 +297,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function toggleRepeat() {
         isRepeated = !isRepeated;
-        elements.repeatBtn.classList.toggle('active', isRepeated);
+        if (elements.repeatBtn) {
+            elements.repeatBtn.classList.toggle('active', isRepeated);
+        }
     }
 
     function toggleFullscreen() {
         if (!document.fullscreenElement) {
-            elements.musicModal.requestFullscreen().catch(err => {
-                console.error(`Erro ao tentar entrar em tela cheia: ${err.message}`);
-            });
+            if (elements.musicModal && elements.musicModal.requestFullscreen) {
+                elements.musicModal.requestFullscreen().catch(err => {
+                    console.error(`Erro ao tentar entrar em tela cheia: ${err.message}`);
+                });
+            }
         } else {
             document.exitFullscreen();
         }
@@ -309,40 +335,50 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     waitForAnimeDB(() => {
-        elements.musicTabs.forEach(tab => {
+        // Guard NodeLists - default to empty array if not found
+        const musicTabs = elements.musicTabs || [];
+        musicTabs.forEach(tab => {
             tab.addEventListener('click', function() {
-                elements.musicTabs.forEach(t => t.classList.remove('active'));
+                musicTabs.forEach(t => t.classList.remove('active'));
                 this.classList.add('active');
                 loadMusic(this.dataset.section);
             });
         });
 
-        elements.playBtn.addEventListener('click', togglePlay);
-        elements.miniPlayBtn.addEventListener('click', togglePlay);
-        elements.nextBtn.addEventListener('click', nextTrack);
-        elements.prevBtn.addEventListener('click', prevTrack);
-        elements.shuffleBtn.addEventListener('click', toggleShuffle);
-        elements.repeatBtn.addEventListener('click', toggleRepeat);
-        elements.fullscreenBtn.addEventListener('click', toggleFullscreen);
-        elements.miniFullscreenBtn.addEventListener('click', showMusicModal);
-        elements.closeModalBtn.addEventListener('click', hideMusicModal);
-        elements.miniCloseBtn.addEventListener('click', () => {
-            musicPlayer.pause();
-            isPlaying = false;
-            updatePlayButtons();
-            hideMiniPlayer();
-        });
+        // Guard event listener attachments
+        if (elements.playBtn) elements.playBtn.addEventListener('click', togglePlay);
+        if (elements.miniPlayBtn) elements.miniPlayBtn.addEventListener('click', togglePlay);
+        if (elements.nextBtn) elements.nextBtn.addEventListener('click', nextTrack);
+        if (elements.prevBtn) elements.prevBtn.addEventListener('click', prevTrack);
+        if (elements.shuffleBtn) elements.shuffleBtn.addEventListener('click', toggleShuffle);
+        if (elements.repeatBtn) elements.repeatBtn.addEventListener('click', toggleRepeat);
+        if (elements.fullscreenBtn) elements.fullscreenBtn.addEventListener('click', toggleFullscreen);
+        if (elements.miniFullscreenBtn) elements.miniFullscreenBtn.addEventListener('click', showMusicModal);
+        if (elements.closeModalBtn) elements.closeModalBtn.addEventListener('click', hideMusicModal);
+        if (elements.miniCloseBtn) {
+            elements.miniCloseBtn.addEventListener('click', () => {
+                musicPlayer.pause();
+                isPlaying = false;
+                updatePlayButtons();
+                hideMiniPlayer();
+            });
+        }
 
-        elements.progressContainer.addEventListener('click', setProgress);
-        elements.miniProgressContainer.addEventListener('click', setProgress);
+        if (elements.progressContainer) {
+            elements.progressContainer.addEventListener('click', setProgress);
+        }
+        if (elements.miniProgressContainer) {
+            elements.miniProgressContainer.addEventListener('click', setProgress);
+        }
 
-        elements.volumeControl.addEventListener('input', function() {
-            musicPlayer.volume = this.value;
-            updateVolumeIcon(this.value);
-        });
-
-        musicPlayer.volume = elements.volumeControl.value;
-        updateVolumeIcon(elements.volumeControl.value);
+        if (elements.volumeControl) {
+            elements.volumeControl.addEventListener('input', function() {
+                musicPlayer.volume = this.value;
+                updateVolumeIcon(this.value);
+            });
+            musicPlayer.volume = elements.volumeControl.value;
+            updateVolumeIcon(elements.volumeControl.value);
+        }
 
         musicPlayer.addEventListener('ended', () => {
             if (isRepeated) {
@@ -357,18 +393,27 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!isNaN(musicPlayer.duration)) {
                 const mins = Math.floor(musicPlayer.currentTime / 60);
                 const secs = Math.floor(musicPlayer.currentTime % 60);
-                elements.currentTimeEl.textContent = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+                if (elements.currentTimeEl) {
+                    elements.currentTimeEl.textContent = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+                }
                 
                 const totalMins = Math.floor(musicPlayer.duration / 60);
                 const totalSecs = Math.floor(musicPlayer.duration % 60);
-                elements.durationEl.textContent = `${totalMins}:${totalSecs < 10 ? '0' : ''}${totalSecs}`;
+                if (elements.durationEl) {
+                    elements.durationEl.textContent = `${totalMins}:${totalSecs < 10 ? '0' : ''}${totalSecs}`;
+                }
                 
                 const progressPercent = (musicPlayer.currentTime / musicPlayer.duration) * 100;
-                elements.progressBarFill.style.width = `${progressPercent}%`;
-                elements.miniProgressBarFill.style.width = `${progressPercent}%`;
+                if (elements.progressBarFill) {
+                    elements.progressBarFill.style.width = `${progressPercent}%`;
+                }
+                if (elements.miniProgressBarFill) {
+                    elements.miniProgressBarFill.style.width = `${progressPercent}%`;
+                }
             }
         });
 
-        document.querySelector('.music-tab').click();
+        const firstTab = document.querySelector('.music-tab');
+        if (firstTab) firstTab.click();
     });
 });

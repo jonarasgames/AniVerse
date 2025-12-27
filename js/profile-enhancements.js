@@ -353,7 +353,9 @@
         modal.querySelectorAll('.bg-option').forEach(option => {
             option.addEventListener('click', function() {
                 modal.querySelectorAll('.bg-option').forEach(o => o.classList.remove('selected'));
+                modal.querySelectorAll('.gradient-option').forEach(o => o.classList.remove('selected'));
                 this.classList.add('selected');
+                applyColor(this);
                 updateAvatarPreviewInModal();
             });
         });
@@ -362,15 +364,9 @@
         modal.querySelectorAll('.gradient-option').forEach(option => {
             option.addEventListener('click', function() {
                 modal.querySelectorAll('.gradient-option').forEach(o => o.classList.remove('selected'));
+                modal.querySelectorAll('.bg-option').forEach(o => o.classList.remove('selected'));
                 this.classList.add('selected');
-                const preview = modal.querySelector('#avatar-preview');
-                if (!preview) return;
-                const avatarBg = preview.querySelector('.avatar-bg');
-                if (!avatarBg) return;
-                const css = this.dataset.css || '';
-                avatarBg.style.backgroundImage = css;
-                const layer = avatarBg.querySelector('.avatar-layer-bg');
-                if (layer) layer.style.backgroundImage = '';
+                applyGradient(this);
             });
         });
 
@@ -379,13 +375,7 @@
             option.addEventListener('click', function() {
                 modal.querySelectorAll('.frame-option').forEach(o => o.classList.remove('selected'));
                 this.classList.add('selected');
-                const preview = modal.querySelector('#avatar-preview');
-                if (!preview) return;
-                const overlay = preview.querySelector('.avatar-frame-overlay');
-                if (!overlay) return;
-                overlay.className = 'avatar-frame-overlay';
-                const frame = this.dataset.frame || '';
-                if (frame) overlay.classList.add(frame);
+                applyFrame(this);
             });
         });
 
@@ -458,6 +448,48 @@
                     alert('Por favor, preencha o nome do perfil.');
                 }
             });
+        }
+
+        // Helper function to apply color and clear conflicting styles
+        function applyColor(colorOption) {
+            const preview = modal.querySelector('#avatar-preview');
+            if (!preview) return;
+            const avatarBg = preview.querySelector('.avatar-bg');
+            if (!avatarBg) return;
+            
+            const bgColor = window.getComputedStyle(colorOption).backgroundColor;
+            avatarBg.style.backgroundColor = bgColor;
+            avatarBg.style.backgroundImage = ''; // Clear gradient/image
+            
+            const layer = avatarBg.querySelector('.avatar-layer-bg');
+            if (layer) layer.style.backgroundImage = '';
+        }
+        
+        // Helper function to apply gradient and clear conflicting styles
+        function applyGradient(gradientOption) {
+            const preview = modal.querySelector('#avatar-preview');
+            if (!preview) return;
+            const avatarBg = preview.querySelector('.avatar-bg');
+            if (!avatarBg) return;
+            
+            const css = gradientOption.dataset.css || '';
+            avatarBg.style.backgroundImage = css; // Apply gradient
+            avatarBg.style.backgroundColor = ''; // Clear solid color
+            
+            const layer = avatarBg.querySelector('.avatar-layer-bg');
+            if (layer) layer.style.backgroundImage = '';
+        }
+        
+        // Helper function to apply frame
+        function applyFrame(frameOption) {
+            const preview = modal.querySelector('#avatar-preview');
+            if (!preview) return;
+            const overlay = preview.querySelector('.avatar-frame-overlay');
+            if (!overlay) return;
+            
+            overlay.className = 'avatar-frame-overlay';
+            const frame = frameOption.dataset.frame || '';
+            if (frame) overlay.classList.add(frame);
         }
 
         function updateAvatarPreviewInModal() {
