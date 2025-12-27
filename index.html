@@ -64,7 +64,7 @@
             <section class="continue-watching">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                     <h2 class="section-title" style="margin: 0;">Continuar Assistindo</h2>
-                    <button id="clear-history-btn" class="btn btn-secondary" style="display: none;">
+                    <button id="clear-history" class="btn btn-secondary">
                         <i class="fas fa-trash"></i> Limpar Histórico
                     </button>
                 </div>
@@ -103,7 +103,9 @@
         <!-- Openings Section -->
         <section id="openings-section" class="content-section">
             <h2 class="section-title">Músicas</h2>
-            <div id="music-player-container"></div>
+            <div id="music-player-container">
+                <div id="music-grid" class="music-grid"></div>
+            </div>
         </section>
 
         <!-- Continue Watching Section -->
@@ -123,7 +125,7 @@
             <span class="close-modal" id="close-video">&times;</span>
             <div id="video-player-container">
                 <!-- Banner above video -->
-                <div id="player-banner" style="background-image: url('https://images.fanart.tv/fanart/dandadan-65696ef40774b.jpg');"></div>
+                <div class="video-banner" style="background-image: url('https://files.catbox.moe/fhnk72.jpg');"></div>
                 
                 <!-- Video element (hidden native controls) -->
                 <video id="anime-player" style="width: 100%; display: block;">
@@ -163,6 +165,10 @@
             <div class="video-info">
                 <h2 id="video-title">Título do Anime</h2>
                 <p id="video-description">Descrição do anime...</p>
+                <div style="margin: 10px 0;">
+                    <span id="current-season-label">Temporada 1</span> • 
+                    <span id="current-episode-label">Episódio 1</span>
+                </div>
                 <div class="episode-selector">
                     <select id="season-select">
                         <option>Temporada 1</option>

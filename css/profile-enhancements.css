@@ -235,3 +235,7 @@
 /* minimal modal adjustments for suggestion modal */
 #suggestion-modal .modal-content { padding:6px; }
 #suggestion-modal iframe { border-radius:4px; }
+
+.video-banner{position:absolute;left:50%;transform:translateX(-50%);top:8px;height:185px;width:100%;max-width:1000px;background-size:contain;background-repeat:no-repeat;background-position:center;opacity:0.95;z-index:5;pointer-events:none;border-radius:6px}
+#video-player-container.is-fullscreen,:fullscreen #video-player-container{position:fixed!important;inset:0!important;width:100vw!important;height:100vh!important;z-index:2147483647!important;background:#000}
+#video-player-container.is-fullscreen video,:fullscreen #video-player-container video{width:100%!important;height:100%!important;object-fit:contain}
