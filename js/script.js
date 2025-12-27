@@ -379,7 +379,7 @@ function renderContinueWatchingGrid(animes, containerId) {
             <div class="anime-info">
                 <h3 class="anime-title">${anime.title}</h3>
                 <div class="anime-meta">
-                    <span>Episódio ${anime.episode}</span>
+                    <span>T${anime.season} E${anime.episode}</span>
                     <span>${Math.round(anime.progress)}%</span>
                 </div>
             </div>
@@ -585,8 +585,17 @@ function openAnimeModal(anime, seasonNumber = 1, episodeNumber = 1) {
         }
 
         // ⭐⭐ NOVO: Passa os dados da abertura para o player ⭐⭐
-        window.currentOpeningData = episode.opening || null;
-        console.log("Dados da abertura:", window.currentOpeningData); // Para debug
+        if (window.updateOpeningData && typeof window.updateOpeningData === 'function') {
+            window.updateOpeningData(episode.opening || null);
+        }
+        console.log("Dados da abertura:", episode.opening); // Para debug
+
+        // Update banner
+        const banner = document.getElementById('player-banner');
+        if (banner) {
+            const bannerUrl = anime.banner || 'https://files.catbox.moe/fhnk72.jpg';
+            banner.style.backgroundImage = `url('${bannerUrl}')`;
+        }
 
         videoPlayer.src = episode.videoUrl;
         videoTitle.textContent = `${anime.title} - ${episode.title || `Episódio ${episodeNum}`}`;

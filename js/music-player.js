@@ -1,4 +1,70 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // First, inject music player UI if not present
+    const musicPlayerContainer = document.getElementById('music-player-container');
+    if (musicPlayerContainer && !document.getElementById('music-grid')) {
+        musicPlayerContainer.innerHTML = `
+            <div class="music-tabs">
+                <button class="music-tab active" data-section="themes">Openings & Endings</button>
+                <button class="music-tab" data-section="osts">OSTs</button>
+            </div>
+            <div id="music-grid-container" class="active">
+                <div id="music-grid" class="music-grid"></div>
+            </div>
+            <div id="osts-container">
+                <div id="osts-grid" class="osts-grid"></div>
+            </div>
+        `;
+    }
+    
+    // Also inject music modal and mini-player if not present
+    if (!document.getElementById('music-modal')) {
+        const musicModalHTML = `
+            <div id="music-modal" class="modal music-modal" style="display: none;">
+                <div class="modal-content music-modal-content">
+                    <span class="close-modal" id="close-music-modal">&times;</span>
+                    <div class="music-player-full">
+                        <img id="music-cover-img" src="" alt="Cover">
+                        <h2 id="music-title">Título</h2>
+                        <p id="music-artist">Artista</p>
+                        <p id="music-anime">Anime</p>
+                        <div class="progress-container"></div>
+                        <div class="music-time">
+                            <span id="music-current-time">0:00</span>
+                            <span id="music-duration">0:00</span>
+                        </div>
+                        <div class="music-controls">
+                            <button id="shuffle-btn"><i class="fas fa-random"></i></button>
+                            <button id="music-prev"><i class="fas fa-step-backward"></i></button>
+                            <button id="music-play"><i class="fas fa-play"></i></button>
+                            <button id="music-next"><i class="fas fa-step-forward"></i></button>
+                            <button id="repeat-btn"><i class="fas fa-redo"></i></button>
+                        </div>
+                        <div class="volume-control-container">
+                            <i class="fas fa-volume-up"></i>
+                            <input type="range" id="volume-control" min="0" max="1" step="0.1" value="1">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="mini-player" class="mini-player">
+                <div class="mini-player-content">
+                    <img id="mini-cover-img" src="" alt="Cover">
+                    <div class="mini-info">
+                        <div id="mini-title">Título</div>
+                        <div id="mini-artist">Artista</div>
+                    </div>
+                    <div class="mini-controls">
+                        <button id="mini-play"><i class="fas fa-play"></i></button>
+                        <button id="mini-fullscreen"><i class="fas fa-expand"></i></button>
+                        <button id="mini-close"><i class="fas fa-times"></i></button>
+                    </div>
+                </div>
+                <div class="mini-progress-container"></div>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', musicModalHTML);
+    }
+    
     const elements = {
         musicModal: document.getElementById('music-modal'),
         miniPlayer: document.getElementById('mini-player'),
@@ -335,6 +401,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     waitForAnimeDB(() => {
+        // Expose loadMusic globally
+        window.loadMusic = loadMusic;
+        
         // Guard NodeLists - default to empty array if not found
         const musicTabs = elements.musicTabs || [];
         musicTabs.forEach(tab => {
