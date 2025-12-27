@@ -129,15 +129,19 @@
                     <input type="text" id="profile-name" class="form-control" placeholder="Seu nome">
                 </div>
                 
+                <input type="hidden" id="selected-pronoun" value="-san">
+                
                 <div class="form-group">
                     <label>Pronome:</label>
-                    <input type="hidden" id="selected-pronoun" value="-san">
-                    <div class="pronoun-buttons">
-                        <button class="pronoun-btn active" data-pronoun="-san">-san</button>
-                        <button class="pronoun-btn" data-pronoun="-chan">-chan</button>
-                        <button class="pronoun-btn" data-pronoun="-kun">-kun</button>
-                        <button class="pronoun-btn" data-pronoun="-sama">-sama</button>
-                        <button class="pronoun-btn" data-pronoun="">Nenhum</button>
+                    <div class="selector-row">
+                        <div class="selector-scroll">
+                            <button class="pronoun-btn active" data-pronoun="-san">-san</button>
+                            <button class="pronoun-btn" data-pronoun="-kun">-kun</button>
+                            <button class="pronoun-btn" data-pronoun="-chan">-chan</button>
+                            <button class="pronoun-btn" data-pronoun="-sama">-sama</button>
+                            <button class="pronoun-btn" data-pronoun="-senpai">-senpai</button>
+                            <button class="pronoun-btn" data-pronoun="">Nenhum</button>
+                        </div>
                     </div>
                 </div>
                 
@@ -155,42 +159,54 @@
 
                 <div class="form-group">
                     <label>Cor de Fundo:</label>
-                    <div class="bg-options-grid">
-                        <div class="bg-option selected" style="background-color: #ff6b6b;"></div>
-                        <div class="bg-option" style="background-color: #4ecdc4;"></div>
-                        <div class="bg-option" style="background-color: #45b7d1;"></div>
-                        <div class="bg-option" style="background-color: #96ceb4;"></div>
-                        <div class="bg-option" style="background-color: #ffeaa7;"></div>
-                        <div class="bg-option" style="background-color: #dfe6e9;"></div>
-                        <div class="bg-option" style="background-color: #a29bfe;"></div>
-                        <div class="bg-option" style="background-color: #fd79a8;"></div>
+                    <div class="selector-row">
+                        <div class="selector-scroll">
+                            <div class="bg-option selected" style="background-color: #ff6b6b;" title="Vermelho"></div>
+                            <div class="bg-option" style="background-color: #4ecdc4;" title="Turquesa"></div>
+                            <div class="bg-option" style="background-color: #ffe66d;" title="Amarelo"></div>
+                            <div class="bg-option" style="background-color: #a8e6cf;" title="Verde"></div>
+                            <div class="bg-option" style="background-color: #ff8b94;" title="Rosa"></div>
+                            <div class="bg-option" style="background-color: #c7ceea;" title="Lavanda"></div>
+                            <div class="bg-option" style="background-color: #ffd3b6;" title="Pêssego"></div>
+                            <div class="bg-option" style="background-color: #95e1d3;" title="Menta"></div>
+                        </div>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label>Gradiente de Fundo:</label>
-                    <div class="gradient-options-grid">
-                        <div class="gradient-option" data-css="linear-gradient(135deg, #667eea 0%, #764ba2 100%)"></div>
-                        <div class="gradient-option" data-css="linear-gradient(135deg, #f093fb 0%, #f5576c 100%)"></div>
-                        <div class="gradient-option" data-css="linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)"></div>
-                        <div class="gradient-option" data-css="linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)"></div>
-                        <div class="gradient-option" data-css="linear-gradient(135deg, #fa709a 0%, #fee140 100%)"></div>
-                        <div class="gradient-option" data-css="linear-gradient(135deg, #30cfd0 0%, #330867 100%)"></div>
+                    <div class="selector-row">
+                        <div class="selector-scroll">
+                            <div class="gradient-option" data-css="linear-gradient(135deg, #667eea 0%, #764ba2 100%)" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);" title="Roxo"></div>
+                            <div class="gradient-option" data-css="linear-gradient(135deg, #f093fb 0%, #f5576c 100%)" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);" title="Rosa"></div>
+                            <div class="gradient-option" data-css="linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);" title="Azul"></div>
+                            <div class="gradient-option" data-css="linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);" title="Verde"></div>
+                            <div class="gradient-option" data-css="linear-gradient(135deg, #fa709a 0%, #fee140 100%)" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);" title="Pôr do Sol"></div>
+                            <div class="gradient-option" data-css="linear-gradient(135deg, #30cfd0 0%, #330867 100%)" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);" title="Oceano"></div>
+                        </div>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label>Imagem de Fundo (atrás do personagem):</label>
-                    <div class="char-list-placeholder"></div>
+                    <label>Fundo (atrás do personagem):</label>
+                    <div class="selector-row">
+                        <div class="selector-scroll bg-image-holder char-list-placeholder">
+                            <!-- Background images will be injected here by profile-enhancements.js -->
+                        </div>
+                    </div>
                 </div>
 
                 <div class="form-group">
                     <label>Moldura:</label>
-                    <div class="frame-options-grid">
-                        <div class="frame-option" data-frame="">Nenhuma</div>
-                        <div class="frame-option" data-frame="frame-gold">Dourado</div>
-                        <div class="frame-option" data-frame="frame-silver">Prateado</div>
-                        <div class="frame-option" data-frame="frame-neon">Neon</div>
+                    <div class="selector-row">
+                        <div class="selector-scroll">
+                            <div class="frame-option" data-frame="" title="Sem moldura" style="background: #333; position: relative;">
+                                <span style="color: white; font-size: 20px;">✕</span>
+                            </div>
+                            <div class="frame-option" data-frame="frame-glow" title="Brilho" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
+                            <div class="frame-option" data-frame="frame-rainbow" title="Arco-íris" style="background: conic-gradient(from 0deg, #ff6b6b, #ffd56b, #6bffce, #6bbdff, #d96bff, #ff6b6b);"></div>
+                            <div class="frame-option" data-frame="frame-dash" title="Traços" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);"></div>
+                        </div>
                     </div>
                 </div>
 
