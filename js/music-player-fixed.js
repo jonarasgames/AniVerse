@@ -202,9 +202,14 @@
     // loadMusic wrapper function for compatibility
     function loadMusic(type) {
         try {
+            if (type !== 'themes') {
+                console.warn(`loadMusic: Type "${type}" not supported, only "themes" is available`);
+                return;
+            }
+            
             if (window.animeDB && window.animeDB.getMusicLibrary) {
                 const musicLibrary = window.animeDB.getMusicLibrary();
-                if (type === 'themes' && musicLibrary && musicLibrary.themes) {
+                if (musicLibrary && musicLibrary.themes) {
                     renderMusicLibrary(musicLibrary);
                 }
             }
