@@ -545,7 +545,7 @@ function openAnimeModal(anime, seasonNumber = 1, episodeNumber = 1) {
         }
     };
     
-    const closeModal = document.querySelector('.close-modal');
+    const closeModal = modal.querySelector('.close-modal');
     
     closeModal?.addEventListener('click', function() {
         modal.style.display = 'none';
