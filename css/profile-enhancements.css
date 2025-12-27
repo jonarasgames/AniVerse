@@ -129,6 +129,8 @@
 
 @media (max-width:640px){ .avatar-bg{width:76px;height:76px;} .char-option{width:56px;height:56px;} .bg-option,.gradient-option,.frame-option{width:46px;height:46px;} }
 
+#skip-opening-btn{ position:absolute; right:12px; top:12px; z-index:20; display:none; }
+
 /* minimal modal adjustments for suggestion modal */
 #suggestion-modal .modal-content { padding:6px; }
 #suggestion-modal iframe { border-radius:4px; }
