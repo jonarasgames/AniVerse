@@ -49,6 +49,14 @@ document.addEventListener('DOMContentLoaded', function() {
             } else if (sectionId === 'continue-section') {
                 loadContinueWatching();
             } else if (sectionId === 'openings-section') {
+                // Load music player if available
+                if (window.animeDB && typeof loadMusic === 'function') {
+                    try {
+                        loadMusic('themes');
+                    } catch (e) {
+                        console.warn('Error loading music:', e);
+                    }
+                }
             } else if (sectionId === 'info-section') {
             }
         });
