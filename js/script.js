@@ -57,8 +57,9 @@ function clearVideoError() {
     }
 }
 
-// Helper function to handle video source changes with timeout
-function onVideoSetSource(player) {
+// Helper function to handle video source changes with timeout monitoring
+// Sets up a 15-second timeout to detect video loading failures
+function setupVideoTimeout(player) {
     // Clear any existing timeout
     if (videoLoadTimeout) {
         clearTimeout(videoLoadTimeout);
@@ -692,9 +693,9 @@ function openAnimeModal(anime, seasonNumber = 1, episodeNumber = 1) {
             banner.style.backgroundImage = `url('${bannerUrl}')`;
         }
 
-        // Set video source and start timeout
+        // Set video source and start timeout monitoring
         videoPlayer.src = episode.videoUrl;
-        onVideoSetSource(videoPlayer);
+        setupVideoTimeout(videoPlayer);
         
         videoTitle.textContent = `${anime.title} - ${episode.title || `Episódio ${episodeNum}`}`;
         
@@ -709,13 +710,15 @@ function openAnimeModal(anime, seasonNumber = 1, episodeNumber = 1) {
         
         videoPlayer.load();
         
-        // Only show error on real failure or timeout
+        // Attempt to play the video
+        // Errors are handled by the timeout mechanism set up in setupVideoTimeout()
+        // This allows the user to manually click play if autoplay is blocked
         videoPlayer.play().then(() => {
             clearVideoError();
         }).catch(e => {
-            console.log("Play error:", e);
-            // Don't show error immediately - let user click play button
-            // Only show error if still not playing after timeout
+            console.log("Play error (autoplay may be blocked):", e);
+            // Don't show error immediately - user can click play button
+            // If video doesn't start within 15s, timeout will show error
         });
     }
     

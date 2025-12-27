@@ -199,7 +199,12 @@
         }
     });
     
-    // loadMusic wrapper function for compatibility
+    /**
+     * Load and render music library
+     * @param {string} type - Music type to load. Currently only 'themes' is supported.
+     * @returns {void}
+     * @note Only 'themes' type is currently implemented. Other types will log a warning.
+     */
     function loadMusic(type) {
         try {
             if (type !== 'themes') {
