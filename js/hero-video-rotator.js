@@ -1,17 +1,13 @@
 (function(){
   const VIDEO_BG_URLS = [
-    "https://cdn.pixabay.com/video/2023/03/07/131772-813033870_large.mp4",
-    "https://cdn.pixabay.com/video/2022/08/05/126858-827650220_large.mp4",
-    "https://cdn.pixabay.com/video/2023/06/15/164244-828306808_large.mp4",
-    "https://cdn.pixabay.com/video/2023/09/22/177474-866787937_large.mp4",
-    "https://cdn.pixabay.com/video/2023/01/05/140554-857498760_large.mp4",
-    "https://cdn.pixabay.com/video/2023/02/04/143992-858159773_large.mp4",
-    "https://cdn.pixabay.com/video/2022/11/15/123672-839180416_large.mp4",
-    "https://cdn.pixabay.com/video/2023/06/25/164732-831518729_large.mp4",
-    "https://cdn.pixabay.com/video/2022/03/09/107251-805541893_large.mp4",
-    "https://cdn.pixabay.com/video/2021/07/21/86281-573046068_large.mp4",
-    "https://cdn.pixabay.com/video/2022/06/15/117882-818220407_large.mp4",
-    "https://cdn.pixabay.com/video/2022/05/20/116389-814689065_large.mp4"
+    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4"
   ];
 
   const ROTATE_INTERVAL = 8000;

@@ -151,15 +151,72 @@
 
 .avatar-frame-overlay { pointer-events:none; position:absolute; inset:0; z-index:4; border-radius:50%; }
 
-/* frames */
-.frame-glow { box-shadow: 0 0 0 4px rgba(255,255,255,0.06), 0 0 18px 6px rgba(129, 49, 255, 0.18), inset 0 0 40px rgba(255,255,255,0.04); animation: framePulse 2.8s ease-in-out infinite; }
-@keyframes framePulse { 0%{transform:scale(1);opacity:1;}50%{transform:scale(1.03);opacity:0.95;}100%{transform:scale(1);opacity:1;} }
+/* frames - Discord-like styles */
+.avatar-frame-overlay {
+    pointer-events: none;
+    position: absolute;
+    inset: -3px; /* Extend beyond avatar border */
+    z-index: 4;
+    border-radius: 50%;
+}
 
-.frame-rainbow { background: conic-gradient(from 0deg,#ff6b6b,#ffd56b,#6bffce,#6bbdff,#d96bff,#ff6b6b); mix-blend-mode:screen; opacity:0.35; animation: spinSlow 8s linear infinite; }
-@keyframes spinSlow { to{ transform: rotate(360deg);} }
+.frame-glow {
+    border: 4px solid transparent;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    box-shadow: 0 0 20px rgba(102, 126, 234, 0.6), inset 0 0 20px rgba(118, 75, 162, 0.3);
+    animation: framePulse 2.8s ease-in-out infinite;
+}
 
-.frame-dash { box-shadow: 0 0 0 3px rgba(255,255,255,0.06); clip-path: polygon(0 0,100% 0,100% 85%,85% 100%,0 100%); animation: dashMove 3s linear infinite; opacity:0.9; }
-@keyframes dashMove { 0%{transform:translateY(0);}50%{transform:translateY(-3px);}100%{transform:translateY(0);} }
+@keyframes framePulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.85; transform: scale(1.02); }
+}
+
+.frame-rainbow {
+    border: 4px solid transparent;
+    background: conic-gradient(from 0deg, #ff6b6b, #ffd56b, #6bffce, #6bbdff, #d96bff, #ff6b6b);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    animation: spinSlow 4s linear infinite;
+}
+
+@keyframes spinSlow {
+    to { transform: rotate(360deg); }
+}
+
+.frame-dash {
+    border: 4px dashed;
+    border-image: linear-gradient(135deg, #f093fb, #f5576c) 1;
+    border-radius: 50%;
+    animation: dashPulse 2s ease-in-out infinite;
+}
+
+@keyframes dashPulse {
+    0%, 100% { border-width: 4px; }
+    50% { border-width: 6px; }
+}
+
+/* Make sure frames are visible */
+.avatar-bg {
+    position: relative;
+}
+
+.avatar-bg::before {
+    content: '';
+    position: absolute;
+    inset: -6px;
+    border-radius: 50%;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.avatar-bg.has-frame::before {
+    display: block;
+}
 
 .char-option { width:64px; height:64px; border-radius:10px; overflow:hidden; border:2px solid transparent; display:inline-flex; align-items:center; justify-content:center; }
 .char-option img { width:100%; height:100%; object-fit:cover; }

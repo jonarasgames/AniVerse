@@ -170,7 +170,7 @@ nav a:hover, nav a.active {
 }
 
 .hero {
-    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://i.ibb.co/0jq7R0y/anime-bg.jpg');
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('../images/bg-default.jpg');
     background-size: cover;
     background-position: center;
     color: white;
