@@ -216,7 +216,11 @@
                 const musicLibrary = window.animeDB.getMusicLibrary();
                 if (musicLibrary && musicLibrary.themes) {
                     renderMusicLibrary(musicLibrary);
+                } else {
+                    console.warn('loadMusic: Music library or themes not available');
                 }
+            } else {
+                console.warn('loadMusic: animeDB or getMusicLibrary not available');
             }
         } catch (error) {
             console.error('Error loading music:', error);
