@@ -1,10 +1,5 @@
 /* Compact profile + avatar styles for AniVerse profile enhancements */
 
-/* Hidden character options container */
-.character-options-container {
-    display: none;
-}
-
 /* Compact selectors: horizontal scroll */
 .profile-sections {
     display: grid;
