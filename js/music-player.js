@@ -34,12 +34,16 @@ document.addEventListener('DOMContentLoaded', function() {
         miniProgressBarFill: document.createElement('div')
     };
 
-    // Adiciona as barras de progresso visuais
-    elements.progressContainer.appendChild(elements.progressBarFill);
-    elements.progressBarFill.classList.add('progress-bar');
+    // Adiciona as barras de progresso visuais se os containers existirem
+    if (elements.progressContainer) {
+        elements.progressContainer.appendChild(elements.progressBarFill);
+        elements.progressBarFill.classList.add('progress-bar');
+    }
     
-    elements.miniProgressContainer.appendChild(elements.miniProgressBarFill);
-    elements.miniProgressBarFill.classList.add('mini-progress-bar');
+    if (elements.miniProgressContainer) {
+        elements.miniProgressContainer.appendChild(elements.miniProgressBarFill);
+        elements.miniProgressBarFill.classList.add('mini-progress-bar');
+    }
 
     const musicPlayer = new Audio();
     let currentTrack = 0;

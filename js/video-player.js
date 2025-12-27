@@ -5,7 +5,7 @@ class SkipButtonController {
         this.currentOpening = null;
         
         if (!this.player || !this.skipBtn) {
-            console.error("Elementos essenciais não encontrados!");
+            console.warn("SkipButtonController: Elementos não encontrados, funcionalidade desabilitada");
             return;
         }
 
@@ -14,29 +14,38 @@ class SkipButtonController {
 
     init() {
         // Configuração inicial
-        this.skipBtn.style.display = 'none'; // Garante estado inicial
+        if (this.skipBtn) this.skipBtn.style.display = 'none';
         
         // Monitora alterações de tempo
-        this.player.addEventListener('timeupdate', () => this.updateButton());
+        if (this.player) {
+            this.player.addEventListener('timeupdate', () => this.updateButton());
+        }
         
         // Configura o clique
-        this.skipBtn.addEventListener('click', () => {
-            if (this.currentOpening) {
-                this.player.currentTime = this.currentOpening.end;
-            }
-        });
+        if (this.skipBtn) {
+            this.skipBtn.addEventListener('click', () => {
+                if (this.currentOpening && this.player) {
+                    this.player.currentTime = this.currentOpening.end;
+                }
+            });
+        }
 
         // Interface global para receber dados
         window.updateOpeningData = (data) => {
             this.currentOpening = data?.start !== undefined ? data : null;
-            console.log("Dados recebidos:", this.currentOpening);
+            window.currentOpeningData = this.currentOpening;
             this.updateButton();
         };
+
+        // Expose current opening data
+        window.currentOpeningData = null;
 
         console.log("✅ Controle de skip configurado!");
     }
 
     updateButton() {
+        if (!this.skipBtn || !this.player) return;
+        
         if (!this.currentOpening) {
             this.skipBtn.style.display = 'none';
             return;
@@ -143,6 +152,13 @@ function frameStep(player, direction) {
 
 // Feedback visual
 function showSeekFeedback(message) {
+    const container = document.getElementById('video-player-container');
+    const player = document.getElementById('anime-player');
+    if (!container && !player) {
+        console.warn('showSeekFeedback: No container found');
+        return;
+    }
+    
     const feedback = document.createElement('div');
     feedback.className = 'player-feedback';
     feedback.textContent = message;
@@ -158,22 +174,37 @@ function showSeekFeedback(message) {
         z-index: 1000;
         font-size: 1.2rem;
     `;
-    document.getElementById('video-player-container').appendChild(feedback);
-    setTimeout(() => feedback.remove(), 1000);
+    
+    const target = container || player.parentElement || document.body;
+    target.appendChild(feedback);
+    setTimeout(() => {
+        if (feedback.parentNode) feedback.remove();
+    }, 1000);
 }
 
 // Feedback de volume
 function showVolumeFeedback() {
+    const container = document.getElementById('video-player-container');
+    const player = document.getElementById('anime-player');
+    if (!container && !player) {
+        console.warn('showVolumeFeedback: No container found');
+        return;
+    }
+    
     const feedback = document.createElement('div');
     feedback.className = 'volume-feedback';
     feedback.innerHTML = `
-        <i class="fas fa-volume-${videoPlayer.muted ? 'mute' : 'up'}"></i>
+        <i class="fas fa-volume-${player && player.muted ? 'mute' : 'up'}"></i>
         <div class="volume-bar">
             <div class="volume-level" 
-                 style="width: ${player.muted ? 0 : player.volume * 100}%">
+                 style="width: ${player && !player.muted ? player.volume * 100 : 0}%">
             </div>
         </div>
     `;
-    document.getElementById('video-player-container').appendChild(feedback);
-    setTimeout(() => feedback.remove(), 1000);
+    
+    const target = container || (player && player.parentElement) || document.body;
+    target.appendChild(feedback);
+    setTimeout(() => {
+        if (feedback.parentNode) feedback.remove();
+    }, 1000);
 }

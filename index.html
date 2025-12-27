@@ -6,6 +6,7 @@
     <title>AniVerse - Seu Universo de Animes</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/profile-enhancements.css">
+    <link rel="stylesheet" href="css/hero-video-rotator.css">
     <link rel="stylesheet" href="css/dark-mode.css" id="dark-mode-style" disabled>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="icon" href="images/logo.png" type="image/png">
@@ -61,7 +62,12 @@
             </section>
 
             <section class="continue-watching">
-                <h2 class="section-title">Continuar Assistindo</h2>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 class="section-title" style="margin: 0;">Continuar Assistindo</h2>
+                    <button id="clear-history-btn" class="btn btn-secondary" style="display: none;">
+                        <i class="fas fa-trash"></i> Limpar Histórico
+                    </button>
+                </div>
                 <div class="anime-grid" id="continue-watching-grid"></div>
             </section>
 
@@ -105,6 +111,9 @@
                         <i class="fas fa-thumbs-down"></i>
                         <span id="dislikes-count">0</span>
                     </button>
+                    <button class="btn-icon" id="pip-btn" title="Picture-in-Picture">
+                        <i class="fas fa-tv"></i>
+                    </button>
                 </div>
             </div>
         </div>
@@ -120,6 +129,18 @@
                     <input type="text" id="profile-name" class="form-control" placeholder="Seu nome">
                 </div>
                 
+                <div class="form-group">
+                    <label>Pronome:</label>
+                    <input type="hidden" id="selected-pronoun" value="-san">
+                    <div class="pronoun-buttons">
+                        <button class="pronoun-btn active" data-pronoun="-san">-san</button>
+                        <button class="pronoun-btn" data-pronoun="-chan">-chan</button>
+                        <button class="pronoun-btn" data-pronoun="-kun">-kun</button>
+                        <button class="pronoun-btn" data-pronoun="-sama">-sama</button>
+                        <button class="pronoun-btn" data-pronoun="">Nenhum</button>
+                    </div>
+                </div>
+                
                 <div id="avatar-preview" class="preview-container">
                     <div class="avatar-bg" style="background-color: #ff6b6b;">
                         <div class="avatar-layer-bg"></div>
@@ -129,6 +150,47 @@
                     <div>
                         <div class="avatar-name">Nome-san</div>
                         <small class="muted">Escolha cor/gradiente / imagem / moldura</small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Cor de Fundo:</label>
+                    <div class="bg-options-grid">
+                        <div class="bg-option selected" style="background-color: #ff6b6b;"></div>
+                        <div class="bg-option" style="background-color: #4ecdc4;"></div>
+                        <div class="bg-option" style="background-color: #45b7d1;"></div>
+                        <div class="bg-option" style="background-color: #96ceb4;"></div>
+                        <div class="bg-option" style="background-color: #ffeaa7;"></div>
+                        <div class="bg-option" style="background-color: #dfe6e9;"></div>
+                        <div class="bg-option" style="background-color: #a29bfe;"></div>
+                        <div class="bg-option" style="background-color: #fd79a8;"></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Gradiente de Fundo:</label>
+                    <div class="gradient-options-grid">
+                        <div class="gradient-option" data-css="linear-gradient(135deg, #667eea 0%, #764ba2 100%)"></div>
+                        <div class="gradient-option" data-css="linear-gradient(135deg, #f093fb 0%, #f5576c 100%)"></div>
+                        <div class="gradient-option" data-css="linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)"></div>
+                        <div class="gradient-option" data-css="linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)"></div>
+                        <div class="gradient-option" data-css="linear-gradient(135deg, #fa709a 0%, #fee140 100%)"></div>
+                        <div class="gradient-option" data-css="linear-gradient(135deg, #30cfd0 0%, #330867 100%)"></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Imagem de Fundo (atrás do personagem):</label>
+                    <div class="char-list-placeholder"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Moldura:</label>
+                    <div class="frame-options-grid">
+                        <div class="frame-option" data-frame="">Nenhuma</div>
+                        <div class="frame-option" data-frame="frame-gold">Dourado</div>
+                        <div class="frame-option" data-frame="frame-silver">Prateado</div>
+                        <div class="frame-option" data-frame="frame-neon">Neon</div>
                     </div>
                 </div>
 
@@ -248,6 +310,7 @@
     <script src="js/video-player.js"></script>
     <script src="js/music-player.js"></script>
     <script src="js/info-section.js"></script>
+    <script src="js/fixes.js"></script>
     <script src="js/script.js"></script>
     <script src="js/profile-enhancements.js"></script>
     <script src="js/hero-video-rotator.js"></script>

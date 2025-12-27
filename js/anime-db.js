@@ -44,7 +44,7 @@ class AnimeDatabase {
                             title: op.title || `Opening ${anime.title}`,
                             artist: op.artist || "Artista Desconhecido",
                             anime: anime.title,
-                            cover: op.cover || anime.thumbnail || 'https://i.ibb.co/0jq7R0y/anime-bg.jpg',
+                            cover: op.cover || anime.thumbnail || 'images/bg-default.jpg',
                             audio: op.audio,
                             type: "opening"
                         });
@@ -60,7 +60,7 @@ class AnimeDatabase {
                             title: ed.title || `Ending ${anime.title}`,
                             artist: ed.artist || "Artista Desconhecido",
                             anime: anime.title,
-                            cover: ed.cover || anime.thumbnail || 'https://i.ibb.co/0jq7R0y/anime-bg.jpg',
+                            cover: ed.cover || anime.thumbnail || 'images/bg-default.jpg',
                             audio: ed.audio,
                             type: "ending"
                         });
@@ -74,7 +74,7 @@ class AnimeDatabase {
                     if (!this.musicLibrary.osts[albumName]) {
                         this.musicLibrary.osts[albumName] = {
                             year: albumData.year || "",
-                            cover: albumData.cover || anime.thumbnail || 'https://i.ibb.co/0jq7R0y/anime-bg.jpg',
+                            cover: albumData.cover || anime.thumbnail || 'images/bg-default.jpg',
                             tracks: []
                         };
                     }
@@ -151,7 +151,7 @@ class AnimeDatabase {
             return {
                 id: id,
                 title: this.customVideos[id].title || "Vídeo Customizado",
-                thumbnail: "https://i.ibb.co/0jq7R0y/anime-bg.jpg",
+                thumbnail: "images/bg-default.jpg",
                 description: "Vídeo adicionado manualmente",
                 type: "custom",
                 seasons: [{

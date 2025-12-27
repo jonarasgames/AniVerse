@@ -137,7 +137,44 @@ function loadContinueWatching() {
     const continueList = animeDB.getContinueWatching();
     renderContinueWatchingGrid(continueList, 'continue-watching-grid');
     renderContinueWatchingGrid(continueList, 'continue-grid');
+    
+    // Show/hide clear history button
+    const clearBtn = document.getElementById('clear-history-btn');
+    if (clearBtn) {
+        clearBtn.style.display = continueList.length > 0 ? 'block' : 'none';
+    }
 }
+
+// Clear history handler
+document.addEventListener('DOMContentLoaded', function() {
+    const clearHistoryBtn = document.getElementById('clear-history-btn');
+    if (clearHistoryBtn) {
+        clearHistoryBtn.addEventListener('click', function() {
+            if (confirm('Tem certeza que deseja limpar todo o histórico de visualização?')) {
+                // Clear continue watching
+                localStorage.removeItem('continueWatching');
+                localStorage.removeItem('watchedEpisodes');
+                
+                // Clear from animeDB
+                if (window.animeDB) {
+                    animeDB.continueWatching = {};
+                    animeDB.watchedEpisodes = {};
+                }
+                
+                // Re-render the grid
+                const grid = document.getElementById('continue-watching-grid');
+                if (grid) {
+                    grid.innerHTML = '<p class="no-results">Você ainda não começou a assistir nenhum anime.</p>';
+                }
+                
+                // Hide the button
+                this.style.display = 'none';
+                
+                alert('Histórico limpo com sucesso!');
+            }
+        });
+    }
+});
 
 function setupCategoryTabs() {
     const categoryTabs = document.querySelectorAll('.category-tab');
@@ -213,7 +250,7 @@ function renderAnimeGrid(animes, containerId) {
         
         animeCard.innerHTML = `
             <div class="anime-thumbnail">
-                <img src="${anime.thumbnail || 'https://i.ibb.co/0jq7R0y/anime-bg.jpg'}" alt="${anime.title}">
+                <img src="${anime.thumbnail || 'images/bg-default.jpg'}" alt="${anime.title}">
                 <div class="trailer-overlay">
                     <i class="fas fa-play"></i>
                     <span>Assistir</span>
@@ -283,7 +320,7 @@ function renderContinueWatchingGrid(animes, containerId) {
         
         animeCard.innerHTML = `
             <div class="anime-thumbnail">
-                <img src="${anime.thumbnail || 'https://i.ibb.co/0jq7R0y/anime-bg.jpg'}" alt="${anime.title}">
+                <img src="${anime.thumbnail || 'images/bg-default.jpg'}" alt="${anime.title}">
                 <div class="progress-bar" style="width: ${anime.progress}%"></div>
                 <div class="watched-badge">Continuar</div>
             </div>
@@ -447,6 +484,26 @@ function openAnimeModal(anime, seasonNumber = 1, episodeNumber = 1) {
         likesCount.textContent = rating.likes;
         dislikesCount.textContent = rating.dislikes;
     });
+    
+    // PiP button handler
+    const pipBtn = document.getElementById('pip-btn');
+    if (pipBtn && videoPlayer) {
+        pipBtn.addEventListener('click', async function() {
+            try {
+                if (document.pictureInPictureElement) {
+                    await document.exitPictureInPicture();
+                } else if (videoPlayer.requestPictureInPicture) {
+                    await videoPlayer.requestPictureInPicture();
+                } else {
+                    // Fallback: create custom mini-player
+                    createCustomMiniPlayer(videoPlayer, anime, seasonSelect.value, episodeSelect.value);
+                }
+            } catch (err) {
+                console.warn('PiP not supported or failed:', err);
+                createCustomMiniPlayer(videoPlayer, anime, seasonSelect.value, episodeSelect.value);
+            }
+        });
+    }
     
     updateEpisodes();
     loadEpisode(anime, seasonNumber, episodeNumber);
@@ -690,7 +747,7 @@ function updateAvatarPreview() {
     const pronoun = document.getElementById('selected-pronoun')?.value || '-san';
     const selectedBgOption = document.querySelector('.bg-option.selected');
     const bgColor = selectedBgOption ? window.getComputedStyle(selectedBgOption).backgroundColor : '#ff6b6b';
-    const charImg = document.querySelector('.char-option.selected img')?.src || 'https://i.ibb.co/0jq7R0y/anime-bg.jpg';
+    const charImg = document.querySelector('.char-option.selected img')?.src || 'images/bg-default.jpg';
     
     const preview = document.getElementById('avatar-preview');
     if (!preview) return;
@@ -782,10 +839,114 @@ function renderSearchResults(results) {
 
 
 window.addEventListener('animeDataLoaded', () => {
-    if (typeof loadNewReleases === 'function') loadNewReleases();
-    if (typeof loadContinueWatching === 'function') loadContinueWatching();
-    if (typeof loadFullCatalog === 'function') loadFullCatalog();
+    try {
+        if (typeof loadAnimeSection === 'function') {
+            loadAnimeSection('anime');
+        }
+    } catch (e) {
+        console.warn('Error loading anime section:', e);
+    }
+    
+    try {
+        if (typeof renderContinueWatchingGrid === 'function' && window.animeDB) {
+            const continueList = animeDB.getContinueWatching();
+            renderContinueWatchingGrid(continueList, 'continue-watching-grid');
+        }
+    } catch (e) {
+        console.warn('Error rendering continue watching:', e);
+    }
+    
+    try {
+        if (typeof loadNewReleases === 'function') loadNewReleases();
+    } catch (e) {
+        console.warn('Error loading new releases:', e);
+    }
+    
+    try {
+        if (typeof loadContinueWatching === 'function') loadContinueWatching();
+    } catch (e) {
+        console.warn('Error loading continue watching:', e);
+    }
+    
+    try {
+        if (typeof loadFullCatalog === 'function') loadFullCatalog();
+    } catch (e) {
+        console.warn('Error loading full catalog:', e);
+    }
+    
+    try {
+        if (typeof updateProfileDisplay === 'function') {
+            updateProfileDisplay();
+        }
+    } catch (e) {
+        console.warn('Error updating profile display:', e);
+    }
+    
+    try {
+        if (typeof bindProfileModalControls === 'function') {
+            bindProfileModalControls();
+        }
+    } catch (e) {
+        console.warn('Error binding profile modal controls:', e);
+    }
 });
+
+// Custom mini-player fallback for browsers without PiP support
+function createCustomMiniPlayer(videoPlayer, anime, season, episode) {
+    // Remove existing mini-player if any
+    const existing = document.getElementById('custom-mini-player');
+    if (existing) existing.remove();
+    
+    const miniPlayer = document.createElement('div');
+    miniPlayer.id = 'custom-mini-player';
+    miniPlayer.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 400px;
+        max-width: 90vw;
+        background: black;
+        border: 2px solid #333;
+        border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        z-index: 10000;
+        overflow: hidden;
+    `;
+    
+    const clonedVideo = videoPlayer.cloneNode(true);
+    clonedVideo.style.width = '100%';
+    clonedVideo.style.height = 'auto';
+    clonedVideo.currentTime = videoPlayer.currentTime;
+    clonedVideo.controls = true;
+    
+    const closeBtn = document.createElement('button');
+    closeBtn.textContent = '×';
+    closeBtn.style.cssText = `
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background: rgba(0,0,0,0.7);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        cursor: pointer;
+        font-size: 20px;
+        z-index: 10001;
+    `;
+    
+    closeBtn.addEventListener('click', () => {
+        videoPlayer.currentTime = clonedVideo.currentTime;
+        miniPlayer.remove();
+    });
+    
+    miniPlayer.appendChild(clonedVideo);
+    miniPlayer.appendChild(closeBtn);
+    document.body.appendChild(miniPlayer);
+    
+    clonedVideo.play().catch(e => console.log('Autoplay blocked:', e));
+}
 
 function loadEpisode(anime, seasonNum, episodeNum) {
     const episode = anime.seasons[seasonNum-1]?.episodes[episodeNum-1];
