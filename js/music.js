@@ -44,14 +44,25 @@
             <div class="mini-player-info">
                 <div id="mini-player-title" class="mini-player-title">Track Title</div>
                 <div id="mini-player-artist" class="mini-player-artist">Artist</div>
+                <div class="mini-player-time">
+                    <span id="music-current-time">0:00</span> / <span id="music-duration">0:00</span>
+                </div>
             </div>
             <div class="mini-player-controls">
                 <button id="mini-play-pause" class="mini-control-btn" aria-label="Play/Pause">
                     <i class="fas fa-pause"></i>
                 </button>
+                <button id="mini-music-fullscreen" class="mini-control-btn" aria-label="Fullscreen">
+                    <i class="fas fa-expand"></i>
+                </button>
                 <button id="mini-close" class="mini-control-btn" aria-label="Close">
                     <i class="fas fa-times"></i>
                 </button>
+            </div>
+            <div class="mini-player-progress-container" id="music-progress-container">
+                <div class="mini-player-progress">
+                    <div class="progress-bar-mini" id="music-progress-bar"></div>
+                </div>
             </div>
         `;
         document.body.appendChild(miniPlayer);
@@ -61,10 +72,22 @@
         // Event listeners
         document.getElementById('mini-play-pause').addEventListener('click', togglePlayPause);
         document.getElementById('mini-close').addEventListener('click', closeMiniPlayer);
+        document.getElementById('mini-music-fullscreen').addEventListener('click', openMusicFullscreen);
+        
+        // BARRA DE PROGRESSO CLICÁVEL
+        const progressContainer = document.getElementById('music-progress-container');
+        progressContainer.addEventListener('click', (e) => {
+            if (!audio) return;
+            const rect = progressContainer.getBoundingClientRect();
+            const percent = (e.clientX - rect.left) / rect.width;
+            audio.currentTime = percent * audio.duration;
+        });
         
         // Update play/pause icon based on audio state
         audio.addEventListener('play', updatePlayPauseIcon);
         audio.addEventListener('pause', updatePlayPauseIcon);
+        audio.addEventListener('timeupdate', updateProgress);
+        audio.addEventListener('loadedmetadata', updateDuration);
         audio.addEventListener('ended', () => {
             closeMiniPlayer();
             if (currentPlayingCard) {
@@ -94,6 +117,156 @@
         }
     }
     
+    function updateProgress() {
+        const audio = getMusicAudio();
+        if (!audio) return;
+        
+        const progressBar = document.getElementById('music-progress-bar');
+        const currentTimeEl = document.getElementById('music-current-time');
+        
+        if (progressBar && audio.duration) {
+            const percent = (audio.currentTime / audio.duration) * 100;
+            progressBar.style.width = percent + '%';
+        }
+        
+        if (currentTimeEl) {
+            currentTimeEl.textContent = formatTime(audio.currentTime);
+        }
+    }
+    
+    function updateDuration() {
+        const audio = getMusicAudio();
+        if (!audio) return;
+        
+        const durationEl = document.getElementById('music-duration');
+        if (durationEl) {
+            durationEl.textContent = formatTime(audio.duration);
+        }
+    }
+    
+    function formatTime(seconds) {
+        if (!seconds || isNaN(seconds)) return '0:00';
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${mins}:${secs.toString().padStart(2, '0')}`;
+    }
+    
+    let currentMusicData = null;
+    
+    function openMusicFullscreen() {
+        if (!currentMusicData) return;
+        
+        const audio = getMusicAudio();
+        
+        // Criar modal fullscreen
+        let fullscreenModal = document.getElementById('music-fullscreen-modal');
+        
+        if (!fullscreenModal) {
+            fullscreenModal = document.createElement('div');
+            fullscreenModal.id = 'music-fullscreen-modal';
+            fullscreenModal.className = 'music-fullscreen-modal';
+            fullscreenModal.innerHTML = `
+                <div class="music-fullscreen-bg" id="music-fs-bg"></div>
+                <button class="music-fs-close" id="music-fs-close-btn">
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="music-fullscreen-content">
+                    <div class="music-fs-artwork">
+                        <img src="" alt="Album Art" id="music-fs-thumb">
+                    </div>
+                    <div class="music-fs-info">
+                        <h2 id="music-fs-title">Título</h2>
+                        <p id="music-fs-artist">Artista</p>
+                    </div>
+                    <div class="music-fs-progress-container" id="music-fs-progress-container">
+                        <div class="music-fs-time">
+                            <span id="music-fs-current">0:00</span>
+                            <span id="music-fs-duration">0:00</span>
+                        </div>
+                        <div class="music-fs-progress-bar">
+                            <div class="music-fs-progress-fill" id="music-fs-progress-fill"></div>
+                        </div>
+                    </div>
+                    <div class="music-fs-controls">
+                        <button class="music-fs-control-btn" id="music-fs-play-pause">
+                            <i class="fas fa-pause"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(fullscreenModal);
+            
+            // Event listeners
+            document.getElementById('music-fs-close-btn').addEventListener('click', closeMusicFullscreen);
+            document.getElementById('music-fs-play-pause').addEventListener('click', togglePlayPause);
+            
+            const fsProgressContainer = document.getElementById('music-fs-progress-container');
+            fsProgressContainer.addEventListener('click', (e) => {
+                if (!audio) return;
+                const progressBar = e.currentTarget.querySelector('.music-fs-progress-bar');
+                const rect = progressBar.getBoundingClientRect();
+                const percent = (e.clientX - rect.left) / rect.width;
+                audio.currentTime = percent * audio.duration;
+            });
+            
+            if (audio) {
+                audio.addEventListener('timeupdate', updateFullscreenProgress);
+                audio.addEventListener('play', updateFullscreenPlayPauseIcon);
+                audio.addEventListener('pause', updateFullscreenPlayPauseIcon);
+            }
+        }
+        
+        // Atualizar conteúdo
+        document.getElementById('music-fs-thumb').src = currentMusicData.thumbnail;
+        document.getElementById('music-fs-title').textContent = currentMusicData.title;
+        document.getElementById('music-fs-artist').textContent = currentMusicData.artist;
+        document.getElementById('music-fs-bg').style.backgroundImage = `url('${currentMusicData.thumbnail}')`;
+        
+        // Atualizar botão play/pause
+        updateFullscreenPlayPauseIcon();
+        
+        fullscreenModal.classList.add('visible');
+        document.body.style.overflow = 'hidden';
+    }
+    
+    function closeMusicFullscreen() {
+        const fullscreenModal = document.getElementById('music-fullscreen-modal');
+        if (fullscreenModal) {
+            fullscreenModal.classList.remove('visible');
+            document.body.style.overflow = '';
+        }
+    }
+    
+    function updateFullscreenProgress() {
+        const audio = getMusicAudio();
+        if (!audio) return;
+        
+        const fill = document.getElementById('music-fs-progress-fill');
+        const currentEl = document.getElementById('music-fs-current');
+        const durationEl = document.getElementById('music-fs-duration');
+        
+        if (fill && audio.duration) {
+            const percent = (audio.currentTime / audio.duration) * 100;
+            fill.style.width = percent + '%';
+        }
+        
+        if (currentEl) {
+            currentEl.textContent = formatTime(audio.currentTime);
+        }
+        
+        if (durationEl) {
+            durationEl.textContent = formatTime(audio.duration);
+        }
+    }
+    
+    function updateFullscreenPlayPauseIcon() {
+        const audio = getMusicAudio();
+        const icon = document.querySelector('#music-fs-play-pause i');
+        if (icon) {
+            icon.className = audio && !audio.paused ? 'fas fa-pause' : 'fas fa-play';
+        }
+    }
+    
     function closeMiniPlayer() {
         const audio = getMusicAudio();
         audio.pause();
@@ -115,6 +288,14 @@
         
         const miniPlayer = document.getElementById('mini-player');
         const audio = getMusicAudio();
+        
+        // Store current music data for fullscreen
+        currentMusicData = {
+            src: src,
+            title: title,
+            artist: artist,
+            thumbnail: thumb
+        };
         
         // Stop if clicking same track
         if (currentPlayingCard === card && !audio.paused) {

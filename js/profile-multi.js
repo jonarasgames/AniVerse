@@ -462,7 +462,9 @@
             const colorOption = Array.from(document.querySelectorAll('.color-option')).find(
                 el => el.dataset.value === targetValue
             );
-            if (colorOption) colorOption.classList.add('selected');
+            if (colorOption) {
+                colorOption.classList.add('selected');
+            }
         }
         
         // Select the correct background image
@@ -470,7 +472,9 @@
             const bgImageOption = Array.from(document.querySelectorAll('.bg-image-option')).find(
                 el => el.dataset.src === profile.avatar.backgroundImage
             );
-            if (bgImageOption) bgImageOption.classList.add('selected');
+            if (bgImageOption) {
+                bgImageOption.classList.add('selected');
+            }
         }
         
         // Select the correct character image
@@ -481,7 +485,9 @@
                     return img && img.src === profile.avatar.characterImage;
                 }
             );
-            if (charOption) charOption.classList.add('selected');
+            if (charOption) {
+                charOption.classList.add('selected');
+            }
         }
         
         // Select the correct frame
@@ -489,13 +495,22 @@
             const frameOption = Array.from(document.querySelectorAll('.frame-option')).find(
                 el => el.dataset.frame === profile.avatar.frame
             );
-            if (frameOption) frameOption.classList.add('selected');
+            if (frameOption) {
+                frameOption.classList.add('selected');
+            }
         }
+        
+        // Update preview with profile data
+        setTimeout(() => {
+            if (window.updatePreview) {
+                window.updatePreview();
+            }
+        }, 100);
         
         // Update save button to "Salvar Alterações"
         const saveBtn = document.getElementById('save-profile-btn');
         if (saveBtn) {
-            saveBtn.textContent = '💾 Salvar Alterações';
+            saveBtn.innerHTML = '<i class="fas fa-check"></i> Salvar Alterações';
         }
     }
 
