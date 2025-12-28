@@ -259,6 +259,46 @@ Test on the following browsers:
 ### Issue: Navigation not working
 **Solution**: Hard refresh (Ctrl+F5), check console for JavaScript errors
 
+## New Features Testing (December 2025 Update)
+
+### Theme System (theme.js)
+**Test**: Open DevTools Console and check:
+```javascript
+// Should see theme applied
+document.documentElement.classList.contains('theme-dark') || 
+document.documentElement.classList.contains('theme-light')
+```
+**Expected**: `true`
+**Verify**: Click dark mode toggle button - theme should switch and persist on reload
+
+### Music Player with Grouping (music.js)
+**Test**: 
+1. Navigate to "Músicas" section
+2. Verify music is grouped by anime (each section has "Anime Name (X músicas)")
+3. Click play on any track
+4. Verify mini-player appears at bottom
+5. Click another track
+6. Verify only one audio element exists:
+```javascript
+document.querySelectorAll('audio').length === 1
+```
+**Expected**: Music grouped by anime, mini-player shows track info, only 1 audio element
+
+### Profile System Integration
+**Test**:
+1. Check console for: `typeof window.profileManager !== 'undefined'`
+2. Watch a video for 10+ seconds
+3. Check profile's continue watching is saved
+4. Verify no duplicate entries in old and new storage
+
+### Automated Tests
+Run Playwright tests:
+```bash
+npm install
+npx playwright install
+npm test
+```
+
 ## Reporting Issues
 
 When reporting issues, please include:

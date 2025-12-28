@@ -133,16 +133,22 @@
         
         // Timeout for loading
         const loadTimeout = setTimeout(() => {
-            if (audio.readyState < 2) {
+            if (audio.readyState < 2 && audio.paused) {
                 showMusicError('Tempo de carregamento excedido. Tente novamente.');
             }
         }, 15000);
         
-        audio.addEventListener('loadeddata', () => {
+        // Clear timeout on various success events
+        const clearLoadTimeout = () => {
             clearTimeout(loadTimeout);
-        }, { once: true });
+        };
+        
+        audio.addEventListener('loadeddata', clearLoadTimeout, { once: true });
+        audio.addEventListener('playing', clearLoadTimeout, { once: true });
+        audio.addEventListener('canplay', clearLoadTimeout, { once: true });
         
         audio.play().catch(err => {
+            clearTimeout(loadTimeout);
             console.error('Play failed:', err);
             showMusicError('Erro ao reproduzir. Clique para tentar novamente.');
         });
