@@ -1,0 +1,25 @@
+{
+  "name": "aniverse",
+  "version": "1.0.0",
+  "description": "AniVerse - Seu Universo de Animes",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "test:debug": "playwright test --debug"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jonarasgames/AniVerse.git"
+  },
+  "keywords": [
+    "anime",
+    "streaming",
+    "video"
+  ],
+  "author": "jonarasgames",
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.40.0"
+  }
+}

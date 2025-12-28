@@ -131,6 +131,26 @@ class AnimeDatabase {
     }
 
     getContinueWatching() {
+        // If profileManager is available and there's an active profile, use it
+        if (window.profileManager && window.profileManager.getActiveProfile) {
+            const activeProfile = window.profileManager.getActiveProfile();
+            if (activeProfile && activeProfile.continueWatching) {
+                return activeProfile.continueWatching.map(item => {
+                    const anime = this.animes.find(a => a.id == item.animeId) || this.getCustomAnime(item.animeId);
+                    if (anime) {
+                        return {
+                            ...anime,
+                            progress: item.progress || 0,
+                            episode: item.episode,
+                            season: item.season
+                        };
+                    }
+                    return null;
+                }).filter(Boolean);
+            }
+        }
+
+        // Fallback to old storage
         return Object.keys(this.continueWatching).map(id => {
             const anime = this.animes.find(a => a.id == id) || this.getCustomAnime(id);
             if (anime) {
@@ -206,6 +226,23 @@ class AnimeDatabase {
 
         const progress = (currentTime / duration) * 100;
 
+        // If profileManager is available and there's an active profile, use it
+        if (window.profileManager && window.profileManager.getActiveProfile) {
+            const activeProfile = window.profileManager.getActiveProfile();
+            if (activeProfile) {
+                window.profileManager.updateContinueWatching(activeProfile.id, {
+                    animeId: animeId,
+                    title: anime.title,
+                    thumbnail: anime.thumbnail,
+                    season: seasonNumber,
+                    episode: episodeNumber,
+                    progress: progress
+                });
+                return; // Don't save to old storage
+            }
+        }
+
+        // Fallback to old storage if no profile system
         this.continueWatching[animeId] = {
             season: seasonNumber,
             episode: episodeNumber,

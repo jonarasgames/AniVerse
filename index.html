@@ -478,11 +478,16 @@
         </div>
     </footer>
 
+    <!-- Theme must load first, without defer -->
+    <script src="js/theme.js"></script>
+    
+    <!-- Core scripts with defer -->
     <script src="js/anime-db.js" defer></script>
     <script src="js/anime-renderer.js" defer></script>
     <script src="js/anime-render-fallback.js" defer></script>
     <script src="js/hero-video-rotator.js" defer></script>
     <script src="js/profile-modal-bindings.js" defer></script>
+    <script src="js/music.js" defer></script>
     <script src="js/music-player.js" defer></script>
     <script src="js/video-player.js" defer></script>
     <script src="js/player-fixes.js" defer></script>
