@@ -671,66 +671,43 @@
 
         // Load profile's continue watching
         if (profile.continueWatching && profile.continueWatching.length > 0) {
-            const continueGrid = document.getElementById('continue-watching-grid');
-            if (continueGrid) {
-                continueGrid.innerHTML = '';
+            // Helper function to create continue watching card
+            function createContinueWatchingCard(item) {
+                const card = document.createElement('div');
+                card.className = 'anime-card';
+                card.style.cursor = 'pointer';
+                card.innerHTML = `
+                    <div class="anime-thumbnail">
+                        <img src="${item.thumbnail}" alt="${item.title}">
+                        ${item.progress ? `<div class="progress-bar" style="width: ${item.progress}%"></div>` : ''}
+                    </div>
+                    <div class="anime-info">
+                        <h3 class="anime-title">${item.title}</h3>
+                        <p>T${item.season} E${item.episode}</p>
+                    </div>
+                `;
                 
-                profile.continueWatching.forEach(item => {
-                    const card = document.createElement('div');
-                    card.className = 'anime-card';
-                    card.style.cursor = 'pointer';
-                    card.innerHTML = `
-                        <div class="anime-thumbnail">
-                            <img src="${item.thumbnail}" alt="${item.title}">
-                            ${item.progress ? `<div class="progress-bar" style="width: ${item.progress}%"></div>` : ''}
-                        </div>
-                        <div class="anime-info">
-                            <h3 class="anime-title">${item.title}</h3>
-                            <p>T${item.season} E${item.episode}</p>
-                        </div>
-                    `;
-                    
-                    card.addEventListener('click', () => {
-                        // Open episode
-                        const anime = window.animeDB?.animes.find(a => a.id === item.animeId);
-                        if (anime && window.openEpisode) {
-                            window.openEpisode(anime, item.season, item.episode - 1);
-                        }
-                    });
-                    
-                    continueGrid.appendChild(card);
+                card.addEventListener('click', () => {
+                    const anime = window.animeDB?.animes.find(a => a.id === item.animeId);
+                    if (anime && window.openEpisode) {
+                        window.openEpisode(anime, item.season, item.episode - 1);
+                    }
                 });
+                
+                return card;
             }
             
-            // Also render in separate "Continue Watching" section
-            const continueGrid2 = document.getElementById('continue-grid');
-            if (continueGrid2) {
-                continueGrid2.innerHTML = '';
-                profile.continueWatching.forEach(item => {
-                    const card = document.createElement('div');
-                    card.className = 'anime-card';
-                    card.style.cursor = 'pointer';
-                    card.innerHTML = `
-                        <div class="anime-thumbnail">
-                            <img src="${item.thumbnail}" alt="${item.title}">
-                            ${item.progress ? `<div class="progress-bar" style="width: ${item.progress}%"></div>` : ''}
-                        </div>
-                        <div class="anime-info">
-                            <h3 class="anime-title">${item.title}</h3>
-                            <p>T${item.season} E${item.episode}</p>
-                        </div>
-                    `;
-                    
-                    card.addEventListener('click', () => {
-                        const anime = window.animeDB?.animes.find(a => a.id === item.animeId);
-                        if (anime && window.openEpisode) {
-                            window.openEpisode(anime, item.season, item.episode - 1);
-                        }
+            // Populate both continue watching grids
+            const grids = ['continue-watching-grid', 'continue-grid'];
+            grids.forEach(gridId => {
+                const grid = document.getElementById(gridId);
+                if (grid) {
+                    grid.innerHTML = '';
+                    profile.continueWatching.forEach(item => {
+                        grid.appendChild(createContinueWatchingCard(item));
                     });
-                    
-                    continueGrid2.appendChild(card);
-                });
-            }
+                }
+            });
         } else {
             // If no history, clear grids
             const grids = ['continue-watching-grid', 'continue-grid'];
