@@ -38,11 +38,21 @@
     if (!grid) return;
     grid.innerHTML = '';
     (musicLibrary.themes || []).forEach(theme => {
-      const card = document.createElement('div'); card.className = 'music-card';
-      card.innerHTML = `<img src="${theme.cover || 'images/bg-default.jpg'}" style="width:64px;height:64px;object-fit:cover;"><div class="music-info"><strong>${theme.title}</strong><div>${theme.artist || ''} • ${theme.anime || ''}</div></div><button class="play-music" data-audio="${theme.audio}">▶</button>`;
+      const card = document.createElement('div');
+      card.className = 'music-card';
+      card.innerHTML = `
+        <div class="music-cover">
+          <img src="${theme.cover || 'images/bg-default.jpg'}" alt="${theme.title}">
+        </div>
+        <div class="music-info">
+          <div class="music-title">${theme.title}</div>
+          <div class="music-artist">${theme.artist || ''}</div>
+          <div class="music-anime">${theme.anime || ''}</div>
+        </div>
+      `;
+      card.addEventListener('click', ()=> playMusicUrl(theme.audio));
       grid.appendChild(card);
     });
-    grid.querySelectorAll('.play-music').forEach(b => b.addEventListener('click', ()=> playMusicUrl(b.dataset.audio)));
   };
 
   document.addEventListener('DOMContentLoaded', () => {
