@@ -462,7 +462,9 @@
             const colorOption = Array.from(document.querySelectorAll('.color-option')).find(
                 el => el.dataset.value === targetValue
             );
-            if (colorOption) colorOption.classList.add('selected');
+            if (colorOption) {
+                colorOption.classList.add('selected');
+            }
         }
         
         // Select the correct background image
@@ -470,7 +472,9 @@
             const bgImageOption = Array.from(document.querySelectorAll('.bg-image-option')).find(
                 el => el.dataset.src === profile.avatar.backgroundImage
             );
-            if (bgImageOption) bgImageOption.classList.add('selected');
+            if (bgImageOption) {
+                bgImageOption.classList.add('selected');
+            }
         }
         
         // Select the correct character image
@@ -481,7 +485,9 @@
                     return img && img.src === profile.avatar.characterImage;
                 }
             );
-            if (charOption) charOption.classList.add('selected');
+            if (charOption) {
+                charOption.classList.add('selected');
+            }
         }
         
         // Select the correct frame
@@ -489,13 +495,22 @@
             const frameOption = Array.from(document.querySelectorAll('.frame-option')).find(
                 el => el.dataset.frame === profile.avatar.frame
             );
-            if (frameOption) frameOption.classList.add('selected');
+            if (frameOption) {
+                frameOption.classList.add('selected');
+            }
         }
+        
+        // Update preview with profile data
+        setTimeout(() => {
+            if (window.updatePreview) {
+                window.updatePreview();
+            }
+        }, 100);
         
         // Update save button to "Salvar Alterações"
         const saveBtn = document.getElementById('save-profile-btn');
         if (saveBtn) {
-            saveBtn.textContent = '💾 Salvar Alterações';
+            saveBtn.innerHTML = '<i class="fas fa-check"></i> Salvar Alterações';
         }
     }
 
@@ -652,21 +667,39 @@
             }
             
             headerAvatar.onclick = () => {
-                // Open edit modal for current profile
-                openProfileEditModal(profile);
+                // FOTO DE PERFIL → SELEÇÃO DE USUÁRIOS
+                const profiles = profileManager.getAllProfiles();
+                if (profiles.length > 1) {
+                    showProfileSelectionScreen();
+                } else {
+                    if (confirm('Você só tem 1 perfil. Deseja criar um novo?')) {
+                        openProfileCreationModal();
+                    }
+                }
             };
             
-            headerAvatar.title = `${profile.name}${profile.pronoun} - Clique para editar`;
+            headerAvatar.title = `${profile.name}${profile.pronoun} - Clique para trocar`;
         }
 
-        // Update welcome message
+        // Update welcome message - NOME DO PERFIL → EDIÇÃO
         const welcomeContainer = document.getElementById('user-welcome-container');
         if (welcomeContainer) {
             welcomeContainer.innerHTML = `
-                <h2 style="color: var(--text-color); margin-bottom: 0.5rem;">
-                    Bem-vindo de volta, ${profile.name}${profile.pronoun}!
+                <h2 style="color: var(--text-color); margin-bottom: 0.5rem; cursor: pointer; transition: all 0.3s;" 
+                    id="profile-name-edit-btn"
+                    onmouseover="this.style.color='var(--primary-color)'"
+                    onmouseout="this.style.color='var(--text-color)'"
+                    title="Clique para editar seu perfil">
+                    Bem-vindo de volta, ${profile.name}${profile.pronoun}! ✏️
                 </h2>
             `;
+            
+            const editBtn = document.getElementById('profile-name-edit-btn');
+            if (editBtn) {
+                editBtn.addEventListener('click', () => {
+                    openProfileEditModal(profile);
+                });
+            }
         }
 
         // Load profile's continue watching

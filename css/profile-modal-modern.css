@@ -533,3 +533,100 @@
     font-size: 32px;
     font-weight: bold;
 }
+
+/* Molduras Animadas */
+.avatar-frame-layer.frame-spin {
+    border: 4px solid transparent;
+    background: linear-gradient(white, white) padding-box,
+                linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3) border-box;
+    animation: spin 3s linear infinite;
+}
+
+.avatar-frame-layer.frame-neon {
+    box-shadow: 
+        0 0 10px rgba(0, 255, 255, 0.8),
+        0 0 20px rgba(0, 255, 255, 0.6),
+        0 0 30px rgba(0, 255, 255, 0.4),
+        inset 0 0 10px rgba(0, 255, 255, 0.3);
+    animation: neon-glow 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes neon-glow {
+    from {
+        box-shadow: 
+            0 0 10px rgba(0, 255, 255, 0.8),
+            0 0 20px rgba(0, 255, 255, 0.6),
+            0 0 30px rgba(0, 255, 255, 0.4);
+    }
+    to {
+        box-shadow: 
+            0 0 20px rgba(0, 255, 255, 1),
+            0 0 30px rgba(0, 255, 255, 0.8),
+            0 0 40px rgba(0, 255, 255, 0.6);
+    }
+}
+
+.avatar-frame-layer.frame-fire {
+    box-shadow: 
+        0 0 20px rgba(255, 69, 0, 0.8),
+        0 0 40px rgba(255, 140, 0, 0.6),
+        inset 0 0 20px rgba(255, 69, 0, 0.3);
+    animation: fire-flicker 0.3s infinite;
+}
+
+@keyframes fire-flicker {
+    0%, 100% { 
+        box-shadow: 
+            0 0 20px rgba(255, 69, 0, 0.8),
+            0 0 40px rgba(255, 140, 0, 0.6);
+    }
+    50% { 
+        box-shadow: 
+            0 0 30px rgba(255, 69, 0, 1),
+            0 0 50px rgba(255, 140, 0, 0.8);
+    }
+}
+
+.avatar-frame-layer.frame-electric {
+    box-shadow: 
+        0 0 15px rgba(135, 206, 250, 0.8),
+        0 0 30px rgba(0, 191, 255, 0.6);
+    animation: electric-pulse 0.5s infinite;
+}
+
+@keyframes electric-pulse {
+    0%, 100% { 
+        box-shadow: 
+            0 0 15px rgba(135, 206, 250, 0.8),
+            0 0 30px rgba(0, 191, 255, 0.6);
+    }
+    50% { 
+        box-shadow: 
+            0 0 25px rgba(135, 206, 250, 1),
+            0 0 50px rgba(0, 191, 255, 0.8),
+            0 0 75px rgba(30, 144, 255, 0.5);
+    }
+}
+
+/* Previews */
+.frame-spin-preview {
+    border: 4px solid transparent;
+    background: linear-gradient(white, white) padding-box,
+                linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff) border-box;
+    animation: spin 3s linear infinite;
+}
+
+.frame-neon-preview {
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.8);
+    animation: neon-glow 1.5s ease-in-out infinite alternate;
+}
+
+.frame-fire-preview {
+    box-shadow: 0 0 20px rgba(255, 69, 0, 0.8);
+    animation: fire-flicker 0.3s infinite;
+}
+
+.frame-electric-preview {
+    box-shadow: 0 0 15px rgba(135, 206, 250, 0.8);
+    animation: electric-pulse 0.5s infinite;
+}

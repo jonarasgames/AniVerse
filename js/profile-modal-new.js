@@ -194,13 +194,15 @@
         if (!bgImagesGrid) return;
         
         const bgImages = [
-            'https://files.catbox.moe/fhnk72.jpg',
-            'https://files.catbox.moe/hzfakv.png',
-            'https://files.catbox.moe/y9vkdp.png',
-            'https://files.catbox.moe/brb24b.png',
-            'images/IMG_20250628_194234.png',
-            'images/IMG_20250628_194245.png',
-            'images/IMG_20250628_194305.png'
+            'https://files.catbox.moe/0920l8.png',
+            'https://files.catbox.moe/3ayemo.png',
+            'https://files.catbox.moe/gltz5b.png',
+            'https://files.catbox.moe/8ccmzg.png',
+            'https://files.catbox.moe/zogpuf.png',
+            'https://files.catbox.moe/mw942x.png',
+            'https://files.catbox.moe/p55p9n.png',
+            'https://files.catbox.moe/iu7nod.png',
+            'https://files.catbox.moe/0oprd4.png'
         ];
         
         bgImagesGrid.innerHTML = bgImages.map((src, idx) => `

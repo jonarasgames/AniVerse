@@ -165,6 +165,12 @@ function onVideoSetSource(player){
 // openEpisode helper: set src, resume, banner, opening
 function openEpisode(anime, seasonNumber, episodeIndex){
   try {
+    // PAUSAR MÚSICA SE ESTIVER TOCANDO
+    const musicAudio = document.getElementById('music-playing-audio');
+    if (musicAudio && !musicAudio.paused) {
+        musicAudio.pause();
+    }
+    
     if (!anime) return;
     const season = (anime.seasons || []).find(s => s.number === seasonNumber);
     const episode = season && Array.isArray(season.episodes) ? season.episodes[episodeIndex] : null;
