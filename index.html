@@ -236,9 +236,17 @@
                         <input type="hidden" id="selected-pronoun" value="-san">
                     </div>
                     
-                    <!-- Tabs: Cores / Personagens / Molduras -->
+                    <!-- Senha (opcional) -->
+                    <div class="form-group-modern">
+                        <label>Senha (opcional) 🔒</label>
+                        <input type="password" id="profile-password" class="input-modern" placeholder="Deixe vazio para sem senha">
+                        <small style="color: rgba(255,255,255,0.6); font-size: 12px;">Se definir senha, será solicitada ao selecionar o perfil.</small>
+                    </div>
+                    
+                    <!-- Tabs: Cores / Fundos / Personagens / Molduras -->
                     <div class="customization-tabs">
                         <button class="tab-btn active" data-tab="colors">🎨 Cores</button>
+                        <button class="tab-btn" data-tab="backgrounds">🖼️ Fundos</button>
                         <button class="tab-btn" data-tab="characters">👤 Personagens</button>
                         <button class="tab-btn" data-tab="frames">⭐ Molduras</button>
                     </div>
@@ -257,6 +265,14 @@
                             <div class="color-option" data-type="solid" style="background: #4ecdc4;" data-value="#4ecdc4"></div>
                             <div class="color-option" data-type="solid" style="background: #ffe66d;" data-value="#ffe66d"></div>
                             <div class="color-option" data-type="solid" style="background: #a8e6cf;" data-value="#a8e6cf"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Tab Content: Fundos -->
+                    <div class="tab-content" id="tab-backgrounds">
+                        <label class="tab-label">Imagem de Fundo</label>
+                        <div class="background-images-grid" id="background-images-grid">
+                            <!-- Imagens injetadas via JS -->
                         </div>
                     </div>
                     

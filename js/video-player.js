@@ -92,8 +92,60 @@
   }
 
   async function toggleFullscreen(){
-    const container = document.getElementById('video-player-container'); if(!container) return;
-    try { if(!document.fullscreenElement){ await container.requestFullscreen(); container.classList.add('is-fullscreen'); } else { await document.exitFullscreen(); container.classList.remove('is-fullscreen'); } } catch(e){ console.warn('fullscreen failed', e); container.classList.toggle('is-fullscreen'); }
+    const container = document.getElementById('video-player-container');
+    const player = document.getElementById('anime-player');
+    if(!container || !player) return;
+    
+    try {
+        if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement) {
+            // Entrar em fullscreen
+            if (container.requestFullscreen) {
+                await container.requestFullscreen();
+            } else if (container.webkitRequestFullscreen) {
+                await container.webkitRequestFullscreen();
+            } else if (container.mozRequestFullScreen) {
+                await container.mozRequestFullScreen();
+            } else if (container.msRequestFullscreen) {
+                await container.msRequestFullscreen();
+            }
+            
+            container.classList.add('is-fullscreen');
+        } else {
+            // Sair do fullscreen
+            if (document.exitFullscreen) {
+                await document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) {
+                await document.webkitExitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+                await document.mozCancelFullScreen();
+            } else if (document.msExitFullscreen) {
+                await document.msExitFullscreen();
+            }
+            
+            container.classList.remove('is-fullscreen');
+        }
+    } catch(err) {
+        console.warn('Fullscreen error:', err);
+        
+        // Fallback manual
+        container.classList.toggle('is-fullscreen');
+        
+        if (container.classList.contains('is-fullscreen')) {
+            container.style.position = 'fixed';
+            container.style.top = '0';
+            container.style.left = '0';
+            container.style.width = '100vw';
+            container.style.height = '100vh';
+            container.style.zIndex = '9999';
+        } else {
+            container.style.position = '';
+            container.style.top = '';
+            container.style.left = '';
+            container.style.width = '';
+            container.style.height = '';
+            container.style.zIndex = '';
+        }
+    }
   }
 
   function formatTime(seconds) {
@@ -215,10 +267,79 @@
     if (pipBtn) pipBtn.addEventListener('click', async ()=>{ try { if (player.requestPictureInPicture) await player.requestPictureInPicture(); else showCustomMiniPlayer(player); } catch(e){ console.warn('PiP error', e); showCustomMiniPlayer(player); } });
 
     const fsBtn = safe('fullscreen-btn'); if (fsBtn) fsBtn.addEventListener('click', toggleFullscreen);
-    document.addEventListener('fullscreenchange', ()=> { const cont=document.getElementById('video-player-container'); if(!document.fullscreenElement && cont) cont.classList.remove('is-fullscreen'); });
+    
+    // Listener para mudanças de fullscreen
+    ['fullscreenchange', 'webkitfullscreenchange', 'mozfullscreenchange', 'MSFullscreenChange'].forEach(event => {
+        document.addEventListener(event, () => {
+            const container = document.getElementById('video-player-container');
+            if (!container) return;
+            
+            if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement) {
+                container.classList.remove('is-fullscreen');
+            }
+        });
+    });
   });
 
   window.showCustomMiniPlayer = showCustomMiniPlayer;
   window.showVideoError = showVideoError;
   window.clearVideoError = clearVideoError;
+  window.toggleFullscreen = toggleFullscreen;
 })();
+
+// Keyboard shortcuts for video player
+document.addEventListener('keydown', (e) => {
+    const player = document.getElementById('anime-player');
+    if (!player) return;
+    
+    const modal = document.getElementById('video-modal');
+    if (!modal || modal.style.display !== 'flex') return; // Only work when modal is open
+    
+    // Don't trigger if user is typing in an input
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    
+    switch(e.key.toLowerCase()) {
+        case ' ': // Space
+        case 'k':
+            e.preventDefault();
+            if (player.paused) {
+                player.play().catch(() => {});
+            } else {
+                player.pause();
+            }
+            break;
+            
+        case 'arrowleft': // Voltar 5s
+            e.preventDefault();
+            player.currentTime = Math.max(0, player.currentTime - 5);
+            break;
+            
+        case 'arrowright': // Avançar 5s
+            e.preventDefault();
+            player.currentTime = Math.min(player.duration || 0, player.currentTime + 5);
+            break;
+            
+        case 'arrowup': // Volume +10%
+            e.preventDefault();
+            player.volume = Math.min(1, player.volume + 0.1);
+            player.muted = false;
+            break;
+            
+        case 'arrowdown': // Volume -10%
+            e.preventDefault();
+            player.volume = Math.max(0, player.volume - 0.1);
+            break;
+            
+        case 'm': // Mute/Unmute
+            e.preventDefault();
+            player.muted = !player.muted;
+            break;
+            
+        case 'f': // Fullscreen
+            e.preventDefault();
+            if (window.toggleFullscreen) {
+                window.toggleFullscreen();
+            }
+            break;
+    }
+});

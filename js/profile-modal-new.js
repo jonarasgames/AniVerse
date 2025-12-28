@@ -6,8 +6,10 @@
         name: 'Nome',
         pronoun: '-san',
         backgroundColor: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        backgroundImage: null,
         characterImage: 'images/IMG_20250628_194234.png',
-        frame: ''
+        frame: '',
+        password: null
     };
 
     // Character images list
@@ -137,6 +139,17 @@
                 updatePreview();
             });
         }
+        
+        // Password input
+        const passwordInput = document.getElementById('profile-password');
+        if (passwordInput) {
+            passwordInput.addEventListener('input', () => {
+                currentProfileData.password = passwordInput.value.trim() || null;
+            });
+        }
+        
+        // Initialize background images grid
+        initBackgroundImagesGrid();
 
         // Save button
         if (saveBtn) {
@@ -175,6 +188,37 @@
             characterGrid.appendChild(option);
         });
     }
+    
+    function initBackgroundImagesGrid() {
+        const bgImagesGrid = document.getElementById('background-images-grid');
+        if (!bgImagesGrid) return;
+        
+        const bgImages = [
+            'https://files.catbox.moe/fhnk72.jpg',
+            'https://files.catbox.moe/hzfakv.png',
+            'https://files.catbox.moe/y9vkdp.png',
+            'https://files.catbox.moe/brb24b.png',
+            'images/IMG_20250628_194234.png',
+            'images/IMG_20250628_194245.png',
+            'images/IMG_20250628_194305.png'
+        ];
+        
+        bgImagesGrid.innerHTML = bgImages.map((src, idx) => `
+            <div class="bg-image-option ${idx === 0 ? 'selected' : ''}" data-src="${src}">
+                <img src="${src}" alt="Fundo ${idx + 1}">
+            </div>
+        `).join('');
+        
+        // Event listeners
+        bgImagesGrid.querySelectorAll('.bg-image-option').forEach(opt => {
+            opt.addEventListener('click', () => {
+                bgImagesGrid.querySelectorAll('.bg-image-option').forEach(o => o.classList.remove('selected'));
+                opt.classList.add('selected');
+                currentProfileData.backgroundImage = opt.dataset.src;
+                updatePreview();
+            });
+        });
+    }
 
     function updatePreview() {
         const previewBg = document.getElementById('preview-bg');
@@ -183,13 +227,20 @@
         const previewName = document.getElementById('preview-name');
 
         if (previewBg) {
-            if (currentProfileData.backgroundColor.startsWith('linear-gradient') || 
+            if (currentProfileData.backgroundImage) {
+                previewBg.style.background = `url('${currentProfileData.backgroundImage}')`;
+                previewBg.style.backgroundSize = 'cover';
+                previewBg.style.backgroundPosition = 'center';
+            } else if (currentProfileData.backgroundColor.startsWith('linear-gradient') || 
                 currentProfileData.backgroundColor.startsWith('radial-gradient')) {
                 previewBg.style.background = currentProfileData.backgroundColor;
-                previewBg.style.backgroundColor = '';
+                previewBg.style.backgroundSize = '';
+                previewBg.style.backgroundPosition = '';
             } else {
                 previewBg.style.backgroundColor = currentProfileData.backgroundColor;
                 previewBg.style.background = '';
+                previewBg.style.backgroundSize = '';
+                previewBg.style.backgroundPosition = '';
             }
         }
 
@@ -316,13 +367,18 @@
                 backgroundColor: profileData.avatar?.backgroundColor || 
                                 profileData.avatar?.gradient || 
                                 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                backgroundImage: profileData.avatar?.backgroundImage || null,
                 characterImage: profileData.avatar?.characterImage || 'images/IMG_20250628_194234.png',
-                frame: profileData.avatar?.frame || ''
+                frame: profileData.avatar?.frame || '',
+                password: profileData.password || null
             };
             
             // Update form fields
             const nameInput = document.getElementById('profile-name');
             if (nameInput) nameInput.value = currentProfileData.name;
+            
+            const passwordInput = document.getElementById('profile-password');
+            if (passwordInput) passwordInput.value = currentProfileData.password || '';
             
             // Update pronoun selection
             document.querySelectorAll('.pronoun-pill').forEach(pill => {
