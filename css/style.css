@@ -985,6 +985,13 @@ footer {
     border: 2px solid white;
     margin-right: 10px;
     display: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.user-avatar:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 10px rgba(255,255,255,0.5);
 }
 
 .user-avatar img {

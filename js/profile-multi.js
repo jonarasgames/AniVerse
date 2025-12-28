@@ -172,10 +172,11 @@
         const profilesGrid = document.createElement('div');
         profilesGrid.style.cssText = `
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 200px));
-            gap: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 150px));
+            gap: 1.5rem;
             justify-content: center;
-            margin-bottom: 2rem;
+            max-width: 800px;
+            margin: 0 auto 2rem auto;
         `;
 
         // Add existing profiles
@@ -241,8 +242,8 @@
 
         const avatarContainer = document.createElement('div');
         avatarContainer.style.cssText = `
-            width: 180px;
-            height: 180px;
+            width: 150px;
+            height: 150px;
             border-radius: 8px;
             overflow: hidden;
             margin-bottom: 1rem;
@@ -266,6 +267,64 @@
             `;
             avatarContainer.appendChild(charImg);
         }
+
+        // Add overlay with edit/delete buttons
+        const overlay = document.createElement('div');
+        overlay.style.cssText = `
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(8px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 5;
+        `;
+
+        const editBtn = document.createElement('button');
+        editBtn.textContent = '✏️ Editar';
+        editBtn.style.cssText = `
+            background: rgba(255,255,255,0.9);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        `;
+        editBtn.onclick = (e) => {
+            e.stopPropagation();
+            openProfileEditModal(profile);
+        };
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.textContent = '🗑️ Deletar';
+        deleteBtn.style.cssText = `
+            background: rgba(230,57,70,0.9);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        `;
+        deleteBtn.onclick = (e) => {
+            e.stopPropagation();
+            if(confirm(`Deletar "${profile.name}${profile.pronoun}"?`)) {
+                profileManager.deleteProfile(profile.id);
+                showProfileSelectionScreen();
+            }
+        };
+
+        overlay.appendChild(editBtn);
+        overlay.appendChild(deleteBtn);
+        avatarContainer.appendChild(overlay);
+
+        card.addEventListener('mouseenter', () => overlay.style.opacity = '1');
+        card.addEventListener('mouseleave', () => overlay.style.opacity = '0');
 
         card.appendChild(avatarContainer);
 
@@ -293,7 +352,7 @@
                 margin-top: 8px;
                 justify-content: center;
                 flex-wrap: wrap;
-                max-width: 180px;
+                max-width: 150px;
             `;
             
             profile.continueWatching.slice(0, 3).forEach(anime => {
@@ -328,14 +387,13 @@
             card.style.transform = 'scale(1)';
         });
         card.addEventListener('click', () => {
-            hideProfileSelectionScreen();
-            openProfileCreationModal();
+            openProfileCreationModal(true); // true = hide selection screen after
         });
 
         const avatarContainer = document.createElement('div');
         avatarContainer.style.cssText = `
-            width: 180px;
-            height: 180px;
+            width: 150px;
+            height: 150px;
             border-radius: 8px;
             overflow: hidden;
             margin-bottom: 1rem;
@@ -373,11 +431,18 @@
         }
     }
 
-    function openProfileCreationModal() {
+    function openProfileCreationModal(hideSelectionScreen = false) {
+        if (hideSelectionScreen) {
+            hideProfileSelectionScreen();
+        }
+        
         const modal = document.getElementById('profile-modal');
         if (modal) {
             modal.style.display = 'flex';
             document.body.style.overflow = 'hidden';
+            
+            // Clear editing mode
+            delete modal.dataset.editingProfileId;
             
             // Reset form
             const nameInput = document.getElementById('profile-name');
@@ -394,6 +459,73 @@
             
             const firstChar = document.querySelector('.char-option');
             if (firstChar) firstChar.classList.add('selected');
+            
+            // Reset button text
+            const saveBtn = document.getElementById('save-profile');
+            if (saveBtn) {
+                saveBtn.textContent = 'Salvar Perfil';
+            }
+        }
+    }
+
+    function openProfileEditModal(profile) {
+        const modal = document.getElementById('profile-modal');
+        if (!modal || !profile) return;
+        
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        
+        // Store current profile being edited
+        modal.dataset.editingProfileId = profile.id;
+        
+        // Fill form with profile data
+        const nameInput = document.getElementById('profile-name');
+        if (nameInput) nameInput.value = profile.name;
+        
+        const pronounSelect = document.getElementById('selected-pronoun');
+        if (pronounSelect) pronounSelect.value = profile.pronoun || '-san';
+        
+        // Clear all selections first
+        document.querySelectorAll('.bg-option, .char-option, .gradient-option, .bg-image-option, .frame-option').forEach(el => {
+            el.classList.remove('selected');
+        });
+        
+        // Select the correct background option
+        if (profile.avatar?.backgroundColor) {
+            const bgOption = Array.from(document.querySelectorAll('.bg-option')).find(
+                el => el.style.backgroundColor === profile.avatar.backgroundColor
+            );
+            if (bgOption) bgOption.classList.add('selected');
+        }
+        
+        // Select the correct gradient option
+        if (profile.avatar?.gradient) {
+            const gradientOption = Array.from(document.querySelectorAll('.gradient-option')).find(
+                el => el.dataset.css === profile.avatar.gradient
+            );
+            if (gradientOption) gradientOption.classList.add('selected');
+        }
+        
+        // Select the correct character image
+        if (profile.avatar?.characterImage) {
+            const charOption = Array.from(document.querySelectorAll('.char-option')).find(
+                el => el.dataset.src === profile.avatar.characterImage
+            );
+            if (charOption) charOption.classList.add('selected');
+        }
+        
+        // Select the correct background image
+        if (profile.avatar?.backgroundImage) {
+            const bgImageOption = Array.from(document.querySelectorAll('.bg-image-option')).find(
+                el => el.dataset.src === profile.avatar.backgroundImage
+            );
+            if (bgImageOption) bgImageOption.classList.add('selected');
+        }
+        
+        // Update save button to "Salvar Alterações"
+        const saveBtn = document.getElementById('save-profile');
+        if (saveBtn) {
+            saveBtn.textContent = 'Salvar Alterações';
         }
     }
 
@@ -425,10 +557,11 @@
         const profilesGrid = document.createElement('div');
         profilesGrid.style.cssText = `
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 200px));
-            gap: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 150px));
+            gap: 1.5rem;
             justify-content: center;
-            margin-bottom: 2rem;
+            max-width: 800px;
+            margin: 0 auto 2rem auto;
         `;
 
         profiles.forEach(profile => {
@@ -466,8 +599,8 @@
 
         const avatarContainer = document.createElement('div');
         avatarContainer.style.cssText = `
-            width: 180px;
-            height: 180px;
+            width: 150px;
+            height: 150px;
             border-radius: 8px;
             overflow: hidden;
             margin-bottom: 1rem;
@@ -533,11 +666,28 @@
         // Update header avatar
         const headerAvatar = document.getElementById('header-avatar');
         if (headerAvatar) {
+            headerAvatar.style.display = 'flex';
+            headerAvatar.style.width = '40px';
+            headerAvatar.style.height = '40px';
+            headerAvatar.style.borderRadius = '50%';
+            headerAvatar.style.cursor = 'pointer';
+            headerAvatar.style.background = profile.avatar?.gradient || profile.avatar?.backgroundColor || '#ff6b6b';
+            
             const img = headerAvatar.querySelector('img');
             if (img && profile.avatar?.characterImage) {
                 img.src = profile.avatar.characterImage;
                 img.style.display = 'block';
+            } else if (img) {
+                img.style.display = 'none';
             }
+            
+            headerAvatar.onclick = () => {
+                if(profileManager.getAllProfiles().length > 1) {
+                    showProfileSelectionScreen();
+                }
+            };
+            
+            headerAvatar.title = `${profile.name}${profile.pronoun} - Clique para trocar`;
         }
 
         // Update welcome message
@@ -585,22 +735,30 @@
     // Check on page load
     function init() {
         const profiles = profileManager.getAllProfiles();
+        const activeProfile = profileManager.getActiveProfile();
         
         if (profiles.length === 0) {
             // No profiles, show profile creation
             openProfileCreationModal();
-        } else if (profiles.length === 1) {
-            // Only one profile, auto-select it
+            return;
+        }
+        
+        if (profiles.length === 1 && !activeProfile) {
+            // Only one profile and no active profile, auto-select it
             profileManager.setActiveProfile(profiles[0].id);
             loadProfileData(profiles[0]);
-        } else {
-            // Multiple profiles, show selection screen
-            const activeProfile = profileManager.getActiveProfile();
-            if (activeProfile) {
-                loadProfileData(activeProfile);
-            } else {
-                showProfileSelectionScreen();
-            }
+            return;
+        }
+        
+        if (profiles.length > 1 && !activeProfile) {
+            // Multiple profiles but no active profile, show selection screen
+            showProfileSelectionScreen();
+            return;
+        }
+        
+        if (activeProfile) {
+            // Active profile exists, load it
+            loadProfileData(activeProfile);
         }
 
         // Integrate with existing profile save button
@@ -608,6 +766,7 @@
         if (saveBtn) {
             const originalHandler = saveBtn.onclick;
             saveBtn.onclick = function(e) {
+                const modal = document.getElementById('profile-modal');
                 const nameInput = document.getElementById('profile-name');
                 const pronounInput = document.getElementById('selected-pronoun');
                 
@@ -656,18 +815,40 @@
                     avatar: avatarData
                 };
 
-                const newProfile = profileManager.createProfile(profileData);
-                profileManager.setActiveProfile(newProfile.id);
+                // Check if we're editing an existing profile
+                const editingProfileId = modal?.dataset.editingProfileId;
                 
-                // Close modal
-                const modal = document.getElementById('profile-modal');
-                if (modal) {
-                    modal.style.display = 'none';
-                    document.body.style.overflow = '';
-                }
+                if (editingProfileId) {
+                    // Update existing profile
+                    profileManager.updateProfile(editingProfileId, profileData);
+                    
+                    // Close modal
+                    if (modal) {
+                        modal.style.display = 'none';
+                        delete modal.dataset.editingProfileId;
+                        document.body.style.overflow = '';
+                    }
+                    
+                    // Reload profile selection screen
+                    showProfileSelectionScreen();
+                    alert('Perfil atualizado com sucesso!');
+                } else {
+                    // Create new profile
+                    const newProfile = profileManager.createProfile(profileData);
+                    profileManager.setActiveProfile(newProfile.id);
+                    
+                    // Close modal
+                    if (modal) {
+                        modal.style.display = 'none';
+                        document.body.style.overflow = '';
+                    }
 
-                loadProfileData(newProfile);
-                alert('Perfil criado com sucesso!');
+                    loadProfileData(newProfile);
+                    alert('Perfil criado com sucesso!');
+                }
+                
+                // Reset button text
+                saveBtn.textContent = 'Salvar Perfil';
             };
         }
 

@@ -22,12 +22,73 @@
   function showCustomMiniPlayer(player){
     if(!player) return;
     let mini = document.getElementById('mini-player');
-    if(!mini){ mini = document.createElement('div'); mini.id='mini-player'; Object.assign(mini.style,{position:'fixed',right:'12px',bottom:'12px',width:'320px',height:'180px',zIndex:100000,background:'#000',borderRadius:'8px',overflow:'hidden'}); document.body.appendChild(mini); }
+    if(!mini){ 
+      mini = document.createElement('div'); 
+      mini.id='mini-player'; 
+      Object.assign(mini.style,{position:'fixed',right:'12px',bottom:'12px',width:'320px',height:'180px',zIndex:100000,background:'#000',borderRadius:'8px',overflow:'hidden'}); 
+      document.body.appendChild(mini); 
+    }
     let placeholder = document.getElementById('anime-player-placeholder');
-    if(!placeholder){ placeholder = document.createElement('div'); placeholder.id='anime-player-placeholder'; placeholder.style.display='none'; const cont=document.getElementById('video-player-container'); if(cont) cont.appendChild(placeholder); }
+    if(!placeholder){ 
+      placeholder = document.createElement('div'); 
+      placeholder.id='anime-player-placeholder'; 
+      placeholder.style.display='none'; 
+      const cont=document.getElementById('video-player-container'); 
+      if(cont) cont.appendChild(placeholder); 
+    }
     mini.appendChild(player);
-    player.style.width='100%'; player.style.height='100%'; player.playsInline = true;
-    if(!mini.querySelector('.mini-close')){ const c=document.createElement('button'); c.className='mini-close'; c.textContent='✕'; Object.assign(c.style,{position:'absolute',top:'6px',right:'6px',zIndex:10}); mini.appendChild(c); c.addEventListener('click', ()=>{ const container=document.getElementById('video-player-container'); if(container && placeholder) container.appendChild(player); try{ mini.remove(); }catch(e){} }); }
+    player.style.width='100%'; 
+    player.style.height='100%'; 
+    player.playsInline = true;
+    
+    // Add close button
+    if(!mini.querySelector('.mini-close')){ 
+      const c=document.createElement('button'); 
+      c.className='mini-close'; 
+      c.textContent='✕'; 
+      Object.assign(c.style,{position:'absolute',top:'6px',right:'6px',zIndex:10,background:'rgba(0,0,0,0.7)',color:'white',border:'none',borderRadius:'4px',width:'30px',height:'30px',cursor:'pointer'}); 
+      mini.appendChild(c); 
+      c.addEventListener('click', ()=>{ 
+        const container=document.getElementById('video-player-container'); 
+        if(container && placeholder) container.appendChild(player); 
+        try{ mini.remove(); }catch(e){} 
+      }); 
+    }
+    
+    // Add skip button clone to mini-player
+    const skipBtn = document.getElementById('skip-opening-btn');
+    if(skipBtn && !mini.querySelector('#mini-skip-btn')) {
+      const miniSkip = skipBtn.cloneNode(true);
+      miniSkip.id = 'mini-skip-btn';
+      Object.assign(miniSkip.style,{
+        position:'absolute',
+        bottom:'10px',
+        right:'10px',
+        zIndex:15,
+        display:'none',
+        padding:'6px 12px',
+        fontSize:'12px'
+      });
+      
+      // Clone the click event
+      miniSkip.addEventListener('click', () => {
+        if(window.currentOpeningData && window.currentOpeningData.end) {
+          player.currentTime = window.currentOpeningData.end;
+        }
+      });
+      
+      mini.appendChild(miniSkip);
+      
+      // Sync skip button visibility with main player
+      player.addEventListener('timeupdate', () => {
+        if(skipBtn.style.display === 'block' || window.getComputedStyle(skipBtn).display === 'block') {
+          miniSkip.style.display = 'block';
+          miniSkip.textContent = skipBtn.textContent;
+        } else {
+          miniSkip.style.display = 'none';
+        }
+      });
+    }
   }
 
   async function toggleFullscreen(){

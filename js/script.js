@@ -176,6 +176,24 @@ function openEpisode(anime, seasonNumber, episodeIndex){
     try { const saved = window.animeDB && window.animeDB.getContinueWatching && window.animeDB.getContinueWatching()[String(anime.id)]; if (saved && typeof saved.time === 'number') player.currentTime = saved.time; } catch(e){}
     const sl = document.getElementById('current-season-label'), elb = document.getElementById('current-episode-label');
     if (sl) sl.textContent = `Temporada ${seasonNumber}`; if (elb) elb.textContent = `Episódio ${episodeIndex+1}${episode && episode.title ? ' — '+episode.title : ''}`;
+    
+    // Save to active profile's continue watching
+    if (window.profileManager) {
+        const activeProfile = window.profileManager.getActiveProfile();
+        if (activeProfile) {
+            window.profileManager.updateContinueWatching(activeProfile.id, {
+                animeId: anime.id,
+                title: anime.title,
+                thumbnail: anime.thumbnail || anime.cover,
+                season: seasonNumber,
+                episode: episodeIndex + 1,
+                timestamp: Date.now()
+            });
+        } else {
+            console.warn('⚠️ Nenhum perfil ativo. Histórico NÃO salvo.');
+        }
+    }
+    
     player.play().catch(()=>{});
   } catch(e){ console.error('openEpisode error', e); }
 }
