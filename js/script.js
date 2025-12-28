@@ -2,6 +2,43 @@
 let videoLoadTimeout = null;
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Navigation handling
+  const navLinks = document.querySelectorAll('nav a[data-section]');
+  const sections = document.querySelectorAll('.content-section');
+  
+  navLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const sectionId = link.dataset.section;
+      
+      // Remove active class from all links and sections
+      navLinks.forEach(l => l.classList.remove('active'));
+      sections.forEach(s => s.classList.remove('active'));
+      
+      // Add active class to clicked link
+      link.classList.add('active');
+      
+      // Show corresponding section
+      const targetSection = document.getElementById(sectionId + '-section');
+      if (targetSection) {
+        targetSection.classList.add('active');
+        
+        // Load section-specific data
+        if (sectionId === 'animes' && typeof loadAnimeSection === 'function') {
+          loadAnimeSection('anime');
+        } else if (sectionId === 'movies' && typeof loadAnimeSection === 'function') {
+          loadAnimeSection('movie');
+        } else if (sectionId === 'ovas' && typeof loadAnimeSection === 'function') {
+          loadAnimeSection('ova');
+        } else if (sectionId === 'openings' && typeof renderMusicLibrary === 'function' && window.animeDB) {
+          renderMusicLibrary(window.animeDB.musicLibrary);
+        } else if (sectionId === 'continue' && typeof renderContinueWatchingGrid === 'function' && window.animeDB) {
+          renderContinueWatchingGrid(window.animeDB.getContinueWatching(), 'continue-grid');
+        }
+      }
+    });
+  });
+  
   // Safe bindings
   const clearBtn = document.getElementById('clear-history');
   if (clearBtn) {
@@ -9,6 +46,17 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!confirm('Apagar histórico de continuar assistindo?')) return;
       try { localStorage.removeItem('continueWatching'); localStorage.removeItem('watchedEpisodes'); } catch(e){}
       if (window.animeDB && typeof renderContinueWatchingGrid === 'function') renderContinueWatchingGrid(animeDB.getContinueWatching(), 'continue-watching-grid');
+      alert('Histórico apagado.');
+    });
+  }
+  
+  // Clear history button 2 (in continue section)
+  const clearBtn2 = document.getElementById('clear-history-btn-2');
+  if (clearBtn2) {
+    clearBtn2.addEventListener('click', () => {
+      if (!confirm('Apagar histórico de continuar assistindo?')) return;
+      try { localStorage.removeItem('continueWatching'); localStorage.removeItem('watchedEpisodes'); } catch(e){}
+      if (window.animeDB && typeof renderContinueWatchingGrid === 'function') renderContinueWatchingGrid(animeDB.getContinueWatching(), 'continue-grid');
       alert('Histórico apagado.');
     });
   }
