@@ -823,7 +823,7 @@
                     // Close modal
                     if (modal) {
                         modal.style.display = 'none';
-                        modal.dataset.editingProfileId = '';
+                        delete modal.dataset.editingProfileId;
                         document.body.style.overflow = '';
                     }
                     

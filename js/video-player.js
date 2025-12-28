@@ -25,7 +25,7 @@
     if(!mini){ 
       mini = document.createElement('div'); 
       mini.id='mini-player'; 
-      Object.assign(mini.style,{position:'fixed',right:'12px',bottom:'12px',width:'320px',height:'180px',zIndex:100000,background:'#000',borderRadius:'8px',overflow:'hidden',position:'relative'}); 
+      Object.assign(mini.style,{position:'fixed',right:'12px',bottom:'12px',width:'320px',height:'180px',zIndex:100000,background:'#000',borderRadius:'8px',overflow:'hidden'}); 
       document.body.appendChild(mini); 
     }
     let placeholder = document.getElementById('anime-player-placeholder');
