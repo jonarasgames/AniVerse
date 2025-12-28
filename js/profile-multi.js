@@ -36,6 +36,7 @@
                 name: profileData.name || 'Usuário',
                 pronoun: profileData.pronoun || '-san',
                 avatar: profileData.avatar || {},
+                password: profileData.password || null,
                 createdAt: new Date().toISOString(),
                 continueWatching: []
             };
@@ -238,7 +239,19 @@
         card.addEventListener('mouseleave', () => {
             card.style.transform = 'scale(1)';
         });
-        card.addEventListener('click', onClick);
+        card.addEventListener('click', (e) => {
+            if (!e.target.closest('.profile-card-overlay')) {
+                // If profile has password, ask for it
+                if (profile.password) {
+                    const inputPassword = prompt(`Digite a senha para ${profile.name}${profile.pronoun}:`);
+                    if (inputPassword !== profile.password) {
+                        alert('Senha incorreta! ❌');
+                        return;
+                    }
+                }
+                onClick();
+            }
+        });
 
         const avatarContainer = document.createElement('div');
         avatarContainer.style.cssText = `
@@ -424,36 +437,32 @@
         const nameInput = document.getElementById('profile-name');
         if (nameInput) nameInput.value = profile.name;
         
+        const passwordInput = document.getElementById('profile-password');
+        if (passwordInput) passwordInput.value = profile.password || '';
+        
         const pronounSelect = document.getElementById('selected-pronoun');
         if (pronounSelect) pronounSelect.value = profile.pronoun || '-san';
         
+        // Update pronoun pills
+        document.querySelectorAll('.pronoun-pill').forEach(pill => {
+            pill.classList.remove('active');
+            if (pill.dataset.pronoun === (profile.pronoun || '-san')) {
+                pill.classList.add('active');
+            }
+        });
+        
         // Clear all selections first
-        document.querySelectorAll('.bg-option, .char-option, .gradient-option, .bg-image-option, .frame-option').forEach(el => {
+        document.querySelectorAll('.color-option, .character-option, .bg-image-option, .frame-option').forEach(el => {
             el.classList.remove('selected');
         });
         
-        // Select the correct background option
-        if (profile.avatar?.backgroundColor) {
-            const bgOption = Array.from(document.querySelectorAll('.bg-option')).find(
-                el => el.style.backgroundColor === profile.avatar.backgroundColor
+        // Select the correct color/gradient option
+        if (profile.avatar?.backgroundColor || profile.avatar?.gradient) {
+            const targetValue = profile.avatar.gradient || profile.avatar.backgroundColor;
+            const colorOption = Array.from(document.querySelectorAll('.color-option')).find(
+                el => el.dataset.value === targetValue
             );
-            if (bgOption) bgOption.classList.add('selected');
-        }
-        
-        // Select the correct gradient option
-        if (profile.avatar?.gradient) {
-            const gradientOption = Array.from(document.querySelectorAll('.gradient-option')).find(
-                el => el.dataset.css === profile.avatar.gradient
-            );
-            if (gradientOption) gradientOption.classList.add('selected');
-        }
-        
-        // Select the correct character image
-        if (profile.avatar?.characterImage) {
-            const charOption = Array.from(document.querySelectorAll('.char-option')).find(
-                el => el.dataset.src === profile.avatar.characterImage
-            );
-            if (charOption) charOption.classList.add('selected');
+            if (colorOption) colorOption.classList.add('selected');
         }
         
         // Select the correct background image
@@ -464,10 +473,29 @@
             if (bgImageOption) bgImageOption.classList.add('selected');
         }
         
+        // Select the correct character image
+        if (profile.avatar?.characterImage) {
+            const charOption = Array.from(document.querySelectorAll('.character-option')).find(
+                el => {
+                    const img = el.querySelector('img');
+                    return img && img.src === profile.avatar.characterImage;
+                }
+            );
+            if (charOption) charOption.classList.add('selected');
+        }
+        
+        // Select the correct frame
+        if (profile.avatar?.frame) {
+            const frameOption = Array.from(document.querySelectorAll('.frame-option')).find(
+                el => el.dataset.frame === profile.avatar.frame
+            );
+            if (frameOption) frameOption.classList.add('selected');
+        }
+        
         // Update save button to "Salvar Alterações"
-        const saveBtn = document.getElementById('save-profile');
+        const saveBtn = document.getElementById('save-profile-btn');
         if (saveBtn) {
-            saveBtn.textContent = 'Salvar Alterações';
+            saveBtn.textContent = '💾 Salvar Alterações';
         }
     }
 
@@ -624,11 +652,11 @@
             }
             
             headerAvatar.onclick = () => {
-                // Always allow going to profile selection screen
-                showProfileSelectionScreen();
+                // Open edit modal for current profile
+                openProfileEditModal(profile);
             };
             
-            headerAvatar.title = `${profile.name}${profile.pronoun} - Clique para trocar`;
+            headerAvatar.title = `${profile.name}${profile.pronoun} - Clique para editar`;
         }
 
         // Update welcome message
@@ -643,26 +671,52 @@
 
         // Load profile's continue watching
         if (profile.continueWatching && profile.continueWatching.length > 0) {
-            const grid = document.getElementById('continue-watching-grid');
-            if (grid) {
-                grid.innerHTML = '';
-                profile.continueWatching.forEach(anime => {
-                    const card = document.createElement('div');
-                    card.className = 'anime-card';
-                    card.style.cursor = 'pointer';
-                    card.innerHTML = `
-                        <div class="anime-thumbnail">
-                            <img src="${anime.thumbnail}" alt="${anime.title}">
-                        </div>
-                        <div class="anime-info">
-                            <h3 class="anime-title">${anime.title}</h3>
-                            <p>T${anime.season} E${anime.episode}</p>
-                        </div>
-                        ${anime.progress ? `<div class="progress-bar" style="width: ${anime.progress}%"></div>` : ''}
-                    `;
-                    grid.appendChild(card);
+            // Helper function to create continue watching card
+            function createContinueWatchingCard(item) {
+                const card = document.createElement('div');
+                card.className = 'anime-card';
+                card.style.cursor = 'pointer';
+                card.innerHTML = `
+                    <div class="anime-thumbnail">
+                        <img src="${item.thumbnail}" alt="${item.title}">
+                        ${item.progress ? `<div class="progress-bar" style="width: ${item.progress}%"></div>` : ''}
+                    </div>
+                    <div class="anime-info">
+                        <h3 class="anime-title">${item.title}</h3>
+                        <p>T${item.season} E${item.episode}</p>
+                    </div>
+                `;
+                
+                card.addEventListener('click', () => {
+                    const anime = window.animeDB?.animes.find(a => a.id === item.animeId);
+                    if (anime && window.openEpisode) {
+                        window.openEpisode(anime, item.season, item.episode - 1);
+                    }
                 });
+                
+                return card;
             }
+            
+            // Populate both continue watching grids
+            const grids = ['continue-watching-grid', 'continue-grid'];
+            grids.forEach(gridId => {
+                const grid = document.getElementById(gridId);
+                if (grid) {
+                    grid.innerHTML = '';
+                    profile.continueWatching.forEach(item => {
+                        grid.appendChild(createContinueWatchingCard(item));
+                    });
+                }
+            });
+        } else {
+            // If no history, clear grids
+            const grids = ['continue-watching-grid', 'continue-grid'];
+            grids.forEach(gridId => {
+                const grid = document.getElementById(gridId);
+                if (grid) {
+                    grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #666;">Nenhum anime em progresso ainda.</p>';
+                }
+            });
         }
 
         // Show login button as "profile" button
@@ -703,13 +757,13 @@
         }
 
         // Integrate with existing profile save button
-        const saveBtn = document.getElementById('save-profile');
+        const saveBtn = document.getElementById('save-profile-btn');
         if (saveBtn) {
-            const originalHandler = saveBtn.onclick;
             saveBtn.onclick = function(e) {
                 const modal = document.getElementById('profile-modal');
                 const nameInput = document.getElementById('profile-name');
                 const pronounInput = document.getElementById('selected-pronoun');
+                const passwordInput = document.getElementById('profile-password');
                 
                 if (!nameInput || !nameInput.value.trim()) {
                     alert('Por favor, digite um nome para o perfil.');
@@ -725,14 +779,14 @@
                     frame: null
                 };
 
-                const selectedBg = document.querySelector('.bg-option.selected');
-                if (selectedBg) {
-                    avatarData.backgroundColor = selectedBg.style.backgroundColor;
-                }
-
-                const selectedGradient = document.querySelector('.gradient-option.selected');
-                if (selectedGradient) {
-                    avatarData.gradient = selectedGradient.dataset.css;
+                const selectedColor = document.querySelector('.color-option.selected');
+                if (selectedColor) {
+                    const value = selectedColor.dataset.value;
+                    if (value.startsWith('linear-gradient') || value.startsWith('radial-gradient')) {
+                        avatarData.gradient = value;
+                    } else {
+                        avatarData.backgroundColor = value;
+                    }
                 }
 
                 const selectedBgImage = document.querySelector('.bg-image-option.selected');
@@ -740,7 +794,7 @@
                     avatarData.backgroundImage = selectedBgImage.dataset.src;
                 }
 
-                const selectedChar = document.querySelector('.char-option.selected img');
+                const selectedChar = document.querySelector('.character-option.selected img');
                 if (selectedChar) {
                     avatarData.characterImage = selectedChar.src;
                 }
@@ -753,7 +807,8 @@
                 const profileData = {
                     name: nameInput.value.trim(),
                     pronoun: pronounInput ? pronounInput.value : '-san',
-                    avatar: avatarData
+                    avatar: avatarData,
+                    password: passwordInput ? (passwordInput.value.trim() || null) : null
                 };
 
                 // Check if we're editing an existing profile
@@ -770,9 +825,10 @@
                         document.body.style.overflow = '';
                     }
                     
-                    // Reload profile selection screen
-                    showProfileSelectionScreen();
-                    alert('Perfil atualizado com sucesso!');
+                    // Reload current profile
+                    const updatedProfile = profileManager.getProfile(editingProfileId);
+                    loadProfileData(updatedProfile);
+                    alert('Perfil atualizado com sucesso! ✅');
                 } else {
                     // Create new profile
                     const newProfile = profileManager.createProfile(profileData);
@@ -784,12 +840,17 @@
                         document.body.style.overflow = '';
                     }
 
+                    // Load new profile immediately
                     loadProfileData(newProfile);
-                    alert('Perfil criado com sucesso!');
+                    
+                    // Hide profile selection screen if open
+                    hideProfileSelectionScreen();
+                    
+                    alert('Perfil criado com sucesso! 🎉');
                 }
                 
                 // Reset button text
-                saveBtn.textContent = 'Salvar Perfil';
+                saveBtn.textContent = '💾 Salvar Perfil';
             };
         }
 

@@ -19,28 +19,83 @@
     border-radius: 6px;
 }
 
-/* Fullscreen styles - YouTube-like */
+/* ========================================
+   FULLSCREEN PERFEITO ESTILO YOUTUBE
+   ======================================== */
+
+/* Remover todos os estilos conflitantes do container quando NÃO fullscreen */
+#video-player-container {
+    position: relative;
+    width: 100%;
+    background: #000;
+}
+
+/* FULLSCREEN: Ocupar 100% da viewport */
 #video-player-container:fullscreen,
+#video-player-container:-webkit-full-screen,
+#video-player-container:-moz-full-screen,
 #video-player-container.is-fullscreen {
     position: fixed !important;
-    inset: 0 !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
     width: 100vw !important;
     height: 100vh !important;
+    max-width: none !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
     background: #000 !important;
     z-index: 2147483647 !important;
 }
 
+/* Vídeo preenche 100% em fullscreen */
 #video-player-container:fullscreen #anime-player,
+#video-player-container:-webkit-full-screen #anime-player,
 #video-player-container.is-fullscreen #anime-player {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
     width: 100% !important;
     height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
     object-fit: contain !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
 }
 
-/* Hide banner in fullscreen */
+/* Esconder banner em fullscreen */
 #video-player-container:fullscreen .video-banner,
+#video-player-container:-webkit-full-screen .video-banner,
 #video-player-container.is-fullscreen .video-banner {
     display: none !important;
+}
+
+/* Controles na parte inferior em fullscreen */
+#video-player-container:fullscreen #custom-video-controls,
+#video-player-container:-webkit-full-screen #custom-video-controls,
+#video-player-container.is-fullscreen #custom-video-controls {
+    position: absolute !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    background: linear-gradient(transparent, rgba(0,0,0,0.9)) !important;
+    padding: 30px 20px 20px !important;
+    z-index: 10 !important;
+}
+
+/* Aumentar tamanho dos botões em fullscreen */
+#video-player-container:fullscreen .btn-icon,
+#video-player-container.is-fullscreen .btn-icon {
+    font-size: 24px !important;
+}
+
+/* Timeline maior em fullscreen */
+#video-player-container:fullscreen .timeline-container,
+#video-player-container.is-fullscreen .timeline-container {
+    height: 8px !important;
 }
 
 #video-player-container .player-controls{position:absolute;left:0;right:0;bottom:12px;z-index:100001;display:flex;justify-content:center;align-items:center}

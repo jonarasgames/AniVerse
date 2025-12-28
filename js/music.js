@@ -324,3 +324,37 @@
     window.renderMusicGrid = renderMusicGrid;
     window.playMusic = playMusic;
 })();
+
+// Keyboard shortcuts for music player
+document.addEventListener('keydown', (e) => {
+    const audio = document.getElementById('music-playing-audio');
+    if (!audio) return;
+    
+    const miniPlayer = document.getElementById('mini-player');
+    if (!miniPlayer || miniPlayer.classList.contains('hidden')) return; // Only work when music is playing
+    
+    // Don't trigger if user is typing in an input or watching video
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    const videoModal = document.getElementById('video-modal');
+    if (videoModal && videoModal.style.display === 'flex') return; // Don't interfere with video player
+    
+    switch(e.key.toLowerCase()) {
+        case ' ': // Space - Play/Pause
+            e.preventDefault();
+            const playPauseBtn = document.getElementById('mini-play-pause');
+            if (playPauseBtn) {
+                playPauseBtn.click();
+            }
+            break;
+            
+        case 'arrowleft': // Voltar 5s
+            e.preventDefault();
+            audio.currentTime = Math.max(0, audio.currentTime - 5);
+            break;
+            
+        case 'arrowright': // Avançar 5s
+            e.preventDefault();
+            audio.currentTime = Math.min(audio.duration || 0, audio.currentTime + 5);
+            break;
+    }
+});

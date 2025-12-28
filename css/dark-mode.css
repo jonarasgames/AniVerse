@@ -143,3 +143,47 @@ body.dark-mode .pronoun-btn:hover, body.dark-mode .pronoun-btn.active {
     background-color: var(--primary-color);
     color: white;
 }
+
+/* Additional dark mode text fixes */
+body.dark-mode {
+    background-color: #0f0f1e;
+    color: #e1e8ed;
+}
+
+body.dark-mode .section-title,
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode p,
+body.dark-mode label,
+body.dark-mode .anime-title,
+body.dark-mode .track-title,
+body.dark-mode .track-artist {
+    color: #e1e8ed !important;
+}
+
+body.dark-mode .anime-card {
+    background-color: #1a1f29;
+    color: #e1e8ed;
+}
+
+body.dark-mode .music-track-card {
+    background-color: #1a1f29;
+}
+
+body.dark-mode .track-count {
+    color: #8899a6 !important;
+}
+
+body.dark-mode input,
+body.dark-mode textarea,
+body.dark-mode select {
+    background-color: #1a1f29;
+    color: #e1e8ed;
+    border-color: #2f3336;
+}
+
+body.dark-mode .modal-content {
+    background-color: #1a1a2e !important;
+    color: #e1e8ed !important;
+}

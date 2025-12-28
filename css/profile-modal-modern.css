@@ -486,3 +486,50 @@
 .btn-save-profile i {
     margin-right: 8px;
 }
+
+/* Background Images Grid */
+.background-images-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.bg-image-option {
+    aspect-ratio: 16/9;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    border: 3px solid transparent;
+    transition: all 0.3s;
+    position: relative;
+}
+
+.bg-image-option img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.bg-image-option:hover {
+    transform: scale(1.05);
+}
+
+.bg-image-option.selected {
+    border-color: #e63946;
+    box-shadow: 0 0 15px rgba(230, 57, 70, 0.8);
+}
+
+.bg-image-option.selected::after {
+    content: '✓';
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(230, 57, 70, 0.5);
+    color: white;
+    font-size: 32px;
+    font-weight: bold;
+}
