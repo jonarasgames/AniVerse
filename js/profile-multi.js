@@ -268,64 +268,6 @@
             avatarContainer.appendChild(charImg);
         }
 
-        // Add overlay with edit/delete buttons
-        const overlay = document.createElement('div');
-        overlay.style.cssText = `
-            position: absolute;
-            inset: 0;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(8px);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            opacity: 0;
-            transition: opacity 0.3s;
-            z-index: 5;
-        `;
-
-        const editBtn = document.createElement('button');
-        editBtn.textContent = '✏️ Editar';
-        editBtn.style.cssText = `
-            background: rgba(255,255,255,0.9);
-            border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-        `;
-        editBtn.onclick = (e) => {
-            e.stopPropagation();
-            openProfileEditModal(profile);
-        };
-
-        const deleteBtn = document.createElement('button');
-        deleteBtn.textContent = '🗑️ Deletar';
-        deleteBtn.style.cssText = `
-            background: rgba(230,57,70,0.9);
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-        `;
-        deleteBtn.onclick = (e) => {
-            e.stopPropagation();
-            if(confirm(`Deletar "${profile.name}${profile.pronoun}"?`)) {
-                profileManager.deleteProfile(profile.id);
-                showProfileSelectionScreen();
-            }
-        };
-
-        overlay.appendChild(editBtn);
-        overlay.appendChild(deleteBtn);
-        avatarContainer.appendChild(overlay);
-
-        card.addEventListener('mouseenter', () => overlay.style.opacity = '1');
-        card.addEventListener('mouseleave', () => overlay.style.opacity = '0');
-
         card.appendChild(avatarContainer);
 
         const nameLabel = document.createElement('div');
@@ -682,9 +624,8 @@
             }
             
             headerAvatar.onclick = () => {
-                if(profileManager.getAllProfiles().length > 1) {
-                    showProfileSelectionScreen();
-                }
+                // Always allow going to profile selection screen
+                showProfileSelectionScreen();
             };
             
             headerAvatar.title = `${profile.name}${profile.pronoun} - Clique para trocar`;

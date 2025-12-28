@@ -6,6 +6,7 @@
     <title>AniVerse - Seu Universo de Animes</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/profile-enhancements.css">
+    <link rel="stylesheet" href="css/profile-modal-modern.css">
     <link rel="stylesheet" href="css/hero-video-rotator.css">
     <link rel="stylesheet" href="css/dark-mode.css" id="dark-mode-style" disabled>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -192,203 +193,102 @@
     </div>
 
     <div id="profile-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal close-profile">&times;</span>
-            <h2>Configurar Perfil</h2>
-            <div class="profile-container">
-                <div class="form-group">
-                    <label for="profile-name">Nome:</label>
-                    <input type="text" id="profile-name" class="form-control" placeholder="Seu nome">
+        <div class="modal-content profile-modal-modern">
+            <button class="close-modal-btn" id="close-profile-modal">
+                <i class="fas fa-times"></i>
+            </button>
+            
+            <h2 class="profile-modal-title">Personalizar Perfil</h2>
+            
+            <div class="profile-editor-layout">
+                <!-- Coluna da Esquerda: Preview -->
+                <div class="profile-preview-column">
+                    <div class="profile-preview-card">
+                        <div class="profile-avatar-preview" id="avatar-live-preview">
+                            <div class="avatar-bg-layer" id="preview-bg"></div>
+                            <img src="images/IMG_20250628_194234.png" alt="Personagem" id="preview-char" class="avatar-char-layer">
+                            <div class="avatar-frame-layer" id="preview-frame"></div>
+                        </div>
+                        <div class="profile-name-preview" id="preview-name">Nome-san</div>
+                    </div>
+                    <p class="preview-hint">Visualização em tempo real</p>
                 </div>
                 
-                <input type="hidden" id="selected-pronoun" value="-san">
-                
-                <div class="form-group">
-                    <label>Pronome:</label>
-                    <div class="selector-row">
-                        <div class="selector-scroll">
-                            <button class="pronoun-btn active" data-pronoun="-san">-san</button>
-                            <button class="pronoun-btn" data-pronoun="-kun">-kun</button>
-                            <button class="pronoun-btn" data-pronoun="-chan">-chan</button>
-                            <button class="pronoun-btn" data-pronoun="-sama">-sama</button>
-                            <button class="pronoun-btn" data-pronoun="-senpai">-senpai</button>
-                            <button class="pronoun-btn" data-pronoun="">Nenhum</button>
+                <!-- Coluna da Direita: Opções -->
+                <div class="profile-options-column">
+                    <!-- Nome -->
+                    <div class="form-group-modern">
+                        <label>Nome do Perfil</label>
+                        <input type="text" id="profile-name" class="input-modern" placeholder="Digite seu nome" maxlength="20">
+                    </div>
+                    
+                    <!-- Pronome -->
+                    <div class="form-group-modern">
+                        <label>Pronome</label>
+                        <div class="pronoun-pills">
+                            <button class="pronoun-pill active" data-pronoun="-san">-san</button>
+                            <button class="pronoun-pill" data-pronoun="-kun">-kun</button>
+                            <button class="pronoun-pill" data-pronoun="-chan">-chan</button>
+                            <button class="pronoun-pill" data-pronoun="-sama">-sama</button>
+                            <button class="pronoun-pill" data-pronoun="-senpai">-senpai</button>
+                            <button class="pronoun-pill" data-pronoun="">Nenhum</button>
+                        </div>
+                        <input type="hidden" id="selected-pronoun" value="-san">
+                    </div>
+                    
+                    <!-- Tabs: Cores / Personagens / Molduras -->
+                    <div class="customization-tabs">
+                        <button class="tab-btn active" data-tab="colors">🎨 Cores</button>
+                        <button class="tab-btn" data-tab="characters">👤 Personagens</button>
+                        <button class="tab-btn" data-tab="frames">⭐ Molduras</button>
+                    </div>
+                    
+                    <!-- Tab Content: Cores -->
+                    <div class="tab-content active" id="tab-colors">
+                        <label class="tab-label">Fundo Sólido</label>
+                        <div class="color-grid">
+                            <div class="color-option selected" data-type="solid" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);" data-value="linear-gradient(135deg, #667eea 0%, #764ba2 100%)"></div>
+                            <div class="color-option" data-type="solid" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);" data-value="linear-gradient(135deg, #f093fb 0%, #f5576c 100%)"></div>
+                            <div class="color-option" data-type="solid" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);" data-value="linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)"></div>
+                            <div class="color-option" data-type="solid" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);" data-value="linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)"></div>
+                            <div class="color-option" data-type="solid" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);" data-value="linear-gradient(135deg, #fa709a 0%, #fee140 100%)"></div>
+                            <div class="color-option" data-type="solid" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);" data-value="linear-gradient(135deg, #30cfd0 0%, #330867 100%)"></div>
+                            <div class="color-option" data-type="solid" style="background: #ff6b6b;" data-value="#ff6b6b"></div>
+                            <div class="color-option" data-type="solid" style="background: #4ecdc4;" data-value="#4ecdc4"></div>
+                            <div class="color-option" data-type="solid" style="background: #ffe66d;" data-value="#ffe66d"></div>
+                            <div class="color-option" data-type="solid" style="background: #a8e6cf;" data-value="#a8e6cf"></div>
                         </div>
                     </div>
-                </div>
-                
-                <div id="avatar-preview" class="preview-container">
-                    <div class="avatar-bg" style="background-color: #ff6b6b;">
-                        <div class="avatar-layer-bg"></div>
-                        <img src="images/IMG_20250628_194234.png" alt="Personagem" class="avatar-char">
-                        <div class="avatar-frame-overlay"></div>
-                    </div>
-                    <div>
-                        <div class="avatar-name">Nome-san</div>
-                        <small class="muted">Escolha cor/gradiente / imagem / moldura</small>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>Cor de Fundo:</label>
-                    <div class="selector-row">
-                        <div class="selector-scroll">
-                            <div class="bg-option selected" style="background-color: #ff6b6b;" title="Vermelho"></div>
-                            <div class="bg-option" style="background-color: #4ecdc4;" title="Turquesa"></div>
-                            <div class="bg-option" style="background-color: #ffe66d;" title="Amarelo"></div>
-                            <div class="bg-option" style="background-color: #a8e6cf;" title="Verde"></div>
-                            <div class="bg-option" style="background-color: #ff8b94;" title="Rosa"></div>
-                            <div class="bg-option" style="background-color: #c7ceea;" title="Lavanda"></div>
-                            <div class="bg-option" style="background-color: #ffd3b6;" title="Pêssego"></div>
-                            <div class="bg-option" style="background-color: #95e1d3;" title="Menta"></div>
+                    
+                    <!-- Tab Content: Personagens -->
+                    <div class="tab-content" id="tab-characters">
+                        <div class="character-grid" id="character-grid">
+                            <!-- Personagens serão injetados via JS -->
                         </div>
                     </div>
-                </div>
-
-                <div class="form-group">
-                    <label>Gradiente de Fundo:</label>
-                    <div class="selector-row">
-                        <div class="selector-scroll">
-                            <div class="gradient-option" data-css="linear-gradient(135deg, #667eea 0%, #764ba2 100%)" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);" title="Roxo"></div>
-                            <div class="gradient-option" data-css="linear-gradient(135deg, #f093fb 0%, #f5576c 100%)" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);" title="Rosa"></div>
-                            <div class="gradient-option" data-css="linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);" title="Azul"></div>
-                            <div class="gradient-option" data-css="linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);" title="Verde"></div>
-                            <div class="gradient-option" data-css="linear-gradient(135deg, #fa709a 0%, #fee140 100%)" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);" title="Pôr do Sol"></div>
-                            <div class="gradient-option" data-css="linear-gradient(135deg, #30cfd0 0%, #330867 100%)" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);" title="Oceano"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>Personagem:</label>
-                    <div class="selector-row">
-                        <div class="selector-scroll char-list-placeholder">
-                            <!-- Character images will be relocated here by profile-enhancements.js -->
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>Fundo (atrás do personagem):</label>
-                    <div class="selector-row">
-                        <div class="selector-scroll bg-image-holder">
-                            <!-- Background images will be injected here by profile-enhancements.js -->
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>Moldura:</label>
-                    <div class="selector-row">
-                        <div class="selector-scroll">
-                            <div class="frame-option" data-frame="" title="Sem moldura" style="background: #333; position: relative;">
-                                <span style="color: white; font-size: 20px;">✕</span>
+                    
+                    <!-- Tab Content: Molduras -->
+                    <div class="tab-content" id="tab-frames">
+                        <div class="frame-grid">
+                            <div class="frame-option selected" data-frame="">
+                                <div class="frame-preview-none">Sem moldura</div>
                             </div>
-                            <div class="frame-option" data-frame="frame-glow" title="Brilho" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
-                            <div class="frame-option" data-frame="frame-rainbow" title="Arco-íris" style="background: conic-gradient(from 0deg, #ff6b6b, #ffd56b, #6bffce, #6bbdff, #d96bff, #ff6b6b);"></div>
-                            <div class="frame-option" data-frame="frame-dash" title="Traços" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);"></div>
+                            <div class="frame-option" data-frame="glow">
+                                <div class="frame-preview frame-glow-preview"></div>
+                                <span>Brilho</span>
+                            </div>
+                            <div class="frame-option" data-frame="rainbow">
+                                <div class="frame-preview frame-rainbow-preview"></div>
+                                <span>Arco-íris</span>
+                            </div>
                         </div>
                     </div>
+                    
+                    <!-- Botão Salvar -->
+                    <button class="btn-save-profile" id="save-profile-btn">
+                        <i class="fas fa-check"></i> Salvar Perfil
+                    </button>
                 </div>
-
-                <!-- Character options that will be relocated by profile-enhancements.js -->
-                <div class="character-options-container">
-                    <div class="char-option selected" data-char="1">
-                        <img src="images/IMG_20250628_194234.png" alt="Personagem">
-                    </div>
-                    <div class="char-option" data-char="2">
-                        <img src="images/IMG_20250628_194245.png" alt="Personagem">
-                    </div>
-                    <div class="char-option" data-char="3">
-                        <img src="images/IMG_20250628_194305.png" alt="Personagem">
-                    </div>
-                    <div class="char-option" data-char="4">
-                        <img src="images/IMG_20250628_194357.png" alt="Personagem">
-                    </div>
-                    <div class="char-option" data-char="5">
-                        <img src="images/IMG_20250628_194904.png" alt="Personagem">
-                    </div>
-                    <div class="char-option" data-char="6">
-                        <img src="images/IMG_20250628_194935.png" alt="Personagem">
-                    </div>
-                    <div class="char-option" data-char="7">
-                        <img src="images/IMG_20250628_194950.png" alt="Personagem">
-                    </div>
-                    <div class="char-option" data-char="8">
-                        <img src="images/IMG_20250628_203536.png" alt="Personagem">
-                    </div>
-                    <div class="char-option" data-char="9">
-                        <img src="images/IMG_20250628_203813.png" alt="Personagem">
-                    </div>
-                    <div class="char-option" data-char="10">
-                        <img src="images/IMG_20250628_203832.png" alt="Personagem">
-                    </div>
-                    <div class="char-option" data-char="11">
-                        <img src="images/IMG_20250629_103041.png" alt="Personagem">
-                    </div>
-                    <div class="char-option" data-char="12">
-                        <img src="images/IMG_20250629_103055.png" alt="Personagem">
-                    </div>
-                    <div class="char-option" data-char="13">
-                        <img src="images/IMG_20250629_103125.png" alt="Personagem">
-                    </div>
-                    <div class="char-option" data-char="14">
-                        <img src="images/IMG_20250629_103206.png" alt="Personagem">
-                    </div>
-                    <div class="char-option" data-char="15">
-                        <img src="images/IMG_20250629_103221.png" alt="Personagem">
-                    </div>
-                    <div class="char-option" data-char="16">
-                        <img src="images/IMG_20250629_103234.png" alt="Personagem">
-                    </div>
-                    <div class="char-option" data-char="17">
-                        <img src="images/IMG_20250701_144109.png" alt="Personagem">
-                    </div>
-                    <div class="char-option" data-char="18">
-                        <img src="images/IMG_20250701_144133.png" alt="Personagem">
-                    </div>
-                    <div class="char-option" data-char="19">
-                        <img src="images/IMG_20250701_144201.png" alt="Personagem">
-                    </div>
-                    <div class="char-option" data-char="20">
-                        <img src="images/IMG_20250707_193349.png" alt="Personagem">
-                    </div>
-                    <div class="char-option" data-char="21">
-                        <img src="images/IMG_20250707_193432.png" alt="Personagem">
-                    </div>
-                    <div class="char-option" data-char="22">
-                        <img src="images/IMG_20250707_193452.png" alt="Personagem">
-                    </div>
-                    <div class="char-option" data-char="23">
-                        <img src="images/IMG_20250707_193511.png" alt="Personagem">
-                    </div>
-                    <div class="char-option" data-char="24">
-                        <img src="images/IMG_20250707_193600.png" alt="Personagem">
-                    </div>
-                    <div class="char-option" data-char="25">
-                        <img src="images/dan-da-dan-66bb02e694458_waifu2x_art_scan_noise3_scale%20(1).png" alt="Personagem">
-                    </div>
-                    <div class="char-option" data-char="26">
-                        <img src="images/dan-da-dan-66bb02e93a299_waifu2x_art_scan_noise3_scale%20(1).png" alt="Personagem">
-                    </div>
-                    <div class="char-option" data-char="27">
-                        <img src="images/dan-da-dan-66bb02eb45d02_waifu2x_art_scan_noise3_scale%20(1).png" alt="Personagem">
-                    </div>
-                    <div class="char-option" data-char="28">
-                        <img src="images/dan-da-dan-66bb02ed34fe2_waifu2x_art_scan_noise3_scale%20(1).png" alt="Personagem">
-                    </div>
-                    <div class="char-option" data-char="29">
-                        <img src="https://files.catbox.moe/hzfakv.png" alt="Personagem">
-                    </div>
-                    <div class="char-option" data-char="30">
-                        <img src="https://files.catbox.moe/y9vkdp.png" alt="Personagem">
-                    </div>
-                    <div class="char-option" data-char="31">
-                        <img src="https://files.catbox.moe/brb24b.png" alt="Personagem">
-                    </div>
-                </div>
-
-                <button id="save-profile" class="btn btn-primary">Salvar Perfil</button>
             </div>
         </div>
     </div>
@@ -496,6 +396,8 @@
     <script src="js/fixes.js" defer></script>
     <script src="js/profile-enhancements.js" defer></script>
     <script src="js/profile-multi.js" defer></script>
+    <script src="js/profile-modal-new.js" defer></script>
+    <script src="js/music-player-new.js" defer></script>
     <script id="ani-diagnostic-init">/* ANI-diagnostic-init-check */(function(){try{console.log("AniVerse init check running"); fetch(window.location.pathname.replace(/\/[^\/]*$/, "") + "/anime-data.json", {cache: "no-store"}).then(function(r){console.log("fetch anime-data.json ->", r.status, r.statusText); if(r.ok){ try{ window.dispatchEvent(new Event("animeDataLoaded")); console.log("Dispatched animeDataLoaded for diagnostic"); } catch(e){console.warn("dispatch error", e);} } }).catch(function(err){console.warn("fetch anime-data.json failed:", err); });}catch(e){console.error("ANI-diagnostic error:", e);}})();</script>
 </body>
 </html>
