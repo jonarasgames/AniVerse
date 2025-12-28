@@ -323,23 +323,11 @@ document.addEventListener('keydown', (e) => {
             case 'ArrowUp':
                 player.volume = Math.min(1, player.volume + 0.1);
                 player.muted = false;
-                // Atualizar UI de volume se existir
-                const volumeProgress = document.getElementById('volume-progress');
-                if (volumeProgress) {
-                    volumeProgress.style.width = (player.volume * 100) + '%';
-                }
-                // Atualizar ícone
                 updateVideoVolumeIcon();
                 break;
                 
             case 'ArrowDown':
                 player.volume = Math.max(0, player.volume - 0.1);
-                // Atualizar UI de volume se existir
-                const volumeProgress2 = document.getElementById('volume-progress');
-                if (volumeProgress2) {
-                    volumeProgress2.style.width = (player.volume * 100) + '%';
-                }
-                // Atualizar ícone
                 updateVideoVolumeIcon();
                 break;
                 

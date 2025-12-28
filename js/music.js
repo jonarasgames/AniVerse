@@ -562,6 +562,7 @@
     // Export functions
     window.renderMusicGrid = renderMusicGrid;
     window.playMusic = playMusic;
+    window.updateMusicVolume = updateMusicVolume;
 })();
 
 // Keyboard shortcuts for music player
@@ -628,6 +629,3 @@ document.addEventListener('keydown', (e) => {
             break;
     }
 });
-
-// Export updateMusicVolume to make it globally available
-window.updateMusicVolume = updateMusicVolume;
