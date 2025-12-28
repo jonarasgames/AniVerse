@@ -1,4 +1,79 @@
-:root {
+/* Auto dark mode based on system preference */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --background-color: #121212;
+        --text-color: #e0e0e0;
+        --card-bg: #1e1e1e;
+        --header-bg: #0f0f0f;
+        --footer-bg: #0f0f0f;
+        --secondary-color: #2a2a2a;
+        --watched-color: rgba(46, 204, 113, 0.5);
+    }
+
+    .anime-card {
+        border: 1px solid #333;
+    }
+
+    .anime-meta {
+        color: #aaa;
+    }
+
+    .modal-content {
+        border: 1px solid #333;
+    }
+
+    .search-bar input {
+        background-color: #333;
+        color: white;
+    }
+
+    .search-bar input::placeholder {
+        color: #aaa;
+    }
+
+    .category-tab {
+        background-color: #333;
+        color: #ddd;
+    }
+
+    .category-tab:hover {
+        background-color: #444;
+    }
+
+    .category-tab.active {
+        background-color: var(--primary-color);
+        color: white;
+    }
+
+    .episode-selector select {
+        background-color: #333;
+        color: white;
+        border-color: #444;
+    }
+
+    option.watched {
+        color: #1dd1a1;
+    }
+
+    .profile-form input, .profile-form select {
+        background-color: #333;
+        color: white;
+        border-color: #444;
+    }
+
+    .pronoun-btn {
+        background-color: #444;
+        color: #ddd;
+    }
+
+    .pronoun-btn:hover, .pronoun-btn.active {
+        background-color: var(--primary-color);
+        color: white;
+    }
+}
+
+/* Manual dark mode when user toggles */
+body.dark-mode {
     --background-color: #121212;
     --text-color: #e0e0e0;
     --card-bg: #1e1e1e;
@@ -8,63 +83,63 @@
     --watched-color: rgba(46, 204, 113, 0.5);
 }
 
-.anime-card {
+body.dark-mode .anime-card {
     border: 1px solid #333;
 }
 
-.anime-meta {
+body.dark-mode .anime-meta {
     color: #aaa;
 }
 
-.modal-content {
+body.dark-mode .modal-content {
     border: 1px solid #333;
 }
 
-.search-bar input {
+body.dark-mode .search-bar input {
     background-color: #333;
     color: white;
 }
 
-.search-bar input::placeholder {
+body.dark-mode .search-bar input::placeholder {
     color: #aaa;
 }
 
-.category-tab {
+body.dark-mode .category-tab {
     background-color: #333;
     color: #ddd;
 }
 
-.category-tab:hover {
+body.dark-mode .category-tab:hover {
     background-color: #444;
 }
 
-.category-tab.active {
+body.dark-mode .category-tab.active {
     background-color: var(--primary-color);
     color: white;
 }
 
-.episode-selector select {
+body.dark-mode .episode-selector select {
     background-color: #333;
     color: white;
     border-color: #444;
 }
 
-option.watched {
+body.dark-mode option.watched {
     color: #1dd1a1;
 }
 
-.profile-form input, .profile-form select {
+body.dark-mode .profile-form input, body.dark-mode .profile-form select {
     background-color: #333;
     color: white;
     border-color: #444;
 }
 
-.pronoun-btn {
+body.dark-mode .pronoun-btn {
     background-color: #444;
     color: #ddd;
 }
 
-.pronoun-btn:hover, .pronoun-btn.active {
+body.dark-mode .pronoun-btn:hover, body.dark-mode .pronoun-btn.active {
     background-color: var(--primary-color);
     color: white;
 }

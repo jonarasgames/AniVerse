@@ -1,6 +1,70 @@
 /* js/script.js - core fixes: avoid videoLoadTimeout ReferenceError, onVideoSetSource, openEpisode, animeDataLoaded binds */
 let videoLoadTimeout = null;
 
+// Dark mode initialization and handling
+(function() {
+  // Check for saved preference or system preference
+  function initDarkMode() {
+    const savedMode = localStorage.getItem('darkMode');
+    const darkModeToggle = document.getElementById('dark-mode-toggle');
+    
+    if (savedMode === 'enabled') {
+      document.body.classList.add('dark-mode');
+      updateDarkModeIcon(true);
+    } else if (savedMode === 'disabled') {
+      document.body.classList.remove('dark-mode');
+      updateDarkModeIcon(false);
+    } else {
+      // No saved preference, use system preference
+      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark-mode');
+        updateDarkModeIcon(true);
+      }
+    }
+    
+    // Listen for system theme changes
+    if (window.matchMedia) {
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+        // Only auto-switch if user hasn't manually set a preference
+        if (!localStorage.getItem('darkMode')) {
+          if (e.matches) {
+            document.body.classList.add('dark-mode');
+            updateDarkModeIcon(true);
+          } else {
+            document.body.classList.remove('dark-mode');
+            updateDarkModeIcon(false);
+          }
+        }
+      });
+    }
+    
+    // Toggle button handler
+    if (darkModeToggle) {
+      darkModeToggle.addEventListener('click', () => {
+        const isDark = document.body.classList.toggle('dark-mode');
+        localStorage.setItem('darkMode', isDark ? 'enabled' : 'disabled');
+        updateDarkModeIcon(isDark);
+      });
+    }
+  }
+  
+  function updateDarkModeIcon(isDark) {
+    const toggle = document.getElementById('dark-mode-toggle');
+    if (!toggle) return;
+    const icon = toggle.querySelector('i');
+    if (icon) {
+      icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+    }
+  }
+  
+  // Initialize immediately (don't wait for DOMContentLoaded to avoid flash)
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initDarkMode);
+  } else {
+    initDarkMode();
+  }
+})();
+
 document.addEventListener('DOMContentLoaded', () => {
   // Navigation handling
   const navLinks = document.querySelectorAll('nav a[data-section]');
