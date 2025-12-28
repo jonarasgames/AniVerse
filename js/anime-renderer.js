@@ -15,10 +15,16 @@
     const type = anime.type || 'anime';
     
     card.innerHTML = `
-      <div class="anime-thumbnail" style="background-image: url('${thumbnail}'); background-size: cover; background-position: center; height: 280px; border-radius: 8px 8px 0 0;"></div>
-      <div class="anime-info" style="padding: 12px;">
-        <h3 style="margin: 0 0 8px 0; font-size: 16px; line-height: 1.3;">${title}</h3>
-        <p style="margin: 0; font-size: 13px; opacity: 0.8;">${type.toUpperCase()}</p>
+      <div class="anime-thumbnail">
+        <img src="${thumbnail}" alt="${title}">
+      </div>
+      <div class="anime-info">
+        <h3 class="anime-title">${title}</h3>
+        <p class="anime-meta">${type.toUpperCase()}</p>
+      </div>
+      <div class="trailer-overlay">
+        <i class="fas fa-play"></i>
+        <p>Assistir</p>
       </div>
     `;
     
@@ -44,14 +50,17 @@
     const episode = anime.episode || 1;
     
     card.innerHTML = `
-      <div class="anime-thumbnail" style="background-image: url('${thumbnail}'); background-size: cover; background-position: center; height: 280px; border-radius: 8px 8px 0 0; position: relative;">
-        <div class="progress-overlay" style="position: absolute; bottom: 0; left: 0; right: 0; height: 4px; background: rgba(0,0,0,0.5);">
-          <div class="progress-bar" style="height: 100%; background: var(--primary-color, #007bff); width: ${Math.min(100, Math.max(0, progress))}%;"></div>
-        </div>
+      <div class="anime-thumbnail">
+        <img src="${thumbnail}" alt="${title}">
+        <div class="progress-bar" style="width: ${Math.min(100, Math.max(0, progress))}%;"></div>
       </div>
-      <div class="anime-info" style="padding: 12px;">
-        <h3 style="margin: 0 0 8px 0; font-size: 16px; line-height: 1.3;">${title}</h3>
-        <p style="margin: 0; font-size: 13px; opacity: 0.8;">T${season} • EP${episode} • ${Math.round(progress)}%</p>
+      <div class="anime-info">
+        <h3 class="anime-title">${title}</h3>
+        <p class="anime-meta">T${season} • EP${episode} • ${Math.round(progress)}%</p>
+      </div>
+      <div class="trailer-overlay">
+        <i class="fas fa-play"></i>
+        <p>Continuar</p>
       </div>
     `;
     
