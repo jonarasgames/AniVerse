@@ -20,14 +20,6 @@
     try { const s = localStorage.getItem('userProfile'); return s ? JSON.parse(s) : null; } catch(e){ return null; }
   }
 
-  window.openProfileModal = function() {
-    const modal = safe('profile-modal');
-    if (modal) {
-      modal.style.display = 'block';
-      document.body.style.overflow = 'hidden';
-    }
-  };
-
   window.bindProfileModalControls = function(){
     const modal = safe('profile-modal');
     if (!modal){
@@ -35,24 +27,6 @@
       const m = document.createElement('div'); m.id='profile-modal'; m.className='profile-modal'; m.innerHTML = '<div class="profile-modal-inner"><h3>Perfil</h3><div id="profile-controls"></div><button id="save-profile">Salvar</button></div>';
       document.body.appendChild(m);
     }
-    
-    // Bind close buttons
-    const closeButtons = modal.querySelectorAll('.close-modal, .close-profile');
-    closeButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        modal.style.display = 'none';
-        document.body.style.overflow = '';
-      });
-    });
-    
-    // Close on outside click
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) {
-        modal.style.display = 'none';
-        document.body.style.overflow = '';
-      }
-    });
-    
     const saveBtn = document.getElementById('save-profile');
     if (saveBtn) saveBtn.addEventListener('click', () => {
       const profile = { name: document.getElementById('profile-name')?.value || '', pronoun: document.getElementById('selected-pronoun')?.value || '', avatarBg: document.querySelector('.avatar-bg')?.style.backgroundColor || '', avatarChar: document.querySelector('.char-option.selected')?.dataset?.char || '', avatarFrame: document.querySelector('.avatar-frame-overlay')?.className || '' };
@@ -60,8 +34,6 @@
       // update header avatar if present
       const headerAvatar = document.querySelector('#header-avatar img');
       if (headerAvatar && profile.avatarChar) headerAvatar.src = profile.avatarChar;
-      modal.style.display = 'none';
-      document.body.style.overflow = '';
       alert('Perfil salvo.');
     });
 

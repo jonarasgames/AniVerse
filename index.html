@@ -128,7 +128,7 @@
                 <div class="video-banner" style="background-image: url('https://files.catbox.moe/fhnk72.jpg');"></div>
                 
                 <!-- Video element (hidden native controls) -->
-                <video id="anime-player" style="width: 100%; display: block;">
+                <video id="anime-player" playsinline="" preload="metadata" style="width: 100%; display: block;">
                     Seu navegador não suporta vídeos.
                 </video>
                 
@@ -470,6 +470,7 @@
     </footer>
 
     <script src="js/anime-db.js" defer></script>
+    <script src="js/anime-renderer.js" defer></script>
     <script src="js/anime-render-fallback.js" defer></script>
     <script src="js/hero-video-rotator.js" defer></script>
     <script src="js/profile-modal-bindings.js" defer></script>
