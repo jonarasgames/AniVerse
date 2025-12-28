@@ -320,7 +320,7 @@ nav a:hover, nav a.active {
 
 .anime-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 220px));
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 20px;
     margin-bottom: 40px;
     justify-content: center;
@@ -334,8 +334,9 @@ nav a:hover, nav a.active {
     transition: var(--transition);
     position: relative;
     cursor: pointer;
-    aspect-ratio: 2/3;
-    max-width: 220px;
+    /* Force 16:9 horizontal aspect ratio */
+    aspect-ratio: 16/9;
+    width: 100%;
 }
 
 .anime-card:hover {
@@ -357,7 +358,8 @@ nav a:hover, nav a.active {
     left: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: cover !important;
+    background: #1a1a1a;
     transition: var(--transition);
 }
 
