@@ -1,4 +1,4 @@
-/* js/video-player.js - robust player */
+/* js/video-player.js - robust player: click-to-pause, skip-controller, PiP fallback, container fullscreen */
 (function(){
   function safe(id){ return document.getElementById(id); }
   function showVideoError(msg){ let el=document.getElementById('video-error-container'); if(!el){ el=document.createElement('div'); el.id='video-error-container'; Object.assign(el.style,{position:'absolute',top:'50%',left:'50%',transform:'translate(-50%,-50%)',background:'rgba(0,0,0,0.78)',color:'#fff',padding:'10px 14px',borderRadius:'8px',zIndex:100010,pointerEvents:'none'}); (document.getElementById('video-player-container')||document.body).appendChild(el);} el.textContent=msg; }
@@ -6,7 +6,7 @@
 
   function SkipController(player, skipId){
     this.player = player; this.skipBtn = safe(skipId); this.opening = null;
-    if(!this.player || !this.skipBtn){ console.warn('SkipController: elements missing'); return; }
+    if(!this.player || !this.skipBtn){ console.warn('SkipController: missing elements'); return; }
     this.player.addEventListener('timeupdate', ()=> this.update());
     this.skipBtn.addEventListener('click', ()=> { if (this.opening) this.player.currentTime = this.opening.end; });
   }
@@ -37,7 +37,8 @@
 
   document.addEventListener('DOMContentLoaded', ()=>{
     const player = safe('anime-player'); if(!player){ console.warn('#anime-player not found'); return; }
-    player.addEventListener('click', (e) => { if (e.target !== player) return; if (player.paused) player.play().catch(()=>{}); else player.pause(); });
+    // click on video toggles pause/play (only when clicking the element itself)
+    player.addEventListener('click', (e)=> { if(e.target!==player) return; if(player.paused) player.play().catch(()=>{}); else player.pause(); });
 
     const skipCtrl = new SkipController(player, 'skip-opening-btn');
     window.updateOpeningData = function(data){ window.currentOpeningData = data && typeof data.start === 'number' ? data : null; if(skipCtrl && typeof skipCtrl.setOpening === 'function') skipCtrl.setOpening(window.currentOpeningData); };
