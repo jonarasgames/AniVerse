@@ -652,21 +652,39 @@
             }
             
             headerAvatar.onclick = () => {
-                // Open edit modal for current profile
-                openProfileEditModal(profile);
+                // FOTO DE PERFIL → SELEÇÃO DE USUÁRIOS
+                const profiles = profileManager.getAllProfiles();
+                if (profiles.length > 1) {
+                    showProfileSelectionScreen();
+                } else {
+                    if (confirm('Você só tem 1 perfil. Deseja criar um novo?')) {
+                        openProfileCreationModal();
+                    }
+                }
             };
             
-            headerAvatar.title = `${profile.name}${profile.pronoun} - Clique para editar`;
+            headerAvatar.title = `${profile.name}${profile.pronoun} - Clique para trocar`;
         }
 
-        // Update welcome message
+        // Update welcome message - NOME DO PERFIL → EDIÇÃO
         const welcomeContainer = document.getElementById('user-welcome-container');
         if (welcomeContainer) {
             welcomeContainer.innerHTML = `
-                <h2 style="color: var(--text-color); margin-bottom: 0.5rem;">
-                    Bem-vindo de volta, ${profile.name}${profile.pronoun}!
+                <h2 style="color: var(--text-color); margin-bottom: 0.5rem; cursor: pointer; transition: all 0.3s;" 
+                    id="profile-name-edit-btn"
+                    onmouseover="this.style.color='var(--primary-color)'"
+                    onmouseout="this.style.color='var(--text-color)'"
+                    title="Clique para editar seu perfil">
+                    Bem-vindo de volta, ${profile.name}${profile.pronoun}! ✏️
                 </h2>
             `;
+            
+            const editBtn = document.getElementById('profile-name-edit-btn');
+            if (editBtn) {
+                editBtn.addEventListener('click', () => {
+                    openProfileEditModal(profile);
+                });
+            }
         }
 
         // Load profile's continue watching
