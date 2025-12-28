@@ -2,6 +2,14 @@
 (function(){
   'use strict';
 
+  // Helper function to escape HTML and prevent XSS
+  function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
   // Create an anime card element
   function createAnimeCard(anime) {
     if (!anime) return null;
@@ -11,12 +19,12 @@
     card.dataset.animeId = anime.id;
     
     const thumbnail = anime.thumbnail || anime.cover || 'images/bg-default.jpg';
-    const title = anime.title || anime.name || 'Sem título';
-    const type = anime.type || 'anime';
+    const title = escapeHtml(anime.title || anime.name || 'Sem título');
+    const type = escapeHtml(anime.type || 'anime');
     
     card.innerHTML = `
       <div class="anime-thumbnail">
-        <img src="${thumbnail}" alt="${title}">
+        <img src="${escapeHtml(thumbnail)}" alt="${title}">
       </div>
       <div class="anime-info">
         <h3 class="anime-title">${title}</h3>
@@ -44,14 +52,14 @@
     card.dataset.animeId = anime.id;
     
     const thumbnail = anime.thumbnail || anime.cover || 'images/bg-default.jpg';
-    const title = anime.title || anime.name || 'Sem título';
+    const title = escapeHtml(anime.title || anime.name || 'Sem título');
     const progress = anime.progress || 0;
     const season = anime.season || 1;
     const episode = anime.episode || 1;
     
     card.innerHTML = `
       <div class="anime-thumbnail">
-        <img src="${thumbnail}" alt="${title}">
+        <img src="${escapeHtml(thumbnail)}" alt="${title}">
         <div class="progress-bar" style="width: ${Math.min(100, Math.max(0, progress))}%;"></div>
       </div>
       <div class="anime-info">
