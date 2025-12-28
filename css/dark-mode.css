@@ -196,3 +196,22 @@ body.dark-mode .music-section-header h3 {
 body.dark-mode .anime-cover-small {
     border: 1px solid rgba(255,255,255,0.1);
 }
+
+/* Títulos de seções de música BRANCOS no dark mode */
+body.dark-mode .music-section-header h3 {
+    color: #ffffff !important;
+}
+
+body.dark-mode .music-anime-section {
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding-bottom: 20px;
+}
+
+body.dark-mode .music-anime-title {
+    color: #ffffff !important;
+}
+
+body.dark-mode .music-section h2,
+body.dark-mode .music-section h3 {
+    color: #ffffff !important;
+}

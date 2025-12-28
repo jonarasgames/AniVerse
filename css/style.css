@@ -1949,6 +1949,46 @@ footer {
     background: rgba(255, 255, 255, 0.1);
 }
 
+/* Volume Control no Mini Player de Música */
+.mini-volume-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+}
+
+.mini-volume-slider {
+    width: 0;
+    height: 4px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 2px;
+    cursor: pointer;
+    position: relative;
+    opacity: 0;
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.mini-volume-container:hover .mini-volume-slider {
+    width: 60px;
+    opacity: 1;
+}
+
+.mini-volume-fill {
+    height: 100%;
+    background: var(--primary-color);
+    width: 100%;
+    transition: width 0.1s;
+}
+
+/* Mobile: Mostrar volume sempre */
+@media (max-width: 768px) {
+    .mini-volume-slider {
+        width: 50px;
+        opacity: 1;
+    }
+}
+
 /* Mini-player time and progress bar */
 .mini-player-time {
     font-size: 0.75rem;

@@ -289,57 +289,97 @@
 
 // Keyboard shortcuts for video player
 document.addEventListener('keydown', (e) => {
+    // PRIORIDADE 1: Se modal de vídeo está aberto, responder APENAS vídeo
+    const videoModal = document.getElementById('video-modal');
     const player = document.getElementById('anime-player');
-    if (!player) return;
     
-    const modal = document.getElementById('video-modal');
-    if (!modal || modal.style.display !== 'flex') return; // Only work when modal is open
-    
-    // Don't trigger if user is typing in an input
-    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-    
-    switch(e.key.toLowerCase()) {
-        case ' ': // Space
-        case 'k':
+    if (videoModal && videoModal.style.display === 'flex' && player) {
+        // Don't trigger if user is typing in an input
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+        
+        // Prevenir ações padrão do navegador
+        if ([' ', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'k', 'm', 'f'].includes(e.key)) {
             e.preventDefault();
-            if (player.paused) {
-                player.play().catch(() => {});
-            } else {
-                player.pause();
-            }
-            break;
-            
-        case 'arrowleft': // Voltar 5s
-            e.preventDefault();
-            player.currentTime = Math.max(0, player.currentTime - 5);
-            break;
-            
-        case 'arrowright': // Avançar 5s
-            e.preventDefault();
-            player.currentTime = Math.min(player.duration || 0, player.currentTime + 5);
-            break;
-            
-        case 'arrowup': // Volume +10%
-            e.preventDefault();
-            player.volume = Math.min(1, player.volume + 0.1);
-            player.muted = false;
-            break;
-            
-        case 'arrowdown': // Volume -10%
-            e.preventDefault();
-            player.volume = Math.max(0, player.volume - 0.1);
-            break;
-            
-        case 'm': // Mute/Unmute
-            e.preventDefault();
-            player.muted = !player.muted;
-            break;
-            
-        case 'f': // Fullscreen
-            e.preventDefault();
-            if (window.toggleFullscreen) {
-                window.toggleFullscreen();
-            }
-            break;
+        }
+        
+        switch(e.key) {
+            case ' ':
+            case 'k':
+                if (player.paused) {
+                    player.play().catch(() => {});
+                } else {
+                    player.pause();
+                }
+                break;
+                
+            case 'ArrowLeft':
+                player.currentTime = Math.max(0, player.currentTime - 5);
+                break;
+                
+            case 'ArrowRight':
+                player.currentTime = Math.min(player.duration || 0, player.currentTime + 5);
+                break;
+                
+            case 'ArrowUp':
+                player.volume = Math.min(1, player.volume + 0.1);
+                player.muted = false;
+                // Atualizar UI de volume se existir
+                const volumeProgress = document.getElementById('volume-progress');
+                if (volumeProgress) {
+                    volumeProgress.style.width = (player.volume * 100) + '%';
+                }
+                // Atualizar ícone
+                updateVideoVolumeIcon();
+                break;
+                
+            case 'ArrowDown':
+                player.volume = Math.max(0, player.volume - 0.1);
+                // Atualizar UI de volume se existir
+                const volumeProgress2 = document.getElementById('volume-progress');
+                if (volumeProgress2) {
+                    volumeProgress2.style.width = (player.volume * 100) + '%';
+                }
+                // Atualizar ícone
+                updateVideoVolumeIcon();
+                break;
+                
+            case 'm':
+                player.muted = !player.muted;
+                // Atualizar ícone de volume
+                updateVideoVolumeIcon();
+                break;
+                
+            case 'f':
+                if (typeof toggleFullscreen === 'function') {
+                    toggleFullscreen();
+                }
+                break;
+        }
+        
+        // IMPORTANTE: Retornar aqui para NÃO processar comandos de música
+        return;
     }
 });
+
+function updateVideoVolumeIcon() {
+    const player = document.getElementById('anime-player');
+    const volumeBtn = document.getElementById('volume-btn');
+    if (!player || !volumeBtn) return;
+    
+    const icon = volumeBtn.querySelector('i');
+    if (icon) {
+        if (player.muted || player.volume === 0) {
+            icon.className = 'fas fa-volume-mute';
+        } else if (player.volume < 0.5) {
+            icon.className = 'fas fa-volume-down';
+        } else {
+            icon.className = 'fas fa-volume-up';
+        }
+    }
+    
+    // Update volume progress bar
+    const volumeProgress = document.getElementById('volume-progress');
+    if (volumeProgress) {
+        volumeProgress.style.width = player.muted ? '0%' : (player.volume * 100) + '%';
+    }
+}

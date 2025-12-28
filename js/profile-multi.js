@@ -249,6 +249,33 @@
                         return;
                     }
                 }
+                
+                // FECHAR MODAL DE VÍDEO SE ESTIVER ABERTO (limpar estado anterior)
+                const videoModal = document.getElementById('video-modal');
+                if (videoModal) {
+                    videoModal.style.display = 'none';
+                }
+                
+                // PAUSAR E LIMPAR PLAYER DE VÍDEO
+                const videoPlayer = document.getElementById('anime-player');
+                if (videoPlayer) {
+                    videoPlayer.pause();
+                    videoPlayer.src = '';
+                    videoPlayer.currentTime = 0;
+                }
+                
+                // PAUSAR E FECHAR PLAYER DE MÚSICA
+                const musicAudio = document.getElementById('music-playing-audio');
+                if (musicAudio) {
+                    musicAudio.pause();
+                    musicAudio.src = '';
+                }
+                
+                const miniPlayer = document.getElementById('mini-player');
+                if (miniPlayer) {
+                    miniPlayer.classList.add('hidden');
+                }
+                
                 onClick();
             }
         });
@@ -424,6 +451,12 @@
     }
 
     function openProfileEditModal(profile) {
+        // FECHAR tela de seleção se estiver aberta
+        const selectionScreen = document.getElementById('profile-selection-overlay');
+        if (selectionScreen) {
+            selectionScreen.style.display = 'none';
+        }
+        
         const modal = document.getElementById('profile-modal');
         if (!modal || !profile) return;
         
@@ -696,7 +729,16 @@
             
             const editBtn = document.getElementById('profile-name-edit-btn');
             if (editBtn) {
-                editBtn.addEventListener('click', () => {
+                editBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    // GARANTIR que não abre seleção no fundo
+                    const selectionScreen = document.getElementById('profile-selection-overlay');
+                    if (selectionScreen) {
+                        selectionScreen.style.display = 'none';
+                    }
+                    
                     openProfileEditModal(profile);
                 });
             }

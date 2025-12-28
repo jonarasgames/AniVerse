@@ -52,6 +52,17 @@
                 <button id="mini-play-pause" class="mini-control-btn" aria-label="Play/Pause">
                     <i class="fas fa-pause"></i>
                 </button>
+                
+                <!-- CONTROLE DE VOLUME -->
+                <div class="mini-volume-container">
+                    <button class="mini-control-btn" id="mini-music-volume-btn" aria-label="Mute/Unmute">
+                        <i class="fas fa-volume-up"></i>
+                    </button>
+                    <div class="mini-volume-slider" id="mini-volume-slider">
+                        <div class="mini-volume-fill" id="mini-volume-fill"></div>
+                    </div>
+                </div>
+                
                 <button id="mini-music-fullscreen" class="mini-control-btn" aria-label="Fullscreen">
                     <i class="fas fa-expand"></i>
                 </button>
@@ -74,6 +85,26 @@
         document.getElementById('mini-close').addEventListener('click', closeMiniPlayer);
         document.getElementById('mini-music-fullscreen').addEventListener('click', openMusicFullscreen);
         
+        // VOLUME BUTTON
+        const volumeBtn = document.getElementById('mini-music-volume-btn');
+        volumeBtn.addEventListener('click', () => {
+            if (audio) {
+                audio.muted = !audio.muted;
+                updateMusicVolume();
+            }
+        });
+        
+        // VOLUME SLIDER
+        const volumeSlider = document.getElementById('mini-volume-slider');
+        volumeSlider.addEventListener('click', (e) => {
+            if (!audio) return;
+            const rect = volumeSlider.getBoundingClientRect();
+            const percent = (e.clientX - rect.left) / rect.width;
+            audio.volume = Math.max(0, Math.min(1, percent));
+            audio.muted = false;
+            updateMusicVolume();
+        });
+        
         // BARRA DE PROGRESSO CLICÁVEL
         const progressContainer = document.getElementById('music-progress-container');
         progressContainer.addEventListener('click', (e) => {
@@ -88,6 +119,7 @@
         audio.addEventListener('pause', updatePlayPauseIcon);
         audio.addEventListener('timeupdate', updateProgress);
         audio.addEventListener('loadedmetadata', updateDuration);
+        audio.addEventListener('volumechange', updateMusicVolume);
         audio.addEventListener('ended', () => {
             closeMiniPlayer();
             if (currentPlayingCard) {
@@ -141,6 +173,32 @@
         const durationEl = document.getElementById('music-duration');
         if (durationEl) {
             durationEl.textContent = formatTime(audio.duration);
+        }
+    }
+    
+    // NOVA FUNÇÃO: Atualizar UI de volume
+    function updateMusicVolume() {
+        const audio = getMusicAudio();
+        if (!audio) return;
+        
+        const volumeFill = document.getElementById('mini-volume-fill');
+        const volumeBtn = document.getElementById('mini-music-volume-btn');
+        
+        if (volumeFill) {
+            volumeFill.style.width = (audio.volume * 100) + '%';
+        }
+        
+        if (volumeBtn) {
+            const icon = volumeBtn.querySelector('i');
+            if (icon) {
+                if (audio.muted || audio.volume === 0) {
+                    icon.className = 'fas fa-volume-mute';
+                } else if (audio.volume < 0.5) {
+                    icon.className = 'fas fa-volume-down';
+                } else {
+                    icon.className = 'fas fa-volume-up';
+                }
+            }
         }
     }
     
@@ -508,34 +566,68 @@
 
 // Keyboard shortcuts for music player
 document.addEventListener('keydown', (e) => {
+    // PRIORIDADE 2: Se modal de vídeo está aberto, IGNORAR comandos de música
+    const videoModal = document.getElementById('video-modal');
+    if (videoModal && videoModal.style.display === 'flex') {
+        return; // Não processar nada se vídeo estiver aberto
+    }
+    
+    // Só processar se mini-player de música estiver visível
+    const miniPlayer = document.getElementById('mini-player');
+    if (!miniPlayer || miniPlayer.classList.contains('hidden')) {
+        return;
+    }
+    
     const audio = document.getElementById('music-playing-audio');
     if (!audio) return;
     
-    const miniPlayer = document.getElementById('mini-player');
-    if (!miniPlayer || miniPlayer.classList.contains('hidden')) return; // Only work when music is playing
-    
-    // Don't trigger if user is typing in an input or watching video
+    // Don't trigger if user is typing in an input
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-    const videoModal = document.getElementById('video-modal');
-    if (videoModal && videoModal.style.display === 'flex') return; // Don't interfere with video player
     
-    switch(e.key.toLowerCase()) {
-        case ' ': // Space - Play/Pause
-            e.preventDefault();
-            const playPauseBtn = document.getElementById('mini-play-pause');
-            if (playPauseBtn) {
-                playPauseBtn.click();
+    // Prevenir ações padrão
+    if ([' ', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'm'].includes(e.key)) {
+        e.preventDefault();
+    }
+    
+    switch(e.key) {
+        case ' ':
+            if (audio.paused) {
+                audio.play().catch(() => {});
+            } else {
+                audio.pause();
             }
             break;
             
-        case 'arrowleft': // Voltar 5s
-            e.preventDefault();
+        case 'ArrowLeft':
             audio.currentTime = Math.max(0, audio.currentTime - 5);
             break;
             
-        case 'arrowright': // Avançar 5s
-            e.preventDefault();
+        case 'ArrowRight':
             audio.currentTime = Math.min(audio.duration || 0, audio.currentTime + 5);
+            break;
+            
+        case 'ArrowUp':
+            audio.volume = Math.min(1, audio.volume + 0.1);
+            if (window.updateMusicVolume) {
+                window.updateMusicVolume();
+            }
+            break;
+            
+        case 'ArrowDown':
+            audio.volume = Math.max(0, audio.volume - 0.1);
+            if (window.updateMusicVolume) {
+                window.updateMusicVolume();
+            }
+            break;
+            
+        case 'm':
+            audio.muted = !audio.muted;
+            if (window.updateMusicVolume) {
+                window.updateMusicVolume();
+            }
             break;
     }
 });
+
+// Export updateMusicVolume to make it globally available
+window.updateMusicVolume = updateMusicVolume;
