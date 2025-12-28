@@ -50,7 +50,7 @@
           <div class="music-anime">${theme.anime || ''}</div>
         </div>
       `;
-      card.addEventListener('click', ()=> playMusicUrl(theme.audio));
+      card.addEventListener('click', () => playMusicUrl(theme.audio));
       grid.appendChild(card);
     });
   };

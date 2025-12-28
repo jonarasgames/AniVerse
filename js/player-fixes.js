@@ -49,7 +49,7 @@
         // Fix: Keyboard controls
         document.addEventListener('keydown', function(e) {
             const modal = document.getElementById('video-modal');
-            if (!modal || !modal.classList.contains('show') && modal.style.display !== 'flex') return;
+            if (!modal || (!modal.classList.contains('show') && modal.style.display !== 'flex')) return;
 
             switch(e.key) {
                 case ' ':
