@@ -172,10 +172,11 @@
         const profilesGrid = document.createElement('div');
         profilesGrid.style.cssText = `
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 200px));
-            gap: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 150px));
+            gap: 1.5rem;
             justify-content: center;
-            margin-bottom: 2rem;
+            max-width: 800px;
+            margin: 0 auto 2rem auto;
         `;
 
         // Add existing profiles
@@ -351,7 +352,7 @@
                 margin-top: 8px;
                 justify-content: center;
                 flex-wrap: wrap;
-                max-width: 180px;
+                max-width: 150px;
             `;
             
             profile.continueWatching.slice(0, 3).forEach(anime => {
@@ -556,10 +557,11 @@
         const profilesGrid = document.createElement('div');
         profilesGrid.style.cssText = `
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 200px));
-            gap: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 150px));
+            gap: 1.5rem;
             justify-content: center;
-            margin-bottom: 2rem;
+            max-width: 800px;
+            margin: 0 auto 2rem auto;
         `;
 
         profiles.forEach(profile => {
