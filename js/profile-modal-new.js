@@ -325,66 +325,10 @@
                 // Clear editing flag
                 delete modal.dataset.editingProfileId;
             } else {
-                const activeProfile = window.profileManager.getActiveProfile();
-                
-                if (activeProfile) {
-                    // Update existing active profile
-                    window.profileManager.updateProfile(activeProfile.id, {
-                        name: currentProfileData.name,
-                        pronoun: currentProfileData.pronoun,
-                        avatar: {
-                            backgroundColor: currentProfileData.backgroundColor,
-                            backgroundImage: currentProfileData.backgroundImage,
-                            characterImage: currentProfileData.characterImage,
-                            frame: currentProfileData.frame,
-                            gradient: currentProfileData.backgroundColor.startsWith('linear-gradient') ? 
-                                     currentProfileData.backgroundColor : null
-                        }
-                    });
-                    
-                    // Update header avatar
-                    updateHeaderAvatar(activeProfile);
-                    
-                    // Also call loadProfileData if available to ensure header is shown
-                    if (typeof window.loadProfileData === 'function') {
-                        window.loadProfileData(activeProfile);
-                    } else {
-                        // Fallback: make header visible
-                        const headerAvatar = document.getElementById('header-avatar');
-                        if (headerAvatar) headerAvatar.style.display = 'flex';
-                    }
-                    
-                    // Show success message
-                    showSuccessMessage('Perfil atualizado com sucesso!');
-                } else {
-                    // Create new profile
-                    const newProfile = window.profileManager.createProfile({
-                        name: currentProfileData.name,
-                        pronoun: currentProfileData.pronoun,
-                        avatar: {
-                            backgroundColor: currentProfileData.backgroundColor,
-                            backgroundImage: currentProfileData.backgroundImage,
-                            characterImage: currentProfileData.characterImage,
-                            frame: currentProfileData.frame,
-                            gradient: currentProfileData.backgroundColor.startsWith('linear-gradient') ? 
-                                     currentProfileData.backgroundColor : null
-                        }
-                    });
-                    
-                    window.profileManager.setActiveProfile(newProfile.id);
-                    updateHeaderAvatar(newProfile);
-                    
-                    // Also call loadProfileData if available to ensure header is shown
-                    if (typeof window.loadProfileData === 'function') {
-                        window.loadProfileData(newProfile);
-                    } else {
-                        // Fallback: make header visible
-                        const headerAvatar = document.getElementById('header-avatar');
-                        if (headerAvatar) headerAvatar.style.display = 'flex';
-                    }
-                    
-                    showSuccessMessage('Perfil criado com sucesso!');
-                }
+                // No editingProfileId means we're in create mode
+                // Don't automatically update active profile - let profile-multi.js handle it
+                // This function should only handle the case when explicitly editing a profile
+                return;
             }
         } else {
             // Fallback to localStorage
