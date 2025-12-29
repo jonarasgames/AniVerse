@@ -111,13 +111,14 @@
         const colorOptions = document.querySelectorAll('.color-option');
         colorOptions.forEach(option => {
             option.addEventListener('click', () => {
-                // Clear background image selections when selecting color
-                document.querySelectorAll('.bg-image-option').forEach(o => o.classList.remove('selected'));
+                // Don't clear background image selections - allow layering
+                // document.querySelectorAll('.bg-image-option').forEach(o => o.classList.remove('selected'));
                 
                 colorOptions.forEach(o => o.classList.remove('selected'));
                 option.classList.add('selected');
                 currentProfileData.backgroundColor = option.dataset.value;
-                currentProfileData.backgroundImage = null; // Clear background image when color is selected
+                // DON'T clear background image - keep it for layering
+                // currentProfileData.backgroundImage = null;
                 updatePreview();
             });
         });

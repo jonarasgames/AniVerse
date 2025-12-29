@@ -111,6 +111,7 @@
                 season: animeData.season,
                 episode: animeData.episode,
                 progress: animeData.progress || 0,
+                currentTime: animeData.currentTime || 0,
                 timestamp: new Date().toISOString()
             });
 
@@ -281,21 +282,33 @@
         });
 
         const avatarContainer = document.createElement('div');
-        avatarContainer.style.cssText = `
-            width: 150px;
-            height: 150px;
-            border-radius: 8px;
-            overflow: hidden;
-            margin-bottom: 1rem;
-            background: ${profile.avatar?.backgroundColor || '#ff6b6b'};
-            ${profile.avatar?.backgroundImage ? `background-image: url('${profile.avatar.backgroundImage}');` : ''}
-            ${profile.avatar?.gradient ? `background: ${profile.avatar.gradient};` : ''}
-            background-size: cover;
-            background-position: center;
-            position: relative;
-            border: 3px solid transparent;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-        `;
+        const baseStyles = {
+            width: '150px',
+            height: '150px',
+            borderRadius: '8px',
+            overflow: 'hidden',
+            marginBottom: '1rem',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            position: 'relative',
+            border: '3px solid transparent',
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.3)'
+        };
+        
+        // Build background styles properly
+        let backgroundCSS = '';
+        if (profile.avatar?.backgroundImage) {
+            // Both image and color for fallback
+            backgroundCSS = `background: ${profile.avatar.backgroundColor || '#ff6b6b'} url('${profile.avatar.backgroundImage}') center/cover;`;
+        } else if (profile.avatar?.gradient) {
+            backgroundCSS = `background: ${profile.avatar.gradient};`;
+        } else {
+            backgroundCSS = `background: ${profile.avatar?.backgroundColor || '#ff6b6b'};`;
+        }
+        
+        avatarContainer.style.cssText = Object.entries(baseStyles)
+            .map(([k, v]) => `${k.replace(/[A-Z]/g, m => '-' + m.toLowerCase())}: ${v}`)
+            .join('; ') + '; ' + backgroundCSS;
 
         if (profile.avatar?.characterImage) {
             const charImg = document.createElement('img');
@@ -705,8 +718,16 @@
             headerAvatar.style.height = '40px';
             headerAvatar.style.borderRadius = '50%';
             headerAvatar.style.cursor = 'pointer';
-            headerAvatar.style.background = profile.avatar?.gradient || profile.avatar?.backgroundColor || '#ff6b6b';
             headerAvatar.style.position = 'relative';
+            
+            // Set background with proper fallback
+            if (profile.avatar?.backgroundImage) {
+                headerAvatar.style.background = `${profile.avatar.backgroundColor || '#ff6b6b'} url('${profile.avatar.backgroundImage}') center/cover`;
+            } else if (profile.avatar?.gradient) {
+                headerAvatar.style.background = profile.avatar.gradient;
+            } else {
+                headerAvatar.style.background = profile.avatar?.backgroundColor || '#ff6b6b';
+            }
             
             // Clear existing content
             headerAvatar.innerHTML = '';
