@@ -870,7 +870,11 @@
                 
                 card.addEventListener('click', () => {
                     const anime = window.animeDB?.animes.find(a => a.id === item.animeId);
-                    if (anime && window.openEpisode) {
+                    if (anime && window.openAnimeModal) {
+                        // Use openAnimeModal to properly populate season/episode selectors
+                        window.openAnimeModal(anime, item.season, item.episode - 1);
+                    } else if (anime && window.openEpisode) {
+                        // Fallback to openEpisode if openAnimeModal not available
                         window.openEpisode(anime, item.season, item.episode - 1);
                     }
                 });
