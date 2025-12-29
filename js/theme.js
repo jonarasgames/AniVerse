@@ -16,6 +16,8 @@
         document.body.classList.remove('dark-mode', 'light-mode');
         if (theme === 'theme-dark') {
             document.body.classList.add('dark-mode');
+        } else {
+            document.body.classList.add('light-mode');
         }
         
         console.log('Theme initialized:', theme);
@@ -31,6 +33,8 @@
                 document.body.classList.remove('dark-mode', 'light-mode');
                 if (newTheme === 'theme-dark') {
                     document.body.classList.add('dark-mode');
+                } else {
+                    document.body.classList.add('light-mode');
                 }
                 
                 console.log('System theme changed:', newTheme);
@@ -49,6 +53,8 @@
         document.body.classList.remove('dark-mode', 'light-mode');
         if (newTheme === 'theme-dark') {
             document.body.classList.add('dark-mode');
+        } else {
+            document.body.classList.add('light-mode');
         }
         
         localStorage.setItem('aniverse_theme', newTheme);
