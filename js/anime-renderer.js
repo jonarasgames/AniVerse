@@ -128,8 +128,8 @@
       window.openEpisode(anime, season, episode);
     }
     
-    // Show modal
-    modal.style.display = 'block';
+    // Show modal - use flex for proper keyboard detection
+    modal.style.display = 'flex';
     document.body.style.overflow = 'hidden';
   }
 

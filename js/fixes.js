@@ -41,7 +41,10 @@
         if (headerAvatar) {
             headerAvatar.addEventListener('click', function(e) {
                 e.preventDefault();
-                if (typeof openProfileModal === 'function') {
+                // Avatar click should open profile selection
+                if (typeof showProfileSelectionScreen === 'function') {
+                    showProfileSelectionScreen();
+                } else if (typeof openProfileModal === 'function') {
                     openProfileModal();
                 } else {
                     const modal = document.getElementById('profile-modal');

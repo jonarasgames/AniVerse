@@ -215,3 +215,24 @@ body.dark-mode .music-section h2,
 body.dark-mode .music-section h3 {
     color: #ffffff !important;
 }
+
+/* Additional music section dark mode fixes */
+body.dark-mode .music-section {
+    color: #e0e0e0;
+}
+
+body.dark-mode .music-tracks {
+    color: #e0e0e0;
+}
+
+body.dark-mode .music-card .music-title {
+    color: #ffffff !important;
+}
+
+body.dark-mode .music-card .music-artist {
+    color: #b0b0b0 !important;
+}
+
+body.dark-mode .music-card .music-type {
+    color: #909090 !important;
+}
