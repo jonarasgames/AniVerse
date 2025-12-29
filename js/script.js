@@ -172,6 +172,14 @@ function openEpisode(anime, seasonNumber, episodeIndex){
     }
     
     if (!anime) return;
+    
+    // GARANTIR QUE O MODAL DE VÍDEO SEJA EXIBIDO
+    const videoModal = document.getElementById('video-modal');
+    if (videoModal) {
+        videoModal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+    
     const season = (anime.seasons || []).find(s => s.number === seasonNumber);
     const episode = season && Array.isArray(season.episodes) ? season.episodes[episodeIndex] : null;
     const player = document.getElementById('anime-player'); if (!player) return;

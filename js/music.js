@@ -26,6 +26,20 @@
             audio.preload = 'metadata';
             audio.style.display = 'none';
             document.body.appendChild(audio);
+            
+            // Restore saved volume
+            try {
+                const savedVolume = localStorage.getItem('musicVolume');
+                const savedMuted = localStorage.getItem('musicMuted');
+                if (savedVolume !== null) {
+                    audio.volume = parseFloat(savedVolume);
+                }
+                if (savedMuted !== null) {
+                    audio.muted = savedMuted === 'true';
+                }
+            } catch(e) {
+                console.warn('Could not restore music volume:', e);
+            }
         }
         
         musicPlayerInstance = audio;
@@ -127,6 +141,9 @@
                 currentPlayingCard = null;
             }
         });
+        
+        // Initialize volume display
+        updateMusicVolume();
     }
     
     function updatePlayPauseIcon() {
@@ -199,6 +216,14 @@
                     icon.className = 'fas fa-volume-up';
                 }
             }
+        }
+        
+        // Persist volume to localStorage
+        try {
+            localStorage.setItem('musicVolume', audio.volume.toString());
+            localStorage.setItem('musicMuted', audio.muted.toString());
+        } catch(e) {
+            console.warn('Could not save music volume:', e);
         }
     }
     
