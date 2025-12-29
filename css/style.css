@@ -991,6 +991,7 @@ footer {
     display: none;
     cursor: pointer;
     transition: all 0.3s ease;
+    position: relative;
 }
 
 .user-avatar:hover {
@@ -998,10 +999,28 @@ footer {
     box-shadow: 0 0 10px rgba(255,255,255,0.5);
 }
 
-.user-avatar img {
+.user-avatar img,
+.user-avatar .avatar-char-layer {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+}
+
+.user-avatar .avatar-bg-layer {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+}
+
+.user-avatar .avatar-frame-layer {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    z-index: 3;
+    pointer-events: none;
 }
 
 .user-profile {

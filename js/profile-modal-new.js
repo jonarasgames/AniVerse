@@ -238,33 +238,47 @@
         const previewName = document.getElementById('preview-name');
 
         if (previewBg) {
-            // Reset all background styles first
+            // Reset all background properties first
             previewBg.style.background = '';
             previewBg.style.backgroundColor = '';
             previewBg.style.backgroundImage = '';
-            previewBg.style.backgroundSize = '';
-            previewBg.style.backgroundPosition = '';
             
+            // Set background color/gradient (as base layer)
+            if (currentProfileData.backgroundColor) {
+                if (currentProfileData.backgroundColor.startsWith('linear-gradient') || 
+                    currentProfileData.backgroundColor.startsWith('radial-gradient')) {
+                    // For gradients, we'll use backgroundColor as fallback and layer gradient via backgroundImage
+                    // But if there's also a background image, we need to layer both
+                    if (currentProfileData.backgroundImage) {
+                        // Layer: gradient as fallback, then image on top
+                        previewBg.style.backgroundColor = '#667eea'; // Fallback solid color from gradient
+                        previewBg.style.backgroundImage = `${currentProfileData.backgroundColor}, url('${currentProfileData.backgroundImage}')`;
+                    } else {
+                        // Just the gradient
+                        previewBg.style.backgroundImage = currentProfileData.backgroundColor;
+                    }
+                } else {
+                    // Solid color - always set as backgroundColor
+                    previewBg.style.backgroundColor = currentProfileData.backgroundColor;
+                    // If there's also a background image, layer it on top
+                    if (currentProfileData.backgroundImage) {
+                        previewBg.style.backgroundImage = `url('${currentProfileData.backgroundImage}')`;
+                    }
+                }
+            } else {
+                // Default gradient if no color is selected
+                if (currentProfileData.backgroundImage) {
+                    previewBg.style.backgroundColor = '#667eea'; // Fallback solid color
+                    previewBg.style.backgroundImage = `linear-gradient(135deg, #667eea 0%, #764ba2 100%), url('${currentProfileData.backgroundImage}')`;
+                } else {
+                    previewBg.style.backgroundImage = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                }
+            }
+            
+            // Set background image properties if image exists
             if (currentProfileData.backgroundImage) {
-                // Use backgroundImage when image is selected, keep color as backup
-                previewBg.style.backgroundImage = `url('${currentProfileData.backgroundImage}')`;
                 previewBg.style.backgroundSize = 'cover';
                 previewBg.style.backgroundPosition = 'center';
-                // Keep backgroundColor as fallback while image loads
-                if (currentProfileData.backgroundColor) {
-                    previewBg.style.backgroundColor = currentProfileData.backgroundColor;
-                }
-            } else if (currentProfileData.backgroundColor && 
-                       (currentProfileData.backgroundColor.startsWith('linear-gradient') || 
-                        currentProfileData.backgroundColor.startsWith('radial-gradient'))) {
-                // Use background property for gradients
-                previewBg.style.background = currentProfileData.backgroundColor;
-            } else if (currentProfileData.backgroundColor) {
-                // Use backgroundColor for solid colors
-                previewBg.style.backgroundColor = currentProfileData.backgroundColor;
-            } else {
-                // Default gradient if nothing is selected
-                previewBg.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
             }
         }
 
@@ -309,6 +323,15 @@
                 const updatedProfile = window.profileManager.getProfile(editingProfileId);
                 updateHeaderAvatar(updatedProfile);
                 
+                // Also call loadProfileData if available to ensure header is shown
+                if (typeof window.loadProfileData === 'function') {
+                    window.loadProfileData(updatedProfile);
+                } else {
+                    // Fallback: make header visible
+                    const headerAvatar = document.getElementById('header-avatar');
+                    if (headerAvatar) headerAvatar.style.display = 'flex';
+                }
+                
                 // Show success message
                 showSuccessMessage('Perfil atualizado com sucesso!');
                 
@@ -335,6 +358,15 @@
                     // Update header avatar
                     updateHeaderAvatar(activeProfile);
                     
+                    // Also call loadProfileData if available to ensure header is shown
+                    if (typeof window.loadProfileData === 'function') {
+                        window.loadProfileData(activeProfile);
+                    } else {
+                        // Fallback: make header visible
+                        const headerAvatar = document.getElementById('header-avatar');
+                        if (headerAvatar) headerAvatar.style.display = 'flex';
+                    }
+                    
                     // Show success message
                     showSuccessMessage('Perfil atualizado com sucesso!');
                 } else {
@@ -354,6 +386,15 @@
                     
                     window.profileManager.setActiveProfile(newProfile.id);
                     updateHeaderAvatar(newProfile);
+                    
+                    // Also call loadProfileData if available to ensure header is shown
+                    if (typeof window.loadProfileData === 'function') {
+                        window.loadProfileData(newProfile);
+                    } else {
+                        // Fallback: make header visible
+                        const headerAvatar = document.getElementById('header-avatar');
+                        if (headerAvatar) headerAvatar.style.display = 'flex';
+                    }
                     
                     showSuccessMessage('Perfil criado com sucesso!');
                 }
@@ -377,9 +418,40 @@
         const headerAvatar = document.getElementById('header-avatar');
         if (!headerAvatar) return;
 
-        const imgElement = headerAvatar.querySelector('img');
+        // Update background layer
+        const bgLayer = document.getElementById('header-avatar-bg');
+        if (bgLayer && profile.avatar) {
+            // Apply background color/gradient
+            if (profile.avatar.backgroundImage) {
+                bgLayer.style.backgroundImage = `url('${profile.avatar.backgroundImage}')`;
+                bgLayer.style.backgroundSize = 'cover';
+                bgLayer.style.backgroundPosition = 'center';
+                // Keep color as fallback
+                if (profile.avatar.backgroundColor) {
+                    bgLayer.style.backgroundColor = profile.avatar.backgroundColor;
+                } else if (profile.avatar.gradient) {
+                    bgLayer.style.background = profile.avatar.gradient;
+                }
+            } else if (profile.avatar.gradient) {
+                bgLayer.style.background = profile.avatar.gradient;
+            } else if (profile.avatar.backgroundColor) {
+                bgLayer.style.backgroundColor = profile.avatar.backgroundColor;
+            }
+        }
+
+        // Update character image
+        const imgElement = headerAvatar.querySelector('img, .avatar-char-layer');
         if (imgElement && profile.avatar?.characterImage) {
             imgElement.src = profile.avatar.characterImage;
+        }
+
+        // Update frame layer
+        const frameLayer = document.getElementById('header-avatar-frame');
+        if (frameLayer && profile.avatar) {
+            frameLayer.className = 'avatar-frame-layer';
+            if (profile.avatar.frame) {
+                frameLayer.classList.add(profile.avatar.frame);
+            }
         }
     }
 
