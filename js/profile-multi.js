@@ -710,42 +710,44 @@
     }
 
     function loadProfileData(profile) {
-        // Update header avatar
+        // Update header avatar using the new layered structure
         const headerAvatar = document.getElementById('header-avatar');
         if (headerAvatar) {
             headerAvatar.style.display = 'flex';
-            headerAvatar.style.width = '40px';
-            headerAvatar.style.height = '40px';
-            headerAvatar.style.borderRadius = '50%';
-            headerAvatar.style.cursor = 'pointer';
-            headerAvatar.style.position = 'relative';
             
-            // Set background with proper fallback
-            if (profile.avatar?.backgroundImage) {
-                headerAvatar.style.background = `${profile.avatar.backgroundColor || '#ff6b6b'} url('${profile.avatar.backgroundImage}') center/cover`;
-            } else if (profile.avatar?.gradient) {
-                headerAvatar.style.background = profile.avatar.gradient;
-            } else {
-                headerAvatar.style.background = profile.avatar?.backgroundColor || '#ff6b6b';
+            // Update background layer
+            const bgLayer = document.getElementById('header-avatar-bg');
+            if (bgLayer) {
+                bgLayer.style.cssText = ''; // Reset
+                if (profile.avatar?.backgroundImage) {
+                    bgLayer.style.backgroundImage = `url('${profile.avatar.backgroundImage}')`;
+                    bgLayer.style.backgroundSize = 'cover';
+                    bgLayer.style.backgroundPosition = 'center';
+                    if (profile.avatar.backgroundColor) {
+                        bgLayer.style.backgroundColor = profile.avatar.backgroundColor;
+                    } else if (profile.avatar.gradient) {
+                        bgLayer.style.background = profile.avatar.gradient;
+                    }
+                } else if (profile.avatar?.gradient) {
+                    bgLayer.style.background = profile.avatar.gradient;
+                } else {
+                    bgLayer.style.backgroundColor = profile.avatar?.backgroundColor || '#ff6b6b';
+                }
             }
             
-            // Clear existing content
-            headerAvatar.innerHTML = '';
-            
-            // Add character image if exists
-            if (profile.avatar?.characterImage) {
-                const img = document.createElement('img');
-                img.src = profile.avatar.characterImage;
-                img.style.cssText = 'width: 100%; height: 100%; object-fit: cover; border-radius: 50%;';
-                headerAvatar.appendChild(img);
+            // Update character image
+            const charImg = headerAvatar.querySelector('img, .avatar-char-layer');
+            if (charImg && profile.avatar?.characterImage) {
+                charImg.src = profile.avatar.characterImage;
             }
             
-            // Add frame overlay if frame is set
-            if (profile.avatar?.frame) {
-                const frameOverlay = document.createElement('span');
-                frameOverlay.className = 'avatar-frame-layer ' + profile.avatar.frame;
-                frameOverlay.style.cssText = 'position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: 50%; pointer-events: none;';
-                headerAvatar.appendChild(frameOverlay);
+            // Update frame layer
+            const frameLayer = document.getElementById('header-avatar-frame');
+            if (frameLayer) {
+                frameLayer.className = 'avatar-frame-layer';
+                if (profile.avatar?.frame) {
+                    frameLayer.classList.add(profile.avatar.frame);
+                }
             }
             
             headerAvatar.onclick = () => {
