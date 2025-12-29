@@ -238,35 +238,47 @@
         const previewName = document.getElementById('preview-name');
 
         if (previewBg) {
-            // Always set background color first (as base layer or fallback)
+            // Reset all background properties first
+            previewBg.style.background = '';
+            previewBg.style.backgroundColor = '';
+            previewBg.style.backgroundImage = '';
+            
+            // Set background color/gradient (as base layer)
             if (currentProfileData.backgroundColor) {
                 if (currentProfileData.backgroundColor.startsWith('linear-gradient') || 
                     currentProfileData.backgroundColor.startsWith('radial-gradient')) {
-                    // For gradients, set as background-image
-                    previewBg.style.background = currentProfileData.backgroundColor;
+                    // For gradients, we'll use backgroundColor as fallback and layer gradient via backgroundImage
+                    // But if there's also a background image, we need to layer both
+                    if (currentProfileData.backgroundImage) {
+                        // Layer: gradient as fallback, then image on top
+                        previewBg.style.backgroundColor = '#667eea'; // Fallback solid color from gradient
+                        previewBg.style.backgroundImage = `${currentProfileData.backgroundColor}, url('${currentProfileData.backgroundImage}')`;
+                    } else {
+                        // Just the gradient
+                        previewBg.style.backgroundImage = currentProfileData.backgroundColor;
+                    }
                 } else {
-                    // For solid colors, set as backgroundColor
+                    // Solid color - always set as backgroundColor
                     previewBg.style.backgroundColor = currentProfileData.backgroundColor;
-                    previewBg.style.backgroundImage = ''; // Clear any gradient
+                    // If there's also a background image, layer it on top
+                    if (currentProfileData.backgroundImage) {
+                        previewBg.style.backgroundImage = `url('${currentProfileData.backgroundImage}')`;
+                    }
                 }
             } else {
                 // Default gradient if no color is selected
-                previewBg.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                if (currentProfileData.backgroundImage) {
+                    previewBg.style.backgroundColor = '#667eea'; // Fallback solid color
+                    previewBg.style.backgroundImage = `linear-gradient(135deg, #667eea 0%, #764ba2 100%), url('${currentProfileData.backgroundImage}')`;
+                } else {
+                    previewBg.style.backgroundImage = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                }
             }
             
-            // If background image is selected, layer it on top of the color
+            // Set background image properties if image exists
             if (currentProfileData.backgroundImage) {
-                // Combine background color/gradient with image using CSS background shorthand
-                const bgColor = currentProfileData.backgroundColor || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-                previewBg.style.backgroundImage = `url('${currentProfileData.backgroundImage}')`;
                 previewBg.style.backgroundSize = 'cover';
                 previewBg.style.backgroundPosition = 'center';
-                // Keep the backgroundColor set above as fallback while image loads
-            } else {
-                // No background image, clear image-specific properties
-                previewBg.style.backgroundImage = '';
-                previewBg.style.backgroundSize = '';
-                previewBg.style.backgroundPosition = '';
             }
         }
 
