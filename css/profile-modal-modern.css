@@ -616,11 +616,48 @@
 }
 
 /* Molduras Animadas */
+.avatar-frame-layer.frame-glow {
+    box-shadow: 0 0 20px rgba(107, 124, 255, 0.9), 0 0 40px rgba(99, 132, 255, 0.6);
+    border: 3px solid rgba(255, 255, 255, 0.3);
+}
+
+.avatar-frame-layer.frame-rainbow {
+    border: 4px solid transparent;
+    background: linear-gradient(#1e1e2e, #1e1e2e) padding-box,
+                conic-gradient(from 0deg, #ff6b6b, #ffd56b, #6bffce, #6bbdff, #d96bff, #ff6b6b) border-box;
+    animation: rainbowRotate 3s linear infinite;
+}
+
+@keyframes rainbowRotate {
+    to { filter: hue-rotate(360deg); }
+}
+
+.avatar-frame-layer.frame-pulse {
+    box-shadow: 0 0 20px rgba(255, 100, 150, 0.8);
+    animation: pulse-animation 2s ease-in-out infinite;
+}
+
+@keyframes pulse-animation {
+    0%, 100% {
+        box-shadow: 0 0 10px rgba(255, 100, 150, 0.6);
+        border: 3px solid rgba(255, 100, 150, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 30px rgba(255, 100, 150, 1), 0 0 50px rgba(255, 100, 150, 0.6);
+        border: 3px solid rgba(255, 100, 150, 0.8);
+    }
+}
+
 .avatar-frame-layer.frame-spin {
     border: 4px solid transparent;
     background: linear-gradient(white, white) padding-box,
                 linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3) border-box;
     animation: spin 3s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }
 
 .avatar-frame-layer.frame-neon {
@@ -690,6 +727,11 @@
 }
 
 /* Previews */
+.frame-pulse-preview {
+    box-shadow: 0 0 20px rgba(255, 100, 150, 0.8);
+    animation: pulse-animation 2s ease-in-out infinite;
+}
+
 .frame-spin-preview {
     border: 4px solid transparent;
     background: linear-gradient(white, white) padding-box,

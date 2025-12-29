@@ -238,33 +238,35 @@
         const previewName = document.getElementById('preview-name');
 
         if (previewBg) {
-            // Reset all background styles first
-            previewBg.style.background = '';
-            previewBg.style.backgroundColor = '';
-            previewBg.style.backgroundImage = '';
-            previewBg.style.backgroundSize = '';
-            previewBg.style.backgroundPosition = '';
+            // Always set background color first (as base layer or fallback)
+            if (currentProfileData.backgroundColor) {
+                if (currentProfileData.backgroundColor.startsWith('linear-gradient') || 
+                    currentProfileData.backgroundColor.startsWith('radial-gradient')) {
+                    // For gradients, set as background-image
+                    previewBg.style.background = currentProfileData.backgroundColor;
+                } else {
+                    // For solid colors, set as backgroundColor
+                    previewBg.style.backgroundColor = currentProfileData.backgroundColor;
+                    previewBg.style.backgroundImage = ''; // Clear any gradient
+                }
+            } else {
+                // Default gradient if no color is selected
+                previewBg.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+            }
             
+            // If background image is selected, layer it on top of the color
             if (currentProfileData.backgroundImage) {
-                // Use backgroundImage when image is selected, keep color as backup
+                // Combine background color/gradient with image using CSS background shorthand
+                const bgColor = currentProfileData.backgroundColor || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
                 previewBg.style.backgroundImage = `url('${currentProfileData.backgroundImage}')`;
                 previewBg.style.backgroundSize = 'cover';
                 previewBg.style.backgroundPosition = 'center';
-                // Keep backgroundColor as fallback while image loads
-                if (currentProfileData.backgroundColor) {
-                    previewBg.style.backgroundColor = currentProfileData.backgroundColor;
-                }
-            } else if (currentProfileData.backgroundColor && 
-                       (currentProfileData.backgroundColor.startsWith('linear-gradient') || 
-                        currentProfileData.backgroundColor.startsWith('radial-gradient'))) {
-                // Use background property for gradients
-                previewBg.style.background = currentProfileData.backgroundColor;
-            } else if (currentProfileData.backgroundColor) {
-                // Use backgroundColor for solid colors
-                previewBg.style.backgroundColor = currentProfileData.backgroundColor;
+                // Keep the backgroundColor set above as fallback while image loads
             } else {
-                // Default gradient if nothing is selected
-                previewBg.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                // No background image, clear image-specific properties
+                previewBg.style.backgroundImage = '';
+                previewBg.style.backgroundSize = '';
+                previewBg.style.backgroundPosition = '';
             }
         }
 
@@ -377,9 +379,40 @@
         const headerAvatar = document.getElementById('header-avatar');
         if (!headerAvatar) return;
 
-        const imgElement = headerAvatar.querySelector('img');
+        // Update background layer
+        const bgLayer = document.getElementById('header-avatar-bg');
+        if (bgLayer && profile.avatar) {
+            // Apply background color/gradient
+            if (profile.avatar.backgroundImage) {
+                bgLayer.style.backgroundImage = `url('${profile.avatar.backgroundImage}')`;
+                bgLayer.style.backgroundSize = 'cover';
+                bgLayer.style.backgroundPosition = 'center';
+                // Keep color as fallback
+                if (profile.avatar.backgroundColor) {
+                    bgLayer.style.backgroundColor = profile.avatar.backgroundColor;
+                } else if (profile.avatar.gradient) {
+                    bgLayer.style.background = profile.avatar.gradient;
+                }
+            } else if (profile.avatar.gradient) {
+                bgLayer.style.background = profile.avatar.gradient;
+            } else if (profile.avatar.backgroundColor) {
+                bgLayer.style.backgroundColor = profile.avatar.backgroundColor;
+            }
+        }
+
+        // Update character image
+        const imgElement = headerAvatar.querySelector('img, .avatar-char-layer');
         if (imgElement && profile.avatar?.characterImage) {
             imgElement.src = profile.avatar.characterImage;
+        }
+
+        // Update frame layer
+        const frameLayer = document.getElementById('header-avatar-frame');
+        if (frameLayer && profile.avatar) {
+            frameLayer.className = 'avatar-frame-layer';
+            if (profile.avatar.frame) {
+                frameLayer.classList.add(profile.avatar.frame);
+            }
         }
     }
 

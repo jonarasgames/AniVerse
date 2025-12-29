@@ -30,7 +30,13 @@
             newLoginBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 if (typeof openProfileModal === 'function') {
-                    openProfileModal();
+                    // Pass active profile data when editing
+                    if (window.profileManager) {
+                        const activeProfile = window.profileManager.getActiveProfile();
+                        openProfileModal(activeProfile);
+                    } else {
+                        openProfileModal();
+                    }
                 } else {
                     const modal = document.getElementById('profile-modal');
                     if (modal) modal.style.display = 'block';
