@@ -318,5 +318,8 @@
     };
   }
 
+  // Export openAnimeModal to window for use by other modules (e.g., profile-multi.js)
+  window.openAnimeModal = openAnimeModal;
+
   console.log('✅ Anime renderer loaded');
 })();
