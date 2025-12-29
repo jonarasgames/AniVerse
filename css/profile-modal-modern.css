@@ -232,20 +232,90 @@
 }
 
 /* Frame Effects */
-.avatar-frame-layer.frame-glow {
+.avatar-frame-layer.glow {
     box-shadow: 0 0 20px rgba(107, 124, 255, 0.9), 0 0 40px rgba(99, 132, 255, 0.6);
     border: 3px solid rgba(255, 255, 255, 0.3);
 }
 
-.avatar-frame-layer.frame-rainbow {
+.avatar-frame-layer.rainbow {
     border: 4px solid transparent;
-    background: linear-gradient(#1e1e2e, #1e1e2e) padding-box,
+    background: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0)) padding-box,
                 conic-gradient(from 0deg, #ff6b6b, #ffd56b, #6bffce, #6bbdff, #d96bff, #ff6b6b) border-box;
     animation: rainbowRotate 3s linear infinite;
 }
 
+.avatar-frame-layer.pulse {
+    border: 3px solid #667eea;
+    animation: pulseFrame 2s ease-in-out infinite;
+}
+
+.avatar-frame-layer.spin {
+    border: 4px solid transparent;
+    border-top-color: #ff6b6b;
+    border-right-color: #ffd56b;
+    border-bottom-color: #6bffce;
+    border-left-color: #6bbdff;
+    animation: spinFrame 3s linear infinite;
+}
+
+.avatar-frame-layer.neon {
+    box-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff, 0 0 30px #ff00ff;
+    border: 2px solid #ff00ff;
+    animation: neonPulse 1.5s ease-in-out infinite;
+}
+
+.avatar-frame-layer.fire {
+    border: 3px solid #ff4500;
+    box-shadow: 0 0 15px #ff4500, 0 0 30px #ff6347, 0 0 45px #ff7f50;
+    animation: fireFlicker 0.3s ease-in-out infinite;
+}
+
+.avatar-frame-layer.electric {
+    border: 3px solid #00ffff;
+    box-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff;
+    animation: electricZap 0.1s ease-in-out infinite;
+}
+
 @keyframes rainbowRotate {
     to { filter: hue-rotate(360deg); }
+}
+
+@keyframes pulseFrame {
+    0%, 100% { 
+        transform: scale(1);
+        border-color: #667eea;
+    }
+    50% { 
+        transform: scale(1.05);
+        border-color: #764ba2;
+    }
+}
+
+@keyframes spinFrame {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes neonPulse {
+    0%, 100% { 
+        box-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff, 0 0 30px #ff00ff;
+    }
+    50% { 
+        box-shadow: 0 0 20px #ff00ff, 0 0 40px #ff00ff, 0 0 60px #ff00ff;
+    }
+}
+
+@keyframes fireFlicker {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.8; }
+}
+
+@keyframes electricZap {
+    0%, 100% { 
+        box-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff;
+    }
+    50% { 
+        box-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff;
+    }
 }
 
 .profile-name-preview {

@@ -282,46 +282,59 @@
         });
 
         const avatarContainer = document.createElement('div');
-        const baseStyles = {
-            width: '150px',
-            height: '150px',
-            borderRadius: '8px',
-            overflow: 'hidden',
-            marginBottom: '1rem',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            position: 'relative',
-            border: '3px solid transparent',
-            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.3)'
-        };
+        avatarContainer.style.cssText = `
+            width: 150px;
+            height: 150px;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+            position: relative;
+            border: 3px solid transparent;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        `;
         
-        // Build background styles properly
-        let backgroundCSS = '';
-        if (profile.avatar?.backgroundImage) {
-            // Both image and color for fallback
-            backgroundCSS = `background: ${profile.avatar.backgroundColor || '#ff6b6b'} url('${profile.avatar.backgroundImage}') center/cover;`;
-        } else if (profile.avatar?.gradient) {
-            backgroundCSS = `background: ${profile.avatar.gradient};`;
+        // Create layered structure like the preview
+        const bgLayer = document.createElement('div');
+        bgLayer.style.cssText = `
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+        `;
+        
+        // Layer 1: Background color/gradient
+        if (profile.avatar?.gradient) {
+            bgLayer.style.background = profile.avatar.gradient;
+        } else if (profile.avatar?.backgroundColor) {
+            bgLayer.style.backgroundColor = profile.avatar.backgroundColor;
         } else {
-            backgroundCSS = `background: ${profile.avatar?.backgroundColor || '#ff6b6b'};`;
+            bgLayer.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
         }
         
-        avatarContainer.style.cssText = Object.entries(baseStyles)
-            .map(([k, v]) => `${k.replace(/[A-Z]/g, m => '-' + m.toLowerCase())}: ${v}`)
-            .join('; ') + '; ' + backgroundCSS;
+        // Layer 2: Background image (if present)
+        if (profile.avatar?.backgroundImage) {
+            bgLayer.style.backgroundImage = `url('${profile.avatar.backgroundImage}')`;
+            bgLayer.style.backgroundSize = 'cover';
+            bgLayer.style.backgroundPosition = 'center';
+        }
+        
+        avatarContainer.appendChild(bgLayer);
 
+        // Layer 3: Character image
         if (profile.avatar?.characterImage) {
             const charImg = document.createElement('img');
             charImg.src = profile.avatar.characterImage;
             charImg.style.cssText = `
+                position: absolute;
+                inset: 0;
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
+                z-index: 2;
             `;
             avatarContainer.appendChild(charImg);
         }
 
-        // Add frame overlay if frame is set
+        // Layer 4: Frame overlay (if frame is set)
         if (profile.avatar?.frame) {
             const frameOverlay = document.createElement('div');
             frameOverlay.className = 'avatar-frame-layer ' + profile.avatar.frame;
@@ -333,6 +346,7 @@
                 bottom: 0;
                 pointer-events: none;
                 border-radius: 8px;
+                z-index: 3;
             `;
             avatarContainer.appendChild(frameOverlay);
         }
@@ -651,21 +665,46 @@
             border-radius: 8px;
             overflow: hidden;
             margin-bottom: 1rem;
-            background: ${profile.avatar?.backgroundColor || '#ff6b6b'};
-            ${profile.avatar?.backgroundImage ? `background-image: url('${profile.avatar.backgroundImage}');` : ''}
-            ${profile.avatar?.gradient ? `background: ${profile.avatar.gradient};` : ''}
-            background-size: cover;
-            background-position: center;
             position: relative;
         `;
 
+        // Create layered structure
+        const bgLayer = document.createElement('div');
+        bgLayer.style.cssText = `
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+        `;
+        
+        // Layer 1: Background color/gradient
+        if (profile.avatar?.gradient) {
+            bgLayer.style.background = profile.avatar.gradient;
+        } else if (profile.avatar?.backgroundColor) {
+            bgLayer.style.backgroundColor = profile.avatar.backgroundColor;
+        } else {
+            bgLayer.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+        }
+        
+        // Layer 2: Background image
+        if (profile.avatar?.backgroundImage) {
+            bgLayer.style.backgroundImage = `url('${profile.avatar.backgroundImage}')`;
+            bgLayer.style.backgroundSize = 'cover';
+            bgLayer.style.backgroundPosition = 'center';
+        }
+        
+        avatarContainer.appendChild(bgLayer);
+
+        // Layer 3: Character image
         if (profile.avatar?.characterImage) {
             const charImg = document.createElement('img');
             charImg.src = profile.avatar.characterImage;
             charImg.style.cssText = `
+                position: absolute;
+                inset: 0;
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
+                z-index: 2;
             `;
             avatarContainer.appendChild(charImg);
         }
@@ -687,6 +726,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            z-index: 10;
         `;
         deleteBtn.addEventListener('click', () => {
             if (confirm(`Deseja deletar o perfil "${profile.name}${profile.pronoun}"?`)) {
@@ -719,19 +759,24 @@
             const bgLayer = document.getElementById('header-avatar-bg');
             if (bgLayer) {
                 bgLayer.style.cssText = ''; // Reset
+                bgLayer.style.position = 'absolute';
+                bgLayer.style.inset = '0';
+                bgLayer.style.zIndex = '1';
+                
+                // Layer 1: Background color/gradient
+                if (profile.avatar?.gradient) {
+                    bgLayer.style.background = profile.avatar.gradient;
+                } else if (profile.avatar?.backgroundColor) {
+                    bgLayer.style.backgroundColor = profile.avatar.backgroundColor;
+                } else {
+                    bgLayer.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                }
+                
+                // Layer 2: Background image
                 if (profile.avatar?.backgroundImage) {
                     bgLayer.style.backgroundImage = `url('${profile.avatar.backgroundImage}')`;
                     bgLayer.style.backgroundSize = 'cover';
                     bgLayer.style.backgroundPosition = 'center';
-                    if (profile.avatar.backgroundColor) {
-                        bgLayer.style.backgroundColor = profile.avatar.backgroundColor;
-                    } else if (profile.avatar.gradient) {
-                        bgLayer.style.background = profile.avatar.gradient;
-                    }
-                } else if (profile.avatar?.gradient) {
-                    bgLayer.style.background = profile.avatar.gradient;
-                } else {
-                    bgLayer.style.backgroundColor = profile.avatar?.backgroundColor || '#ff6b6b';
                 }
             }
             
@@ -739,12 +784,18 @@
             const charImg = headerAvatar.querySelector('img, .avatar-char-layer');
             if (charImg && profile.avatar?.characterImage) {
                 charImg.src = profile.avatar.characterImage;
+                charImg.style.position = 'absolute';
+                charImg.style.inset = '0';
+                charImg.style.zIndex = '2';
             }
             
             // Update frame layer
             const frameLayer = document.getElementById('header-avatar-frame');
             if (frameLayer) {
                 frameLayer.className = 'avatar-frame-layer';
+                frameLayer.style.position = 'absolute';
+                frameLayer.style.inset = '0';
+                frameLayer.style.zIndex = '3';
                 if (profile.avatar?.frame) {
                     frameLayer.classList.add(profile.avatar.frame);
                 }
@@ -910,7 +961,13 @@
         }
         
         if (activeProfile) {
-            // Active profile exists, load it
+            // Active profile exists
+            // If profile has password, redirect to selection screen for protection
+            if (activeProfile.password) {
+                showProfileSelectionScreen();
+                return;
+            }
+            // Otherwise, load it directly
             loadProfileData(activeProfile);
         }
 

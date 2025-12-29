@@ -210,8 +210,13 @@
             'https://files.catbox.moe/0oprd4.png'
         ];
         
-        bgImagesGrid.innerHTML = bgImages.map((src, idx) => `
-            <div class="bg-image-option ${idx === 0 ? 'selected' : ''}" data-src="${src}">
+        // Add "No background" option first
+        bgImagesGrid.innerHTML = `
+            <div class="bg-image-option bg-none-option" data-src="">
+                <div style="width: 100%; height: 100%; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem;">✕</div>
+            </div>
+        ` + bgImages.map((src, idx) => `
+            <div class="bg-image-option" data-src="${src}">
                 <img src="${src}" alt="Fundo ${idx + 1}">
             </div>
         `).join('');
@@ -219,13 +224,9 @@
         // Event listeners
         bgImagesGrid.querySelectorAll('.bg-image-option').forEach(opt => {
             opt.addEventListener('click', () => {
-                // Don't clear color selections - keep as fallback while image loads
-                // document.querySelectorAll('.color-option').forEach(o => o.classList.remove('selected'));
-                
                 bgImagesGrid.querySelectorAll('.bg-image-option').forEach(o => o.classList.remove('selected'));
                 opt.classList.add('selected');
-                currentProfileData.backgroundImage = opt.dataset.src;
-                // Don't clear backgroundColor - keep it as fallback for when image is loading
+                currentProfileData.backgroundImage = opt.dataset.src || null;
                 updatePreview();
             });
         });
@@ -242,50 +243,36 @@
             previewBg.style.background = '';
             previewBg.style.backgroundColor = '';
             previewBg.style.backgroundImage = '';
+            previewBg.style.backgroundSize = '';
+            previewBg.style.backgroundPosition = '';
             
-            // Set background color/gradient (as base layer)
+            // Layer 1: Background color/gradient (base layer, always present)
             if (currentProfileData.backgroundColor) {
                 if (currentProfileData.backgroundColor.startsWith('linear-gradient') || 
                     currentProfileData.backgroundColor.startsWith('radial-gradient')) {
-                    // For gradients, we'll use backgroundColor as fallback and layer gradient via backgroundImage
-                    // But if there's also a background image, we need to layer both
-                    if (currentProfileData.backgroundImage) {
-                        // Layer: gradient as fallback, then image on top
-                        previewBg.style.backgroundColor = '#667eea'; // Fallback solid color from gradient
-                        previewBg.style.backgroundImage = `${currentProfileData.backgroundColor}, url('${currentProfileData.backgroundImage}')`;
-                    } else {
-                        // Just the gradient
-                        previewBg.style.backgroundImage = currentProfileData.backgroundColor;
-                    }
+                    previewBg.style.background = currentProfileData.backgroundColor;
                 } else {
-                    // Solid color - always set as backgroundColor
                     previewBg.style.backgroundColor = currentProfileData.backgroundColor;
-                    // If there's also a background image, layer it on top
-                    if (currentProfileData.backgroundImage) {
-                        previewBg.style.backgroundImage = `url('${currentProfileData.backgroundImage}')`;
-                    }
                 }
             } else {
-                // Default gradient if no color is selected
-                if (currentProfileData.backgroundImage) {
-                    previewBg.style.backgroundColor = '#667eea'; // Fallback solid color
-                    previewBg.style.backgroundImage = `linear-gradient(135deg, #667eea 0%, #764ba2 100%), url('${currentProfileData.backgroundImage}')`;
-                } else {
-                    previewBg.style.backgroundImage = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-                }
+                // Default gradient if no color
+                previewBg.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
             }
             
-            // Set background image properties if image exists
+            // Layer 2: Background image (on top of color, if present)
             if (currentProfileData.backgroundImage) {
+                previewBg.style.backgroundImage = `url('${currentProfileData.backgroundImage}')`;
                 previewBg.style.backgroundSize = 'cover';
                 previewBg.style.backgroundPosition = 'center';
             }
         }
 
+        // Layer 3: Character image (on top of everything via z-index in CSS)
         if (previewChar && currentProfileData.characterImage) {
             previewChar.src = currentProfileData.characterImage;
         }
 
+        // Layer 4: Frame (on top via z-index in CSS)
         if (previewFrame) {
             previewFrame.className = 'avatar-frame-layer';
             if (currentProfileData.frame) {
