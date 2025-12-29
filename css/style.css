@@ -1448,7 +1448,7 @@ footer {
 .music-card .music-title {
     font-size: 0.95rem;
     margin: 0 0 5px;
-    color: #fff;
+    color: var(--text-color);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1457,7 +1457,8 @@ footer {
 .music-card .music-artist {
     font-size: 0.85rem;
     margin: 0 0 3px;
-    color: #aaa;
+    color: var(--text-color);
+    opacity: 0.8;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1466,7 +1467,8 @@ footer {
 .music-card .music-anime {
     font-size: 0.75rem;
     margin: 0;
-    color: #777;
+    color: var(--text-color);
+    opacity: 0.6;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -2398,6 +2400,50 @@ html.theme-dark select {
         width: 100%;
         height: auto;
         max-height: 150px;
+    }
+    
+    /* Video modal mobile adjustments */
+    .modal-content {
+        width: 98%;
+        margin: 1% auto;
+        padding: 10px;
+    }
+    
+    .video-info h2 {
+        font-size: 1.2rem;
+    }
+    
+    .episode-selector {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .episode-selector select {
+        width: 100%;
+        font-size: 0.9rem;
+    }
+    
+    #custom-video-controls {
+        padding: 8px;
+    }
+    
+    .controls-row {
+        gap: 5px !important;
+    }
+    
+    .btn-icon {
+        width: 32px;
+        height: 32px;
+        font-size: 0.9rem;
+    }
+    
+    #time-display {
+        font-size: 0.75rem;
+        min-width: 70px;
+    }
+    
+    .video-controls {
+        flex-wrap: wrap;
     }
 }
 

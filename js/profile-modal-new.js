@@ -111,9 +111,13 @@
         const colorOptions = document.querySelectorAll('.color-option');
         colorOptions.forEach(option => {
             option.addEventListener('click', () => {
+                // Clear background image selections when selecting color
+                document.querySelectorAll('.bg-image-option').forEach(o => o.classList.remove('selected'));
+                
                 colorOptions.forEach(o => o.classList.remove('selected'));
                 option.classList.add('selected');
                 currentProfileData.backgroundColor = option.dataset.value;
+                currentProfileData.backgroundImage = null; // Clear background image when color is selected
                 updatePreview();
             });
         });
@@ -214,9 +218,13 @@
         // Event listeners
         bgImagesGrid.querySelectorAll('.bg-image-option').forEach(opt => {
             opt.addEventListener('click', () => {
+                // Clear color selections when selecting background image
+                document.querySelectorAll('.color-option').forEach(o => o.classList.remove('selected'));
+                
                 bgImagesGrid.querySelectorAll('.bg-image-option').forEach(o => o.classList.remove('selected'));
                 opt.classList.add('selected');
                 currentProfileData.backgroundImage = opt.dataset.src;
+                currentProfileData.backgroundColor = null; // Clear background color when image is selected
                 updatePreview();
             });
         });
@@ -233,16 +241,25 @@
                 previewBg.style.background = `url('${currentProfileData.backgroundImage}')`;
                 previewBg.style.backgroundSize = 'cover';
                 previewBg.style.backgroundPosition = 'center';
-            } else if (currentProfileData.backgroundColor.startsWith('linear-gradient') || 
-                currentProfileData.backgroundColor.startsWith('radial-gradient')) {
+                previewBg.style.backgroundColor = '';
+            } else if (currentProfileData.backgroundColor && 
+                       (currentProfileData.backgroundColor.startsWith('linear-gradient') || 
+                        currentProfileData.backgroundColor.startsWith('radial-gradient'))) {
                 previewBg.style.background = currentProfileData.backgroundColor;
                 previewBg.style.backgroundSize = '';
                 previewBg.style.backgroundPosition = '';
-            } else {
+                previewBg.style.backgroundColor = '';
+            } else if (currentProfileData.backgroundColor) {
                 previewBg.style.backgroundColor = currentProfileData.backgroundColor;
                 previewBg.style.background = '';
                 previewBg.style.backgroundSize = '';
                 previewBg.style.backgroundPosition = '';
+            } else {
+                // Default gradient if nothing is selected
+                previewBg.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                previewBg.style.backgroundSize = '';
+                previewBg.style.backgroundPosition = '';
+                previewBg.style.backgroundColor = '';
             }
         }
 
@@ -265,15 +282,17 @@
     function saveProfile() {
         // Get the profile manager if available
         if (window.profileManager) {
-            const activeProfile = window.profileManager.getActiveProfile();
+            const modal = document.getElementById('profile-modal');
+            const editingProfileId = modal?.dataset.editingProfileId;
             
-            if (activeProfile) {
+            if (editingProfileId) {
                 // Update existing profile
-                window.profileManager.updateProfile(activeProfile.id, {
+                window.profileManager.updateProfile(editingProfileId, {
                     name: currentProfileData.name,
                     pronoun: currentProfileData.pronoun,
                     avatar: {
                         backgroundColor: currentProfileData.backgroundColor,
+                        backgroundImage: currentProfileData.backgroundImage,
                         characterImage: currentProfileData.characterImage,
                         frame: currentProfileData.frame,
                         gradient: currentProfileData.backgroundColor.startsWith('linear-gradient') ? 
@@ -282,28 +301,57 @@
                 });
                 
                 // Update header avatar
-                updateHeaderAvatar(activeProfile);
+                const updatedProfile = window.profileManager.getProfile(editingProfileId);
+                updateHeaderAvatar(updatedProfile);
                 
                 // Show success message
                 showSuccessMessage('Perfil atualizado com sucesso!');
+                
+                // Clear editing flag
+                delete modal.dataset.editingProfileId;
             } else {
-                // Create new profile
-                const newProfile = window.profileManager.createProfile({
-                    name: currentProfileData.name,
-                    pronoun: currentProfileData.pronoun,
-                    avatar: {
-                        backgroundColor: currentProfileData.backgroundColor,
-                        characterImage: currentProfileData.characterImage,
-                        frame: currentProfileData.frame,
-                        gradient: currentProfileData.backgroundColor.startsWith('linear-gradient') ? 
-                                 currentProfileData.backgroundColor : null
-                    }
-                });
+                const activeProfile = window.profileManager.getActiveProfile();
                 
-                window.profileManager.setActiveProfile(newProfile.id);
-                updateHeaderAvatar(newProfile);
-                
-                showSuccessMessage('Perfil criado com sucesso!');
+                if (activeProfile) {
+                    // Update existing active profile
+                    window.profileManager.updateProfile(activeProfile.id, {
+                        name: currentProfileData.name,
+                        pronoun: currentProfileData.pronoun,
+                        avatar: {
+                            backgroundColor: currentProfileData.backgroundColor,
+                            backgroundImage: currentProfileData.backgroundImage,
+                            characterImage: currentProfileData.characterImage,
+                            frame: currentProfileData.frame,
+                            gradient: currentProfileData.backgroundColor.startsWith('linear-gradient') ? 
+                                     currentProfileData.backgroundColor : null
+                        }
+                    });
+                    
+                    // Update header avatar
+                    updateHeaderAvatar(activeProfile);
+                    
+                    // Show success message
+                    showSuccessMessage('Perfil atualizado com sucesso!');
+                } else {
+                    // Create new profile
+                    const newProfile = window.profileManager.createProfile({
+                        name: currentProfileData.name,
+                        pronoun: currentProfileData.pronoun,
+                        avatar: {
+                            backgroundColor: currentProfileData.backgroundColor,
+                            backgroundImage: currentProfileData.backgroundImage,
+                            characterImage: currentProfileData.characterImage,
+                            frame: currentProfileData.frame,
+                            gradient: currentProfileData.backgroundColor.startsWith('linear-gradient') ? 
+                                     currentProfileData.backgroundColor : null
+                        }
+                    });
+                    
+                    window.profileManager.setActiveProfile(newProfile.id);
+                    updateHeaderAvatar(newProfile);
+                    
+                    showSuccessMessage('Perfil criado com sucesso!');
+                }
             }
         } else {
             // Fallback to localStorage

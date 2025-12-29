@@ -188,6 +188,12 @@ function openEpisode(anime, seasonNumber, episodeIndex){
     if (bannerEl) bannerEl.style.backgroundImage = `url('${bannerUrl}')`;
     if (episode && episode.opening && typeof episode.opening.start === 'number' && typeof episode.opening.end === 'number') window.updateOpeningData && window.updateOpeningData({ start: episode.opening.start, end: episode.opening.end }); else window.updateOpeningData && window.updateOpeningData(null);
     try { const saved = window.animeDB && window.animeDB.getContinueWatching && window.animeDB.getContinueWatching()[String(anime.id)]; if (saved && typeof saved.time === 'number') player.currentTime = saved.time; } catch(e){}
+    // Update video title and description
+    const titleEl = document.getElementById('video-title');
+    const descEl = document.getElementById('video-description');
+    if (titleEl) titleEl.textContent = anime.title || 'Título do Anime';
+    if (descEl) descEl.textContent = anime.description || 'Descrição do anime...';
+    
     const sl = document.getElementById('current-season-label'), elb = document.getElementById('current-episode-label');
     if (sl) sl.textContent = `Temporada ${seasonNumber}`; if (elb) elb.textContent = `Episódio ${episodeIndex+1}${episode && episode.title ? ' — '+episode.title : ''}`;
     
