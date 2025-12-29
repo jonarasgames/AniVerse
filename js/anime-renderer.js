@@ -113,15 +113,15 @@
       // Add change handler
       seasonSelect.onchange = () => {
         const newSeason = parseInt(seasonSelect.value);
-        populateEpisodes(anime, newSeason);
+        populateEpisodes(anime, newSeason, 0); // Reset to first episode
         if (anime.seasons.find(s => s.number === newSeason)?.episodes?.length > 0) {
           openEpisode(anime, newSeason, 0);
         }
       };
     }
     
-    // Populate episodes for selected season
-    populateEpisodes(anime, season);
+    // Populate episodes for selected season AND select the current episode
+    populateEpisodes(anime, season, episode);
     
     // Open the episode
     if (window.openEpisode && typeof window.openEpisode === 'function') {
@@ -133,7 +133,7 @@
     document.body.style.overflow = 'hidden';
   }
 
-  function populateEpisodes(anime, seasonNumber) {
+  function populateEpisodes(anime, seasonNumber, selectedEpisodeIndex) {
     const episodeSelect = document.getElementById('episode-select');
     if (!episodeSelect || !anime.seasons) return;
     
@@ -145,6 +145,10 @@
       const option = document.createElement('option');
       option.value = idx;
       option.textContent = `Episódio ${idx + 1}${ep.title ? ' - ' + ep.title : ''}`;
+      // Select the correct episode
+      if (selectedEpisodeIndex !== undefined && idx === selectedEpisodeIndex) {
+        option.selected = true;
+      }
       episodeSelect.appendChild(option);
     });
     

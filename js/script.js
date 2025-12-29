@@ -197,16 +197,26 @@ function openEpisode(anime, seasonNumber, episodeIndex){
     const sl = document.getElementById('current-season-label'), elb = document.getElementById('current-episode-label');
     if (sl) sl.textContent = `Temporada ${seasonNumber}`; if (elb) elb.textContent = `Episódio ${episodeIndex+1}${episode && episode.title ? ' — '+episode.title : ''}`;
     
-    // Save to active profile's continue watching
+    // Save to active profile's continue watching with initial 0% progress
     if (window.profileManager) {
         const activeProfile = window.profileManager.getActiveProfile();
         if (activeProfile) {
+            // Store anime info globally for progress updates
+            window.currentWatchingAnime = {
+                id: anime.id,
+                title: anime.title,
+                thumbnail: anime.thumbnail || anime.cover,
+                season: seasonNumber,
+                episode: episodeIndex + 1
+            };
+            
             window.profileManager.updateContinueWatching(activeProfile.id, {
                 animeId: anime.id,
                 title: anime.title,
                 thumbnail: anime.thumbnail || anime.cover,
                 season: seasonNumber,
                 episode: episodeIndex + 1,
+                progress: 0,
                 timestamp: Date.now()
             });
         } else {
@@ -218,6 +228,67 @@ function openEpisode(anime, seasonNumber, episodeIndex){
   } catch(e){ console.error('openEpisode error', e); }
 }
 window.openEpisode = openEpisode;
+
+// Update progress periodically while video is playing
+document.addEventListener('DOMContentLoaded', () => {
+  const player = document.getElementById('anime-player');
+  if (player) {
+    let progressUpdateInterval = null;
+    
+    player.addEventListener('timeupdate', () => {
+      // Update progress every 5 seconds while playing
+      if (!progressUpdateInterval && !player.paused) {
+        progressUpdateInterval = setInterval(() => {
+          if (window.currentWatchingAnime && window.profileManager && player.duration > 0) {
+            const activeProfile = window.profileManager.getActiveProfile();
+            if (activeProfile) {
+              const progress = Math.min(100, Math.max(0, (player.currentTime / player.duration) * 100));
+              
+              window.profileManager.updateContinueWatching(activeProfile.id, {
+                animeId: window.currentWatchingAnime.id,
+                title: window.currentWatchingAnime.title,
+                thumbnail: window.currentWatchingAnime.thumbnail,
+                season: window.currentWatchingAnime.season,
+                episode: window.currentWatchingAnime.episode,
+                progress: progress,
+                timestamp: Date.now()
+              });
+            }
+          }
+        }, 5000); // Update every 5 seconds
+      }
+    });
+    
+    player.addEventListener('pause', () => {
+      if (progressUpdateInterval) {
+        clearInterval(progressUpdateInterval);
+        progressUpdateInterval = null;
+      }
+    });
+    
+    player.addEventListener('ended', () => {
+      if (progressUpdateInterval) {
+        clearInterval(progressUpdateInterval);
+        progressUpdateInterval = null;
+      }
+      // Mark as 100% complete
+      if (window.currentWatchingAnime && window.profileManager) {
+        const activeProfile = window.profileManager.getActiveProfile();
+        if (activeProfile) {
+          window.profileManager.updateContinueWatching(activeProfile.id, {
+            animeId: window.currentWatchingAnime.id,
+            title: window.currentWatchingAnime.title,
+            thumbnail: window.currentWatchingAnime.thumbnail,
+            season: window.currentWatchingAnime.season,
+            episode: window.currentWatchingAnime.episode,
+            progress: 100,
+            timestamp: Date.now()
+          });
+        }
+      }
+    });
+  }
+});
 
 window.addEventListener('animeDataLoaded', () => {
   try { if (typeof loadAnimeSection === 'function') loadAnimeSection('anime'); } catch(e){}

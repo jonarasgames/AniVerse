@@ -236,3 +236,21 @@ body.dark-mode .music-card .music-artist {
 body.dark-mode .music-card .music-type {
     color: #909090 !important;
 }
+
+/* Ensure all music text elements are white in dark mode */
+body.dark-mode .music-info .music-title,
+body.dark-mode .music-info .music-artist,
+body.dark-mode .music-info .music-anime,
+body.dark-mode .music-section .music-title,
+body.dark-mode .music-section .music-artist,
+body.dark-mode .music-section .music-type {
+    color: #ffffff !important;
+}
+
+body.dark-mode .music-section .music-artist {
+    color: #b0b0b0 !important;
+}
+
+body.dark-mode .music-section .music-type {
+    color: var(--primary-color) !important;
+}

@@ -218,13 +218,13 @@
         // Event listeners
         bgImagesGrid.querySelectorAll('.bg-image-option').forEach(opt => {
             opt.addEventListener('click', () => {
-                // Clear color selections when selecting background image
-                document.querySelectorAll('.color-option').forEach(o => o.classList.remove('selected'));
+                // Don't clear color selections - keep as fallback while image loads
+                // document.querySelectorAll('.color-option').forEach(o => o.classList.remove('selected'));
                 
                 bgImagesGrid.querySelectorAll('.bg-image-option').forEach(o => o.classList.remove('selected'));
                 opt.classList.add('selected');
                 currentProfileData.backgroundImage = opt.dataset.src;
-                currentProfileData.backgroundColor = null; // Clear background color when image is selected
+                // Don't clear backgroundColor - keep it as fallback for when image is loading
                 updatePreview();
             });
         });
@@ -237,29 +237,33 @@
         const previewName = document.getElementById('preview-name');
 
         if (previewBg) {
+            // Reset all background styles first
+            previewBg.style.background = '';
+            previewBg.style.backgroundColor = '';
+            previewBg.style.backgroundImage = '';
+            previewBg.style.backgroundSize = '';
+            previewBg.style.backgroundPosition = '';
+            
             if (currentProfileData.backgroundImage) {
-                previewBg.style.background = `url('${currentProfileData.backgroundImage}')`;
+                // Use backgroundImage when image is selected, keep color as backup
+                previewBg.style.backgroundImage = `url('${currentProfileData.backgroundImage}')`;
                 previewBg.style.backgroundSize = 'cover';
                 previewBg.style.backgroundPosition = 'center';
-                previewBg.style.backgroundColor = '';
+                // Keep backgroundColor as fallback while image loads
+                if (currentProfileData.backgroundColor) {
+                    previewBg.style.backgroundColor = currentProfileData.backgroundColor;
+                }
             } else if (currentProfileData.backgroundColor && 
                        (currentProfileData.backgroundColor.startsWith('linear-gradient') || 
                         currentProfileData.backgroundColor.startsWith('radial-gradient'))) {
+                // Use background property for gradients
                 previewBg.style.background = currentProfileData.backgroundColor;
-                previewBg.style.backgroundSize = '';
-                previewBg.style.backgroundPosition = '';
-                previewBg.style.backgroundColor = '';
             } else if (currentProfileData.backgroundColor) {
+                // Use backgroundColor for solid colors
                 previewBg.style.backgroundColor = currentProfileData.backgroundColor;
-                previewBg.style.background = '';
-                previewBg.style.backgroundSize = '';
-                previewBg.style.backgroundPosition = '';
             } else {
                 // Default gradient if nothing is selected
                 previewBg.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-                previewBg.style.backgroundSize = '';
-                previewBg.style.backgroundPosition = '';
-                previewBg.style.backgroundColor = '';
             }
         }
 

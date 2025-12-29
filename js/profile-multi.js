@@ -794,11 +794,18 @@
             });
         }
 
-        // Show login button as "profile" button
+        // Show login button as "profile" button - CLIQUE → EDITAR PERFIL
         const loginBtn = document.getElementById('login-btn');
         if (loginBtn) {
             loginBtn.innerHTML = `<i class="fas fa-user-circle"></i> ${profile.name}`;
-            loginBtn.onclick = showProfileSelectionScreen;
+            loginBtn.onclick = () => {
+                // Fechar tela de seleção se estiver aberta
+                const selectionScreen = document.getElementById('profile-selection-overlay');
+                if (selectionScreen) {
+                    selectionScreen.style.display = 'none';
+                }
+                openProfileEditModal(profile);
+            };
         }
     }
 
@@ -929,13 +936,20 @@
             };
         }
 
-        // Add profile switch button to header
+        // Add profile switch button to header - CLIQUE → EDITAR PERFIL
         const loginBtn = document.getElementById('login-btn');
         if (loginBtn && profiles.length > 0) {
             const activeProfile = profileManager.getActiveProfile();
             if (activeProfile) {
                 loginBtn.innerHTML = `<i class="fas fa-user-circle"></i> ${activeProfile.name}`;
-                loginBtn.onclick = showProfileSelectionScreen;
+                loginBtn.onclick = () => {
+                    // Fechar tela de seleção se estiver aberta
+                    const selectionScreen = document.getElementById('profile-selection-overlay');
+                    if (selectionScreen) {
+                        selectionScreen.style.display = 'none';
+                    }
+                    openProfileEditModal(activeProfile);
+                };
             }
         }
     }
