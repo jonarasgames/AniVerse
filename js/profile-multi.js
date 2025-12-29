@@ -945,17 +945,8 @@
         const profiles = profileManager.getAllProfiles();
         const activeProfile = profileManager.getActiveProfile();
         
-        if (profiles.length === 0) {
-            // No profiles, show profile creation
-            openProfileCreationModal();
-            return;
-        }
-        
-        // SEMPRE mostra tela de seleção de usuários ao entrar no site
-        // independente de ter um ou mais perfis
-        showProfileSelectionScreen();
-
-        // Integrate with existing profile save button
+        // ALWAYS set up save button handler (must run before early return)
+        // This ensures profile creation works even when there are no profiles
         const saveBtn = document.getElementById('save-profile-btn');
         if (saveBtn) {
             saveBtn.onclick = function(e) {
@@ -1052,20 +1043,30 @@
                 saveBtn.textContent = '💾 Salvar Perfil';
             };
         }
+        
+        if (profiles.length === 0) {
+            // No profiles, show profile creation
+            openProfileCreationModal();
+            return;
+        }
+        
+        // SEMPRE mostra tela de seleção de usuários ao entrar no site
+        // independente de ter um ou mais perfis
+        showProfileSelectionScreen();
 
         // Add profile switch button to header - CLIQUE → EDITAR PERFIL
         const loginBtn = document.getElementById('login-btn');
         if (loginBtn && profiles.length > 0) {
-            const activeProfile = profileManager.getActiveProfile();
-            if (activeProfile) {
-                loginBtn.innerHTML = `<i class="fas fa-user-circle"></i> ${activeProfile.name}`;
+            const currentActiveProfile = profileManager.getActiveProfile();
+            if (currentActiveProfile) {
+                loginBtn.innerHTML = `<i class="fas fa-user-circle"></i> ${currentActiveProfile.name}`;
                 loginBtn.onclick = () => {
                     // Fechar tela de seleção se estiver aberta
                     const selectionScreen = document.getElementById('profile-selection-overlay');
                     if (selectionScreen) {
                         selectionScreen.style.display = 'none';
                     }
-                    openProfileEditModal(activeProfile);
+                    openProfileEditModal(currentActiveProfile);
                 };
             }
         }
