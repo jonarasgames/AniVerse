@@ -92,6 +92,9 @@
     const season = seasonNumber || 1;
     const episode = episodeIndex !== undefined ? episodeIndex : 0;
     
+    // Store current anime globally so selectors know which anime they're for
+    window.currentAnime = anime;
+    
     // Update video title and description
     const titleEl = document.getElementById('video-title');
     const descEl = document.getElementById('video-description');
@@ -101,18 +104,22 @@
     // Populate season select
     const seasonSelect = document.getElementById('season-select');
     if (seasonSelect && anime.seasons) {
-      seasonSelect.innerHTML = '';
+      // Remove old event listeners by cloning
+      const newSeasonSelect = seasonSelect.cloneNode(false);
+      seasonSelect.parentNode.replaceChild(newSeasonSelect, seasonSelect);
+      
+      newSeasonSelect.innerHTML = '';
       anime.seasons.forEach((s, idx) => {
         const option = document.createElement('option');
         option.value = s.number;
         option.textContent = `Temporada ${s.number}`;
         if (s.number === season) option.selected = true;
-        seasonSelect.appendChild(option);
+        newSeasonSelect.appendChild(option);
       });
       
-      // Add change handler
-      seasonSelect.onchange = () => {
-        const newSeason = parseInt(seasonSelect.value);
+      // Add change handler with closure to current anime
+      newSeasonSelect.onchange = () => {
+        const newSeason = parseInt(newSeasonSelect.value);
         populateEpisodes(anime, newSeason, 0); // Reset to first episode
         if (anime.seasons.find(s => s.number === newSeason)?.episodes?.length > 0) {
           openEpisode(anime, newSeason, 0);
@@ -140,7 +147,11 @@
     const season = anime.seasons.find(s => s.number === seasonNumber);
     if (!season || !season.episodes) return;
     
-    episodeSelect.innerHTML = '';
+    // Remove old event listeners by cloning
+    const newEpisodeSelect = episodeSelect.cloneNode(false);
+    episodeSelect.parentNode.replaceChild(newEpisodeSelect, episodeSelect);
+    
+    newEpisodeSelect.innerHTML = '';
     season.episodes.forEach((ep, idx) => {
       const option = document.createElement('option');
       option.value = idx;
@@ -149,12 +160,12 @@
       if (selectedEpisodeIndex !== undefined && idx === selectedEpisodeIndex) {
         option.selected = true;
       }
-      episodeSelect.appendChild(option);
+      newEpisodeSelect.appendChild(option);
     });
     
-    // Add change handler
-    episodeSelect.onchange = () => {
-      const episodeIdx = parseInt(episodeSelect.value);
+    // Add change handler with closure to current anime
+    newEpisodeSelect.onchange = () => {
+      const episodeIdx = parseInt(newEpisodeSelect.value);
       if (window.openEpisode && typeof window.openEpisode === 'function') {
         window.openEpisode(anime, seasonNumber, episodeIdx);
       }
