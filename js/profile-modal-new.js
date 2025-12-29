@@ -311,6 +311,15 @@
                 const updatedProfile = window.profileManager.getProfile(editingProfileId);
                 updateHeaderAvatar(updatedProfile);
                 
+                // Also call loadProfileData if available to ensure header is shown
+                if (typeof window.loadProfileData === 'function') {
+                    window.loadProfileData(updatedProfile);
+                } else {
+                    // Fallback: make header visible
+                    const headerAvatar = document.getElementById('header-avatar');
+                    if (headerAvatar) headerAvatar.style.display = 'flex';
+                }
+                
                 // Show success message
                 showSuccessMessage('Perfil atualizado com sucesso!');
                 
@@ -337,6 +346,15 @@
                     // Update header avatar
                     updateHeaderAvatar(activeProfile);
                     
+                    // Also call loadProfileData if available to ensure header is shown
+                    if (typeof window.loadProfileData === 'function') {
+                        window.loadProfileData(activeProfile);
+                    } else {
+                        // Fallback: make header visible
+                        const headerAvatar = document.getElementById('header-avatar');
+                        if (headerAvatar) headerAvatar.style.display = 'flex';
+                    }
+                    
                     // Show success message
                     showSuccessMessage('Perfil atualizado com sucesso!');
                 } else {
@@ -356,6 +374,15 @@
                     
                     window.profileManager.setActiveProfile(newProfile.id);
                     updateHeaderAvatar(newProfile);
+                    
+                    // Also call loadProfileData if available to ensure header is shown
+                    if (typeof window.loadProfileData === 'function') {
+                        window.loadProfileData(newProfile);
+                    } else {
+                        // Fallback: make header visible
+                        const headerAvatar = document.getElementById('header-avatar');
+                        if (headerAvatar) headerAvatar.style.display = 'flex';
+                    }
                     
                     showSuccessMessage('Perfil criado com sucesso!');
                 }

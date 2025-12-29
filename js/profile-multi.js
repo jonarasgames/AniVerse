@@ -1040,4 +1040,5 @@
     // Export functions
     window.showProfileSelectionScreen = showProfileSelectionScreen;
     window.hideProfileSelectionScreen = hideProfileSelectionScreen;
+    window.loadProfileData = loadProfileData;
 })();
