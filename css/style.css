@@ -503,6 +503,8 @@ nav a:hover, nav a.active {
     background-color: rgba(0, 0, 0, 0.9);
     overflow: auto;
     animation: fadeIn 0.3s ease;
+    align-items: flex-start;
+    justify-content: center;
 }
 
 .modal-content {

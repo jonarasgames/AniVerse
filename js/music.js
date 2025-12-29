@@ -42,6 +42,22 @@
             }
         }
         
+        // Restore saved volume preference
+        const savedVolume = localStorage.getItem('musicVolume');
+        if (savedVolume !== null) {
+            const volume = parseFloat(savedVolume);
+            // Validate volume is within range [0, 1]
+            if (!isNaN(volume) && volume >= 0 && volume <= 1) {
+                audio.volume = volume;
+            }
+        }
+        
+        // Restore saved mute preference
+        const savedMuted = localStorage.getItem('musicMuted');
+        if (savedMuted !== null) {
+            audio.muted = savedMuted === 'true';
+        }
+        
         musicPlayerInstance = audio;
         return audio;
     }
@@ -105,6 +121,8 @@
             if (audio) {
                 audio.muted = !audio.muted;
                 updateMusicVolume();
+                // Save mute preference
+                localStorage.setItem('musicMuted', audio.muted.toString());
             }
         });
         
@@ -117,6 +135,8 @@
             audio.volume = Math.max(0, Math.min(1, percent));
             audio.muted = false;
             updateMusicVolume();
+            // Save volume preference
+            localStorage.setItem('musicVolume', audio.volume.toString());
         });
         
         // BARRA DE PROGRESSO CLICÁVEL

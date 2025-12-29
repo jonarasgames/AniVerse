@@ -41,7 +41,12 @@
         if (headerAvatar) {
             headerAvatar.addEventListener('click', function(e) {
                 e.preventDefault();
-                if (typeof openProfileModal === 'function') {
+                // Avatar click should open profile selection
+                // Fallback chain handles different loading states of profile-multi.js
+                // since scripts load with defer, we need to check function availability
+                if (typeof showProfileSelectionScreen === 'function') {
+                    showProfileSelectionScreen();
+                } else if (typeof openProfileModal === 'function') {
                     openProfileModal();
                 } else {
                     const modal = document.getElementById('profile-modal');
