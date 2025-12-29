@@ -213,7 +213,8 @@ function openEpisode(anime, seasonNumber, episodeIndex){
     const sl = document.getElementById('current-season-label'), elb = document.getElementById('current-episode-label');
     if (sl) sl.textContent = `Temporada ${seasonNumber}`; if (elb) elb.textContent = `Episódio ${episodeIndex+1}${episode && episode.title ? ' — '+episode.title : ''}`;
     
-    // Store anime info globally for progress updates
+    // Store anime info globally for progress updates and auto-advance
+    window.currentAnime = anime; // Store full anime object for auto-advance
     window.currentWatchingAnime = {
         id: anime.id,
         title: anime.title,
@@ -338,6 +339,33 @@ document.addEventListener('DOMContentLoaded', () => {
             currentTime: player.duration || 0,
             timestamp: Date.now()
           });
+        }
+      }
+      
+      // Auto-advance to next episode
+      if (window.currentAnime && window.currentWatchingAnime) {
+        const currentSeason = window.currentAnime.seasons?.find(s => s.number === window.currentWatchingAnime.season);
+        if (currentSeason && currentSeason.episodes) {
+          const nextEpisodeIndex = window.currentWatchingAnime.episode; // episode is 1-based, index is 0-based
+          
+          if (nextEpisodeIndex < currentSeason.episodes.length) {
+            // Next episode exists in current season
+            console.log(`⏭️ Auto-advancing to next episode: S${window.currentWatchingAnime.season}E${nextEpisodeIndex + 1}`);
+            setTimeout(() => {
+              window.openEpisode(window.currentAnime, window.currentWatchingAnime.season, nextEpisodeIndex);
+            }, 1000); // Wait 1 second before auto-advance
+          } else {
+            // Check if there's a next season
+            const nextSeason = window.currentAnime.seasons?.find(s => s.number === window.currentWatchingAnime.season + 1);
+            if (nextSeason && nextSeason.episodes && nextSeason.episodes.length > 0) {
+              console.log(`⏭️ Auto-advancing to next season: S${nextSeason.number}E1`);
+              setTimeout(() => {
+                window.openEpisode(window.currentAnime, nextSeason.number, 0);
+              }, 1000);
+            } else {
+              console.log('✅ Finished watching all episodes!');
+            }
+          }
         }
       }
     });
