@@ -31,7 +31,11 @@
         // Restore saved volume preference
         const savedVolume = localStorage.getItem('musicVolume');
         if (savedVolume !== null) {
-            audio.volume = parseFloat(savedVolume);
+            const volume = parseFloat(savedVolume);
+            // Validate volume is within range [0, 1]
+            if (!isNaN(volume) && volume >= 0 && volume <= 1) {
+                audio.volume = volume;
+            }
         }
         
         // Restore saved mute preference

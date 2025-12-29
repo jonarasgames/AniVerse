@@ -264,19 +264,24 @@
     // Restore saved video volume
     const savedVideoVolume = localStorage.getItem('videoVolume');
     if (savedVideoVolume !== null) {
-      player.volume = parseFloat(savedVideoVolume);
-      if (volumeProgress) {
-        volumeProgress.style.width = (player.volume * 100) + '%';
+      const volume = parseFloat(savedVideoVolume);
+      // Validate volume is within range [0, 1]
+      if (!isNaN(volume) && volume >= 0 && volume <= 1) {
+        player.volume = volume;
+        if (volumeProgress) {
+          volumeProgress.style.width = (player.volume * 100) + '%';
+        }
       }
-      updateVolumeIcon();
     }
     
     // Restore saved video mute state
     const savedVideoMuted = localStorage.getItem('videoMuted');
     if (savedVideoMuted !== null) {
       player.muted = savedVideoMuted === 'true';
-      updateVolumeIcon();
     }
+    
+    // Update volume icon once after restoration
+    updateVolumeIcon();
     
     // click on video toggles pause/play (only when clicking the element itself)
     player.addEventListener('click', (e)=> { if(e.target!==player) return; if(player.paused) player.play().catch(()=>{}); else player.pause(); });
