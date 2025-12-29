@@ -488,8 +488,8 @@
         }
         
         if (!window.animeDB || !window.animeDB.musicLibrary) {
-            console.warn('music.js: animeDB.musicLibrary not available');
-            ensureFallbackMessage(musicGrid, 'música');
+            // Dados ainda não carregados - aguardar evento animeDataLoaded
+            // Não mostrar warning aqui pois pode ser timing normal
             return;
         }
         
@@ -588,12 +588,20 @@
         }
     }
     
+    // Flag to prevent duplicate event listener registration
+    let musicListenerAdded = false;
+    
     // Initialize when anime data is loaded
     function init() {
+        // Adicionar listener apenas uma vez para evitar memory leaks
+        if (!musicListenerAdded) {
+            window.addEventListener('animeDataLoaded', renderMusicGrid);
+            musicListenerAdded = true;
+        }
+        
+        // Tentar renderizar imediatamente se dados já disponíveis
         if (window.animeDB && window.animeDB.musicLibrary) {
             renderMusicGrid();
-        } else {
-            window.addEventListener('animeDataLoaded', renderMusicGrid);
         }
     }
     

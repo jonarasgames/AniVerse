@@ -277,6 +277,17 @@
                     miniPlayer.classList.add('hidden');
                 }
                 
+                // LIMPAR ESTADO GLOBAL DE ANIME ATUAL (corrige bug de temporadas/episódios)
+                window.currentAnime = null;
+                window.currentAnimeData = null;
+                window.currentWatchingAnime = null;
+                
+                // RESETAR SELETORES DE TEMPORADA E EPISÓDIO
+                const seasonSelect = document.getElementById('season-select');
+                const episodeSelect = document.getElementById('episode-select');
+                if (seasonSelect) seasonSelect.innerHTML = '<option>Temporada 1</option>';
+                if (episodeSelect) episodeSelect.innerHTML = '<option>Episódio 1</option>';
+                
                 onClick();
             }
         });
@@ -802,15 +813,8 @@
             }
             
             headerAvatar.onclick = () => {
-                // FOTO DE PERFIL → SELEÇÃO DE USUÁRIOS
-                const profiles = profileManager.getAllProfiles();
-                if (profiles.length > 1) {
-                    showProfileSelectionScreen();
-                } else {
-                    if (confirm('Você só tem 1 perfil. Deseja criar um novo?')) {
-                        openProfileCreationModal();
-                    }
-                }
+                // FOTO DE PERFIL → SELEÇÃO DE USUÁRIOS (sempre mostra tela de seleção)
+                showProfileSelectionScreen();
             };
             
             headerAvatar.title = `${profile.name}${profile.pronoun} - Clique para trocar`;
@@ -947,29 +951,9 @@
             return;
         }
         
-        if (profiles.length === 1 && !activeProfile) {
-            // Only one profile and no active profile, auto-select it
-            profileManager.setActiveProfile(profiles[0].id);
-            loadProfileData(profiles[0]);
-            return;
-        }
-        
-        if (profiles.length > 1 && !activeProfile) {
-            // Multiple profiles but no active profile, show selection screen
-            showProfileSelectionScreen();
-            return;
-        }
-        
-        if (activeProfile) {
-            // Active profile exists
-            // If profile has password, redirect to selection screen for protection
-            if (activeProfile.password) {
-                showProfileSelectionScreen();
-                return;
-            }
-            // Otherwise, load it directly
-            loadProfileData(activeProfile);
-        }
+        // SEMPRE mostra tela de seleção de usuários ao entrar no site
+        // independente de ter um ou mais perfis
+        showProfileSelectionScreen();
 
         // Integrate with existing profile save button
         const saveBtn = document.getElementById('save-profile-btn');
