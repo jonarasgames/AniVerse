@@ -308,6 +308,22 @@
             avatarContainer.appendChild(charImg);
         }
 
+        // Add frame overlay if frame is set
+        if (profile.avatar?.frame) {
+            const frameOverlay = document.createElement('div');
+            frameOverlay.className = 'avatar-frame-layer ' + profile.avatar.frame;
+            frameOverlay.style.cssText = `
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                pointer-events: none;
+                border-radius: 8px;
+            `;
+            avatarContainer.appendChild(frameOverlay);
+        }
+
         card.appendChild(avatarContainer);
 
         const nameLabel = document.createElement('div');
@@ -690,13 +706,25 @@
             headerAvatar.style.borderRadius = '50%';
             headerAvatar.style.cursor = 'pointer';
             headerAvatar.style.background = profile.avatar?.gradient || profile.avatar?.backgroundColor || '#ff6b6b';
+            headerAvatar.style.position = 'relative';
             
-            const img = headerAvatar.querySelector('img');
-            if (img && profile.avatar?.characterImage) {
+            // Clear existing content
+            headerAvatar.innerHTML = '';
+            
+            // Add character image if exists
+            if (profile.avatar?.characterImage) {
+                const img = document.createElement('img');
                 img.src = profile.avatar.characterImage;
-                img.style.display = 'block';
-            } else if (img) {
-                img.style.display = 'none';
+                img.style.cssText = 'width: 100%; height: 100%; object-fit: cover; border-radius: 50%;';
+                headerAvatar.appendChild(img);
+            }
+            
+            // Add frame overlay if frame is set
+            if (profile.avatar?.frame) {
+                const frameOverlay = document.createElement('span');
+                frameOverlay.className = 'avatar-frame-layer ' + profile.avatar.frame;
+                frameOverlay.style.cssText = 'position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: 50%; pointer-events: none;';
+                headerAvatar.appendChild(frameOverlay);
             }
             
             headerAvatar.onclick = () => {
@@ -794,10 +822,35 @@
             });
         }
 
-        // Show login button as "profile" button - CLIQUE → EDITAR PERFIL
+        // Show login button as "profile" button with avatar
         const loginBtn = document.getElementById('login-btn');
         if (loginBtn) {
-            loginBtn.innerHTML = `<i class="fas fa-user-circle"></i> ${profile.name}`;
+            // Create avatar HTML
+            const avatarStyle = `
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                background: ${profile.avatar?.backgroundColor || '#ff6b6b'};
+                ${profile.avatar?.gradient ? `background: ${profile.avatar.gradient};` : ''}
+                ${profile.avatar?.backgroundImage ? `background-image: url('${profile.avatar.backgroundImage}');` : ''}
+                background-size: cover;
+                background-position: center;
+                display: inline-block;
+                vertical-align: middle;
+                margin-right: 8px;
+                position: relative;
+            `;
+            
+            let avatarHTML = `<span style="${avatarStyle}">`;
+            if (profile.avatar?.characterImage) {
+                avatarHTML += `<img src="${profile.avatar.characterImage}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+            }
+            if (profile.avatar?.frame) {
+                avatarHTML += `<span class="avatar-frame-layer ${profile.avatar.frame}" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: 50%; pointer-events: none;"></span>`;
+            }
+            avatarHTML += `</span>`;
+            
+            loginBtn.innerHTML = avatarHTML + profile.name;
             loginBtn.onclick = () => {
                 // Fechar tela de seleção se estiver aberta
                 const selectionScreen = document.getElementById('profile-selection-overlay');
