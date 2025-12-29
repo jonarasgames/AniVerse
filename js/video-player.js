@@ -227,6 +227,8 @@
         if (volumeProgress) {
           volumeProgress.style.width = player.muted ? '0%' : (player.volume * 100) + '%';
         }
+        // Save video mute preference
+        localStorage.setItem('videoMuted', player.muted.toString());
       });
     }
     
@@ -254,7 +256,26 @@
           volumeProgress.style.width = (player.volume * 100) + '%';
         }
         updateVolumeIcon();
+        // Save video volume preference
+        localStorage.setItem('videoVolume', player.volume.toString());
       });
+    }
+    
+    // Restore saved video volume
+    const savedVideoVolume = localStorage.getItem('videoVolume');
+    if (savedVideoVolume !== null) {
+      player.volume = parseFloat(savedVideoVolume);
+      if (volumeProgress) {
+        volumeProgress.style.width = (player.volume * 100) + '%';
+      }
+      updateVolumeIcon();
+    }
+    
+    // Restore saved video mute state
+    const savedVideoMuted = localStorage.getItem('videoMuted');
+    if (savedVideoMuted !== null) {
+      player.muted = savedVideoMuted === 'true';
+      updateVolumeIcon();
     }
     
     // click on video toggles pause/play (only when clicking the element itself)
@@ -324,17 +345,23 @@ document.addEventListener('keydown', (e) => {
                 player.volume = Math.min(1, player.volume + 0.1);
                 player.muted = false;
                 updateVideoVolumeIcon();
+                // Save video volume preference
+                localStorage.setItem('videoVolume', player.volume.toString());
                 break;
                 
             case 'ArrowDown':
                 player.volume = Math.max(0, player.volume - 0.1);
                 updateVideoVolumeIcon();
+                // Save video volume preference
+                localStorage.setItem('videoVolume', player.volume.toString());
                 break;
                 
             case 'm':
                 player.muted = !player.muted;
                 // Atualizar ícone de volume
                 updateVideoVolumeIcon();
+                // Save video mute preference
+                localStorage.setItem('videoMuted', player.muted.toString());
                 break;
                 
             case 'f':
