@@ -208,13 +208,73 @@
       }
     });
     
-    // Timeline click
+    // Timeline click and drag (YouTube-style)
     if (timelineContainer) {
-      timelineContainer.addEventListener('click', (e) => {
+      let isDraggingTimeline = false;
+      let wasPlayingBeforeDrag = false;
+      
+      // Helper function to seek to position
+      function seekToPosition(clientX) {
         const rect = timelineContainer.getBoundingClientRect();
-        const percent = (e.clientX - rect.left) / rect.width;
+        const percent = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
         if (player.duration) {
           player.currentTime = percent * player.duration;
+          if (timelineProgress) {
+            timelineProgress.style.width = (percent * 100) + '%';
+          }
+        }
+      }
+      
+      // Mouse events for desktop drag
+      timelineContainer.addEventListener('mousedown', (e) => {
+        isDraggingTimeline = true;
+        wasPlayingBeforeDrag = !player.paused;
+        if (wasPlayingBeforeDrag) player.pause();
+        seekToPosition(e.clientX);
+        e.preventDefault();
+      });
+      
+      document.addEventListener('mousemove', (e) => {
+        if (isDraggingTimeline) {
+          seekToPosition(e.clientX);
+        }
+      });
+      
+      document.addEventListener('mouseup', () => {
+        if (isDraggingTimeline) {
+          isDraggingTimeline = false;
+          if (wasPlayingBeforeDrag) player.play().catch(() => {});
+        }
+      });
+      
+      // Touch events for mobile drag
+      timelineContainer.addEventListener('touchstart', (e) => {
+        isDraggingTimeline = true;
+        wasPlayingBeforeDrag = !player.paused;
+        if (wasPlayingBeforeDrag) player.pause();
+        const touch = e.touches[0];
+        seekToPosition(touch.clientX);
+        e.preventDefault();
+      }, { passive: false });
+      
+      document.addEventListener('touchmove', (e) => {
+        if (isDraggingTimeline && e.touches.length > 0) {
+          e.preventDefault(); // Prevent scrolling while dragging timeline
+          seekToPosition(e.touches[0].clientX);
+        }
+      }, { passive: false });
+      
+      document.addEventListener('touchend', () => {
+        if (isDraggingTimeline) {
+          isDraggingTimeline = false;
+          if (wasPlayingBeforeDrag) player.play().catch(() => {});
+        }
+      });
+      
+      // Also keep simple click for quick seeks
+      timelineContainer.addEventListener('click', (e) => {
+        if (!isDraggingTimeline) {
+          seekToPosition(e.clientX);
         }
       });
     }
