@@ -1,16 +1,15 @@
 [
   {
     "id": 1,
-    "title": "Lucky Star",
-    "description": "Em um mundo onde a humanidade vive dentro de cidades cercadas por três enormes muralhas que os protegem dos gigantescos humanóides devoradores de humanos chamados de Titãs.",
-    "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/main/images/thumbnails/attack.png",
-    "trailer": "https://www.youtube.com/embed/MGRm4IzK1SQ?autoplay=1&mute=1&enablejsapi=1",
+    "title": "Lucky☆Star",
+    "description": "Lucky☆Star acompanha o cotidiano de quatro adoráveis ​​garotas do ensino médio: Konata Izumi, a otaku preguiçosa; as gêmeas Hiiragi, Tsukasa e Kagami (uma doçura e uma picância, respectivamente); e a inteligente e educada Miyuki Takara.",
+    "thumbnail": "https://files.catbox.moe/tfxcoy.jpg",
+    "trailer": "akakaka",
     "type": "anime",
     "dateAdded": "2025-12-31",
     "categories": [
-      "action",
-      "drama",
-      "fantasy"
+      "comedy",
+      "slice of life"
     ],
     "seasons": [
       {
@@ -27,141 +26,178 @@
             "duration": 1440
           }
         ]
-      },
-      {
-        "number": 2,
-        "episodes": [
-          {
-            "title": "A Muralha Sina",
-            "videoUrl": "https://example.com/attack-on-titan-s2e1.mp4",
-            "duration": 1440
-          }
-        ]
       }
     ],
-    "year": 2013,
-    "rating": 4.8,
-    "openings": [
-      {
-        "title": "Guren no Yumiya",
-        "artist": "Linked Horizon",
-        "audio": "https://example.com/attack-op1.mp3",
-        "cover": "https://example.com/attack-op1-cover.jpg",
-        "type": "opening",
-        "season": 1
-      },
-      {
-        "title": "Shinzo wo Sasageyo!",
-        "artist": "Linked Horizon",
-        "audio": "https://example.com/attack-op2.mp3",
-        "cover": "https://example.com/attack-op2-cover.jpg",
-        "type": "opening",
-        "season": 2
-      }
-    ],
-    "endings": [
-      {
-        "title": "Utsukushiki Zankoku na Sekai",
-        "artist": "Yoko Hikasa",
-        "audio": "https://example.com/attack-ed1.mp3",
-        "cover": "https://example.com/attack-ed1-cover.jpg",
-        "type": "ending",
-        "season": 1
-      }
-    ],
-    "osts": {
-      "Attack on Titan Original Soundtrack": {
-        "year": 2013,
-        "cover": "https://example.com/attack-ost1-cover.jpg",
-        "tracks": [
-          {
-            "title": "ətˈæk 0N tάɪtn",
-            "artist": "Hiroyuki Sawano",
-            "audio": "https://example.com/attack-ost1.mp3",
-            "duration": 245
-          },
-          {
-            "title": "Vogel im Käfig",
-            "artist": "Hiroyuki Sawano",
-            "audio": "https://example.com/attack-ost2.mp3",
-            "duration": 328
-          }
-        ]
-      },
-      "Attack on Titan Season 2 OST": {
-        "year": 2017,
-        "cover": "https://example.com/attack-ost2-cover.jpg",
-        "tracks": [
-          {
-            "title": "Barricades",
-            "artist": "Hiroyuki Sawano",
-            "audio": "https://example.com/attack-ost3.mp3",
-            "duration": 215
-          }
-        ]
-      }
-    }
+    "year": 2007,
+    "rating": 7.76,
+    "openings": [],
+    "endings": [],
+    "osts": {},
+    "banner": "https://files.catbox.moe/x97qo0.jpg"
   },
   {
     "id": 2,
-    "title": "Demon Slayer: Mugen Train",
-    "description": "Tanjiro e seus amigos embarcam no Trem Infinito para ajudar o Pilar das Chamas, Kyojuro Rengoku, a combater um demônio que tem atormentado os passageiros.",
-    "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/main/images/thumbnails/demonmovie.png",
-    "trailer": "https://www.youtube.com/embed/ATJYac_dORw?autoplay=1&mute=1&enablejsapi=1",
-    "type": "movie",
-    "dateAdded": "2023-10-19",
+    "title": "Bocchi the Rock!",
+    "description": "Desejando fazer amigos e se apresentar ao vivo com uma banda, a solitária e socialmente ansiosa Hitori \"Bocchi\" Gotou dedica seu tempo a tocar guitarra. Em um dia fatídico, Bocchi conhece a extrovertida baterista Nijika Ijichi, que a convida para se juntar à Banda Kessoku quando a guitarrista, Ikuyo Kita, foge antes do primeiro show. Logo depois, Bocchi conhece sua última companheira de banda — a descolada baixista Ryou Yamada.",
+    "thumbnail": "https://files.catbox.moe/bmnf43.jpg",
+    "trailer": "laskdfn",
+    "type": "anime",
+    "dateAdded": "2025-12-31",
     "categories": [
-      "action",
-      "fantasy"
+      "comedy"
     ],
     "seasons": [
       {
         "number": 1,
         "episodes": [
           {
-            "title": "Demon Slayer: Mugen Train",
-            "videoUrl": "https://example.com/demon-slayer-movie.mp4",
-            "duration": 6600
+            "title": "Bocchi Caída",
+            "videoUrl": "https://seed305.bitchute.com/8xBkY2iNMQ05/7Rzp4J4IQDMA.mp4",
+            "duration": 1420,
+            "opening": {
+              "start": 174,
+              "end": 264
+            }
+          },
+          {
+            "title": "Te Vejo Amanhã",
+            "videoUrl": "https://seed177.bitchute.com/8xBkY2iNMQ05/zSM7J8DJ0unT.mp4",
+            "duration": 1420,
+            "opening": {
+              "start": 34,
+              "end": 124
+            }
+          },
+          {
+            "title": "Chegando com Tudo",
+            "videoUrl": "https://seed125.bitchute.com/8xBkY2iNMQ05/NXHDPYzouRXQ.mp4",
+            "duration": 1420,
+            "opening": {
+              "start": 221,
+              "end": 311
+            }
+          },
+          {
+            "title": "Jumping Girl(s)",
+            "videoUrl": "https://seed305.bitchute.com/8xBkY2iNMQ05/8Pw0fpB52s90.mp4",
+            "duration": 1420,
+            "opening": {
+              "start": 105,
+              "end": 195
+            }
+          },
+          {
+            "title": "O Peixe Que Não Consegue Voar",
+            "videoUrl": "https://zggg98sgwbg1gh.bitchute.com/8xBkY2iNMQ05/Tw4yC2Yfl877.mp4",
+            "duration": 1420,
+            "opening": {
+              "start": 167,
+              "end": 257
+            }
+          },
+          {
+            "title": "Oito Paisagens",
+            "videoUrl": "https://seed171.bitchute.com/8xBkY2iNMQ05/Ru9ShxuVgIRo.mp4",
+            "duration": 1420,
+            "opening": {
+              "start": 303,
+              "end": 393
+            }
+          },
+          {
+            "title": "Para a Sua Casa",
+            "videoUrl": "https://seed128.bitchute.com/8xBkY2iNMQ05/VeLqsRwwaPk3.mp4",
+            "duration": 1420,
+            "opening": {
+              "start": 166,
+              "end": 256
+            }
+          },
+          {
+            "title": "Bocchi the Rock",
+            "videoUrl": "https://seed305.bitchute.com/8xBkY2iNMQ05/ukWFlx2n3QXo.mp4",
+            "duration": 1420
+          },
+          {
+            "title": "Enoshima Escar",
+            "videoUrl": "https://seed132.bitchute.com/8xBkY2iNMQ05/o4vKwwuWwz3z.mp4",
+            "duration": 1420,
+            "opening": {
+              "start": 173,
+              "end": 263
+            }
+          },
+          {
+            "title": "After Dark",
+            "videoUrl": "https://seed171.bitchute.com/8xBkY2iNMQ05/XhkkyzGytHM6.mp4",
+            "duration": 0,
+            "opening": {
+              "start": 148,
+              "end": 238
+            }
+          },
+          {
+            "title": "Pôr do Sol Duodecimal",
+            "videoUrl": "https://seed125.bitchute.com/8xBkY2iNMQ05/gu5oGxI61c01.mp4",
+            "duration": 1420,
+            "opening": {
+              "start": 186,
+              "end": 276
+            }
+          },
+          {
+            "title": "A Luz da Manhã Cai Sobre Você",
+            "videoUrl": "https://seed177.bitchute.com/8xBkY2iNMQ05/bQJwcRivBUsv.mp4",
+            "duration": 1420
           }
         ]
       }
     ],
-    "year": 2020,
-    "rating": 4.9,
+    "year": 2022,
+    "rating": 8.74,
     "openings": [
       {
-        "title": "Homura",
-        "artist": "LiSA",
-        "audio": "https://example.com/demon-movie-op1.mp3",
-        "cover": "https://example.com/demon-movie-op1-cover.jpg",
+        "title": "Seishun Complex",
+        "artist": "Kessoku Band",
+        "audio": "https://files.catbox.moe/x1vejn.mp3",
+        "cover": "https://files.catbox.moe/jxiyoq.jpg",
         "type": "opening",
         "season": 1
       }
     ],
     "endings": [
       {
-        "title": "Kamado Tanjiro no Uta",
-        "artist": "Go Shiina",
-        "audio": "https://example.com/demon-movie-ed1.mp3",
-        "cover": "https://example.com/demon-movie-ed1-cover.jpg",
+        "title": "Distortion!!",
+        "artist": "Kessoku Band",
+        "audio": "https://files.catbox.moe/5op4h4.mp3",
+        "cover": "https://files.catbox.moe/ghfj50.jpg",
         "type": "ending",
         "season": 1
+      },
+      {
+        "title": "Karakara",
+        "artist": "Kessoku Band",
+        "audio": "https://files.catbox.moe/06c19s.mp3",
+        "type": "ending",
+        "cover": "https://files.catbox.moe/x99bp7.jpg"
+      },
+      {
+        "title": "Nani ga Warui",
+        "artist": "Kessoku Band",
+        "audio": "https://files.catbox.moe/xrq1k6.mp3",
+        "type": "ending",
+        "cover": "https://files.catbox.moe/l5r26r.jpeg"
+      },
+      {
+        "title": "Korogaru Iwa, Kimi ni Asa ga Furu",
+        "artist": "Kessoku Band",
+        "audio": "https://files.catbox.moe/daxd1b.mp3",
+        "type": "ending",
+        "cover": "https://files.catbox.moe/deznic.jpg"
       }
     ],
-    "osts": {
-      "Demon Slayer: Mugen Train Original Soundtrack": {
-        "year": 2020,
-        "cover": "https://example.com/demon-movie-ost1-cover.jpg",
-        "tracks": [
-          {
-            "title": "Rengoku's Theme",
-            "artist": "Yuki Kajiura, Go Shiina",
-            "audio": "https://example.com/demon-movie-ost1.mp3",
-            "duration": 245
-          }
-        ]
-      }
-    }
+    "osts": {},
+    "banner": "https://files.catbox.moe/umn2v5.jpg"
   },
   {
     "id": 3,
@@ -668,7 +704,7 @@
       {
         "title": "Soramimi Cake",
         "artist": "Oranges & Lemons",
-        "audio": "https://kappa.vgmsite.com/soundtracks/azumanga-daiou-the-animation-utaimasho/eyugksoc/01.%20Ear-Playing-Tricks%20Cake.mp3",
+        "audio": "https://nu.vgmtreasurechest.com/soundtracks/azumanga-daiou-the-animation-utaimasho/ogmqsqbi/01.%20Ear-Playing-Tricks%20Cake.mp3",
         "cover": "https://static.wikia.nocookie.net/azumanga/images/8/80/Soramimi_Cake_Raspberry_heaven.jpg",
         "type": "opening",
         "season": 1
@@ -678,27 +714,13 @@
       {
         "title": "Raspberry Heaven",
         "artist": "Oranges & Lemons",
-        "audio": "https://kappa.vgmsite.com/soundtracks/azumanga-daiou-the-animation-utaimasho/ieokccdk/12.%20raspberry%20heaven.mp3",
+        "audio": "https://nu.vgmtreasurechest.com/soundtracks/azumanga-daiou-the-animation-utaimasho/dzntceqt/12.%20raspberry%20heaven.mp3",
         "cover": "https://static.wikia.nocookie.net/azumanga/images/8/80/Soramimi_Cake_Raspberry_heaven.jpg",
         "type": "ending",
         "season": 1
       }
     ],
-    "osts": {
-      "Azumanga Daioh Original Soundtrack": {
-        "title": "Azumanga Daioh Original Soundtrack",
-        "year": 2002,
-        "cover": "https://raw.githubusercontent.com/jonarasgames/AniVerse/main/images/thumbnails/ranmanet.png",
-        "tracks": [
-          {
-            "title": "Azumanga Daioh Main Theme",
-            "artist": "Masaki Kurihara",
-            "audio": "https://example.com/azumanga-ost1.mp3",
-            "duration": 120
-          }
-        ]
-      }
-    },
+    "osts": {},
     "banner": "https://files.catbox.moe/a4u65d.jpg"
   },
   {
@@ -988,7 +1010,7 @@
       {
         "title": "Blue Sky Rhapsody",
         "artist": "Fhána",
-        "audio": "https://dn721806.ca.archive.org/0/items/misskobayashisdragonmaidopfull/Miss_kobayashis_dragon_maidOpFull.mp3",
+        "audio": "https://files.catbox.moe/71f9ig.mp3",
         "cover": "https://static.wikia.nocookie.net/maid-dragon/images/d/de/108125_686683.jpg",
         "type": "opening",
         "season": 1
@@ -1106,7 +1128,7 @@
             "videoUrl": "https://files.catbox.moe/8rzp8h.mp4",
             "duration": 1466,
             "opening": {
-              "start": 146,
+              "start": 86,
               "end": 176
             }
           },
