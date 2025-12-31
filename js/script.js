@@ -94,6 +94,8 @@ document.addEventListener('DOMContentLoaded', () => {
           loadAnimeSection('movie');
         } else if (sectionId === 'ovas' && typeof loadAnimeSection === 'function') {
           loadAnimeSection('ova');
+        } else if (sectionId === 'collections' && typeof loadCollections === 'function') {
+          loadCollections();
         } else if (sectionId === 'openings' && typeof renderMusicLibrary === 'function' && window.animeDB) {
           renderMusicLibrary(window.animeDB.musicLibrary);
         } else if (sectionId === 'continue' && typeof renderContinueWatchingGrid === 'function' && window.animeDB) {
@@ -226,6 +228,11 @@ function openEpisode(anime, seasonNumber, episodeIndex){
     // Update video info overlay
     if (window.updateVideoOverlay) {
         window.updateVideoOverlay();
+    }
+    
+    // Update collection indicator in player
+    if (window.updateCollectionIndicator) {
+        window.updateCollectionIndicator(anime.id);
     }
     
     // Save to active profile's continue watching with initial 0% progress

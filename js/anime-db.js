@@ -1,6 +1,7 @@
 class AnimeDatabase {
     constructor() {
         this.animes = [];
+        this.collections = [];
         this.watchedEpisodes = JSON.parse(localStorage.getItem('watchedEpisodes')) || {};
         this.continueWatching = JSON.parse(localStorage.getItem('continueWatching')) || {};
         this.ratings = JSON.parse(localStorage.getItem('episodeRatings')) || {};
@@ -19,9 +20,21 @@ class AnimeDatabase {
             const response = await fetch('anime-data.json');
             if (!response.ok) throw new Error("Falha ao carregar anime-data.json");
             
-            this.animes = await response.json();
+            const data = await response.json();
+            
+            // Support both old array format and new object format
+            if (Array.isArray(data)) {
+                // Old format: data is array of animes
+                this.animes = data;
+                this.collections = [];
+            } else {
+                // New format: data is object with animes and collections
+                this.animes = data.animes || [];
+                this.collections = data.collections || [];
+            }
+            
             this.sortAnimesByDate();
-            console.log(`Carregados ${this.animes.length} animes`);
+            console.log(`Carregados ${this.animes.length} animes e ${this.collections.length} coleções`);
             
             // Pré-processar músicas para acesso rápido
             this.processMusicData();
@@ -31,6 +44,7 @@ class AnimeDatabase {
         } catch (error) {
             console.error("Erro ao carregar dados:", error);
             this.animes = [];
+            this.collections = [];
         }
     }
 
@@ -118,6 +132,26 @@ class AnimeDatabase {
         return this.musicLibrary?.osts || {};
     }
 
+    // Métodos de coleções
+    getCollections() {
+        return this.collections || [];
+    }
+
+    getCollectionById(collectionId) {
+        return this.collections.find(c => c.id === collectionId) || null;
+    }
+
+    getCollectionForAnime(animeId) {
+        const numericId = Number(animeId);
+        return this.collections.find(c => c.animeIds && c.animeIds.includes(numericId)) || null;
+    }
+
+    getAnimesInCollection(collectionId) {
+        const collection = this.getCollectionById(collectionId);
+        if (!collection || !collection.animeIds) return [];
+        return collection.animeIds.map(id => this.getAnimeById(id)).filter(Boolean);
+    }
+
     sortAnimesByDate() {
         this.animes.sort((a, b) => new Date(b.dateAdded) - new Date(a.dateAdded));
     }
@@ -166,7 +200,8 @@ class AnimeDatabase {
     }
 
     getAnimeById(id) {
-        return this.animes.find(anime => anime.id == id) || this.getCustomAnime(id);
+        const numericId = Number(id);
+        return this.animes.find(anime => anime.id === numericId) || this.getCustomAnime(id);
     }
 
     getCustomAnime(id) {

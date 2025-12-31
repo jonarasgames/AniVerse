@@ -25,6 +25,7 @@
                     <li><a href="#" data-section="animes">Animes</a></li>
                     <li><a href="#" data-section="movies">Filmes</a></li>
                     <li><a href="#" data-section="ovas">OVAs</a></li>
+                    <li><a href="#" data-section="collections">Coleções</a></li>
                     <li><a href="#" data-section="openings">Músicas</a></li>
                     <li><a href="#" data-section="continue">Continuar Assistindo</a></li>
                 </ul>
@@ -101,6 +102,13 @@
         <section id="ovas-section" class="content-section">
             <h2 class="section-title">OVAs</h2>
             <div class="anime-grid" id="ovas-grid"></div>
+        </section>
+
+        <!-- Collections Section -->
+        <section id="collections-section" class="content-section">
+            <h2 class="section-title">Coleções</h2>
+            <p class="section-description">Agrupe seus animes favoritos em coleções para fácil navegação</p>
+            <div class="collections-grid" id="collections-grid"></div>
         </section>
 
         <!-- Openings Section -->
@@ -191,6 +199,12 @@
                 <div style="margin: 10px 0;">
                     <span id="current-season-label">Temporada 1</span> • 
                     <span id="current-episode-label">Episódio 1</span>
+                </div>
+                <!-- Collection indicator in player -->
+                <div id="collection-indicator" class="collection-indicator" style="display: none;">
+                    <i class="fas fa-layer-group"></i>
+                    <span id="collection-name">Coleção</span>
+                    <div id="collection-items" class="collection-items"></div>
                 </div>
                 <div class="episode-selector">
                     <select id="season-select">
