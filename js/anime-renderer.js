@@ -270,6 +270,149 @@
     renderContinueWatchingGrid(continueWatching, 'continue-grid');
   };
 
+  // Create a collection card element
+  function createCollectionCard(collection) {
+    if (!collection) return null;
+    
+    const card = document.createElement('div');
+    card.className = 'collection-card';
+    card.dataset.collectionId = collection.id;
+    
+    const thumbnail = collection.thumbnail || 'images/bg-default.jpg';
+    const name = escapeHtml(collection.name || 'Coleção');
+    const description = escapeHtml(collection.description || '');
+    const count = collection.animeIds ? collection.animeIds.length : 0;
+    
+    card.innerHTML = `
+      <div class="collection-thumbnail">
+        <img src="${escapeHtml(thumbnail)}" alt="${name}">
+        <div class="collection-count"><i class="fas fa-layer-group"></i> ${count}</div>
+      </div>
+      <div class="collection-info">
+        <h3 class="collection-title">${name}</h3>
+        <p class="collection-description">${description}</p>
+      </div>
+      <div class="trailer-overlay">
+        <i class="fas fa-folder-open"></i>
+        <p>Ver Coleção</p>
+      </div>
+    `;
+    
+    // Add click handler to expand collection
+    card.style.cursor = 'pointer';
+    card.addEventListener('click', () => expandCollection(collection));
+    
+    return card;
+  }
+
+  // Expand a collection to show its contents
+  function expandCollection(collection) {
+    if (!collection || !collection.animeIds) return;
+    
+    const grid = document.getElementById('collections-grid');
+    if (!grid) return;
+    
+    // Get animes in this collection
+    const animes = window.animeDB.getAnimesInCollection(collection.id);
+    
+    // Create expanded view
+    grid.innerHTML = `
+      <div class="collection-header">
+        <button class="btn btn-secondary collection-back" onclick="window.loadCollections()">
+          <i class="fas fa-arrow-left"></i> Voltar
+        </button>
+        <div class="collection-header-info">
+          <h2>${escapeHtml(collection.name)}</h2>
+          <p>${escapeHtml(collection.description || '')}</p>
+        </div>
+      </div>
+      <div class="collection-animes anime-grid"></div>
+    `;
+    
+    const animesGrid = grid.querySelector('.collection-animes');
+    if (animesGrid && animes.length > 0) {
+      animes.forEach(anime => {
+        const card = createAnimeCard(anime);
+        if (card) animesGrid.appendChild(card);
+      });
+    } else if (animesGrid) {
+      animesGrid.innerHTML = '<p style="padding: 20px; text-align: center; opacity: 0.7;">Nenhum anime encontrado nesta coleção.</p>';
+    }
+  }
+
+  // Load collections section
+  window.loadCollections = function() {
+    if (!window.animeDB) {
+      console.warn('AnimeDB not ready');
+      return;
+    }
+    
+    const collections = window.animeDB.getCollections();
+    const grid = document.getElementById('collections-grid');
+    
+    if (!grid) {
+      console.warn('Collections grid not found');
+      return;
+    }
+    
+    grid.innerHTML = '';
+    
+    if (!collections || collections.length === 0) {
+      grid.innerHTML = '<p style="padding: 20px; text-align: center; opacity: 0.7;">Nenhuma coleção encontrada. Adicione coleções no arquivo anime-data.json.</p>';
+      return;
+    }
+    
+    collections.forEach(collection => {
+      const card = createCollectionCard(collection);
+      if (card) grid.appendChild(card);
+    });
+    
+    console.log(`Loaded ${collections.length} collections`);
+  };
+
+  // Update collection indicator in video player
+  window.updateCollectionIndicator = function(animeId) {
+    const indicator = document.getElementById('collection-indicator');
+    const nameEl = document.getElementById('collection-name');
+    const itemsEl = document.getElementById('collection-items');
+    
+    if (!indicator || !nameEl || !itemsEl || !window.animeDB) {
+      return;
+    }
+    
+    const collection = window.animeDB.getCollectionForAnime(animeId);
+    
+    if (!collection) {
+      indicator.style.display = 'none';
+      return;
+    }
+    
+    // Show collection indicator
+    indicator.style.display = 'block';
+    nameEl.textContent = collection.name;
+    
+    // Populate collection items
+    const animes = window.animeDB.getAnimesInCollection(collection.id);
+    itemsEl.innerHTML = '';
+    
+    animes.forEach(anime => {
+      const item = document.createElement('div');
+      item.className = 'collection-item' + (anime.id == animeId ? ' active' : '');
+      item.innerHTML = `
+        <img src="${escapeHtml(anime.thumbnail || 'images/bg-default.jpg')}" alt="${escapeHtml(anime.title)}">
+        <span>${escapeHtml(anime.title)}</span>
+      `;
+      item.style.cursor = 'pointer';
+      item.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (anime.id != animeId) {
+          openAnimeModal(anime);
+        }
+      });
+      itemsEl.appendChild(item);
+    });
+  };
+
   // Close video modal handler
   const closeVideoBtn = document.getElementById('close-video');
   if (closeVideoBtn) {

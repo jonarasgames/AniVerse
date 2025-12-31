@@ -1,7 +1,8 @@
-[
-  {
-    "id": 1,
-    "title": "Lucky☆Star",
+{
+  "animes": [
+    {
+      "id": 1,
+      "title": "Lucky☆Star",
     "description": "Lucky☆Star acompanha o cotidiano de quatro adoráveis ​​garotas do ensino médio: Konata Izumi, a otaku preguiçosa; as gêmeas Hiiragi, Tsukasa e Kagami (uma doçura e uma picância, respectivamente); e a inteligente e educada Miyuki Takara.",
     "thumbnail": "https://files.catbox.moe/tfxcoy.jpg",
     "trailer": "akakaka",
@@ -2074,4 +2075,28 @@
     "dateAdded": "2025-12-31",
     "rating": 5.11
   }
-]
+  ],
+  "collections": [
+    {
+      "id": "joshiraku",
+      "name": "Joshiraku",
+      "description": "A coleção completa de Joshiraku inclui a série principal e o OVA",
+      "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/main/images/thumbnails/joshiraku.png",
+      "animeIds": [13, 14]
+    },
+    {
+      "id": "azumanga",
+      "name": "Azumanga Daioh",
+      "description": "A coleção completa de Azumanga Daioh inclui a série principal, o Web Daioh e o filme curto",
+      "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/main/images/thumbnails/azudaioh.png",
+      "animeIds": [7, 11, 12]
+    },
+    {
+      "id": "ichigo-mashimaro",
+      "name": "Ichigo Mashimaro",
+      "description": "A coleção completa de Ichigo Mashimaro inclui a série principal e o OVA Encore",
+      "thumbnail": "https://files.catbox.moe/1sg3nl.jpg",
+      "animeIds": [17, 18]
+    }
+  ]
+}
