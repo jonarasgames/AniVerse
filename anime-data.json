@@ -1,12 +1,12 @@
 [
   {
     "id": 1,
-    "title": "Attack on Titan",
+    "title": "Lucky Star",
     "description": "Em um mundo onde a humanidade vive dentro de cidades cercadas por três enormes muralhas que os protegem dos gigantescos humanóides devoradores de humanos chamados de Titãs.",
     "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/main/images/thumbnails/attack.png",
     "trailer": "https://www.youtube.com/embed/MGRm4IzK1SQ?autoplay=1&mute=1&enablejsapi=1",
     "type": "anime",
-    "dateAdded": "2023-10-20",
+    "dateAdded": "2025-12-31",
     "categories": [
       "action",
       "drama",
@@ -406,7 +406,8 @@
           }
         ]
       }
-    }
+    },
+    "banner": "https://files.catbox.moe/63hmj6.jpg"
   },
   {
     "id": 7,
@@ -427,132 +428,236 @@
           {
             "title": "A Diante, os Exames de Entrada!",
             "videoUrl": "https://files.catbox.moe/9sqmzv.mp4",
-            "duration": 1447
+            "duration": 1447,
+            "opening": {
+              "start": 0,
+              "end": 90
+            }
           },
           {
             "title": "Dia da Osaka",
             "videoUrl": "https://files.catbox.moe/tff74x.mp4",
-            "duration": 1447
+            "duration": 1447,
+            "opening": {
+              "start": 0,
+              "end": 90
+            }
           },
           {
             "title": "Nyamo",
             "videoUrl": "https://files.catbox.moe/i1qpqg.mp4",
-            "duration": 1447
+            "duration": 1447,
+            "opening": {
+              "start": 0,
+              "end": 90
+            }
           },
           {
             "title": "Piscina! Piscina! Piscina!",
             "videoUrl": "https://files.catbox.moe/0cadkg.mp4",
-            "duration": 1447
+            "duration": 1447,
+            "opening": {
+              "start": 0,
+              "end": 90
+            }
           },
           {
             "title": "Férias de verão",
             "videoUrl": "https://files.catbox.moe/kevo22.mp4",
-            "duration": 1447
+            "duration": 1447,
+            "opening": {
+              "start": 0,
+              "end": 90
+            }
           },
           {
             "title": "Festival de Esportes",
             "videoUrl": "https://files.catbox.moe/mzs9xm.mp4",
-            "duration": 1447
+            "duration": 1447,
+            "opening": {
+              "start": 0,
+              "end": 90
+            }
           },
           {
             "title": "Festival Cultural",
             "videoUrl": "https://files.catbox.moe/m7wj5i.mp4",
-            "duration": 1447
+            "duration": 1447,
+            "opening": {
+              "start": 0,
+              "end": 90
+            }
           },
           {
             "title": "Especial Sonhos de Ano Novo",
             "videoUrl": "https://files.catbox.moe/uztzgt.mp4",
-            "duration": 1447
+            "duration": 1447,
+            "opening": {
+              "start": 0,
+              "end": 90
+            }
           },
           {
             "title": "Sakaki-san",
             "videoUrl": "https://files.catbox.moe/uvvlf1.mp4",
-            "duration": 1447
+            "duration": 1447,
+            "opening": {
+              "start": 0,
+              "end": 90
+            }
           },
           {
             "title": "Nós Somos Estudantes do Segundo Ano!",
             "videoUrl": "https://files.catbox.moe/ftmfgn.mp4",
-            "duration": 1447
+            "duration": 1447,
+            "opening": {
+              "start": 0,
+              "end": 90
+            }
           },
           {
             "title": "Kagura e Sakaki",
             "videoUrl": "https://files.catbox.moe/9jmrp0.mp4",
-            "duration": 1447
+            "duration": 1447,
+            "opening": {
+              "start": 0,
+              "end": 90
+            }
           },
           {
             "title": "Dia da Chyio-chan",
             "videoUrl": "https://files.catbox.moe/s0fowe.mp4",
-            "duration": 1447
+            "duration": 1447,
+            "opening": {
+              "start": 0,
+              "end": 90
+            }
           },
           {
             "title": "Provas",
             "videoUrl": "https://files.catbox.moe/xytmny.mp4",
-            "duration": 1447
+            "duration": 1447,
+            "opening": {
+              "start": 0,
+              "end": 90
+            }
           },
           {
             "title": "O Mar, Quimonos e Festa",
             "videoUrl": "https://files.catbox.moe/fug66z.mp4",
-            "duration": 1447
+            "duration": 1447,
+            "opening": {
+              "start": 0,
+              "end": 90
+            }
           },
           {
             "title": "Festival de Esportes do Segundo Ano",
             "videoUrl": "https://files.catbox.moe/ljm0y8.mp4",
-            "duration": 1447
+            "duration": 1447,
+            "opening": {
+              "start": 0,
+              "end": 90
+            }
           },
           {
             "title": "Festival Cultural do Segundo Ano",
             "videoUrl": "https://files.catbox.moe/1hqjb2.mp4",
-            "duration": 1447
+            "duration": 1447,
+            "opening": {
+              "start": 0,
+              "end": 90
+            }
           },
           {
             "title": "Fim do Segundo Semestre e Natal",
             "videoUrl": "https://files.catbox.moe/ttnid0.mp4",
-            "duration": 1447
+            "duration": 1447,
+            "opening": {
+              "start": 0,
+              "end": 90
+            }
           },
           {
             "title": "Provações da Koyomi",
             "videoUrl": "https://files.catbox.moe/paca5b.mp4",
-            "duration": 1447
+            "duration": 1447,
+            "opening": {
+              "start": 0,
+              "end": 90
+            }
           },
           {
             "title": "Uma Noite de Primavera",
             "videoUrl": "https://files.catbox.moe/ngk2ns.mp4",
-            "duration": 1447
+            "duration": 1447,
+            "opening": {
+              "start": 0,
+              "end": 90
+            }
           },
           {
             "title": "Terceiro Ano",
             "videoUrl": "https://files.catbox.moe/s6uxsy.mp4",
-            "duration": 1447
+            "duration": 1447,
+            "opening": {
+              "start": 0,
+              "end": 90
+            }
           },
           {
             "title": "Excursão Escolar",
             "videoUrl": "https://files.catbox.moe/he35zp.mp4",
-            "duration": 1447
+            "duration": 1447,
+            "opening": {
+              "start": 0,
+              "end": 90
+            }
           },
           {
             "title": "Estudos Para os Exames de Admissão",
             "videoUrl": "https://files.catbox.moe/xn1deg.mp4",
-            "duration": 1447
+            "duration": 1447,
+            "opening": {
+              "start": 0,
+              "end": 90
+            }
           },
           {
             "title": "Último Festival de Esportes",
             "videoUrl": "https://files.catbox.moe/h6dfvx.mp4",
-            "duration": 1447
+            "duration": 1447,
+            "opening": {
+              "start": 0,
+              "end": 90
+            }
           },
           {
             "title": "Yamamayaa",
             "videoUrl": "https://files.catbox.moe/moqg4k.mp4",
-            "duration": 1447
+            "duration": 1447,
+            "opening": {
+              "start": 0,
+              "end": 90
+            }
           },
           {
             "title": "Em Frente: Os Exames de Admissão!",
             "videoUrl": "https://files.catbox.moe/58664b.mp4",
-            "duration": 1447
+            "duration": 1447,
+            "opening": {
+              "start": 0,
+              "end": 90
+            }
           },
           {
             "title": "Cerimônia de Formatura",
             "videoUrl": "https://files.catbox.moe/xg8jlr.mp4",
-            "duration": 1447
+            "duration": 1447,
+            "opening": {
+              "start": 0,
+              "end": 90
+            }
           }
         ]
       }
@@ -593,7 +698,8 @@
           }
         ]
       }
-    }
+    },
+    "banner": "https://files.catbox.moe/a4u65d.jpg"
   },
   {
     "id": 8,
@@ -697,20 +803,8 @@
         "season": 1
       }
     ],
-    "osts": {
-      "Ranma 1/2 2024 Original Soundtrack": {
-        "year": 2024,
-        "cover": "https://example.com/ranma2024-ost1-cover.jpg",
-        "tracks": [
-          {
-            "title": "Ranma 1/2 2024 Main Theme",
-            "artist": "Composer Name",
-            "audio": "https://example.com/ranma2024-ost1.mp3",
-            "duration": 180
-          }
-        ]
-      }
-    }
+    "osts": {},
+    "banner": "https://files.catbox.moe/gtfzjq.png"
   },
   {
     "id": 9,
@@ -860,7 +954,8 @@
     "rating": 7.7,
     "openings": [],
     "endings": [],
-    "osts": []
+    "osts": [],
+    "banner": "https://files.catbox.moe/ou865t.jpg"
   },
   {
     "id": 10,
@@ -925,7 +1020,8 @@
         "season": 2
       }
     ],
-    "osts": {}
+    "osts": {},
+    "banner": "https://files.catbox.moe/0vkic6.jpg"
   },
   {
     "id": 11,
@@ -955,7 +1051,8 @@
     "rating": 6.1,
     "openings": [],
     "endings": [],
-    "osts": {}
+    "osts": {},
+    "banner": "https://files.catbox.moe/a4u65d.jpg"
   },
   {
     "id": 12,
@@ -985,7 +1082,8 @@
     "rating": 7.3,
     "openings": [],
     "endings": [],
-    "osts": {}
+    "osts": {},
+    "banner": "https://files.catbox.moe/a4u65d.jpg"
   },
   {
     "id": 13,
@@ -1006,67 +1104,119 @@
           {
             "title": "Diálogo Normal",
             "videoUrl": "https://files.catbox.moe/8rzp8h.mp4",
-            "duration": 1466
+            "duration": 1466,
+            "opening": {
+              "start": 146,
+              "end": 176
+            }
           },
           {
             "title": "Bastidores Riquezas",
             "videoUrl": "https://files.catbox.moe/uj5462.mp4",
-            "duration": 1448
+            "duration": 1448,
+            "opening": {
+              "start": 0,
+              "end": 90
+            }
           },
           {
             "title": "Um Banho Para Além",
             "videoUrl": "https://files.catbox.moe/553orz.mp4",
-            "duration": 1448
+            "duration": 1448,
+            "opening": {
+              "start": 0,
+              "end": 90
+            }
           },
           {
             "title": "Garota Óculos",
             "videoUrl": "https://files.catbox.moe/romyv9.mp4",
-            "duration": 1448
+            "duration": 1448,
+            "opening": {
+              "start": 0,
+              "end": 90
+            }
           },
           {
             "title": "Elogie A Menina",
             "videoUrl": "https://files.catbox.moe/wixj9n.mp4",
-            "duration": 1450
+            "duration": 1450,
+            "opening": {
+              "start": 0,
+              "end": 90
+            }
           },
           {
             "title": "Quatro Emociona",
             "videoUrl": "https://files.catbox.moe/yv3gt2.mp4",
-            "duration": 1450
+            "duration": 1450,
+            "opening": {
+              "start": 0,
+              "end": 90
+            }
           },
           {
             "title": "Yankees São Assustadores",
             "videoUrl": "https://files.catbox.moe/kfks7k.mp4",
-            "duration": 1434
+            "duration": 1434,
+            "opening": {
+              "start": 0,
+              "end": 90
+            }
           },
           {
             "title": "Saco De Ouro",
             "videoUrl": "https://files.catbox.moe/jv1iwc.mp4",
-            "duration": 1434
+            "duration": 1434,
+            "opening": {
+              "start": 0,
+              "end": 90
+            }
           },
           {
             "title": "Butttofu",
             "videoUrl": "https://files.catbox.moe/7n7aso.mp4",
-            "duration": 1434
+            "duration": 1434,
+            "opening": {
+              "start": 0,
+              "end": 90
+            }
           },
           {
             "title": "Banda De Abóbora",
             "videoUrl": "https://files.catbox.moe/y23b90.mp4",
-            "duration": 1434
+            "duration": 1434,
+            "opening": {
+              "start": 0,
+              "end": 90
+            }
           },
           {
             "title": "Jogo Família",
             "videoUrl": "https://files.catbox.moe/j00nuh.mp4",
-            "duration": 1434
+            "duration": 1434,
+            "opening": {
+              "start": 0,
+              "end": 90
+            }
           },
           {
             "title": "O Sonhador Contra Ataca!",
             "videoUrl": "https://files.catbox.moe/bply33.mp4",
-            "duration": 1434
+            "duration": 1434,
+            "opening": {
+              "start": 0,
+              "end": 90
+            }
           },
           {
             "title": "Coragem Do Personagem",
             "videoUrl": "https://files.catbox.moe/9yhua2.mp4",
-            "duration": 1419
+            "duration": 1419,
+            "opening": {
+              "start": 0,
+              "end": 90
+            }
           }
         ]
       }
@@ -1093,7 +1243,8 @@
         "season": 1
       }
     ],
-    "osts": {}
+    "osts": {},
+    "banner": "https://files.catbox.moe/qfer7v.jpg"
   },
   {
     "id": 14,
@@ -1150,62 +1301,110 @@
           {
             "title": "É Assim Que um Amor Começa!",
             "videoUrl": "https://zggg98sgwbg1gh.bitchute.com/8xBkY2iNMQ05/86EFkNp06Q1s.mp4",
-            "duration": 1479
+            "duration": 1479,
+            "opening": {
+              "start": 0,
+              "end": 90
+            }
           },
           {
             "title": "Isso Aí É um Alienígena, Né?!",
             "videoUrl": "https://files.catbox.moe/tbstae.mp4",
-            "duration": 1477
+            "duration": 1477,
+            "opening": {
+              "start": 121,
+              "end": 211
+            }
           },
           {
             "title": "Uma Disputa de Velha contra Velha",
             "videoUrl": "https://files.catbox.moe/rtt8bk.mp4",
-            "duration": 1483
+            "duration": 1483,
+            "opening": {
+              "start": 114,
+              "end": 204
+            }
           },
           {
             "title": "Hora de Arrebentar Com a Velha Turbo",
             "videoUrl": "https://seed132.bitchute.com/8xBkY2iNMQ05/01ojoyeEC9RT.mp4",
-            "duration": 1483
+            "duration": 1483,
+            "opening": {
+              "start": 394,
+              "end": 484
+            }
           },
           {
             "title": "Cadê Tuas Bolas, Cara?",
             "videoUrl": "https://files.catbox.moe/veucsu.mp4",
-            "duration": 1485
+            "duration": 1485,
+            "opening": {
+              "start": 78,
+              "end": 168
+            }
           },
           {
             "title": "Surge uma Mulher Perigosa",
             "videoUrl": "https://seed167.bitchute.com/8xBkY2iNMQ05/mg9pyIGEYUgb.mp4",
-            "duration": 1483
+            "duration": 1483,
+            "opening": {
+              "start": 445,
+              "end": 535
+            }
           },
           {
             "title": "Rumo a um Mundo Gentil",
             "videoUrl": "https://seed132.bitchute.com/8xBkY2iNMQ05/6DRBdpGgJhHI.mp4",
-            "duration": 1483
+            "duration": 1483,
+            "opening": {
+              "start": 334,
+              "end": 424
+            }
           },
           {
             "title": "Ela Tá Meio Bolada",
             "videoUrl": "https://files.catbox.moe/779gfr.mp4",
-            "duration": 1470
+            "duration": 1470,
+            "opening": {
+              "start": 235,
+              "end": 325
+            }
           },
           {
             "title": "Fusão! Serpiano Demônio de Dover Nessie!",
             "videoUrl": "https://seed122.bitchute.com/8xBkY2iNMQ05/78yz8FGtp3WR.mp4",
-            "duration": 1472
+            "duration": 1472,
+            "opening": {
+              "start": 317,
+              "end": 407
+            }
           },
           {
             "title": "Você Já Viu uma Abdução de Gado?",
             "videoUrl": "https://files.catbox.moe/ayu0q7.mp4",
-            "duration": 1470
+            "duration": 1470,
+            "opening": {
+              "start": 0,
+              "end": 90
+            }
           },
           {
             "title": "O Primeiro Amor",
             "videoUrl": "https://files.catbox.moe/br7lxd.mp4",
-            "duration": 1470
+            "duration": 1470,
+            "opening": {
+              "start": 521,
+              "end": 611
+            }
           },
           {
             "title": "Simbora Pra Casa Amaldiçoada!",
             "videoUrl": "https://files.catbox.moe/xsfqa8.mp4",
-            "duration": 1455
+            "duration": 1455,
+            "opening": {
+              "start": 417,
+              "end": 507
+            }
           }
         ]
       },
@@ -1215,22 +1414,38 @@
           {
             "title": "Então essa é a lendária cobra gigante?",
             "videoUrl": "https://zggg98sgwbg1gh.bitchute.com/8xBkY2iNMQ05/AbKx8aUh8yP1.mp4",
-            "duration": 1499
+            "duration": 1499,
+            "opening": {
+              "start": 230,
+              "end": 320
+            }
           },
           {
             "title": "O Olho Demoníaco",
             "videoUrl": "https://zn21g5kls-n995.bitchute.com/8xBkY2iNMQ05/1tUfYdthvHjD.mp4",
-            "duration": 1495
+            "duration": 1495,
+            "opening": {
+              "start": 326,
+              "end": 417
+            }
           },
           {
             "title": "Imperdoável",
             "videoUrl": "https://seed171.bitchute.com/8xBkY2iNMQ05/xAMfdbb9tzaB.mp4",
-            "duration": 1495
+            "duration": 1495,
+            "opening": {
+              "start": 398,
+              "end": 488
+            }
           },
           {
             "title": "A gente tá muito ferrado!",
             "videoUrl": "https://seed171.bitchute.com/8xBkY2iNMQ05/KK42xU3JqPsn.mp4",
-            "duration": 1499
+            "duration": 1499,
+            "opening": {
+              "start": 271,
+              "end": 361
+            }
           },
           {
             "title": "Vamos todos morar juntos",
@@ -1427,7 +1642,8 @@
         "season": 1
       }
     ],
-    "osts": {}
+    "osts": {},
+    "banner": "https://files.catbox.moe/i84e36.jpg"
   },
   {
     "id": 17,
@@ -1436,7 +1652,7 @@
     "year": 2005,
     "description": "Baseado no mangá de Barasui, Ichigo Mashimaro acompanha a vida de Nobue Itou, sua irmã mais nova, Chika, e suas amigas. A premissa básica da série pode ser resumida em \"garotas fofas fazendo coisas fofas de maneiras fofas\", seja tentando parar de fumar, saindo para brincar, comemorando um feriado ou fazendo tarefas escolares. Este OVA continua de onde a série parou, dando continuidade às aventuras do seu dia a dia, só que mais fofas.",
     "thumbnail": "https://files.catbox.moe/1sg3nl.jpg",
-    "banner": "https://images.fanart.tv/fanart/ichigo-mashimaro-62594828caf75.jpg",
+    "banner": "https://files.catbox.moe/3p6nri.jpg",
     "trailer": "https://www.youtube.com/watch?v=vwx8MwaVhKI",
     "categories": [
       "comedy",
@@ -1447,12 +1663,12 @@
         "number": 1,
         "episodes": [
           {
-            "title": "0 - Especial",
+            "title": "Especial",
             "videoUrl": "https://files.catbox.moe/9vpzq0.mp4",
             "duration": 231
           },
           {
-            "title": "01 – Aniversário",
+            "title": "Aniversário",
             "videoUrl": "https://files.catbox.moe/ycm3gg.mp4",
             "duration": 1451,
             "opening": {
@@ -1461,7 +1677,7 @@
             }
           },
           {
-            "title": "02 – Ana",
+            "title": "Ana",
             "videoUrl": "https://files.catbox.moe/34tvb1.mp4",
             "duration": 1451,
             "opening": {
@@ -1470,7 +1686,7 @@
             }
           },
           {
-            "title": "03 – Chamda de casa",
+            "title": "Chamda de casa",
             "videoUrl": "https://files.catbox.moe/h19k7e.mp4",
             "duration": 1451,
             "opening": {
@@ -1479,7 +1695,7 @@
             }
           },
           {
-            "title": "04 – Arbeit",
+            "title": "Arbeit",
             "videoUrl": "https://files.catbox.moe/692zug.mp4",
             "duration": 1451,
             "opening": {
@@ -1488,7 +1704,7 @@
             }
           },
           {
-            "title": "05 – Dormir juntos",
+            "title": "Dormir juntos",
             "videoUrl": "https://files.catbox.moe/692zug.mp4",
             "duration": 1451,
             "opening": {
@@ -1497,7 +1713,7 @@
             }
           },
           {
-            "title": "06 – Dia de Verão",
+            "title": "Dia de Verão",
             "videoUrl": "https://files.catbox.moe/vbzhkn.mp4",
             "duration": 1451,
             "opening": {
@@ -1506,7 +1722,7 @@
             }
           },
           {
-            "title": "07 – Banho de mar",
+            "title": "Banho de mar",
             "videoUrl": "https://files.catbox.moe/0r0oj4.mp4",
             "duration": 1451,
             "opening": {
@@ -1515,7 +1731,7 @@
             }
           },
           {
-            "title": "08 – Festival",
+            "title": "Festival",
             "videoUrl": "https://files.catbox.moe/3e3pjp.mp4",
             "duration": 1451,
             "opening": {
@@ -1524,7 +1740,7 @@
             }
           },
           {
-            "title": "09 – Crescendo",
+            "title": "Crescendo",
             "videoUrl": "https://files.catbox.moe/xlerde.mp4",
             "duration": 1451,
             "opening": {
@@ -1533,7 +1749,7 @@
             }
           },
           {
-            "title": "10 – Flor",
+            "title": "Flor",
             "videoUrl": "https://files.catbox.moe/2rc32n.mp4",
             "duration": 1451,
             "opening": {
@@ -1542,7 +1758,7 @@
             }
           },
           {
-            "title": "11 – Primeira neve",
+            "title": "Primeira neve",
             "videoUrl": "https://files.catbox.moe/h9ojsb.mp4",
             "duration": 1451,
             "opening": {
@@ -1551,7 +1767,7 @@
             }
           },
           {
-            "title": "12 – Presente",
+            "title": "Presente",
             "videoUrl": "https://files.catbox.moe/kc4ig0.mp4",
             "duration": 1421,
             "opening": {
@@ -1591,7 +1807,7 @@
     "year": 2007,
     "description": "Episódios OVA incluído após a série com 5 novos episódios.",
     "thumbnail": "https://files.catbox.moe/9ihgt7.png",
-    "banner": "https://images.fanart.tv/fanart/ichigo-mashimaro-62594828caf75.jpg",
+    "banner": "https://files.catbox.moe/3p6nri.jpg",
     "trailer": "",
     "categories": [
       "comedy",
@@ -1602,7 +1818,7 @@
         "number": 1,
         "episodes": [
           {
-            "title": "1 - Paisagem",
+            "title": "Paisagem",
             "videoUrl": "https://files.catbox.moe/nblgp4.mp4",
             "duration": 0,
             "opening": {
@@ -1611,7 +1827,7 @@
             }
           },
           {
-            "title": "2 - O de sempre",
+            "title": "O de sempre",
             "videoUrl": "https://files.catbox.moe/19d4rg.mp4",
             "duration": 1539,
             "opening": {
@@ -1620,7 +1836,7 @@
             }
           },
           {
-            "title": "3 - Rotina",
+            "title": "Rotina",
             "videoUrl": "https://files.catbox.moe/lr5i03.mp4",
             "duration": 1561,
             "opening": {
@@ -1629,7 +1845,7 @@
             }
           },
           {
-            "title": "4 - Olá",
+            "title": "Olá",
             "videoUrl": "https://files.catbox.moe/vwjnbz.mp4",
             "duration": 1610,
             "opening": {
@@ -1638,7 +1854,7 @@
             }
           },
           {
-            "title": "Episódio 5",
+            "title": "Até amanhã",
             "videoUrl": "https://files.catbox.moe/aqqqyb.mp4",
             "duration": 1652,
             "opening": {
@@ -1684,5 +1900,156 @@
     "osts": {},
     "dateAdded": "2025-12-30",
     "rating": 7.65
+  },
+  {
+    "id": 19,
+    "title": "Ao Oni the Animation",
+    "type": "anime",
+    "year": 2016,
+    "description": "Enquanto Hiroshi e seus amigos tentam resolver os vários enigmas da mansão e escapar de seu novo inimigo azul, eles se deparam com diversos finais terríveis ao fracassarem miseravelmente.",
+    "thumbnail": "https://files.catbox.moe/u7qxwb.png",
+    "banner": "https://files.catbox.moe/8nhxx3.jpg",
+    "trailer": "",
+    "categories": [
+      "comedy",
+      "terror"
+    ],
+    "seasons": [
+      {
+        "number": 1,
+        "episodes": [
+          {
+            "title": "Tem 5 Pessoas Aqui!",
+            "videoUrl": "https://files.catbox.moe/5ki9v6.mp4",
+            "duration": 184,
+            "opening": {
+              "start": 0,
+              "end": 34
+            }
+          },
+          {
+            "title": "Usina de Força Takeshi",
+            "videoUrl": "https://files.catbox.moe/utdlzw.mp4",
+            "duration": 184,
+            "opening": {
+              "start": 0,
+              "end": 34
+            }
+          },
+          {
+            "title": "Confissão",
+            "videoUrl": "https://files.catbox.moe/olht6v.mp4",
+            "duration": 184,
+            "opening": {
+              "start": 0,
+              "end": 34
+            }
+          },
+          {
+            "title": "O Requintado Cotidiano do Aooni",
+            "videoUrl": "https://files.catbox.moe/2bl3rl.mp4",
+            "duration": 184,
+            "opening": {
+              "start": 0,
+              "end": 34
+            }
+          },
+          {
+            "title": "Estilo Rococó",
+            "videoUrl": "https://files.catbox.moe/1ef22k.mp4",
+            "duration": 184,
+            "opening": {
+              "start": 0,
+              "end": 34
+            }
+          },
+          {
+            "title": "Elegia aos Homens",
+            "videoUrl": "https://files.catbox.moe/jk1be9.mp4",
+            "duration": 184,
+            "opening": {
+              "start": 0,
+              "end": 34
+            }
+          },
+          {
+            "title": "Quebra-cabeça",
+            "videoUrl": "https://files.catbox.moe/0mv5do.mp4",
+            "duration": 184,
+            "opening": {
+              "start": 0,
+              "end": 34
+            }
+          },
+          {
+            "title": "Barras de Ferro",
+            "videoUrl": "https://files.catbox.moe/w7dfct.mp4",
+            "duration": 184,
+            "opening": {
+              "start": 0,
+              "end": 34
+            }
+          },
+          {
+            "title": "Mascote Local",
+            "videoUrl": "https://files.catbox.moe/e3na5n.mp4",
+            "duration": 184,
+            "opening": {
+              "start": 0,
+              "end": 34
+            }
+          },
+          {
+            "title": "Aooni Supersônico",
+            "videoUrl": "https://files.catbox.moe/au2wap.mp4",
+            "duration": 184,
+            "opening": {
+              "start": 0,
+              "end": 34
+            }
+          },
+          {
+            "title": "Ao-tim-bum",
+            "videoUrl": "https://files.catbox.moe/8gbncp.mp4",
+            "duration": 184,
+            "opening": {
+              "start": 0,
+              "end": 34
+            }
+          },
+          {
+            "title": "Mundo Oposto",
+            "videoUrl": "https://files.catbox.moe/q8whxd.mp4",
+            "duration": 184,
+            "opening": {
+              "start": 0,
+              "end": 34
+            }
+          },
+          {
+            "title": "Presos Por 70 Anos",
+            "videoUrl": "https://files.catbox.moe/b382kb.mp4",
+            "duration": 184,
+            "opening": {
+              "start": 0,
+              "end": 34
+            }
+          }
+        ]
+      }
+    ],
+    "openings": [],
+    "endings": [
+      {
+        "title": "Kimi koso Ao Oni",
+        "artist": "Machigerita",
+        "audio": "https://files.catbox.moe/pbrfpx.mp3",
+        "type": "ending",
+        "cover": "https://files.catbox.moe/gysd7v.jpg"
+      }
+    ],
+    "osts": {},
+    "dateAdded": "2025-12-31",
+    "rating": 5.11
   }
 ]
