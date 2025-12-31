@@ -302,9 +302,90 @@
             
             if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement) {
                 container.classList.remove('is-fullscreen');
+                container.classList.remove('controls-hidden');
             }
         });
     });
+
+    // Auto-hide controls in fullscreen mode
+    let controlsHideTimeout = null;
+    const HIDE_CONTROLS_DELAY = 3000; // 3 seconds of inactivity
+    
+    function isInFullscreen() {
+        const container = document.getElementById('video-player-container');
+        return document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || (container && container.classList.contains('is-fullscreen'));
+    }
+    
+    function showControls() {
+        const container = document.getElementById('video-player-container');
+        if (!container) return;
+        
+        container.classList.remove('controls-hidden');
+        
+        // Reset hide timer
+        if (controlsHideTimeout) {
+            clearTimeout(controlsHideTimeout);
+        }
+        
+        // Only auto-hide if in fullscreen and video is playing
+        if (isInFullscreen() && player && !player.paused) {
+            controlsHideTimeout = setTimeout(() => {
+                if (isInFullscreen() && !player.paused) {
+                    container.classList.add('controls-hidden');
+                }
+            }, HIDE_CONTROLS_DELAY);
+        }
+    }
+    
+    function hideControls() {
+        const container = document.getElementById('video-player-container');
+        if (!container || !isInFullscreen()) return;
+        
+        container.classList.add('controls-hidden');
+    }
+    
+    // Mouse movement - show controls (PC)
+    const container = document.getElementById('video-player-container');
+    if (container) {
+        container.addEventListener('mousemove', () => {
+            if (isInFullscreen()) {
+                showControls();
+            }
+        });
+        
+        // Touch events - show controls (mobile)
+        container.addEventListener('touchstart', () => {
+            if (isInFullscreen()) {
+                showControls();
+            }
+        });
+        
+        // When mouse leaves container, start hide timer
+        container.addEventListener('mouseleave', () => {
+            if (isInFullscreen() && player && !player.paused) {
+                if (controlsHideTimeout) {
+                    clearTimeout(controlsHideTimeout);
+                }
+                controlsHideTimeout = setTimeout(hideControls, HIDE_CONTROLS_DELAY);
+            }
+        });
+    }
+    
+    // Show controls when video is paused
+    player.addEventListener('pause', showControls);
+    
+    // Hide controls when video starts playing (after delay)
+    player.addEventListener('play', () => {
+        if (isInFullscreen()) {
+            if (controlsHideTimeout) {
+                clearTimeout(controlsHideTimeout);
+            }
+            controlsHideTimeout = setTimeout(hideControls, HIDE_CONTROLS_DELAY);
+        }
+    });
+    
+    // Show controls when seeking
+    player.addEventListener('seeking', showControls);
   });
 
   window.showCustomMiniPlayer = showCustomMiniPlayer;
