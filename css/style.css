@@ -1900,6 +1900,42 @@ footer {
   padding: 20px 15px 15px;
 }
 
+/* Auto-hide controls in fullscreen mode */
+#video-player-container:fullscreen #custom-video-controls,
+#video-player-container.is-fullscreen #custom-video-controls,
+#video-player-container:-webkit-full-screen #custom-video-controls {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+#video-player-container:fullscreen.controls-hidden #custom-video-controls,
+#video-player-container.is-fullscreen.controls-hidden #custom-video-controls,
+#video-player-container:-webkit-full-screen.controls-hidden #custom-video-controls {
+  opacity: 0;
+  transform: translateY(100%);
+  pointer-events: none;
+}
+
+/* Hide cursor when controls are hidden in fullscreen */
+#video-player-container:fullscreen.controls-hidden,
+#video-player-container.is-fullscreen.controls-hidden,
+#video-player-container:-webkit-full-screen.controls-hidden {
+  cursor: none;
+}
+
+/* Skip button auto-hide in fullscreen */
+#video-player-container:fullscreen #skip-opening-btn,
+#video-player-container.is-fullscreen #skip-opening-btn,
+#video-player-container:-webkit-full-screen #skip-opening-btn {
+  transition: opacity 0.3s ease;
+}
+
+#video-player-container:fullscreen.controls-hidden #skip-opening-btn,
+#video-player-container.is-fullscreen.controls-hidden #skip-opening-btn,
+#video-player-container:-webkit-full-screen.controls-hidden #skip-opening-btn {
+  opacity: 0;
+  pointer-events: none;
+}
+
 /* Mini-player styles for music.js */
 .mini-player {
     position: fixed;
