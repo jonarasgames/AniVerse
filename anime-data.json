@@ -1428,5 +1428,261 @@
       }
     ],
     "osts": {}
+  },
+  {
+    "id": 17,
+    "title": "Ichigo Mashimaro",
+    "type": "anime",
+    "year": 2005,
+    "description": "Baseado no mangá de Barasui, Ichigo Mashimaro acompanha a vida de Nobue Itou, sua irmã mais nova, Chika, e suas amigas. A premissa básica da série pode ser resumida em \"garotas fofas fazendo coisas fofas de maneiras fofas\", seja tentando parar de fumar, saindo para brincar, comemorando um feriado ou fazendo tarefas escolares. Este OVA continua de onde a série parou, dando continuidade às aventuras do seu dia a dia, só que mais fofas.",
+    "thumbnail": "https://files.catbox.moe/1sg3nl.jpg",
+    "banner": "https://images.fanart.tv/fanart/ichigo-mashimaro-62594828caf75.jpg",
+    "trailer": "https://www.youtube.com/watch?v=vwx8MwaVhKI",
+    "categories": [
+      "comedy",
+      "slice of life"
+    ],
+    "seasons": [
+      {
+        "number": 1,
+        "episodes": [
+          {
+            "title": "0 - Especial",
+            "videoUrl": "https://files.catbox.moe/9vpzq0.mp4",
+            "duration": 231
+          },
+          {
+            "title": "01 – Aniversário",
+            "videoUrl": "https://files.catbox.moe/ycm3gg.mp4",
+            "duration": 1451,
+            "opening": {
+              "start": 0,
+              "end": 90
+            }
+          },
+          {
+            "title": "02 – Ana",
+            "videoUrl": "https://files.catbox.moe/34tvb1.mp4",
+            "duration": 1451,
+            "opening": {
+              "start": 0,
+              "end": 90
+            }
+          },
+          {
+            "title": "03 – Chamda de casa",
+            "videoUrl": "https://files.catbox.moe/h19k7e.mp4",
+            "duration": 1451,
+            "opening": {
+              "start": 0,
+              "end": 90
+            }
+          },
+          {
+            "title": "04 – Arbeit",
+            "videoUrl": "https://files.catbox.moe/692zug.mp4",
+            "duration": 1451,
+            "opening": {
+              "start": 0,
+              "end": 90
+            }
+          },
+          {
+            "title": "05 – Dormir juntos",
+            "videoUrl": "https://files.catbox.moe/692zug.mp4",
+            "duration": 1451,
+            "opening": {
+              "start": 0,
+              "end": 90
+            }
+          },
+          {
+            "title": "06 – Dia de Verão",
+            "videoUrl": "https://files.catbox.moe/vbzhkn.mp4",
+            "duration": 1451,
+            "opening": {
+              "start": 0,
+              "end": 90
+            }
+          },
+          {
+            "title": "07 – Banho de mar",
+            "videoUrl": "https://files.catbox.moe/0r0oj4.mp4",
+            "duration": 1451,
+            "opening": {
+              "start": 0,
+              "end": 90
+            }
+          },
+          {
+            "title": "08 – Festival",
+            "videoUrl": "https://files.catbox.moe/3e3pjp.mp4",
+            "duration": 1451,
+            "opening": {
+              "start": 0,
+              "end": 90
+            }
+          },
+          {
+            "title": "09 – Crescendo",
+            "videoUrl": "https://files.catbox.moe/xlerde.mp4",
+            "duration": 1451,
+            "opening": {
+              "start": 0,
+              "end": 90
+            }
+          },
+          {
+            "title": "10 – Flor",
+            "videoUrl": "https://files.catbox.moe/2rc32n.mp4",
+            "duration": 1451,
+            "opening": {
+              "start": 0,
+              "end": 90
+            }
+          },
+          {
+            "title": "11 – Primeira neve",
+            "videoUrl": "https://files.catbox.moe/h9ojsb.mp4",
+            "duration": 1451,
+            "opening": {
+              "start": 0,
+              "end": 90
+            }
+          },
+          {
+            "title": "12 – Presente",
+            "videoUrl": "https://files.catbox.moe/kc4ig0.mp4",
+            "duration": 1421,
+            "opening": {
+              "start": 0,
+              "end": 90
+            }
+          }
+        ]
+      }
+    ],
+    "openings": [
+      {
+        "title": "Ichigo Complete",
+        "artist": "Saeko Chiba, Fumiko Orikasa, Ayako Kawasumi and Mamiko Noto",
+        "audio": "https://files.catbox.moe/ta14d7.m4a",
+        "type": "opening",
+        "cover": "https://files.catbox.moe/3yi31v.png"
+      }
+    ],
+    "endings": [
+      {
+        "title": "Classmate",
+        "artist": "Fumiko Orikasa",
+        "audio": "https://files.catbox.moe/tg7sk3.mp3",
+        "type": "ending",
+        "cover": "https://files.catbox.moe/roynp5.png"
+      }
+    ],
+    "osts": {},
+    "dateAdded": "2025-12-30",
+    "rating": 7.62
+  },
+  {
+    "id": 18,
+    "title": "Ichigo Mashimaro Encore",
+    "type": "ova",
+    "year": 2007,
+    "description": "Episódios OVA incluído após a série com 5 novos episódios.",
+    "thumbnail": "https://files.catbox.moe/9ihgt7.png",
+    "banner": "https://images.fanart.tv/fanart/ichigo-mashimaro-62594828caf75.jpg",
+    "trailer": "",
+    "categories": [
+      "comedy",
+      "slice of life"
+    ],
+    "seasons": [
+      {
+        "number": 1,
+        "episodes": [
+          {
+            "title": "1 - Paisagem",
+            "videoUrl": "https://files.catbox.moe/nblgp4.mp4",
+            "duration": 0,
+            "opening": {
+              "start": 0,
+              "end": 101
+            }
+          },
+          {
+            "title": "2 - O de sempre",
+            "videoUrl": "https://files.catbox.moe/19d4rg.mp4",
+            "duration": 1539,
+            "opening": {
+              "start": 0,
+              "end": 101
+            }
+          },
+          {
+            "title": "3 - Rotina",
+            "videoUrl": "https://files.catbox.moe/lr5i03.mp4",
+            "duration": 1561,
+            "opening": {
+              "start": 0,
+              "end": 101
+            }
+          },
+          {
+            "title": "4 - Olá",
+            "videoUrl": "https://files.catbox.moe/vwjnbz.mp4",
+            "duration": 1610,
+            "opening": {
+              "start": 276,
+              "end": 375
+            }
+          },
+          {
+            "title": "Episódio 5",
+            "videoUrl": "https://files.catbox.moe/aqqqyb.mp4",
+            "duration": 1652,
+            "opening": {
+              "start": 127,
+              "end": 226
+            }
+          }
+        ]
+      }
+    ],
+    "openings": [
+      {
+        "title": "Akkan Berry Berry",
+        "artist": "Chiba Saeko, Orikasa Fumiko, Kawasumi Ayako, Noto Mamiko & Nabatame Hitomi",
+        "audio": "https://files.catbox.moe/s1ak45.wav",
+        "type": "opening",
+        "cover": "https://files.catbox.moe/jrdscm.png"
+      },
+      {
+        "title": "Ichigo Splash",
+        "artist": "Saeko Chiba, Mamiko Noto, Ayako Kawasumi, Fumiko Orikasa & Hitomi Nabatame",
+        "audio": "https://files.catbox.moe/fg58ov.mp3",
+        "type": "opening",
+        "cover": "https://files.catbox.moe/jrdscm.png"
+      }
+    ],
+    "endings": [
+      {
+        "title": "Yuu Machi no Kaze",
+        "artist": "Orikasa Fumiko",
+        "audio": "https://files.catbox.moe/2v3cl3.mp3",
+        "type": "ending",
+        "cover": "https://files.catbox.moe/oy9ppy.png"
+      },
+      {
+        "title": "Zutto, Zutto",
+        "artist": "Fumiko Orikasa",
+        "audio": "https://files.catbox.moe/5659mt.mp3",
+        "type": "ending",
+        "cover": "https://files.catbox.moe/oazwdh.jpg"
+      }
+    ],
+    "osts": {},
+    "dateAdded": "2025-12-30",
+    "rating": 7.65
   }
 ]
