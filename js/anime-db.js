@@ -142,7 +142,8 @@ class AnimeDatabase {
     }
 
     getCollectionForAnime(animeId) {
-        return this.collections.find(c => c.animeIds && c.animeIds.includes(parseInt(animeId))) || null;
+        const numericId = Number(animeId);
+        return this.collections.find(c => c.animeIds && c.animeIds.includes(numericId)) || null;
     }
 
     getAnimesInCollection(collectionId) {
@@ -199,7 +200,8 @@ class AnimeDatabase {
     }
 
     getAnimeById(id) {
-        return this.animes.find(anime => anime.id == id) || this.getCustomAnime(id);
+        const numericId = Number(id);
+        return this.animes.find(anime => anime.id === numericId) || this.getCustomAnime(id);
     }
 
     getCustomAnime(id) {

@@ -397,7 +397,7 @@
     
     animes.forEach(anime => {
       const item = document.createElement('div');
-      item.className = 'collection-item' + (anime.id == animeId ? ' active' : '');
+      item.className = 'collection-item' + (anime.id === Number(animeId) ? ' active' : '');
       item.innerHTML = `
         <img src="${escapeHtml(anime.thumbnail || 'images/bg-default.jpg')}" alt="${escapeHtml(anime.title)}">
         <span>${escapeHtml(anime.title)}</span>
@@ -405,7 +405,7 @@
       item.style.cursor = 'pointer';
       item.addEventListener('click', (e) => {
         e.stopPropagation();
-        if (anime.id != animeId) {
+        if (anime.id !== Number(animeId)) {
           openAnimeModal(anime);
         }
       });
