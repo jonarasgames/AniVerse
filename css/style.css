@@ -2727,10 +2727,10 @@ html.theme-dark select {
     overflow: hidden;
 }
 
-/* Only enable tap zones in fullscreen mode when controls are visible */
-#video-player-container:fullscreen.controls-visible #video-tap-zones,
-#video-player-container.is-fullscreen.controls-visible #video-tap-zones,
-#video-player-container:-webkit-full-screen.controls-visible #video-tap-zones {
+/* Enable tap zones in fullscreen mode (always, not just when controls visible) */
+#video-player-container:fullscreen #video-tap-zones,
+#video-player-container.is-fullscreen #video-tap-zones,
+#video-player-container:-webkit-full-screen #video-tap-zones {
     pointer-events: auto;
 }
 
@@ -2739,8 +2739,14 @@ html.theme-dark select {
     height: 100%;
 }
 
+/* Left and right zones are larger for easier double-tap seeking */
+#tap-zone-left,
+#tap-zone-right {
+    flex: 1.5;
+}
+
 #tap-zone-center {
-    flex: 2;
+    flex: 1;
 }
 
 /* Seek feedback indicators */

@@ -432,20 +432,26 @@
             if (lastTapZone === 'left' && currentTime - lastTapTime < DOUBLE_TAP_DELAY) {
                 e.preventDefault();
                 handleDoubleTapSeek('left');
-                lastTapTime = 0;
-                lastTapZone = null;
+                // Keep lastTapTime updated for consecutive double-taps
+                lastTapTime = currentTime;
+                // Keep lastTapZone as 'left' for next tap
             } else {
                 lastTapTime = currentTime;
                 lastTapZone = 'left';
             }
         });
         tapZoneLeft.addEventListener('click', (e) => {
-            // Single click - hide controls
+            // Single click - toggle controls visibility
             const container = document.getElementById('video-player-container');
-            if (container && controlsVisible) {
-                container.classList.add('controls-hidden');
-                container.classList.remove('controls-visible');
-                controlsVisible = false;
+            if (container) {
+                controlsVisible = !controlsVisible;
+                if (controlsVisible) {
+                    container.classList.remove('controls-hidden');
+                    container.classList.add('controls-visible');
+                } else {
+                    container.classList.add('controls-hidden');
+                    container.classList.remove('controls-visible');
+                }
             }
         });
     }
@@ -457,20 +463,26 @@
             if (lastTapZone === 'right' && currentTime - lastTapTime < DOUBLE_TAP_DELAY) {
                 e.preventDefault();
                 handleDoubleTapSeek('right');
-                lastTapTime = 0;
-                lastTapZone = null;
+                // Keep lastTapTime updated for consecutive double-taps
+                lastTapTime = currentTime;
+                // Keep lastTapZone as 'right' for next tap
             } else {
                 lastTapTime = currentTime;
                 lastTapZone = 'right';
             }
         });
         tapZoneRight.addEventListener('click', (e) => {
-            // Single click - hide controls
+            // Single click - toggle controls visibility
             const container = document.getElementById('video-player-container');
-            if (container && controlsVisible) {
-                container.classList.add('controls-hidden');
-                container.classList.remove('controls-visible');
-                controlsVisible = false;
+            if (container) {
+                controlsVisible = !controlsVisible;
+                if (controlsVisible) {
+                    container.classList.remove('controls-hidden');
+                    container.classList.add('controls-visible');
+                } else {
+                    container.classList.add('controls-hidden');
+                    container.classList.remove('controls-visible');
+                }
             }
         });
     }
@@ -529,6 +541,7 @@
     
     // Mobile: Double-tap detection on video element for seek
     let videoLastTapTime = 0;
+    let videoLastTapZone = null;
     
     player.addEventListener('touchend', (e) => {
         const currentTime = Date.now();
@@ -536,23 +549,28 @@
         const videoRect = player.getBoundingClientRect();
         const tapX = touch.clientX - videoRect.left;
         const videoWidth = videoRect.width;
-        const tapZoneWidth = videoWidth / 3;
+        // Larger side zones (37.5% each side, 25% center)
+        const sideZoneWidth = videoWidth * 0.375;
         
         // Determine which zone was tapped
         let zone = 'center';
-        if (tapX < tapZoneWidth) {
+        if (tapX < sideZoneWidth) {
             zone = 'left';
-        } else if (tapX > videoWidth - tapZoneWidth) {
+        } else if (tapX > videoWidth - sideZoneWidth) {
             zone = 'right';
         }
         
-        if (currentTime - videoLastTapTime < DOUBLE_TAP_DELAY) {
-            // Double tap detected
+        if (videoLastTapZone === zone && currentTime - videoLastTapTime < DOUBLE_TAP_DELAY) {
+            // Double tap detected in same zone
             e.preventDefault();
             if (zone === 'left') {
                 handleDoubleTapSeek('left');
+                // Keep tracking for consecutive double-taps
+                videoLastTapTime = currentTime;
             } else if (zone === 'right') {
                 handleDoubleTapSeek('right');
+                // Keep tracking for consecutive double-taps
+                videoLastTapTime = currentTime;
             } else {
                 // Center double tap - toggle play/pause
                 if (player.paused) {
@@ -560,15 +578,24 @@
                 } else {
                     player.pause();
                 }
+                videoLastTapTime = 0;
+                videoLastTapZone = null;
             }
-            videoLastTapTime = 0;
         } else {
-            // Single tap - show controls if hidden
+            // Single tap - toggle controls
             videoLastTapTime = currentTime;
+            videoLastTapZone = zone;
             
             const container = document.getElementById('video-player-container');
-            if (container && !controlsVisible) {
-                showControls();
+            if (container) {
+                controlsVisible = !controlsVisible;
+                if (controlsVisible) {
+                    container.classList.remove('controls-hidden');
+                    container.classList.add('controls-visible');
+                } else {
+                    container.classList.add('controls-hidden');
+                    container.classList.remove('controls-visible');
+                }
             }
         }
     });
