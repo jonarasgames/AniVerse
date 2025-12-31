@@ -155,11 +155,8 @@
         audio.addEventListener('loadedmetadata', updateDuration);
         audio.addEventListener('volumechange', updateMusicVolume);
         audio.addEventListener('ended', () => {
-            closeMiniPlayer();
-            if (currentPlayingCard) {
-                currentPlayingCard.classList.remove('playing');
-                currentPlayingCard = null;
-            }
+            // Auto-advance to next track
+            playNextTrack();
         });
         
         // Initialize volume display
@@ -367,6 +364,40 @@
         const icon = document.querySelector('#music-fs-play-pause i');
         if (icon) {
             icon.className = audio && !audio.paused ? 'fas fa-pause' : 'fas fa-play';
+        }
+    }
+    
+    // Play next track in the music list
+    function playNextTrack() {
+        if (!currentPlayingCard) {
+            closeMiniPlayer();
+            return;
+        }
+        
+        // Find all music cards
+        const allCards = document.querySelectorAll('.music-card');
+        const cardsArray = Array.from(allCards);
+        const currentIndex = cardsArray.indexOf(currentPlayingCard);
+        
+        if (currentIndex === -1 || currentIndex >= cardsArray.length - 1) {
+            // Last track or not found, stop playing
+            closeMiniPlayer();
+            console.log('🎵 Playlist ended');
+            return;
+        }
+        
+        // Get next card and play it
+        const nextCard = cardsArray[currentIndex + 1];
+        if (nextCard) {
+            const src = nextCard.dataset.src;
+            const title = nextCard.dataset.title;
+            const artist = nextCard.dataset.artist;
+            const thumb = nextCard.dataset.thumb;
+            
+            console.log(`⏭️ Auto-playing next track: ${title}`);
+            playMusic(src, title, artist, thumb, nextCard);
+        } else {
+            closeMiniPlayer();
         }
     }
     

@@ -223,6 +223,11 @@ function openEpisode(anime, seasonNumber, episodeIndex){
         episode: episodeIndex + 1
     };
     
+    // Update video info overlay
+    if (window.updateVideoOverlay) {
+        window.updateVideoOverlay();
+    }
+    
     // Save to active profile's continue watching with initial 0% progress
     if (window.profileManager) {
         const activeProfile = window.profileManager.getActiveProfile();

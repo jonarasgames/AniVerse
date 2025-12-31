@@ -283,8 +283,236 @@
     // Update volume icon once after restoration
     updateVolumeIcon();
     
-    // click on video toggles pause/play (only when clicking the element itself)
-    player.addEventListener('click', (e)=> { if(e.target!==player) return; if(player.paused) player.play().catch(()=>{}); else player.pause(); });
+    // Controls visibility state for click-to-pause
+    let controlsVisible = true;
+    
+    // Update overlay info when video metadata changes
+    function updateVideoOverlay() {
+        const overlayTitle = document.getElementById('overlay-anime-title');
+        const overlayEpisode = document.getElementById('overlay-episode-info');
+        
+        if (window.currentWatchingAnime) {
+            if (overlayTitle) overlayTitle.textContent = window.currentWatchingAnime.title || 'Anime';
+            if (overlayEpisode) {
+                overlayEpisode.textContent = `Temporada ${window.currentWatchingAnime.season} • Episódio ${window.currentWatchingAnime.episode}`;
+            }
+        }
+    }
+    
+    // Listen for when episode changes
+    player.addEventListener('loadedmetadata', updateVideoOverlay);
+    
+    // Next episode button functionality
+    const nextEpisodeBtn = safe('next-episode-btn');
+    if (nextEpisodeBtn) {
+        nextEpisodeBtn.addEventListener('click', () => {
+            if (window.currentAnime && window.currentWatchingAnime) {
+                const currentSeason = window.currentAnime.seasons?.find(s => s.number === window.currentWatchingAnime.season);
+                if (currentSeason && currentSeason.episodes) {
+                    const nextEpisodeIndex = window.currentWatchingAnime.episode; // episode is 1-based, index is 0-based
+                    
+                    if (nextEpisodeIndex < currentSeason.episodes.length) {
+                        // Next episode exists in current season
+                        console.log(`⏭️ Going to next episode: S${window.currentWatchingAnime.season}E${nextEpisodeIndex + 1}`);
+                        window.openEpisode(window.currentAnime, window.currentWatchingAnime.season, nextEpisodeIndex);
+                    } else {
+                        // Check if there's a next season
+                        const nextSeason = window.currentAnime.seasons?.find(s => s.number === window.currentWatchingAnime.season + 1);
+                        if (nextSeason && nextSeason.episodes && nextSeason.episodes.length > 0) {
+                            console.log(`⏭️ Going to next season: S${nextSeason.number}E1`);
+                            window.openEpisode(window.currentAnime, nextSeason.number, 0);
+                        } else {
+                            console.log('✅ No more episodes available');
+                        }
+                    }
+                }
+            }
+        });
+    }
+    
+    // Double-tap to seek (mobile) - Track tap times and positions
+    let lastTapTime = 0;
+    let lastTapZone = null;
+    const DOUBLE_TAP_DELAY = 300; // ms
+    
+    function handleDoubleTapSeek(zone) {
+        const seekFeedbackLeft = document.getElementById('seek-feedback-left');
+        const seekFeedbackRight = document.getElementById('seek-feedback-right');
+        
+        if (zone === 'left') {
+            player.currentTime = Math.max(0, player.currentTime - 5);
+            if (seekFeedbackLeft) {
+                seekFeedbackLeft.classList.remove('show');
+                void seekFeedbackLeft.offsetWidth; // Force reflow
+                seekFeedbackLeft.classList.add('show');
+                setTimeout(() => seekFeedbackLeft.classList.remove('show'), 500);
+            }
+        } else if (zone === 'right') {
+            player.currentTime = Math.min(player.duration || 0, player.currentTime + 5);
+            if (seekFeedbackRight) {
+                seekFeedbackRight.classList.remove('show');
+                void seekFeedbackRight.offsetWidth; // Force reflow
+                seekFeedbackRight.classList.add('show');
+                setTimeout(() => seekFeedbackRight.classList.remove('show'), 500);
+            }
+        }
+    }
+    
+    // Setup tap zones
+    const tapZoneLeft = document.getElementById('tap-zone-left');
+    const tapZoneCenter = document.getElementById('tap-zone-center');
+    const tapZoneRight = document.getElementById('tap-zone-right');
+    
+    // Left zone - double tap to rewind
+    if (tapZoneLeft) {
+        tapZoneLeft.addEventListener('touchend', (e) => {
+            const currentTime = Date.now();
+            if (lastTapZone === 'left' && currentTime - lastTapTime < DOUBLE_TAP_DELAY) {
+                e.preventDefault();
+                handleDoubleTapSeek('left');
+                lastTapTime = 0;
+                lastTapZone = null;
+            } else {
+                lastTapTime = currentTime;
+                lastTapZone = 'left';
+            }
+        });
+        tapZoneLeft.addEventListener('click', (e) => {
+            // Single click - hide controls
+            const container = document.getElementById('video-player-container');
+            if (container && controlsVisible) {
+                container.classList.add('controls-hidden');
+                container.classList.remove('controls-visible');
+                controlsVisible = false;
+            }
+        });
+    }
+    
+    // Right zone - double tap to forward
+    if (tapZoneRight) {
+        tapZoneRight.addEventListener('touchend', (e) => {
+            const currentTime = Date.now();
+            if (lastTapZone === 'right' && currentTime - lastTapTime < DOUBLE_TAP_DELAY) {
+                e.preventDefault();
+                handleDoubleTapSeek('right');
+                lastTapTime = 0;
+                lastTapZone = null;
+            } else {
+                lastTapTime = currentTime;
+                lastTapZone = 'right';
+            }
+        });
+        tapZoneRight.addEventListener('click', (e) => {
+            // Single click - hide controls
+            const container = document.getElementById('video-player-container');
+            if (container && controlsVisible) {
+                container.classList.add('controls-hidden');
+                container.classList.remove('controls-visible');
+                controlsVisible = false;
+            }
+        });
+    }
+    
+    // Center zone - single click to play/pause (only when controls visible)
+    if (tapZoneCenter) {
+        tapZoneCenter.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            // Only pause/play if controls are visible (to avoid accidental taps)
+            if (controlsVisible) {
+                if (player.paused) {
+                    player.play().catch(() => {});
+                } else {
+                    player.pause();
+                }
+            }
+        });
+        // Also allow double tap to hide controls
+        tapZoneCenter.addEventListener('touchend', (e) => {
+            const currentTime = Date.now();
+            if (lastTapZone === 'center' && currentTime - lastTapTime < DOUBLE_TAP_DELAY) {
+                // Double tap on center - toggle controls
+                const container = document.getElementById('video-player-container');
+                if (container) {
+                    controlsVisible = !controlsVisible;
+                    if (controlsVisible) {
+                        container.classList.remove('controls-hidden');
+                        container.classList.add('controls-visible');
+                    } else {
+                        container.classList.add('controls-hidden');
+                        container.classList.remove('controls-visible');
+                    }
+                }
+                lastTapTime = 0;
+                lastTapZone = null;
+            } else {
+                lastTapTime = currentTime;
+                lastTapZone = 'center';
+            }
+        });
+    }
+    
+    // PC: click on video to toggle pause/play (when controls visible)
+    player.addEventListener('click', (e) => {
+        if (e.target !== player) return;
+        // Only toggle if controls are visible
+        if (controlsVisible) {
+            if (player.paused) {
+                player.play().catch(() => {});
+            } else {
+                player.pause();
+            }
+        }
+    });
+    
+    // Mobile: Double-tap detection on video element for seek
+    let videoLastTapTime = 0;
+    let videoLastTapX = 0;
+    
+    player.addEventListener('touchend', (e) => {
+        const currentTime = Date.now();
+        const touch = e.changedTouches[0];
+        const videoRect = player.getBoundingClientRect();
+        const tapX = touch.clientX - videoRect.left;
+        const videoWidth = videoRect.width;
+        const tapZoneWidth = videoWidth / 3;
+        
+        // Determine which zone was tapped
+        let zone = 'center';
+        if (tapX < tapZoneWidth) {
+            zone = 'left';
+        } else if (tapX > videoWidth - tapZoneWidth) {
+            zone = 'right';
+        }
+        
+        if (currentTime - videoLastTapTime < DOUBLE_TAP_DELAY) {
+            // Double tap detected
+            e.preventDefault();
+            if (zone === 'left') {
+                handleDoubleTapSeek('left');
+            } else if (zone === 'right') {
+                handleDoubleTapSeek('right');
+            } else {
+                // Center double tap - toggle play/pause
+                if (player.paused) {
+                    player.play().catch(() => {});
+                } else {
+                    player.pause();
+                }
+            }
+            videoLastTapTime = 0;
+        } else {
+            // Single tap - show/hide controls or toggle pause on center if visible
+            videoLastTapTime = currentTime;
+            videoLastTapX = tapX;
+            
+            // Single tap behavior: if controls hidden, show them
+            const container = document.getElementById('video-player-container');
+            if (container && !controlsVisible) {
+                showControls();
+            }
+        }
+    });
 
     const skipCtrl = new SkipController(player, 'skip-opening-btn');
     window.updateOpeningData = function(data){ window.currentOpeningData = data && typeof data.start === 'number' ? data : null; if(skipCtrl && typeof skipCtrl.setOpening === 'function') skipCtrl.setOpening(window.currentOpeningData); };
@@ -303,6 +531,7 @@
             if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement) {
                 container.classList.remove('is-fullscreen');
                 container.classList.remove('controls-hidden');
+                controlsVisible = true;
             }
         });
     });
@@ -321,6 +550,8 @@
         if (!container) return;
         
         container.classList.remove('controls-hidden');
+        container.classList.add('controls-visible');
+        controlsVisible = true;
         
         // Reset hide timer
         if (controlsHideTimeout) {
@@ -332,6 +563,8 @@
             controlsHideTimeout = setTimeout(() => {
                 if (isInFullscreen() && !player.paused) {
                     container.classList.add('controls-hidden');
+                    container.classList.remove('controls-visible');
+                    controlsVisible = false;
                 }
             }, HIDE_CONTROLS_DELAY);
         }
@@ -342,23 +575,25 @@
         if (!container || !isInFullscreen()) return;
         
         container.classList.add('controls-hidden');
+        container.classList.remove('controls-visible');
+        controlsVisible = false;
     }
     
     // Mouse movement - show controls (PC)
     const container = document.getElementById('video-player-container');
     if (container) {
         container.addEventListener('mousemove', () => {
-            if (isInFullscreen()) {
-                showControls();
-            }
+            showControls();
         });
         
         // Touch events - show controls (mobile)
-        container.addEventListener('touchstart', () => {
-            if (isInFullscreen()) {
+        container.addEventListener('touchstart', (e) => {
+            // Show controls if hidden
+            if (!controlsVisible) {
                 showControls();
+                e.preventDefault(); // Prevent accidental actions
             }
-        });
+        }, { passive: false });
         
         // When mouse leaves container, start hide timer
         container.addEventListener('mouseleave', () => {
@@ -386,6 +621,9 @@
     
     // Show controls when seeking
     player.addEventListener('seeking', showControls);
+    
+    // Update overlay when episode info changes
+    window.updateVideoOverlay = updateVideoOverlay;
   });
 
   window.showCustomMiniPlayer = showCustomMiniPlayer;
