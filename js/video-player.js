@@ -309,7 +309,9 @@
             if (window.currentAnime && window.currentWatchingAnime) {
                 const currentSeason = window.currentAnime.seasons?.find(s => s.number === window.currentWatchingAnime.season);
                 if (currentSeason && currentSeason.episodes) {
-                    const nextEpisodeIndex = window.currentWatchingAnime.episode; // episode is 1-based, index is 0-based
+                    // episode is 1-based, openEpisode takes 0-based index
+                    // So next episode index = current episode number (e.g., watching ep 1 → next index is 1 → ep 2)
+                    const nextEpisodeIndex = window.currentWatchingAnime.episode;
                     
                     if (nextEpisodeIndex < currentSeason.episodes.length) {
                         // Next episode exists in current season
@@ -467,7 +469,6 @@
     
     // Mobile: Double-tap detection on video element for seek
     let videoLastTapTime = 0;
-    let videoLastTapX = 0;
     
     player.addEventListener('touchend', (e) => {
         const currentTime = Date.now();
@@ -502,11 +503,9 @@
             }
             videoLastTapTime = 0;
         } else {
-            // Single tap - show/hide controls or toggle pause on center if visible
+            // Single tap - show controls if hidden
             videoLastTapTime = currentTime;
-            videoLastTapX = tapX;
             
-            // Single tap behavior: if controls hidden, show them
             const container = document.getElementById('video-player-container');
             if (container && !controlsVisible) {
                 showControls();
@@ -587,13 +586,13 @@
         });
         
         // Touch events - show controls (mobile)
-        container.addEventListener('touchstart', (e) => {
+        // Note: We don't preventDefault here to avoid interfering with double-tap detection
+        container.addEventListener('touchstart', () => {
             // Show controls if hidden
             if (!controlsVisible) {
                 showControls();
-                e.preventDefault(); // Prevent accidental actions
             }
-        }, { passive: false });
+        }, { passive: true });
         
         // When mouse leaves container, start hide timer
         container.addEventListener('mouseleave', () => {
