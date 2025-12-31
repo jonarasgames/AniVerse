@@ -127,6 +127,12 @@
         <div class="modal-content">
             <span class="close-modal" id="close-video">&times;</span>
             <div id="video-player-container">
+                <!-- Anime info overlay (top) -->
+                <div id="video-info-overlay" class="video-info-overlay">
+                    <span id="overlay-anime-title">Anime</span>
+                    <span id="overlay-episode-info">Episódio 1</span>
+                </div>
+                
                 <!-- Banner above video -->
                 <div class="video-banner" style="background-image: url('https://files.catbox.moe/fhnk72.jpg');"></div>
                 
@@ -134,6 +140,17 @@
                 <video id="anime-player" playsinline="" preload="metadata" style="width: 100%; display: block;">
                     Seu navegador não suporta vídeos.
                 </video>
+                
+                <!-- Double-tap seek zones (mobile) -->
+                <div id="video-tap-zones">
+                    <div id="tap-zone-left" class="video-tap-zone"></div>
+                    <div id="tap-zone-center" class="video-tap-zone"></div>
+                    <div id="tap-zone-right" class="video-tap-zone"></div>
+                </div>
+                
+                <!-- Seek feedback -->
+                <div id="seek-feedback-left" class="seek-feedback"><i class="fas fa-backward"></i> 5s</div>
+                <div id="seek-feedback-right" class="seek-feedback"><i class="fas fa-forward"></i> 5s</div>
                 
                 <!-- Custom controls overlay -->
                 <div id="custom-video-controls" style="position: relative; background: rgba(0,0,0,0.8); padding: 10px; border-radius: 0 0 8px 8px;">
@@ -156,7 +173,10 @@
                         <button id="skip-opening-btn" class="btn btn-secondary" style="display: none; margin-left: auto;">
                             ⏩ Pular Abertura
                         </button>
-                        <button id="pip-btn" class="btn-icon" title="Picture-in-Picture" style="margin-left: auto;">
+                        <button id="next-episode-btn" class="btn-icon" title="Próximo Episódio" style="margin-left: auto;">
+                            <i class="fas fa-step-forward"></i>
+                        </button>
+                        <button id="pip-btn" class="btn-icon" title="Picture-in-Picture">
                             <i class="fas fa-tv"></i>
                         </button>
                         <button id="fullscreen-btn" class="btn-icon" title="Tela Cheia">
