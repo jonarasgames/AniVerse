@@ -3,2100 +3,2190 @@
     {
       "id": 1,
       "title": "Lucky☆Star",
-    "description": "Lucky☆Star acompanha o cotidiano de quatro adoráveis ​​garotas do ensino médio: Konata Izumi, a otaku preguiçosa; as gêmeas Hiiragi, Tsukasa e Kagami (uma doçura e uma picância, respectivamente); e a inteligente e educada Miyuki Takara.",
-    "thumbnail": "https://files.catbox.moe/tfxcoy.jpg",
-    "trailer": "akakaka",
-    "type": "anime",
-    "dateAdded": "2025-12-31",
-    "categories": [
-      "comedy",
-      "slice of life"
-    ],
-    "seasons": [
-      {
-        "number": 1,
-        "episodes": [
-          {
-            "title": "Ao Grito de 'Você Está Livre'",
-            "videoUrl": "https://store3.gofile.io/download/web/2249da05-3798-46e8-958e-f71a8c4957f9/Avatar%20IV%20Video.mp4",
-            "duration": 1440
-          },
-          {
-            "title": "Aquele Dia",
-            "videoUrl": "https://example.com/attack-on-titan-s1e2.mp4",
-            "duration": 1440
-          }
-        ]
-      }
-    ],
-    "year": 2007,
-    "rating": 7.76,
-    "openings": [],
-    "endings": [],
-    "osts": {},
-    "banner": "https://files.catbox.moe/x97qo0.jpg"
-  },
-  {
-    "id": 2,
-    "title": "Bocchi the Rock!",
-    "description": "Desejando fazer amigos e se apresentar ao vivo com uma banda, a solitária e socialmente ansiosa Hitori \"Bocchi\" Gotou dedica seu tempo a tocar guitarra. Em um dia fatídico, Bocchi conhece a extrovertida baterista Nijika Ijichi, que a convida para se juntar à Banda Kessoku quando a guitarrista, Ikuyo Kita, foge antes do primeiro show. Logo depois, Bocchi conhece sua última companheira de banda — a descolada baixista Ryou Yamada.",
-    "thumbnail": "https://files.catbox.moe/bmnf43.jpg",
-    "trailer": "laskdfn",
-    "type": "anime",
-    "dateAdded": "2025-12-31",
-    "categories": [
-      "comedy"
-    ],
-    "seasons": [
-      {
-        "number": 1,
-        "episodes": [
-          {
-            "title": "Bocchi Caída",
-            "videoUrl": "https://seed305.bitchute.com/8xBkY2iNMQ05/7Rzp4J4IQDMA.mp4",
-            "duration": 1420,
-            "opening": {
-              "start": 174,
-              "end": 264
+      "description": "Lucky☆Star acompanha o cotidiano de quatro adoráveis ​​garotas do ensino médio: Konata Izumi, a otaku preguiçosa; as gêmeas Hiiragi, Tsukasa e Kagami (uma doçura e uma picância, respectivamente); e a inteligente e educada Miyuki Takara.",
+      "thumbnail": "https://files.catbox.moe/tfxcoy.jpg",
+      "trailer": "akakaka",
+      "type": "anime",
+      "dateAdded": "2025-12-31",
+      "categories": [
+        "comedy",
+        "slice of life"
+      ],
+      "seasons": [
+        {
+          "number": 1,
+          "episodes": [
+            {
+              "title": "Ao Grito de 'Você Está Livre'",
+              "videoUrl": "https://store3.gofile.io/download/web/2249da05-3798-46e8-958e-f71a8c4957f9/Avatar%20IV%20Video.mp4",
+              "duration": 1440
+            },
+            {
+              "title": "Aquele Dia",
+              "videoUrl": "https://example.com/attack-on-titan-s1e2.mp4",
+              "duration": 1440
             }
-          },
-          {
-            "title": "Te Vejo Amanhã",
-            "videoUrl": "https://seed177.bitchute.com/8xBkY2iNMQ05/zSM7J8DJ0unT.mp4",
-            "duration": 1420,
-            "opening": {
-              "start": 34,
-              "end": 124
+          ]
+        }
+      ],
+      "year": 2007,
+      "rating": 7.76,
+      "openings": [],
+      "endings": [],
+      "osts": {},
+      "banner": "https://files.catbox.moe/x97qo0.jpg"
+    },
+    {
+      "id": 2,
+      "title": "Bocchi the Rock!",
+      "description": "Desejando fazer amigos e se apresentar ao vivo com uma banda, a solitária e socialmente ansiosa Hitori \"Bocchi\" Gotou dedica seu tempo a tocar guitarra. Em um dia fatídico, Bocchi conhece a extrovertida baterista Nijika Ijichi, que a convida para se juntar à Banda Kessoku quando a guitarrista, Ikuyo Kita, foge antes do primeiro show. Logo depois, Bocchi conhece sua última companheira de banda — a descolada baixista Ryou Yamada.",
+      "thumbnail": "https://files.catbox.moe/bmnf43.jpg",
+      "trailer": "laskdfn",
+      "type": "anime",
+      "dateAdded": "2025-12-31",
+      "categories": [
+        "comedy"
+      ],
+      "seasons": [
+        {
+          "number": 1,
+          "episodes": [
+            {
+              "title": "Bocchi Caída",
+              "videoUrl": "https://seed305.bitchute.com/8xBkY2iNMQ05/7Rzp4J4IQDMA.mp4",
+              "duration": 1420,
+              "opening": {
+                "start": 174,
+                "end": 264
+              }
+            },
+            {
+              "title": "Te Vejo Amanhã",
+              "videoUrl": "https://seed177.bitchute.com/8xBkY2iNMQ05/zSM7J8DJ0unT.mp4",
+              "duration": 1420,
+              "opening": {
+                "start": 34,
+                "end": 124
+              }
+            },
+            {
+              "title": "Chegando com Tudo",
+              "videoUrl": "https://seed125.bitchute.com/8xBkY2iNMQ05/NXHDPYzouRXQ.mp4",
+              "duration": 1420,
+              "opening": {
+                "start": 221,
+                "end": 311
+              }
+            },
+            {
+              "title": "Jumping Girl(s)",
+              "videoUrl": "https://seed305.bitchute.com/8xBkY2iNMQ05/8Pw0fpB52s90.mp4",
+              "duration": 1420,
+              "opening": {
+                "start": 105,
+                "end": 195
+              }
+            },
+            {
+              "title": "O Peixe Que Não Consegue Voar",
+              "videoUrl": "https://zggg98sgwbg1gh.bitchute.com/8xBkY2iNMQ05/Tw4yC2Yfl877.mp4",
+              "duration": 1420,
+              "opening": {
+                "start": 167,
+                "end": 257
+              }
+            },
+            {
+              "title": "Oito Paisagens",
+              "videoUrl": "https://seed171.bitchute.com/8xBkY2iNMQ05/Ru9ShxuVgIRo.mp4",
+              "duration": 1420,
+              "opening": {
+                "start": 303,
+                "end": 393
+              }
+            },
+            {
+              "title": "Para a Sua Casa",
+              "videoUrl": "https://seed128.bitchute.com/8xBkY2iNMQ05/VeLqsRwwaPk3.mp4",
+              "duration": 1420,
+              "opening": {
+                "start": 166,
+                "end": 256
+              }
+            },
+            {
+              "title": "Bocchi the Rock",
+              "videoUrl": "https://seed305.bitchute.com/8xBkY2iNMQ05/ukWFlx2n3QXo.mp4",
+              "duration": 1420
+            },
+            {
+              "title": "Enoshima Escar",
+              "videoUrl": "https://seed132.bitchute.com/8xBkY2iNMQ05/o4vKwwuWwz3z.mp4",
+              "duration": 1420,
+              "opening": {
+                "start": 173,
+                "end": 263
+              }
+            },
+            {
+              "title": "After Dark",
+              "videoUrl": "https://seed171.bitchute.com/8xBkY2iNMQ05/XhkkyzGytHM6.mp4",
+              "duration": 0,
+              "opening": {
+                "start": 148,
+                "end": 238
+              }
+            },
+            {
+              "title": "Pôr do Sol Duodecimal",
+              "videoUrl": "https://seed125.bitchute.com/8xBkY2iNMQ05/gu5oGxI61c01.mp4",
+              "duration": 1420,
+              "opening": {
+                "start": 186,
+                "end": 276
+              }
+            },
+            {
+              "title": "A Luz da Manhã Cai Sobre Você",
+              "videoUrl": "https://seed177.bitchute.com/8xBkY2iNMQ05/bQJwcRivBUsv.mp4",
+              "duration": 1420
             }
-          },
-          {
-            "title": "Chegando com Tudo",
-            "videoUrl": "https://seed125.bitchute.com/8xBkY2iNMQ05/NXHDPYzouRXQ.mp4",
-            "duration": 1420,
-            "opening": {
-              "start": 221,
-              "end": 311
+          ]
+        }
+      ],
+      "year": 2022,
+      "rating": 8.74,
+      "openings": [
+        {
+          "title": "Seishun Complex",
+          "artist": "Kessoku Band",
+          "audio": "https://files.catbox.moe/x1vejn.mp3",
+          "cover": "https://files.catbox.moe/jxiyoq.jpg",
+          "type": "opening",
+          "season": 1
+        }
+      ],
+      "endings": [
+        {
+          "title": "Distortion!!",
+          "artist": "Kessoku Band",
+          "audio": "https://files.catbox.moe/5op4h4.mp3",
+          "cover": "https://files.catbox.moe/ghfj50.jpg",
+          "type": "ending",
+          "season": 1
+        },
+        {
+          "title": "Karakara",
+          "artist": "Kessoku Band",
+          "audio": "https://files.catbox.moe/06c19s.mp3",
+          "type": "ending",
+          "cover": "https://files.catbox.moe/x99bp7.jpg"
+        },
+        {
+          "title": "Nani ga Warui",
+          "artist": "Kessoku Band",
+          "audio": "https://files.catbox.moe/xrq1k6.mp3",
+          "type": "ending",
+          "cover": "https://files.catbox.moe/l5r26r.jpeg"
+        },
+        {
+          "title": "Korogaru Iwa, Kimi ni Asa ga Furu",
+          "artist": "Kessoku Band",
+          "audio": "https://files.catbox.moe/daxd1b.mp3",
+          "type": "ending",
+          "cover": "https://files.catbox.moe/deznic.jpg"
+        }
+      ],
+      "osts": {},
+      "banner": "https://files.catbox.moe/umn2v5.jpg"
+    },
+    {
+      "id": 3,
+      "title": "Jujutsu Kaisen 0",
+      "description": "Yuta Okkotsu ganha o controle de um espírito amaldiçoado extremamente poderoso e se matricula na Tokyo Prefectural Jujutsu High School sob a orientação de Satoru Gojo.",
+      "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/main/images/thumbnails/jujutsumovie.png",
+      "trailer": "https://www.youtube.com/embed/2docezZl574?autoplay=1&mute=1&enablejsapi=1",
+      "type": "movie",
+      "dateAdded": "2023-10-18",
+      "categories": [
+        "action",
+        "supernatural"
+      ],
+      "seasons": [
+        {
+          "number": 1,
+          "episodes": [
+            {
+              "title": "Jujutsu Kaisen 0",
+              "videoUrl": "https://example.com/jujutsu-kaisen-0.mp4",
+              "duration": 6300
             }
-          },
-          {
-            "title": "Jumping Girl(s)",
-            "videoUrl": "https://seed305.bitchute.com/8xBkY2iNMQ05/8Pw0fpB52s90.mp4",
-            "duration": 1420,
-            "opening": {
-              "start": 105,
-              "end": 195
+          ]
+        }
+      ],
+      "year": 2021,
+      "rating": 4.7,
+      "openings": [
+        {
+          "title": "Ichizu",
+          "artist": "King Gnu",
+          "audio": "https://example.com/jujutsu0-op1.mp3",
+          "cover": "https://example.com/jujutsu0-op1-cover.jpg",
+          "type": "opening",
+          "season": 1
+        }
+      ],
+      "endings": [
+        {
+          "title": "Sakayume",
+          "artist": "King Gnu",
+          "audio": "https://example.com/jujutsu0-ed1.mp3",
+          "cover": "https://example.com/jujutsu0-ed1-cover.jpg",
+          "type": "ending",
+          "season": 1
+        }
+      ],
+      "osts": {
+        "Jujutsu Kaisen 0 Original Soundtrack": {
+          "year": 2021,
+          "cover": "https://example.com/jujutsu0-ost1-cover.jpg",
+          "tracks": [
+            {
+              "title": "Yuta Okkotsu's Theme",
+              "artist": "Hiroaki Tsutsumi",
+              "audio": "https://example.com/jujutsu0-ost1.mp3",
+              "duration": 210
             }
-          },
-          {
-            "title": "O Peixe Que Não Consegue Voar",
-            "videoUrl": "https://zggg98sgwbg1gh.bitchute.com/8xBkY2iNMQ05/Tw4yC2Yfl877.mp4",
-            "duration": 1420,
-            "opening": {
-              "start": 167,
-              "end": 257
-            }
-          },
-          {
-            "title": "Oito Paisagens",
-            "videoUrl": "https://seed171.bitchute.com/8xBkY2iNMQ05/Ru9ShxuVgIRo.mp4",
-            "duration": 1420,
-            "opening": {
-              "start": 303,
-              "end": 393
-            }
-          },
-          {
-            "title": "Para a Sua Casa",
-            "videoUrl": "https://seed128.bitchute.com/8xBkY2iNMQ05/VeLqsRwwaPk3.mp4",
-            "duration": 1420,
-            "opening": {
-              "start": 166,
-              "end": 256
-            }
-          },
-          {
-            "title": "Bocchi the Rock",
-            "videoUrl": "https://seed305.bitchute.com/8xBkY2iNMQ05/ukWFlx2n3QXo.mp4",
-            "duration": 1420
-          },
-          {
-            "title": "Enoshima Escar",
-            "videoUrl": "https://seed132.bitchute.com/8xBkY2iNMQ05/o4vKwwuWwz3z.mp4",
-            "duration": 1420,
-            "opening": {
-              "start": 173,
-              "end": 263
-            }
-          },
-          {
-            "title": "After Dark",
-            "videoUrl": "https://seed171.bitchute.com/8xBkY2iNMQ05/XhkkyzGytHM6.mp4",
-            "duration": 0,
-            "opening": {
-              "start": 148,
-              "end": 238
-            }
-          },
-          {
-            "title": "Pôr do Sol Duodecimal",
-            "videoUrl": "https://seed125.bitchute.com/8xBkY2iNMQ05/gu5oGxI61c01.mp4",
-            "duration": 1420,
-            "opening": {
-              "start": 186,
-              "end": 276
-            }
-          },
-          {
-            "title": "A Luz da Manhã Cai Sobre Você",
-            "videoUrl": "https://seed177.bitchute.com/8xBkY2iNMQ05/bQJwcRivBUsv.mp4",
-            "duration": 1420
-          }
-        ]
-      }
-    ],
-    "year": 2022,
-    "rating": 8.74,
-    "openings": [
-      {
-        "title": "Seishun Complex",
-        "artist": "Kessoku Band",
-        "audio": "https://files.catbox.moe/x1vejn.mp3",
-        "cover": "https://files.catbox.moe/jxiyoq.jpg",
-        "type": "opening",
-        "season": 1
-      }
-    ],
-    "endings": [
-      {
-        "title": "Distortion!!",
-        "artist": "Kessoku Band",
-        "audio": "https://files.catbox.moe/5op4h4.mp3",
-        "cover": "https://files.catbox.moe/ghfj50.jpg",
-        "type": "ending",
-        "season": 1
-      },
-      {
-        "title": "Karakara",
-        "artist": "Kessoku Band",
-        "audio": "https://files.catbox.moe/06c19s.mp3",
-        "type": "ending",
-        "cover": "https://files.catbox.moe/x99bp7.jpg"
-      },
-      {
-        "title": "Nani ga Warui",
-        "artist": "Kessoku Band",
-        "audio": "https://files.catbox.moe/xrq1k6.mp3",
-        "type": "ending",
-        "cover": "https://files.catbox.moe/l5r26r.jpeg"
-      },
-      {
-        "title": "Korogaru Iwa, Kimi ni Asa ga Furu",
-        "artist": "Kessoku Band",
-        "audio": "https://files.catbox.moe/daxd1b.mp3",
-        "type": "ending",
-        "cover": "https://files.catbox.moe/deznic.jpg"
-      }
-    ],
-    "osts": {},
-    "banner": "https://files.catbox.moe/umn2v5.jpg"
-  },
-  {
-    "id": 3,
-    "title": "Jujutsu Kaisen 0",
-    "description": "Yuta Okkotsu ganha o controle de um espírito amaldiçoado extremamente poderoso e se matricula na Tokyo Prefectural Jujutsu High School sob a orientação de Satoru Gojo.",
-    "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/main/images/thumbnails/jujutsumovie.png",
-    "trailer": "https://www.youtube.com/embed/2docezZl574?autoplay=1&mute=1&enablejsapi=1",
-    "type": "movie",
-    "dateAdded": "2023-10-18",
-    "categories": [
-      "action",
-      "supernatural"
-    ],
-    "seasons": [
-      {
-        "number": 1,
-        "episodes": [
-          {
-            "title": "Jujutsu Kaisen 0",
-            "videoUrl": "https://example.com/jujutsu-kaisen-0.mp4",
-            "duration": 6300
-          }
-        ]
-      }
-    ],
-    "year": 2021,
-    "rating": 4.7,
-    "openings": [
-      {
-        "title": "Ichizu",
-        "artist": "King Gnu",
-        "audio": "https://example.com/jujutsu0-op1.mp3",
-        "cover": "https://example.com/jujutsu0-op1-cover.jpg",
-        "type": "opening",
-        "season": 1
-      }
-    ],
-    "endings": [
-      {
-        "title": "Sakayume",
-        "artist": "King Gnu",
-        "audio": "https://example.com/jujutsu0-ed1.mp3",
-        "cover": "https://example.com/jujutsu0-ed1-cover.jpg",
-        "type": "ending",
-        "season": 1
-      }
-    ],
-    "osts": {
-      "Jujutsu Kaisen 0 Original Soundtrack": {
-        "year": 2021,
-        "cover": "https://example.com/jujutsu0-ost1-cover.jpg",
-        "tracks": [
-          {
-            "title": "Yuta Okkotsu's Theme",
-            "artist": "Hiroaki Tsutsumi",
-            "audio": "https://example.com/jujutsu0-ost1.mp3",
-            "duration": 210
-          }
-        ]
-      }
-    }
-  },
-  {
-    "id": 4,
-    "title": "One Piece: Stampede",
-    "description": "Piratas de todo o mundo se reúnem para o Pirate Expo, organizado pelo misterioso Buena Festa, onde o tesouro deixado pelo lendário Gol D. Roger está em jogo.",
-    "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/main/images/thumbnails/onepiecemovie.png",
-    "trailer": "https://www.youtube.com/embed/CZzQ6dJkik0?autoplay=1&mute=1&enablejsapi=1",
-    "type": "movie",
-    "dateAdded": "2023-10-17",
-    "categories": [
-      "action",
-      "adventure"
-    ],
-    "seasons": [
-      {
-        "number": 1,
-        "episodes": [
-          {
-            "title": "One Piece: Stampede",
-            "videoUrl": "https://example.com/one-piece-stampede.mp4",
-            "duration": 6300
-          }
-        ]
-      }
-    ],
-    "year": 2019,
-    "rating": 4.6,
-    "openings": [
-      {
-        "title": "GONG",
-        "artist": "WANIMA",
-        "audio": "https://example.com/op-stampede-op1.mp3",
-        "cover": "https://example.com/op-stampede-op1-cover.jpg",
-        "type": "opening",
-        "season": 1
-      }
-    ],
-    "endings": [
-      {
-        "title": "Memories",
-        "artist": "Maki Otsuki",
-        "audio": "https://example.com/op-stampede-ed1.mp3",
-        "cover": "https://example.com/op-stampede-ed1-cover.jpg",
-        "type": "ending",
-        "season": 1
-      }
-    ],
-    "osts": {
-      "One Piece: Stampede Original Soundtrack": {
-        "year": 2019,
-        "cover": "https://example.com/op-stampede-ost1-cover.jpg",
-        "tracks": [
-          {
-            "title": "Stampede Theme",
-            "artist": "Kohei Tanaka",
-            "audio": "https://example.com/op-stampede-ost1.mp3",
-            "duration": 245
-          }
-        ]
-      }
-    }
-  },
-  {
-    "id": 5,
-    "title": "My Hero Academia: Heroes Rising",
-    "description": "Os alunos da Classe 1-A visitam a Ilha Nabu, onde eventualmente acabam enfrentando um vilão com uma peculiaridade alarmante.",
-    "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/main/images/thumbnails/mhamovie.png",
-    "trailer": "https://www.youtube.com/embed/VQGCKyvzIM4?autoplay=1&mute=1&enablejsapi=1",
-    "type": "movie",
-    "dateAdded": "2023-10-16",
-    "categories": [
-      "action",
-      "superhero"
-    ],
-    "seasons": [
-      {
-        "number": 1,
-        "episodes": [
-          {
-            "title": "My Hero Academia: Heroes Rising",
-            "videoUrl": "https://example.com/mha-heroes-rising.mp4",
-            "duration": 6240
-          }
-        ]
-      }
-    ],
-    "year": 2019,
-    "rating": 4.8,
-    "openings": [
-      {
-        "title": "Higher Ground",
-        "artist": "Survive Said The Prophet",
-        "audio": "https://example.com/mha-movie-op1.mp3",
-        "cover": "https://example.com/mha-movie-op1-cover.jpg",
-        "type": "opening",
-        "season": 1
-      }
-    ],
-    "endings": [
-      {
-        "title": "Dakara, Hitori ja nai",
-        "artist": "Little Glee Monster",
-        "audio": "https://example.com/mha-movie-ed1.mp3",
-        "cover": "https://example.com/mha-movie-ed1-cover.jpg",
-        "type": "ending",
-        "season": 1
-      }
-    ],
-    "osts": {
-      "My Hero Academia: Heroes Rising Original Soundtrack": {
-        "year": 2019,
-        "cover": "https://example.com/mha-movie-ost1-cover.jpg",
-        "tracks": [
-          {
-            "title": "Heroes Rising Theme",
-            "artist": "Yuki Hayashi",
-            "audio": "https://example.com/mha-movie-ost1.mp3",
-            "duration": 245
-          }
-        ]
-      }
-    }
-  },
-  {
-    "id": 6,
-    "title": "Neon Genesis Evangelion: The End of Evangelion",
-    "description": "A SEELE ordena um ataque à NERV para destruir os EVAs antes que Gendo consiga provocar o terceiro impacto e a união das almas humanas.",
-    "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/main/images/thumbnails/evangelionmovie.png",
-    "trailer": "https://geo.dailymotion.com/player.html?video=x24kdhz",
-    "type": "movie",
-    "dateAdded": "2023-10-15",
-    "categories": [
-      "drama",
-      "mecha",
-      "psychological"
-    ],
-    "seasons": [
-      {
-        "number": 1,
-        "episodes": [
-          {
-            "title": "The End of Evangelion",
-            "videoUrl": "https://seed306.bitchute.com/8xBkY2iNMQ05/9ePjcp185z3J.mp4",
-            "duration": 5222
-          }
-        ]
-      }
-    ],
-    "year": 1997,
-    "rating": 8.1,
-    "openings": [
-      {
-        "title": "A Cruel Angel's Thesis",
-        "artist": "Yoko Takahashi",
-        "audio": "https://example.com/eva-op1.mp3",
-        "cover": "https://example.com/eva-op1-cover.jpg",
-        "type": "opening",
-        "season": 1
-      }
-    ],
-    "endings": [
-      {
-        "title": "Fly Me to the Moon",
-        "artist": "Claire",
-        "audio": "https://example.com/eva-ed1.mp3",
-        "cover": "https://example.com/eva-ed1-cover.jpg",
-        "type": "ending",
-        "season": 1
-      }
-    ],
-    "osts": {
-      "The End of Evangelion Original Soundtrack": {
-        "year": 1997,
-        "cover": "https://example.com/eva-movie-ost1-cover.jpg",
-        "tracks": [
-          {
-            "title": "Komm, süsser Tod",
-            "artist": "Arianne",
-            "audio": "https://example.com/eva-movie-ost1.mp3",
-            "duration": 245
-          }
-        ]
+          ]
+        }
       }
     },
-    "banner": "https://files.catbox.moe/63hmj6.jpg"
-  },
-  {
-    "id": 7,
-    "title": "Azumanga Daioh",
-    "description": "Uma série animada cômica e altamente imprevisível que acompanha um grupo de meninas do ensino médio e seus professores.",
-    "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/main/images/thumbnails/azudaioh.png",
-    "trailer": "https://www.youtube.com/embed/mqqxHv-BBSY?autoplay=1&mute=1&enablejsapi=1",
-    "type": "anime",
-    "dateAdded": "2025-07-28",
-    "categories": [
-      "comedy",
-      "slice of life"
-    ],
-    "seasons": [
-      {
-        "number": 1,
-        "episodes": [
-          {
-            "title": "A Diante, os Exames de Entrada!",
-            "videoUrl": "https://files.catbox.moe/9sqmzv.mp4",
-            "duration": 1447,
-            "opening": {
-              "start": 0,
-              "end": 90
+    {
+      "id": 4,
+      "title": "One Piece: Stampede",
+      "description": "Piratas de todo o mundo se reúnem para o Pirate Expo, organizado pelo misterioso Buena Festa, onde o tesouro deixado pelo lendário Gol D. Roger está em jogo.",
+      "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/main/images/thumbnails/onepiecemovie.png",
+      "trailer": "https://www.youtube.com/embed/CZzQ6dJkik0?autoplay=1&mute=1&enablejsapi=1",
+      "type": "movie",
+      "dateAdded": "2023-10-17",
+      "categories": [
+        "action",
+        "adventure"
+      ],
+      "seasons": [
+        {
+          "number": 1,
+          "episodes": [
+            {
+              "title": "One Piece: Stampede",
+              "videoUrl": "https://example.com/one-piece-stampede.mp4",
+              "duration": 6300
             }
-          },
-          {
-            "title": "Dia da Osaka",
-            "videoUrl": "https://files.catbox.moe/tff74x.mp4",
-            "duration": 1447,
-            "opening": {
-              "start": 0,
-              "end": 90
+          ]
+        }
+      ],
+      "year": 2019,
+      "rating": 4.6,
+      "openings": [
+        {
+          "title": "GONG",
+          "artist": "WANIMA",
+          "audio": "https://example.com/op-stampede-op1.mp3",
+          "cover": "https://example.com/op-stampede-op1-cover.jpg",
+          "type": "opening",
+          "season": 1
+        }
+      ],
+      "endings": [
+        {
+          "title": "Memories",
+          "artist": "Maki Otsuki",
+          "audio": "https://example.com/op-stampede-ed1.mp3",
+          "cover": "https://example.com/op-stampede-ed1-cover.jpg",
+          "type": "ending",
+          "season": 1
+        }
+      ],
+      "osts": {
+        "One Piece: Stampede Original Soundtrack": {
+          "year": 2019,
+          "cover": "https://example.com/op-stampede-ost1-cover.jpg",
+          "tracks": [
+            {
+              "title": "Stampede Theme",
+              "artist": "Kohei Tanaka",
+              "audio": "https://example.com/op-stampede-ost1.mp3",
+              "duration": 245
             }
-          },
-          {
-            "title": "Nyamo",
-            "videoUrl": "https://files.catbox.moe/i1qpqg.mp4",
-            "duration": 1447,
-            "opening": {
-              "start": 0,
-              "end": 90
-            }
-          },
-          {
-            "title": "Piscina! Piscina! Piscina!",
-            "videoUrl": "https://files.catbox.moe/0cadkg.mp4",
-            "duration": 1447,
-            "opening": {
-              "start": 0,
-              "end": 90
-            }
-          },
-          {
-            "title": "Férias de verão",
-            "videoUrl": "https://files.catbox.moe/kevo22.mp4",
-            "duration": 1447,
-            "opening": {
-              "start": 0,
-              "end": 90
-            }
-          },
-          {
-            "title": "Festival de Esportes",
-            "videoUrl": "https://files.catbox.moe/mzs9xm.mp4",
-            "duration": 1447,
-            "opening": {
-              "start": 0,
-              "end": 90
-            }
-          },
-          {
-            "title": "Festival Cultural",
-            "videoUrl": "https://files.catbox.moe/m7wj5i.mp4",
-            "duration": 1447,
-            "opening": {
-              "start": 0,
-              "end": 90
-            }
-          },
-          {
-            "title": "Especial Sonhos de Ano Novo",
-            "videoUrl": "https://files.catbox.moe/uztzgt.mp4",
-            "duration": 1447,
-            "opening": {
-              "start": 0,
-              "end": 90
-            }
-          },
-          {
-            "title": "Sakaki-san",
-            "videoUrl": "https://files.catbox.moe/uvvlf1.mp4",
-            "duration": 1447,
-            "opening": {
-              "start": 0,
-              "end": 90
-            }
-          },
-          {
-            "title": "Nós Somos Estudantes do Segundo Ano!",
-            "videoUrl": "https://files.catbox.moe/ftmfgn.mp4",
-            "duration": 1447,
-            "opening": {
-              "start": 0,
-              "end": 90
-            }
-          },
-          {
-            "title": "Kagura e Sakaki",
-            "videoUrl": "https://files.catbox.moe/9jmrp0.mp4",
-            "duration": 1447,
-            "opening": {
-              "start": 0,
-              "end": 90
-            }
-          },
-          {
-            "title": "Dia da Chyio-chan",
-            "videoUrl": "https://files.catbox.moe/s0fowe.mp4",
-            "duration": 1447,
-            "opening": {
-              "start": 0,
-              "end": 90
-            }
-          },
-          {
-            "title": "Provas",
-            "videoUrl": "https://files.catbox.moe/xytmny.mp4",
-            "duration": 1447,
-            "opening": {
-              "start": 0,
-              "end": 90
-            }
-          },
-          {
-            "title": "O Mar, Quimonos e Festa",
-            "videoUrl": "https://files.catbox.moe/fug66z.mp4",
-            "duration": 1447,
-            "opening": {
-              "start": 0,
-              "end": 90
-            }
-          },
-          {
-            "title": "Festival de Esportes do Segundo Ano",
-            "videoUrl": "https://files.catbox.moe/ljm0y8.mp4",
-            "duration": 1447,
-            "opening": {
-              "start": 0,
-              "end": 90
-            }
-          },
-          {
-            "title": "Festival Cultural do Segundo Ano",
-            "videoUrl": "https://files.catbox.moe/1hqjb2.mp4",
-            "duration": 1447,
-            "opening": {
-              "start": 0,
-              "end": 90
-            }
-          },
-          {
-            "title": "Fim do Segundo Semestre e Natal",
-            "videoUrl": "https://files.catbox.moe/ttnid0.mp4",
-            "duration": 1447,
-            "opening": {
-              "start": 0,
-              "end": 90
-            }
-          },
-          {
-            "title": "Provações da Koyomi",
-            "videoUrl": "https://files.catbox.moe/paca5b.mp4",
-            "duration": 1447,
-            "opening": {
-              "start": 0,
-              "end": 90
-            }
-          },
-          {
-            "title": "Uma Noite de Primavera",
-            "videoUrl": "https://files.catbox.moe/ngk2ns.mp4",
-            "duration": 1447,
-            "opening": {
-              "start": 0,
-              "end": 90
-            }
-          },
-          {
-            "title": "Terceiro Ano",
-            "videoUrl": "https://files.catbox.moe/s6uxsy.mp4",
-            "duration": 1447,
-            "opening": {
-              "start": 0,
-              "end": 90
-            }
-          },
-          {
-            "title": "Excursão Escolar",
-            "videoUrl": "https://files.catbox.moe/he35zp.mp4",
-            "duration": 1447,
-            "opening": {
-              "start": 0,
-              "end": 90
-            }
-          },
-          {
-            "title": "Estudos Para os Exames de Admissão",
-            "videoUrl": "https://files.catbox.moe/xn1deg.mp4",
-            "duration": 1447,
-            "opening": {
-              "start": 0,
-              "end": 90
-            }
-          },
-          {
-            "title": "Último Festival de Esportes",
-            "videoUrl": "https://files.catbox.moe/h6dfvx.mp4",
-            "duration": 1447,
-            "opening": {
-              "start": 0,
-              "end": 90
-            }
-          },
-          {
-            "title": "Yamamayaa",
-            "videoUrl": "https://files.catbox.moe/moqg4k.mp4",
-            "duration": 1447,
-            "opening": {
-              "start": 0,
-              "end": 90
-            }
-          },
-          {
-            "title": "Em Frente: Os Exames de Admissão!",
-            "videoUrl": "https://files.catbox.moe/58664b.mp4",
-            "duration": 1447,
-            "opening": {
-              "start": 0,
-              "end": 90
-            }
-          },
-          {
-            "title": "Cerimônia de Formatura",
-            "videoUrl": "https://files.catbox.moe/xg8jlr.mp4",
-            "duration": 1447,
-            "opening": {
-              "start": 0,
-              "end": 90
-            }
-          }
-        ]
+          ]
+        }
       }
-    ],
-    "year": 2002,
-    "rating": 8.1,
-    "openings": [
-      {
-        "title": "Soramimi Cake",
-        "artist": "Oranges & Lemons",
-        "audio": "https://nu.vgmtreasurechest.com/soundtracks/azumanga-daiou-the-animation-utaimasho/ogmqsqbi/01.%20Ear-Playing-Tricks%20Cake.mp3",
-        "cover": "https://static.wikia.nocookie.net/azumanga/images/8/80/Soramimi_Cake_Raspberry_heaven.jpg",
-        "type": "opening",
-        "season": 1
+    },
+    {
+      "id": 5,
+      "title": "My Hero Academia: Heroes Rising",
+      "description": "Os alunos da Classe 1-A visitam a Ilha Nabu, onde eventualmente acabam enfrentando um vilão com uma peculiaridade alarmante.",
+      "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/main/images/thumbnails/mhamovie.png",
+      "trailer": "https://www.youtube.com/embed/VQGCKyvzIM4?autoplay=1&mute=1&enablejsapi=1",
+      "type": "movie",
+      "dateAdded": "2023-10-16",
+      "categories": [
+        "action",
+        "superhero"
+      ],
+      "seasons": [
+        {
+          "number": 1,
+          "episodes": [
+            {
+              "title": "My Hero Academia: Heroes Rising",
+              "videoUrl": "https://example.com/mha-heroes-rising.mp4",
+              "duration": 6240
+            }
+          ]
+        }
+      ],
+      "year": 2019,
+      "rating": 4.8,
+      "openings": [
+        {
+          "title": "Higher Ground",
+          "artist": "Survive Said The Prophet",
+          "audio": "https://example.com/mha-movie-op1.mp3",
+          "cover": "https://example.com/mha-movie-op1-cover.jpg",
+          "type": "opening",
+          "season": 1
+        }
+      ],
+      "endings": [
+        {
+          "title": "Dakara, Hitori ja nai",
+          "artist": "Little Glee Monster",
+          "audio": "https://example.com/mha-movie-ed1.mp3",
+          "cover": "https://example.com/mha-movie-ed1-cover.jpg",
+          "type": "ending",
+          "season": 1
+        }
+      ],
+      "osts": {
+        "My Hero Academia: Heroes Rising Original Soundtrack": {
+          "year": 2019,
+          "cover": "https://example.com/mha-movie-ost1-cover.jpg",
+          "tracks": [
+            {
+              "title": "Heroes Rising Theme",
+              "artist": "Yuki Hayashi",
+              "audio": "https://example.com/mha-movie-ost1.mp3",
+              "duration": 245
+            }
+          ]
+        }
       }
-    ],
-    "endings": [
-      {
-        "title": "Raspberry Heaven",
-        "artist": "Oranges & Lemons",
-        "audio": "https://nu.vgmtreasurechest.com/soundtracks/azumanga-daiou-the-animation-utaimasho/dzntceqt/12.%20raspberry%20heaven.mp3",
-        "cover": "https://static.wikia.nocookie.net/azumanga/images/8/80/Soramimi_Cake_Raspberry_heaven.jpg",
-        "type": "ending",
-        "season": 1
-      }
-    ],
-    "osts": {},
-    "banner": "https://files.catbox.moe/a4u65d.jpg"
-  },
-  {
-    "id": 8,
-    "title": "Ranma 1/2",
-    "description": "As aventuras românticas e as desventuras de um jovem que é atingido por uma maldição que o faz mudar de gênero.",
-    "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/main/images/thumbnails/ranmanet.png",
-    "trailer": "https://www.youtube.com/watch?v=V77a7NUof4I",
-    "type": "anime",
-    "dateAdded": "2025-06-29",
-    "categories": [
-      "adventure",
-      "comedy",
-      "romance"
-    ],
-    "seasons": [
-      {
-        "number": 1,
-        "episodes": [
-          {
-            "title": "Episódio 1",
-            "videoUrl": "https://zggg98sgwbg1gh.bitchute.com/8xBkY2iNMQ05/7E6G46cLvHzw.mp4",
-            "duration": 1462
-          },
-          {
-            "title": "Episódio 2",
-            "videoUrl": "https://seed125.bitchute.com/8xBkY2iNMQ05/5vPVHLKrOKcG.mp4",
-            "duration": 1462
-          },
-          {
-            "title": "Episódio 3",
-            "videoUrl": "https://files.catbox.moe/cubuaj.mp4",
-            "duration": 1462
-          },
-          {
-            "title": "Episódio 4",
-            "videoUrl": "https://seed306.bitchute.com/8xBkY2iNMQ05/iEzqxVQFpoeA.mp4",
-            "duration": 1466
-          },
-          {
-            "title": "Episódio 5",
-            "videoUrl": "https://files.catbox.moe/w4dzm7.mp4",
-            "duration": 1470
-          },
-          {
-            "title": "Episódio 6",
-            "videoUrl": "https://seed128.bitchute.com/8xBkY2iNMQ05/r0FTV3eZulwC.mp4",
-            "duration": 1462
-          },
-          {
-            "title": "Episódio 7",
-            "videoUrl": "https://seed307.bitchute.com/8xBkY2iNMQ05/1AWqmaf9YRM7.mp4",
-            "duration": 1468
-          },
-          {
-            "title": "Episódio 8",
-            "videoUrl": "https://zggg98sgwbg1gh.bitchute.com/8xBkY2iNMQ05/7UFXTWu9Yi7X.mp4",
-            "duration": 1472
-          },
-          {
-            "title": "Episódio 9",
-            "videoUrl": "https://files.catbox.moe/8agufk.mp4",
-            "duration": 1466
-          },
-          {
-            "title": "Episódio 10",
-            "videoUrl": "https://seed306.bitchute.com/8xBkY2iNMQ05/Af9TpTaQkFJW.mp4",
-            "duration": 1381
-          },
-          {
-            "title": "Episódio 11",
-            "videoUrl": "https://seed163.bitchute.com/8xBkY2iNMQ05/0VlRkpy48hJJ.mp4",
-            "duration": 1466
-          },
-          {
-            "title": "Episódio 12",
-            "videoUrl": "https://files.catbox.moe/9wfwe9.mp4",
-            "duration": 1466
-          }
-        ]
-      }
-    ],
-    "year": 2024,
-    "rating": 7.9,
-    "openings": [
-      {
-        "title": "Iinazukekkyun",
-        "artist": " Ano",
-        "audio": "https://files.catbox.moe/1qjte8.mp3",
-        "cover": "https://m.media-amazon.com/images/I/81MCmZcJcOL._UF1000,1000_QL80_.jpg",
-        "type": "opening",
-        "season": 1
-      }
-    ],
-    "endings": [
-      {
-        "title": "Anta Nante",
-        "artist": "Riria",
-        "audio": "https://files.catbox.moe/09fe5t.mp3",
-        "cover": "https://i.scdn.co/image/ab67616d0000b27374b94a678dffddb3abca4f97",
-        "type": "ending",
-        "season": 1
-      }
-    ],
-    "osts": {},
-    "banner": "https://files.catbox.moe/gtfzjq.png"
-  },
-  {
-    "id": 9,
-    "title": "Komi Can't Communicate",
-    "description": "Uma aluna de elite e distante é de facto muito retraída e ansiosa por comunicar com os outros. Um estudante comum faz amizade com ela e ajuda-a a abrir-se e a falar com as pessoas.",
-    "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/main/images/thumbnails/komi.png",
-    "trailer": "https://www.youtube.com/watch?v=erF7lSzkTYA&pp=0gcJCdgAo7VqN5tD",
-    "type": "anime",
-    "dateAdded": "2025-06-29",
-    "categories": [
-      "comedy",
-      "slice of life"
-    ],
-    "seasons": [
-      {
-        "number": 1,
-        "episodes": [
-          {
-            "title": "É só que eu queria poder falar.",
-            "videoUrl": "https://files.catbox.moe/adc3gu.mp4",
-            "duration": 1496
-          },
-          {
-            "title": "É só uma uma amizade de infância e mais.",
-            "videoUrl": "https://files.catbox.moe/3bb5he.mp4",
-            "duration": 1496
-          },
-          {
-            "title": "É só medo e mais.",
-            "videoUrl": "https://files.catbox.moe/rwvwkv.mp4",
-            "duration": 1498
-          },
-          {
-            "title": "É só uma questão física e mais.",
-            "videoUrl": "https://files.catbox.moe/2pnhw4.mp4",
-            "duration": 1496
-          },
-          {
-            "title": "É só meu uniforme de verão e mais.",
-            "videoUrl": "https://files.catbox.moe/fnpqqv.mp4",
-            "duration": 1498
-          },
-          {
-            "title": "É só uma brincadeira e mais.",
-            "videoUrl": "https://files.catbox.moe/i3b90m.mp4",
-            "duration": 1496
-          },
-          {
-            "title": "É só a piscina e mais.",
-            "videoUrl": "https://files.catbox.moe/bn8qlh.mp4",
-            "duration": 1496
-          },
-          {
-            "title": "É só Obom e mais.",
-            "videoUrl": "https://files.catbox.moe/fsvlbl.mp4",
-            "duration": 1496
-          },
-          {
-            "title": "É só uma criança do interior e mais.",
-            "videoUrl": "https://files.catbox.moe/pma44d.mp4",
-            "duration": 1496
-          },
-          {
-            "title": "É só dia de esporte e mais.",
-            "videoUrl": "https://files.catbox.moe/enmpd4.mp4",
-            "duration": 1500
-          },
-          {
-            "title": "São propostas para o festival e mais.",
-            "videoUrl": "https://files.catbox.moe/s5h76e.mp4",
-            "duration": 1508
-          },
-          {
-            "title": "É só o festival cultural.",
-            "videoUrl": "https://files.catbox.moe/tnzjbb.mp4",
-            "duration": 1494
-          }
-        ]
+    },
+    {
+      "id": 6,
+      "title": "Neon Genesis Evangelion: The End of Evangelion",
+      "description": "A SEELE ordena um ataque à NERV para destruir os EVAs antes que Gendo consiga provocar o terceiro impacto e a união das almas humanas.",
+      "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/main/images/thumbnails/evangelionmovie.png",
+      "trailer": "https://geo.dailymotion.com/player.html?video=x24kdhz",
+      "type": "movie",
+      "dateAdded": "2023-10-15",
+      "categories": [
+        "drama",
+        "mecha",
+        "psychological"
+      ],
+      "seasons": [
+        {
+          "number": 1,
+          "episodes": [
+            {
+              "title": "The End of Evangelion",
+              "videoUrl": "https://seed306.bitchute.com/8xBkY2iNMQ05/9ePjcp185z3J.mp4",
+              "duration": 5222
+            }
+          ]
+        }
+      ],
+      "year": 1997,
+      "rating": 8.1,
+      "openings": [
+        {
+          "title": "A Cruel Angel's Thesis",
+          "artist": "Yoko Takahashi",
+          "audio": "https://example.com/eva-op1.mp3",
+          "cover": "https://example.com/eva-op1-cover.jpg",
+          "type": "opening",
+          "season": 1
+        }
+      ],
+      "endings": [
+        {
+          "title": "Fly Me to the Moon",
+          "artist": "Claire",
+          "audio": "https://example.com/eva-ed1.mp3",
+          "cover": "https://example.com/eva-ed1-cover.jpg",
+          "type": "ending",
+          "season": 1
+        }
+      ],
+      "osts": {
+        "The End of Evangelion Original Soundtrack": {
+          "year": 1997,
+          "cover": "https://example.com/eva-movie-ost1-cover.jpg",
+          "tracks": [
+            {
+              "title": "Komm, süsser Tod",
+              "artist": "Arianne",
+              "audio": "https://example.com/eva-movie-ost1.mp3",
+              "duration": 245
+            }
+          ]
+        }
       },
-      {
-        "number": 2,
-        "episodes": [
-          {
-            "title": "É só a chegada do inverno. E mais.",
-            "videoUrl": "https://files.catbox.moe/bscoem.mp4",
-            "duration": 1503
-          },
-          {
-            "title": "É só um tufão. E mais.",
-            "videoUrl": "https://files.catbox.moe/mw0a30.mp4",
-            "duration": 1505
-          },
-          {
-            "title": "É só um pensamento. E mais.",
-            "videoUrl": "https://files.catbox.moe/2eela4.mp4",
-            "duration": 1505
-          },
-          {
-            "title": "É só um Natal Feliz.",
-            "videoUrl": "https://zggg98sgwbg1gh.bitchute.com/8xBkY2iNMQ05/P444mDmvc7Ey.mp4",
-            "duration": 1505
-          },
-          {
-            "title": "É só um boneco de neve. E mais.",
-            "videoUrl": "https://files.catbox.moe/gl23me.mp4",
-            "duration": 1501
-          },
-          {
-            "title": "É só o ano-novo da galera. E mais.",
-            "videoUrl": "https://files.catbox.moe/csxczg.mp4",
-            "duration": 1501
-          },
-          {
-            "title": "É só um mal-entendido. E mais.",
-            "videoUrl": "https://files.catbox.moe/zt9mk4.mp4",
-            "duration": 1503
-          },
-          {
-            "title": "É só a viagem escolar.",
-            "videoUrl": "https://files.catbox.moe/9q04pu.mp4",
-            "duration": 1503
-          },
-          {
-            "title": "É só o segundo dia da viagem escolar.",
-            "videoUrl": "https://files.catbox.moe/gh0lym.mp4",
-            "duration": 1497
-          },
-          {
-            "title": "É só o Dia dos Namorados.",
-            "videoUrl": "https://files.catbox.moe/255cfx.mp4",
-            "duration": 1501
-          },
-          {
-            "title": "É só uma meia desfiada. E mais.",
-            "videoUrl": "https://files.catbox.moe/quly6b.mp4",
-            "duration": 1503
-          },
-          {
-            "title": "É só o White Day. E mais.",
-            "videoUrl": "https://files.catbox.moe/o02ctt.mp4",
-            "duration": 1503
-          }
-        ]
-      }
-    ],
-    "year": 2021,
-    "rating": 7.7,
-    "openings": [],
-    "endings": [],
-    "osts": [],
-    "banner": "https://files.catbox.moe/ou865t.jpg"
-  },
-  {
-    "id": 10,
-    "title": "Miss Kobayashi's Dragon Maid",
-    "description": "Um funcionário de escritório contrata um dragão de coração bondoso para servir como sua empregada e entra em um mundo de desventuras cômicas.",
-    "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/main/images/thumbnails/misskobayashianime.jpg",
-    "trailer": "https://www.youtube.com/watch?v=4N6ozeZ2cA0",
-    "type": "anime",
-    "dateAdded": "2025-07-02",
-    "categories": [
-      "comedy",
-      "adventure",
-      "slice of life"
-    ],
-    "seasons": [
-      {
-        "number": 1,
-        "episodes": [
-          {
-            "title": "Episódio 1",
-            "videoUrl": "a",
-            "duration": 0
-          }
-        ]
-      }
-    ],
-    "year": 2017,
-    "rating": 7.7,
-    "openings": [
-      {
-        "title": "Blue Sky Rhapsody",
-        "artist": "Fhána",
-        "audio": "https://files.catbox.moe/71f9ig.mp3",
-        "cover": "https://static.wikia.nocookie.net/maid-dragon/images/d/de/108125_686683.jpg",
-        "type": "opening",
-        "season": 1
-      },
-      {
-        "title": "Ai no Supreme!",
-        "artist": "fhána",
-        "audio": "https://jonaras.s-ul.eu/ds5lZYDG",
-        "cover": "https://static.wikia.nocookie.net/maid-dragon/images/b/b8/Ai_No_Supreme_CD_Cover.jpg",
-        "type": "opening",
-        "season": 2
-      }
-    ],
-    "endings": [
-      {
-        "title": "Ishukan Communication",
-        "artist": "Choro-gonzu",
-        "audio": "https://jonaras.s-ul.eu/AQyn08dm",
-        "cover": "https://static.wikia.nocookie.net/maid-dragon/images/8/8c/Ishukan_Communication_Cover.jpg",
-        "type": "ending",
-        "season": 1
-      },
-      {
-        "title": "Maid with Dragons ︎❤︎",
-        "artist": "Super Chorogons",
-        "audio": "https://jonaras.s-ul.eu/kvukHM8P",
-        "cover": "https://static.wikia.nocookie.net/maid-dragon/images/0/00/Maid_with_Dragons_CD_Cover.jpg",
-        "type": "ending",
-        "season": 2
-      }
-    ],
-    "osts": {},
-    "banner": "https://files.catbox.moe/0vkic6.jpg"
-  },
-  {
-    "id": 11,
-    "title": "Azumanga Web Daioh",
-    "description": "Chiyo leva uma câmera de vídeo para a escola para um projeto de classe. Mas quando Tomo a pega, uma série de problemas acontecem por toda a escola.",
-    "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/main/images/thumbnails/azudaiohweb.png",
-    "trailer": "nothing",
-    "type": "ova",
-    "dateAdded": "2025-07-07",
-    "categories": [
-      "comedy",
-      "slice of life"
-    ],
-    "seasons": [
-      {
-        "number": 1,
-        "episodes": [
-          {
-            "title": "Piloto",
-            "videoUrl": "https://files.catbox.moe/9pp2h7.mp4",
-            "duration": 223
-          }
-        ]
-      }
-    ],
-    "year": 2000,
-    "rating": 6.1,
-    "openings": [],
-    "endings": [],
-    "osts": {},
-    "banner": "https://files.catbox.moe/a4u65d.jpg"
-  },
-  {
-    "id": 12,
-    "title": "Azumanga Daioh: The Very Short Movie",
-    "description": "Uma pequena compilação de esquetes humorísticos com um grupo de amigos do ensino médio.",
-    "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/main/images/thumbnails/azudaiohova.png",
-    "trailer": "num tem",
-    "type": "ova",
-    "dateAdded": "2025-07-08",
-    "categories": [
-      "comedy",
-      "slice of life"
-    ],
-    "seasons": [
-      {
-        "number": 1,
-        "episodes": [
-          {
-            "title": "Episódio 1",
-            "videoUrl": "https://files.catbox.moe/puab95.mp4",
-            "duration": 353
-          }
-        ]
-      }
-    ],
-    "year": 2001,
-    "rating": 7.3,
-    "openings": [],
-    "endings": [],
-    "osts": {},
-    "banner": "https://files.catbox.moe/a4u65d.jpg"
-  },
-  {
-    "id": 13,
-    "title": "Joshiraku",
-    "description": "Marii, Kigurumi, Tetora, Gankyou e Kukuru merecem uma salva de palmas por manterem viva a arte do Rakugo! Qual é o segredo delas? Uma brincadeira espirituosa e absurda, é claro! Essas cinco amigas sempre têm assunto para conversar, não importa quão bobo seja ele.",
-    "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/main/images/thumbnails/joshiraku.png",
-    "trailer": "https://www.w3schools.com/html/mov_bbb.mp4",
-    "type": "anime",
-    "dateAdded": "2025-07-10",
-    "categories": [
-      "slice of life",
-      "comedy"
-    ],
-    "seasons": [
-      {
-        "number": 1,
-        "episodes": [
-          {
-            "title": "Diálogo Normal",
-            "videoUrl": "https://files.catbox.moe/8rzp8h.mp4",
-            "duration": 1466,
-            "opening": {
-              "start": 86,
-              "end": 176
-            }
-          },
-          {
-            "title": "Bastidores Riquezas",
-            "videoUrl": "https://files.catbox.moe/uj5462.mp4",
-            "duration": 1448,
-            "opening": {
-              "start": 0,
-              "end": 90
-            }
-          },
-          {
-            "title": "Um Banho Para Além",
-            "videoUrl": "https://files.catbox.moe/553orz.mp4",
-            "duration": 1448,
-            "opening": {
-              "start": 0,
-              "end": 90
-            }
-          },
-          {
-            "title": "Garota Óculos",
-            "videoUrl": "https://files.catbox.moe/romyv9.mp4",
-            "duration": 1448,
-            "opening": {
-              "start": 0,
-              "end": 90
-            }
-          },
-          {
-            "title": "Elogie A Menina",
-            "videoUrl": "https://files.catbox.moe/wixj9n.mp4",
-            "duration": 1450,
-            "opening": {
-              "start": 0,
-              "end": 90
-            }
-          },
-          {
-            "title": "Quatro Emociona",
-            "videoUrl": "https://files.catbox.moe/yv3gt2.mp4",
-            "duration": 1450,
-            "opening": {
-              "start": 0,
-              "end": 90
-            }
-          },
-          {
-            "title": "Yankees São Assustadores",
-            "videoUrl": "https://files.catbox.moe/kfks7k.mp4",
-            "duration": 1434,
-            "opening": {
-              "start": 0,
-              "end": 90
-            }
-          },
-          {
-            "title": "Saco De Ouro",
-            "videoUrl": "https://files.catbox.moe/jv1iwc.mp4",
-            "duration": 1434,
-            "opening": {
-              "start": 0,
-              "end": 90
-            }
-          },
-          {
-            "title": "Butttofu",
-            "videoUrl": "https://files.catbox.moe/7n7aso.mp4",
-            "duration": 1434,
-            "opening": {
-              "start": 0,
-              "end": 90
-            }
-          },
-          {
-            "title": "Banda De Abóbora",
-            "videoUrl": "https://files.catbox.moe/y23b90.mp4",
-            "duration": 1434,
-            "opening": {
-              "start": 0,
-              "end": 90
-            }
-          },
-          {
-            "title": "Jogo Família",
-            "videoUrl": "https://files.catbox.moe/j00nuh.mp4",
-            "duration": 1434,
-            "opening": {
-              "start": 0,
-              "end": 90
-            }
-          },
-          {
-            "title": "O Sonhador Contra Ataca!",
-            "videoUrl": "https://files.catbox.moe/bply33.mp4",
-            "duration": 1434,
-            "opening": {
-              "start": 0,
-              "end": 90
-            }
-          },
-          {
-            "title": "Coragem Do Personagem",
-            "videoUrl": "https://files.catbox.moe/9yhua2.mp4",
-            "duration": 1419,
-            "opening": {
-              "start": 0,
-              "end": 90
-            }
-          }
-        ]
-      }
-    ],
-    "year": 2012,
-    "rating": 7,
-    "openings": [
-      {
-        "title": "Oato ga Yoroshikutte... yo!",
-        "artist": "Gokuraku Jokai",
-        "audio": "https://files.catbox.moe/ouerl4.mp3",
-        "cover": "https://m.media-amazon.com/images/I/715ax108MTL._UF1000,1000_QL80_.jpg",
-        "type": "opening",
-        "season": 1
-      }
-    ],
-    "endings": [
-      {
-        "title": "Nippon Egao Hyakkei",
-        "artist": "Momokurotei Ichimon",
-        "audio": "https://files.catbox.moe/pzb0yb.mp3",
-        "cover": "https://i.scdn.co/image/ab67616d0000b273d4a4f25d06fa3717eb4b2193",
-        "type": "ending",
-        "season": 1
-      }
-    ],
-    "osts": {},
-    "banner": "https://files.catbox.moe/qfer7v.jpg"
-  },
-  {
-    "id": 14,
-    "title": "Joshiraku OVA",
-    "description": "Episódio OVA incluído no quinto volume do mangá.",
-    "thumbnail": "https://simkl.in/fanart/67/678476efef177c6c_w.jpg",
-    "trailer": "assasina",
-    "type": "ova",
-    "dateAdded": "2025-07-10",
-    "categories": [
-      "comedy",
-      "slice of life"
-    ],
-    "seasons": [
-      {
-        "number": 1,
-        "episodes": [
-          {
-            "title": "Episódio 14",
-            "videoUrl": "https://files.catbox.moe/rzewv2.mp4",
-            "duration": 1420,
-            "opening": {
-              "start": 0,
-              "end": 90
-            }
-          }
-        ]
-      }
-    ],
-    "year": 2013,
-    "rating": 7.3,
-    "openings": [],
-    "endings": [],
-    "osts": {}
-  },
-  {
-    "id": 15,
-    "title": "Dan Da Dan",
-    "description": "Quando as crenças de Momo e Okarun entram em conflito, eles são jogados em um mundo de fantasmas, alienígenas e poderes despertos.",
-    "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/main/images/thumbnails/dandadanime.png",
-    "banner": "https://files.catbox.moe/fhnk72.jpg",
-    "trailer": "https://www.youtube.com/embed/MGRm4IzK1SQ?autoplay=1&mute=1&enablejsapi=1",
-    "type": "anime",
-    "dateAdded": "2025-07-12",
-    "categories": [
-      "action",
-      "comedy",
-      "slice of life"
-    ],
-    "seasons": [
-      {
-        "number": 1,
-        "episodes": [
-          {
-            "title": "É Assim Que um Amor Começa!",
-            "videoUrl": "https://zggg98sgwbg1gh.bitchute.com/8xBkY2iNMQ05/86EFkNp06Q1s.mp4",
-            "duration": 1479,
-            "opening": {
-              "start": 0,
-              "end": 90
-            }
-          },
-          {
-            "title": "Isso Aí É um Alienígena, Né?!",
-            "videoUrl": "https://files.catbox.moe/tbstae.mp4",
-            "duration": 1477,
-            "opening": {
-              "start": 121,
-              "end": 211
-            }
-          },
-          {
-            "title": "Uma Disputa de Velha contra Velha",
-            "videoUrl": "https://files.catbox.moe/rtt8bk.mp4",
-            "duration": 1483,
-            "opening": {
-              "start": 114,
-              "end": 204
-            }
-          },
-          {
-            "title": "Hora de Arrebentar Com a Velha Turbo",
-            "videoUrl": "https://seed132.bitchute.com/8xBkY2iNMQ05/01ojoyeEC9RT.mp4",
-            "duration": 1483,
-            "opening": {
-              "start": 394,
-              "end": 484
-            }
-          },
-          {
-            "title": "Cadê Tuas Bolas, Cara?",
-            "videoUrl": "https://files.catbox.moe/veucsu.mp4",
-            "duration": 1485,
-            "opening": {
-              "start": 78,
-              "end": 168
-            }
-          },
-          {
-            "title": "Surge uma Mulher Perigosa",
-            "videoUrl": "https://seed167.bitchute.com/8xBkY2iNMQ05/mg9pyIGEYUgb.mp4",
-            "duration": 1483,
-            "opening": {
-              "start": 445,
-              "end": 535
-            }
-          },
-          {
-            "title": "Rumo a um Mundo Gentil",
-            "videoUrl": "https://seed132.bitchute.com/8xBkY2iNMQ05/6DRBdpGgJhHI.mp4",
-            "duration": 1483,
-            "opening": {
-              "start": 334,
-              "end": 424
-            }
-          },
-          {
-            "title": "Ela Tá Meio Bolada",
-            "videoUrl": "https://files.catbox.moe/779gfr.mp4",
-            "duration": 1470,
-            "opening": {
-              "start": 235,
-              "end": 325
-            }
-          },
-          {
-            "title": "Fusão! Serpiano Demônio de Dover Nessie!",
-            "videoUrl": "https://seed122.bitchute.com/8xBkY2iNMQ05/78yz8FGtp3WR.mp4",
-            "duration": 1472,
-            "opening": {
-              "start": 317,
-              "end": 407
-            }
-          },
-          {
-            "title": "Você Já Viu uma Abdução de Gado?",
-            "videoUrl": "https://files.catbox.moe/ayu0q7.mp4",
-            "duration": 1470,
-            "opening": {
-              "start": 0,
-              "end": 90
-            }
-          },
-          {
-            "title": "O Primeiro Amor",
-            "videoUrl": "https://files.catbox.moe/br7lxd.mp4",
-            "duration": 1470,
-            "opening": {
-              "start": 521,
-              "end": 611
-            }
-          },
-          {
-            "title": "Simbora Pra Casa Amaldiçoada!",
-            "videoUrl": "https://files.catbox.moe/xsfqa8.mp4",
-            "duration": 1455,
-            "opening": {
-              "start": 417,
-              "end": 507
-            }
-          }
-        ]
-      },
-      {
-        "number": 2,
-        "episodes": [
-          {
-            "title": "Então essa é a lendária cobra gigante?",
-            "videoUrl": "https://zggg98sgwbg1gh.bitchute.com/8xBkY2iNMQ05/AbKx8aUh8yP1.mp4",
-            "duration": 1499,
-            "opening": {
-              "start": 230,
-              "end": 320
-            }
-          },
-          {
-            "title": "O Olho Demoníaco",
-            "videoUrl": "https://zn21g5kls-n995.bitchute.com/8xBkY2iNMQ05/1tUfYdthvHjD.mp4",
-            "duration": 1495,
-            "opening": {
-              "start": 326,
-              "end": 417
-            }
-          },
-          {
-            "title": "Imperdoável",
-            "videoUrl": "https://seed171.bitchute.com/8xBkY2iNMQ05/xAMfdbb9tzaB.mp4",
-            "duration": 1495,
-            "opening": {
-              "start": 398,
-              "end": 488
-            }
-          },
-          {
-            "title": "A gente tá muito ferrado!",
-            "videoUrl": "https://seed171.bitchute.com/8xBkY2iNMQ05/KK42xU3JqPsn.mp4",
-            "duration": 1499,
-            "opening": {
-              "start": 271,
-              "end": 361
-            }
-          },
-          {
-            "title": "Vamos todos morar juntos",
-            "videoUrl": "https://seed122.bitchute.com/8xBkY2iNMQ05/uEv56IaF1pgq.mp4",
-            "duration": 1499,
-            "opening": {
-              "start": 83,
-              "end": 173
-            }
-          },
-          {
-            "title": "Viramos uma família",
-            "videoUrl": "https://seed306.bitchute.com/8xBkY2iNMQ05/bw3J04tUEh0X.mp4",
-            "duration": 1497,
-            "opening": {
-              "start": 144,
-              "end": 234
-            }
-          },
-          {
-            "title": "Ele tá meio bolado",
-            "videoUrl": "https://seed163.bitchute.com/8xBkY2iNMQ05/yGyqYZ8tYNcX.mp4",
-            "duration": 1497,
-            "opening": {
-              "start": 137,
-              "end": 227
-            }
-          },
-          {
-            "title": "Manda ver Okarun!",
-            "videoUrl": "https://seed126.bitchute.com/8xBkY2iNMQ05/xddkbCxQa0iA.mp4",
-            "duration": 1482,
-            "opening": {
-              "start": 98,
-              "end": 187
-            }
-          },
-          {
-            "title": "Quero reconstruir minha casa",
-            "videoUrl": "https://files.catbox.moe/pd9ljj.mp4",
-            "duration": 1480,
-            "opening": {
-              "start": 370,
-              "end": 460
-            }
-          },
-          {
-            "title": "Qual o segredo da sua popularidade?",
-            "videoUrl": "https://files.catbox.moe/bfx001.mp4",
-            "duration": 1480,
-            "opening": {
-              "start": 391,
-              "end": 481
-            }
-          },
-          {
-            "title": "Um Kaiju!",
-            "videoUrl": "https://seed167.bitchute.com/8xBkY2iNMQ05/uyeo91y1O8db.mp4",
-            "duration": 1470,
-            "opening": {
-              "start": 140,
-              "end": 231
-            }
-          },
-          {
-            "title": "Confronto! Kaiju Especial Vs Robô Gigante!",
-            "videoUrl": "https://seed163.bitchute.com/8xBkY2iNMQ05/bnKIIUQ1P1qr.mp4",
-            "duration": 1465,
-            "opening": {
-              "start": 335,
-              "end": 425
-            }
-          }
-        ]
-      }
-    ],
-    "year": 2024,
-    "rating": 8.3,
-    "openings": [
-      {
-        "title": "Otonoke",
-        "artist": "Creepy Nuts",
-        "audio": "https://files.catbox.moe/s9x422.mp3",
-        "cover": "https://static.wikia.nocookie.net/dandadan/images/0/07/Otonoke_Cover.png",
-        "type": "opening",
-        "season": 1
-      },
-      {
-        "title": "On The Way",
-        "artist": "AiNA THE END",
-        "audio": "https://files.catbox.moe/9oojg2.mp3",
-        "cover": "https://static.wikia.nocookie.net/dandadan/images/0/04/Ontheway.png",
-        "type": "opening",
-        "season": 2
-      }
-    ],
-    "endings": [
-      {
-        "title": "TAIDADA",
-        "artist": "ZUTOMAYO",
-        "audio": "https://files.catbox.moe/cqtcsj.mp3",
-        "cover": "https://static.wikia.nocookie.net/dandadan/images/4/4c/TAIDADA_Cover.png",
-        "type": "ending",
-        "season": 1
-      },
-      {
-        "title": "Something's Wrong with Them",
-        "artist": " WurtS",
-        "audio": "https://files.catbox.moe/iuw9wk.mp3",
-        "cover": "https://static.wikia.nocookie.net/dandadan/images/d/d4/Doukashiteru_Cover.png",
-        "type": "ending",
-        "season": 2
-      }
-    ],
-    "osts": {}
-  },
-  {
-    "id": 16,
-    "title": "FLCL - Fã Dublagem",
-    "description": "Coisas misteriosas começam a acontecer com Naota, um jovem de 12 anos, encontra uma mulher estranha em uma Vespa junto com seu grande baixo.",
-    "thumbnail": "https://files.catbox.moe/77hqc3.png",
-    "trailer": "tenao",
-    "type": "ova",
-    "dateAdded": "2025-08-07",
-    "categories": [
-      "action",
-      "comedy",
-      "horror",
-      "psychological"
-    ],
-    "seasons": [
-      {
-        "number": 1,
-        "episodes": [
-          {
-            "title": "Fooly Cooly",
-            "videoUrl": "https://seed167.bitchute.com/8xBkY2iNMQ05/1z8u42Q8eP53.mp4",
-            "duration": 1497
-          }
-        ]
-      }
-    ],
-    "year": 2000,
-    "rating": 8.1,
-    "openings": [
-      {
-        "title": "One Life",
-        "artist": "The Pillows",
-        "audio": "https://files.catbox.moe/zstsbu.mp3",
-        "cover": "https://images.genius.com/a8a5e93fea230d6fd840d135e5258193.465x465x1.jpg",
-        "type": "opening",
-        "season": 1
-      },
-      {
-        "title": "Instant Music",
-        "artist": "The Pillows",
-        "audio": "https://files.catbox.moe/7y6tnj.mp3",
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/ae/9e/9f/ae9e9f26-a0e2-88bd-28f5-23586a42527f/8720766609171.png/1200x630bb.jpg",
-        "type": "opening",
-        "season": 1
-      },
-      {
-        "title": "Happy Bivouac",
-        "artist": "The Pillows",
-        "audio": "https://files.catbox.moe/4zf7nj.mp3",
-        "cover": "https://cdn-images.dzcdn.net/images/cover/32599ab5f37ed18c1a811d55ea14d144/0x1900-000000-80-0-0.jpg",
-        "type": "opening",
-        "season": 1
-      },
-      {
-        "title": "Runners High",
-        "artist": "The Pillows",
-        "audio": "https://files.catbox.moe/mohuj9.mp3",
-        "cover": "https://i.scdn.co/image/ab67616d0000b2731c1f2c36b568473ec546d691",
-        "type": "opening",
-        "season": 1
-      },
-      {
-        "title": "Carnival",
-        "artist": "The Pillows",
-        "audio": "https://files.catbox.moe/yp0xup.mp3",
-        "cover": "https://i.scdn.co/image/ab67616d0000b273c03a29523ae9543551f8b4c3",
-        "type": "opening",
-        "season": 1
-      }
-    ],
-    "endings": [
-      {
-        "title": "Ride on Shooting Star",
-        "artist": "The Pillows",
-        "audio": "https://files.catbox.moe/31mdu3.mp3",
-        "cover": "https://i.scdn.co/image/ab67616d0000b2735c75c417c99ccf9139ce546c",
-        "type": "ending",
-        "season": 1
-      }
-    ],
-    "osts": {},
-    "banner": "https://files.catbox.moe/i84e36.jpg"
-  },
-  {
-    "id": 17,
-    "title": "Ichigo Mashimaro",
-    "type": "anime",
-    "year": 2005,
-    "description": "Baseado no mangá de Barasui, Ichigo Mashimaro acompanha a vida de Nobue Itou, sua irmã mais nova, Chika, e suas amigas. A premissa básica da série pode ser resumida em \"garotas fofas fazendo coisas fofas de maneiras fofas\", seja tentando parar de fumar, saindo para brincar, comemorando um feriado ou fazendo tarefas escolares. Este OVA continua de onde a série parou, dando continuidade às aventuras do seu dia a dia, só que mais fofas.",
-    "thumbnail": "https://files.catbox.moe/1sg3nl.jpg",
-    "banner": "https://files.catbox.moe/3p6nri.jpg",
-    "trailer": "https://www.youtube.com/watch?v=vwx8MwaVhKI",
-    "categories": [
-      "comedy",
-      "slice of life"
-    ],
-    "seasons": [
-      {
-        "number": 1,
-        "episodes": [
-          {
-            "title": "Especial",
-            "videoUrl": "https://files.catbox.moe/9vpzq0.mp4",
-            "duration": 231
-          },
-          {
-            "title": "Aniversário",
-            "videoUrl": "https://files.catbox.moe/ycm3gg.mp4",
-            "duration": 1451,
-            "opening": {
-              "start": 0,
-              "end": 90
-            }
-          },
-          {
-            "title": "Ana",
-            "videoUrl": "https://files.catbox.moe/34tvb1.mp4",
-            "duration": 1451,
-            "opening": {
-              "start": 0,
-              "end": 90
-            }
-          },
-          {
-            "title": "Chamda de casa",
-            "videoUrl": "https://files.catbox.moe/h19k7e.mp4",
-            "duration": 1451,
-            "opening": {
-              "start": 0,
-              "end": 90
-            }
-          },
-          {
-            "title": "Arbeit",
-            "videoUrl": "https://files.catbox.moe/692zug.mp4",
-            "duration": 1451,
-            "opening": {
-              "start": 0,
-              "end": 90
-            }
-          },
-          {
-            "title": "Dormir juntos",
-            "videoUrl": "https://files.catbox.moe/692zug.mp4",
-            "duration": 1451,
-            "opening": {
-              "start": 0,
-              "end": 90
-            }
-          },
-          {
-            "title": "Dia de Verão",
-            "videoUrl": "https://files.catbox.moe/vbzhkn.mp4",
-            "duration": 1451,
-            "opening": {
-              "start": 0,
-              "end": 90
-            }
-          },
-          {
-            "title": "Banho de mar",
-            "videoUrl": "https://files.catbox.moe/0r0oj4.mp4",
-            "duration": 1451,
-            "opening": {
-              "start": 0,
-              "end": 90
-            }
-          },
-          {
-            "title": "Festival",
-            "videoUrl": "https://files.catbox.moe/3e3pjp.mp4",
-            "duration": 1451,
-            "opening": {
-              "start": 0,
-              "end": 90
-            }
-          },
-          {
-            "title": "Crescendo",
-            "videoUrl": "https://files.catbox.moe/xlerde.mp4",
-            "duration": 1451,
-            "opening": {
-              "start": 0,
-              "end": 90
-            }
-          },
-          {
-            "title": "Flor",
-            "videoUrl": "https://files.catbox.moe/2rc32n.mp4",
-            "duration": 1451,
-            "opening": {
-              "start": 0,
-              "end": 90
-            }
-          },
-          {
-            "title": "Primeira neve",
-            "videoUrl": "https://files.catbox.moe/h9ojsb.mp4",
-            "duration": 1451,
-            "opening": {
-              "start": 0,
-              "end": 90
-            }
-          },
-          {
-            "title": "Presente",
-            "videoUrl": "https://files.catbox.moe/kc4ig0.mp4",
-            "duration": 1421,
-            "opening": {
-              "start": 0,
-              "end": 90
-            }
-          }
-        ]
-      }
-    ],
-    "openings": [
-      {
-        "title": "Ichigo Complete",
-        "artist": "Saeko Chiba, Fumiko Orikasa, Ayako Kawasumi and Mamiko Noto",
-        "audio": "https://files.catbox.moe/ta14d7.m4a",
-        "type": "opening",
-        "cover": "https://files.catbox.moe/3yi31v.png"
-      }
-    ],
-    "endings": [
-      {
-        "title": "Classmate",
-        "artist": "Fumiko Orikasa",
-        "audio": "https://files.catbox.moe/tg7sk3.mp3",
-        "type": "ending",
-        "cover": "https://files.catbox.moe/roynp5.png"
-      }
-    ],
-    "osts": {},
-    "dateAdded": "2025-12-30",
-    "rating": 7.62
-  },
-  {
-    "id": 18,
-    "title": "Ichigo Mashimaro Encore",
-    "type": "ova",
-    "year": 2007,
-    "description": "Episódios OVA incluído após a série com 5 novos episódios.",
-    "thumbnail": "https://files.catbox.moe/9ihgt7.png",
-    "banner": "https://files.catbox.moe/3p6nri.jpg",
-    "trailer": "",
-    "categories": [
-      "comedy",
-      "slice of life"
-    ],
-    "seasons": [
-      {
-        "number": 1,
-        "episodes": [
-          {
-            "title": "Paisagem",
-            "videoUrl": "https://files.catbox.moe/nblgp4.mp4",
-            "duration": 0,
-            "opening": {
-              "start": 0,
-              "end": 101
-            }
-          },
-          {
-            "title": "O de sempre",
-            "videoUrl": "https://files.catbox.moe/19d4rg.mp4",
-            "duration": 1539,
-            "opening": {
-              "start": 0,
-              "end": 101
-            }
-          },
-          {
-            "title": "Rotina",
-            "videoUrl": "https://files.catbox.moe/lr5i03.mp4",
-            "duration": 1561,
-            "opening": {
-              "start": 0,
-              "end": 101
-            }
-          },
-          {
-            "title": "Olá",
-            "videoUrl": "https://files.catbox.moe/vwjnbz.mp4",
-            "duration": 1610,
-            "opening": {
-              "start": 276,
-              "end": 375
-            }
-          },
-          {
-            "title": "Até amanhã",
-            "videoUrl": "https://files.catbox.moe/aqqqyb.mp4",
-            "duration": 1652,
-            "opening": {
-              "start": 127,
-              "end": 226
-            }
-          }
-        ]
-      }
-    ],
-    "openings": [
-      {
-        "title": "Akkan Berry Berry",
-        "artist": "Chiba Saeko, Orikasa Fumiko, Kawasumi Ayako, Noto Mamiko & Nabatame Hitomi",
-        "audio": "https://files.catbox.moe/s1ak45.wav",
-        "type": "opening",
-        "cover": "https://files.catbox.moe/jrdscm.png"
-      },
-      {
-        "title": "Ichigo Splash",
-        "artist": "Saeko Chiba, Mamiko Noto, Ayako Kawasumi, Fumiko Orikasa & Hitomi Nabatame",
-        "audio": "https://files.catbox.moe/fg58ov.mp3",
-        "type": "opening",
-        "cover": "https://files.catbox.moe/jrdscm.png"
-      }
-    ],
-    "endings": [
-      {
-        "title": "Yuu Machi no Kaze",
-        "artist": "Orikasa Fumiko",
-        "audio": "https://files.catbox.moe/2v3cl3.mp3",
-        "type": "ending",
-        "cover": "https://files.catbox.moe/oy9ppy.png"
-      },
-      {
-        "title": "Zutto, Zutto",
-        "artist": "Fumiko Orikasa",
-        "audio": "https://files.catbox.moe/5659mt.mp3",
-        "type": "ending",
-        "cover": "https://files.catbox.moe/oazwdh.jpg"
-      }
-    ],
-    "osts": {},
-    "dateAdded": "2025-12-30",
-    "rating": 7.65
-  },
-  {
-    "id": 19,
-    "title": "Ao Oni the Animation",
-    "type": "anime",
-    "year": 2016,
-    "description": "Enquanto Hiroshi e seus amigos tentam resolver os vários enigmas da mansão e escapar de seu novo inimigo azul, eles se deparam com diversos finais terríveis ao fracassarem miseravelmente.",
-    "thumbnail": "https://files.catbox.moe/u7qxwb.png",
-    "banner": "https://files.catbox.moe/8nhxx3.jpg",
-    "trailer": "",
-    "categories": [
-      "comedy",
-      "terror"
-    ],
-    "seasons": [
-      {
-        "number": 1,
-        "episodes": [
-          {
-            "title": "Tem 5 Pessoas Aqui!",
-            "videoUrl": "https://files.catbox.moe/5ki9v6.mp4",
-            "duration": 184,
-            "opening": {
-              "start": 0,
-              "end": 34
-            }
-          },
-          {
-            "title": "Usina de Força Takeshi",
-            "videoUrl": "https://files.catbox.moe/utdlzw.mp4",
-            "duration": 184,
-            "opening": {
-              "start": 0,
-              "end": 34
-            }
-          },
-          {
-            "title": "Confissão",
-            "videoUrl": "https://files.catbox.moe/olht6v.mp4",
-            "duration": 184,
-            "opening": {
-              "start": 0,
-              "end": 34
-            }
-          },
-          {
-            "title": "O Requintado Cotidiano do Aooni",
-            "videoUrl": "https://files.catbox.moe/2bl3rl.mp4",
-            "duration": 184,
-            "opening": {
-              "start": 0,
-              "end": 34
-            }
-          },
-          {
-            "title": "Estilo Rococó",
-            "videoUrl": "https://files.catbox.moe/1ef22k.mp4",
-            "duration": 184,
-            "opening": {
-              "start": 0,
-              "end": 34
-            }
-          },
-          {
-            "title": "Elegia aos Homens",
-            "videoUrl": "https://files.catbox.moe/jk1be9.mp4",
-            "duration": 184,
-            "opening": {
-              "start": 0,
-              "end": 34
-            }
-          },
-          {
-            "title": "Quebra-cabeça",
-            "videoUrl": "https://files.catbox.moe/0mv5do.mp4",
-            "duration": 184,
-            "opening": {
-              "start": 0,
-              "end": 34
-            }
-          },
-          {
-            "title": "Barras de Ferro",
-            "videoUrl": "https://files.catbox.moe/w7dfct.mp4",
-            "duration": 184,
-            "opening": {
-              "start": 0,
-              "end": 34
-            }
-          },
-          {
-            "title": "Mascote Local",
-            "videoUrl": "https://files.catbox.moe/e3na5n.mp4",
-            "duration": 184,
-            "opening": {
-              "start": 0,
-              "end": 34
-            }
-          },
-          {
-            "title": "Aooni Supersônico",
-            "videoUrl": "https://files.catbox.moe/au2wap.mp4",
-            "duration": 184,
-            "opening": {
-              "start": 0,
-              "end": 34
-            }
-          },
-          {
-            "title": "Ao-tim-bum",
-            "videoUrl": "https://files.catbox.moe/8gbncp.mp4",
-            "duration": 184,
-            "opening": {
-              "start": 0,
-              "end": 34
-            }
-          },
-          {
-            "title": "Mundo Oposto",
-            "videoUrl": "https://files.catbox.moe/q8whxd.mp4",
-            "duration": 184,
-            "opening": {
-              "start": 0,
-              "end": 34
-            }
-          },
-          {
-            "title": "Presos Por 70 Anos",
-            "videoUrl": "https://files.catbox.moe/b382kb.mp4",
-            "duration": 184,
-            "opening": {
-              "start": 0,
-              "end": 34
-            }
-          }
-        ]
-      }
-    ],
-    "openings": [],
-    "endings": [
-      {
-        "title": "Kimi koso Ao Oni",
-        "artist": "Machigerita",
-        "audio": "https://files.catbox.moe/pbrfpx.mp3",
-        "type": "ending",
-        "cover": "https://files.catbox.moe/gysd7v.jpg"
-      }
-    ],
-    "osts": {},
-    "dateAdded": "2025-12-31",
-    "rating": 5.11
-  }
+      "banner": "https://files.catbox.moe/63hmj6.jpg"
+    },
+    {
+      "id": 7,
+      "title": "Azumanga Daioh",
+      "description": "Uma série animada cômica e altamente imprevisível que acompanha um grupo de meninas do ensino médio e seus professores.",
+      "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/main/images/thumbnails/azudaioh.png",
+      "trailer": "https://www.youtube.com/embed/mqqxHv-BBSY?autoplay=1&mute=1&enablejsapi=1",
+      "type": "anime",
+      "dateAdded": "2025-07-28",
+      "categories": [
+        "comedy",
+        "slice of life"
+      ],
+      "seasons": [
+        {
+          "number": 1,
+          "episodes": [
+            {
+              "title": "A Diante, os Exames de Entrada!",
+              "videoUrl": "https://files.catbox.moe/9sqmzv.mp4",
+              "duration": 1447,
+              "opening": {
+                "start": 0,
+                "end": 90
+              }
+            },
+            {
+              "title": "Dia da Osaka",
+              "videoUrl": "https://files.catbox.moe/tff74x.mp4",
+              "duration": 1447,
+              "opening": {
+                "start": 0,
+                "end": 90
+              }
+            },
+            {
+              "title": "Nyamo",
+              "videoUrl": "https://files.catbox.moe/i1qpqg.mp4",
+              "duration": 1447,
+              "opening": {
+                "start": 0,
+                "end": 90
+              }
+            },
+            {
+              "title": "Piscina! Piscina! Piscina!",
+              "videoUrl": "https://files.catbox.moe/0cadkg.mp4",
+              "duration": 1447,
+              "opening": {
+                "start": 0,
+                "end": 90
+              }
+            },
+            {
+              "title": "Férias de verão",
+              "videoUrl": "https://files.catbox.moe/kevo22.mp4",
+              "duration": 1447,
+              "opening": {
+                "start": 0,
+                "end": 90
+              }
+            },
+            {
+              "title": "Festival de Esportes",
+              "videoUrl": "https://files.catbox.moe/mzs9xm.mp4",
+              "duration": 1447,
+              "opening": {
+                "start": 0,
+                "end": 90
+              }
+            },
+            {
+              "title": "Festival Cultural",
+              "videoUrl": "https://files.catbox.moe/m7wj5i.mp4",
+              "duration": 1447,
+              "opening": {
+                "start": 0,
+                "end": 90
+              }
+            },
+            {
+              "title": "Especial Sonhos de Ano Novo",
+              "videoUrl": "https://files.catbox.moe/uztzgt.mp4",
+              "duration": 1447,
+              "opening": {
+                "start": 0,
+                "end": 90
+              }
+            },
+            {
+              "title": "Sakaki-san",
+              "videoUrl": "https://files.catbox.moe/uvvlf1.mp4",
+              "duration": 1447,
+              "opening": {
+                "start": 0,
+                "end": 90
+              }
+            },
+            {
+              "title": "Nós Somos Estudantes do Segundo Ano!",
+              "videoUrl": "https://files.catbox.moe/ftmfgn.mp4",
+              "duration": 1447,
+              "opening": {
+                "start": 0,
+                "end": 90
+              }
+            },
+            {
+              "title": "Kagura e Sakaki",
+              "videoUrl": "https://files.catbox.moe/9jmrp0.mp4",
+              "duration": 1447,
+              "opening": {
+                "start": 0,
+                "end": 90
+              }
+            },
+            {
+              "title": "Dia da Chyio-chan",
+              "videoUrl": "https://files.catbox.moe/s0fowe.mp4",
+              "duration": 1447,
+              "opening": {
+                "start": 0,
+                "end": 90
+              }
+            },
+            {
+              "title": "Provas",
+              "videoUrl": "https://files.catbox.moe/xytmny.mp4",
+              "duration": 1447,
+              "opening": {
+                "start": 0,
+                "end": 90
+              }
+            },
+            {
+              "title": "O Mar, Quimonos e Festa",
+              "videoUrl": "https://files.catbox.moe/fug66z.mp4",
+              "duration": 1447,
+              "opening": {
+                "start": 0,
+                "end": 90
+              }
+            },
+            {
+              "title": "Festival de Esportes do Segundo Ano",
+              "videoUrl": "https://files.catbox.moe/ljm0y8.mp4",
+              "duration": 1447,
+              "opening": {
+                "start": 0,
+                "end": 90
+              }
+            },
+            {
+              "title": "Festival Cultural do Segundo Ano",
+              "videoUrl": "https://files.catbox.moe/1hqjb2.mp4",
+              "duration": 1447,
+              "opening": {
+                "start": 0,
+                "end": 90
+              }
+            },
+            {
+              "title": "Fim do Segundo Semestre e Natal",
+              "videoUrl": "https://files.catbox.moe/ttnid0.mp4",
+              "duration": 1447,
+              "opening": {
+                "start": 0,
+                "end": 90
+              }
+            },
+            {
+              "title": "Provações da Koyomi",
+              "videoUrl": "https://files.catbox.moe/paca5b.mp4",
+              "duration": 1447,
+              "opening": {
+                "start": 0,
+                "end": 90
+              }
+            },
+            {
+              "title": "Uma Noite de Primavera",
+              "videoUrl": "https://files.catbox.moe/ngk2ns.mp4",
+              "duration": 1447,
+              "opening": {
+                "start": 0,
+                "end": 90
+              }
+            },
+            {
+              "title": "Terceiro Ano",
+              "videoUrl": "https://files.catbox.moe/s6uxsy.mp4",
+              "duration": 1447,
+              "opening": {
+                "start": 0,
+                "end": 90
+              }
+            },
+            {
+              "title": "Excursão Escolar",
+              "videoUrl": "https://files.catbox.moe/he35zp.mp4",
+              "duration": 1447,
+              "opening": {
+                "start": 0,
+                "end": 90
+              }
+            },
+            {
+              "title": "Estudos Para os Exames de Admissão",
+              "videoUrl": "https://files.catbox.moe/xn1deg.mp4",
+              "duration": 1447,
+              "opening": {
+                "start": 0,
+                "end": 90
+              }
+            },
+            {
+              "title": "Último Festival de Esportes",
+              "videoUrl": "https://files.catbox.moe/h6dfvx.mp4",
+              "duration": 1447,
+              "opening": {
+                "start": 0,
+                "end": 90
+              }
+            },
+            {
+              "title": "Yamamayaa",
+              "videoUrl": "https://files.catbox.moe/moqg4k.mp4",
+              "duration": 1447,
+              "opening": {
+                "start": 0,
+                "end": 90
+              }
+            },
+            {
+              "title": "Em Frente: Os Exames de Admissão!",
+              "videoUrl": "https://files.catbox.moe/58664b.mp4",
+              "duration": 1447,
+              "opening": {
+                "start": 0,
+                "end": 90
+              }
+            },
+            {
+              "title": "Cerimônia de Formatura",
+              "videoUrl": "https://files.catbox.moe/xg8jlr.mp4",
+              "duration": 1447,
+              "opening": {
+                "start": 0,
+                "end": 90
+              }
+            }
+          ]
+        }
+      ],
+      "year": 2002,
+      "rating": 8.1,
+      "openings": [
+        {
+          "title": "Soramimi Cake",
+          "artist": "Oranges & Lemons",
+          "audio": "https://nu.vgmtreasurechest.com/soundtracks/azumanga-daiou-the-animation-utaimasho/ogmqsqbi/01.%20Ear-Playing-Tricks%20Cake.mp3",
+          "cover": "https://static.wikia.nocookie.net/azumanga/images/8/80/Soramimi_Cake_Raspberry_heaven.jpg",
+          "type": "opening",
+          "season": 1
+        }
+      ],
+      "endings": [
+        {
+          "title": "Raspberry Heaven",
+          "artist": "Oranges & Lemons",
+          "audio": "https://nu.vgmtreasurechest.com/soundtracks/azumanga-daiou-the-animation-utaimasho/dzntceqt/12.%20raspberry%20heaven.mp3",
+          "cover": "https://static.wikia.nocookie.net/azumanga/images/8/80/Soramimi_Cake_Raspberry_heaven.jpg",
+          "type": "ending",
+          "season": 1
+        }
+      ],
+      "osts": {},
+      "banner": "https://files.catbox.moe/a4u65d.jpg"
+    },
+    {
+      "id": 8,
+      "title": "Ranma 1/2",
+      "description": "As aventuras românticas e as desventuras de um jovem que é atingido por uma maldição que o faz mudar de gênero.",
+      "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/main/images/thumbnails/ranmanet.png",
+      "trailer": "https://www.youtube.com/watch?v=V77a7NUof4I",
+      "type": "anime",
+      "dateAdded": "2025-06-29",
+      "categories": [
+        "adventure",
+        "comedy",
+        "romance"
+      ],
+      "seasons": [
+        {
+          "number": 1,
+          "episodes": [
+            {
+              "title": "Episódio 1",
+              "videoUrl": "https://zggg98sgwbg1gh.bitchute.com/8xBkY2iNMQ05/7E6G46cLvHzw.mp4",
+              "duration": 1462
+            },
+            {
+              "title": "Episódio 2",
+              "videoUrl": "https://seed125.bitchute.com/8xBkY2iNMQ05/5vPVHLKrOKcG.mp4",
+              "duration": 1462
+            },
+            {
+              "title": "Episódio 3",
+              "videoUrl": "https://files.catbox.moe/cubuaj.mp4",
+              "duration": 1462
+            },
+            {
+              "title": "Episódio 4",
+              "videoUrl": "https://seed306.bitchute.com/8xBkY2iNMQ05/iEzqxVQFpoeA.mp4",
+              "duration": 1466
+            },
+            {
+              "title": "Episódio 5",
+              "videoUrl": "https://files.catbox.moe/w4dzm7.mp4",
+              "duration": 1470
+            },
+            {
+              "title": "Episódio 6",
+              "videoUrl": "https://seed128.bitchute.com/8xBkY2iNMQ05/r0FTV3eZulwC.mp4",
+              "duration": 1462
+            },
+            {
+              "title": "Episódio 7",
+              "videoUrl": "https://seed307.bitchute.com/8xBkY2iNMQ05/1AWqmaf9YRM7.mp4",
+              "duration": 1468
+            },
+            {
+              "title": "Episódio 8",
+              "videoUrl": "https://zggg98sgwbg1gh.bitchute.com/8xBkY2iNMQ05/7UFXTWu9Yi7X.mp4",
+              "duration": 1472
+            },
+            {
+              "title": "Episódio 9",
+              "videoUrl": "https://files.catbox.moe/8agufk.mp4",
+              "duration": 1466
+            },
+            {
+              "title": "Episódio 10",
+              "videoUrl": "https://seed306.bitchute.com/8xBkY2iNMQ05/Af9TpTaQkFJW.mp4",
+              "duration": 1381
+            },
+            {
+              "title": "Episódio 11",
+              "videoUrl": "https://seed163.bitchute.com/8xBkY2iNMQ05/0VlRkpy48hJJ.mp4",
+              "duration": 1466
+            },
+            {
+              "title": "Episódio 12",
+              "videoUrl": "https://files.catbox.moe/9wfwe9.mp4",
+              "duration": 1466
+            }
+          ]
+        }
+      ],
+      "year": 2024,
+      "rating": 7.9,
+      "openings": [
+        {
+          "title": "Iinazukekkyun",
+          "artist": " Ano",
+          "audio": "https://files.catbox.moe/1qjte8.mp3",
+          "cover": "https://m.media-amazon.com/images/I/81MCmZcJcOL._UF1000,1000_QL80_.jpg",
+          "type": "opening",
+          "season": 1
+        }
+      ],
+      "endings": [
+        {
+          "title": "Anta Nante",
+          "artist": "Riria",
+          "audio": "https://files.catbox.moe/09fe5t.mp3",
+          "cover": "https://i.scdn.co/image/ab67616d0000b27374b94a678dffddb3abca4f97",
+          "type": "ending",
+          "season": 1
+        }
+      ],
+      "osts": {},
+      "banner": "https://files.catbox.moe/gtfzjq.png"
+    },
+    {
+      "id": 9,
+      "title": "Komi Can't Communicate",
+      "description": "Uma aluna de elite e distante é de facto muito retraída e ansiosa por comunicar com os outros. Um estudante comum faz amizade com ela e ajuda-a a abrir-se e a falar com as pessoas.",
+      "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/main/images/thumbnails/komi.png",
+      "trailer": "https://www.youtube.com/watch?v=erF7lSzkTYA&pp=0gcJCdgAo7VqN5tD",
+      "type": "anime",
+      "dateAdded": "2025-06-29",
+      "categories": [
+        "comedy",
+        "slice of life"
+      ],
+      "seasons": [
+        {
+          "number": 1,
+          "episodes": [
+            {
+              "title": "É só que eu queria poder falar.",
+              "videoUrl": "https://files.catbox.moe/adc3gu.mp4",
+              "duration": 1496
+            },
+            {
+              "title": "É só uma uma amizade de infância e mais.",
+              "videoUrl": "https://files.catbox.moe/3bb5he.mp4",
+              "duration": 1496
+            },
+            {
+              "title": "É só medo e mais.",
+              "videoUrl": "https://files.catbox.moe/rwvwkv.mp4",
+              "duration": 1498
+            },
+            {
+              "title": "É só uma questão física e mais.",
+              "videoUrl": "https://files.catbox.moe/2pnhw4.mp4",
+              "duration": 1496
+            },
+            {
+              "title": "É só meu uniforme de verão e mais.",
+              "videoUrl": "https://files.catbox.moe/fnpqqv.mp4",
+              "duration": 1498
+            },
+            {
+              "title": "É só uma brincadeira e mais.",
+              "videoUrl": "https://files.catbox.moe/i3b90m.mp4",
+              "duration": 1496
+            },
+            {
+              "title": "É só a piscina e mais.",
+              "videoUrl": "https://files.catbox.moe/bn8qlh.mp4",
+              "duration": 1496
+            },
+            {
+              "title": "É só Obom e mais.",
+              "videoUrl": "https://files.catbox.moe/fsvlbl.mp4",
+              "duration": 1496
+            },
+            {
+              "title": "É só uma criança do interior e mais.",
+              "videoUrl": "https://files.catbox.moe/pma44d.mp4",
+              "duration": 1496
+            },
+            {
+              "title": "É só dia de esporte e mais.",
+              "videoUrl": "https://files.catbox.moe/enmpd4.mp4",
+              "duration": 1500
+            },
+            {
+              "title": "São propostas para o festival e mais.",
+              "videoUrl": "https://files.catbox.moe/s5h76e.mp4",
+              "duration": 1508
+            },
+            {
+              "title": "É só o festival cultural.",
+              "videoUrl": "https://files.catbox.moe/tnzjbb.mp4",
+              "duration": 1494
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "episodes": [
+            {
+              "title": "É só a chegada do inverno. E mais.",
+              "videoUrl": "https://files.catbox.moe/bscoem.mp4",
+              "duration": 1503
+            },
+            {
+              "title": "É só um tufão. E mais.",
+              "videoUrl": "https://files.catbox.moe/mw0a30.mp4",
+              "duration": 1505
+            },
+            {
+              "title": "É só um pensamento. E mais.",
+              "videoUrl": "https://files.catbox.moe/2eela4.mp4",
+              "duration": 1505
+            },
+            {
+              "title": "É só um Natal Feliz.",
+              "videoUrl": "https://zggg98sgwbg1gh.bitchute.com/8xBkY2iNMQ05/P444mDmvc7Ey.mp4",
+              "duration": 1505
+            },
+            {
+              "title": "É só um boneco de neve. E mais.",
+              "videoUrl": "https://files.catbox.moe/gl23me.mp4",
+              "duration": 1501
+            },
+            {
+              "title": "É só o ano-novo da galera. E mais.",
+              "videoUrl": "https://files.catbox.moe/csxczg.mp4",
+              "duration": 1501
+            },
+            {
+              "title": "É só um mal-entendido. E mais.",
+              "videoUrl": "https://files.catbox.moe/zt9mk4.mp4",
+              "duration": 1503
+            },
+            {
+              "title": "É só a viagem escolar.",
+              "videoUrl": "https://files.catbox.moe/9q04pu.mp4",
+              "duration": 1503
+            },
+            {
+              "title": "É só o segundo dia da viagem escolar.",
+              "videoUrl": "https://files.catbox.moe/gh0lym.mp4",
+              "duration": 1497
+            },
+            {
+              "title": "É só o Dia dos Namorados.",
+              "videoUrl": "https://files.catbox.moe/255cfx.mp4",
+              "duration": 1501
+            },
+            {
+              "title": "É só uma meia desfiada. E mais.",
+              "videoUrl": "https://files.catbox.moe/quly6b.mp4",
+              "duration": 1503
+            },
+            {
+              "title": "É só o White Day. E mais.",
+              "videoUrl": "https://files.catbox.moe/o02ctt.mp4",
+              "duration": 1503
+            }
+          ]
+        }
+      ],
+      "year": 2021,
+      "rating": 7.7,
+      "openings": [],
+      "endings": [],
+      "osts": [],
+      "banner": "https://files.catbox.moe/ou865t.jpg"
+    },
+    {
+      "id": 10,
+      "title": "Miss Kobayashi's Dragon Maid",
+      "description": "Um funcionário de escritório contrata um dragão de coração bondoso para servir como sua empregada e entra em um mundo de desventuras cômicas.",
+      "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/main/images/thumbnails/misskobayashianime.jpg",
+      "trailer": "https://www.youtube.com/watch?v=4N6ozeZ2cA0",
+      "type": "anime",
+      "dateAdded": "2025-07-02",
+      "categories": [
+        "comedy",
+        "adventure",
+        "slice of life"
+      ],
+      "seasons": [
+        {
+          "number": 1,
+          "episodes": [
+            {
+              "title": "Episódio 1",
+              "videoUrl": "a",
+              "duration": 0
+            }
+          ]
+        }
+      ],
+      "year": 2017,
+      "rating": 7.7,
+      "openings": [
+        {
+          "title": "Blue Sky Rhapsody",
+          "artist": "Fhána",
+          "audio": "https://files.catbox.moe/71f9ig.mp3",
+          "cover": "https://static.wikia.nocookie.net/maid-dragon/images/d/de/108125_686683.jpg",
+          "type": "opening",
+          "season": 1
+        },
+        {
+          "title": "Ai no Supreme!",
+          "artist": "fhána",
+          "audio": "https://jonaras.s-ul.eu/ds5lZYDG",
+          "cover": "https://static.wikia.nocookie.net/maid-dragon/images/b/b8/Ai_No_Supreme_CD_Cover.jpg",
+          "type": "opening",
+          "season": 2
+        }
+      ],
+      "endings": [
+        {
+          "title": "Ishukan Communication",
+          "artist": "Choro-gonzu",
+          "audio": "https://jonaras.s-ul.eu/AQyn08dm",
+          "cover": "https://static.wikia.nocookie.net/maid-dragon/images/8/8c/Ishukan_Communication_Cover.jpg",
+          "type": "ending",
+          "season": 1
+        },
+        {
+          "title": "Maid with Dragons ︎❤︎",
+          "artist": "Super Chorogons",
+          "audio": "https://jonaras.s-ul.eu/kvukHM8P",
+          "cover": "https://static.wikia.nocookie.net/maid-dragon/images/0/00/Maid_with_Dragons_CD_Cover.jpg",
+          "type": "ending",
+          "season": 2
+        }
+      ],
+      "osts": {},
+      "banner": "https://files.catbox.moe/0vkic6.jpg"
+    },
+    {
+      "id": 11,
+      "title": "Azumanga Web Daioh",
+      "description": "Chiyo leva uma câmera de vídeo para a escola para um projeto de classe. Mas quando Tomo a pega, uma série de problemas acontecem por toda a escola.",
+      "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/main/images/thumbnails/azudaiohweb.png",
+      "trailer": "nothing",
+      "type": "ova",
+      "dateAdded": "2025-07-07",
+      "categories": [
+        "comedy",
+        "slice of life"
+      ],
+      "seasons": [
+        {
+          "number": 1,
+          "episodes": [
+            {
+              "title": "Piloto",
+              "videoUrl": "https://files.catbox.moe/9pp2h7.mp4",
+              "duration": 223
+            }
+          ]
+        }
+      ],
+      "year": 2000,
+      "rating": 6.1,
+      "openings": [],
+      "endings": [],
+      "osts": {},
+      "banner": "https://files.catbox.moe/a4u65d.jpg"
+    },
+    {
+      "id": 12,
+      "title": "Azumanga Daioh: The Very Short Movie",
+      "description": "Uma pequena compilação de esquetes humorísticos com um grupo de amigos do ensino médio.",
+      "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/main/images/thumbnails/azudaiohova.png",
+      "trailer": "num tem",
+      "type": "ova",
+      "dateAdded": "2025-07-08",
+      "categories": [
+        "comedy",
+        "slice of life"
+      ],
+      "seasons": [
+        {
+          "number": 1,
+          "episodes": [
+            {
+              "title": "Episódio 1",
+              "videoUrl": "https://files.catbox.moe/puab95.mp4",
+              "duration": 353
+            }
+          ]
+        }
+      ],
+      "year": 2001,
+      "rating": 7.3,
+      "openings": [],
+      "endings": [],
+      "osts": {},
+      "banner": "https://files.catbox.moe/a4u65d.jpg"
+    },
+    {
+      "id": 13,
+      "title": "Joshiraku",
+      "description": "Marii, Kigurumi, Tetora, Gankyou e Kukuru merecem uma salva de palmas por manterem viva a arte do Rakugo! Qual é o segredo delas? Uma brincadeira espirituosa e absurda, é claro! Essas cinco amigas sempre têm assunto para conversar, não importa quão bobo seja ele.",
+      "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/main/images/thumbnails/joshiraku.png",
+      "trailer": "https://www.w3schools.com/html/mov_bbb.mp4",
+      "type": "anime",
+      "dateAdded": "2025-07-10",
+      "categories": [
+        "slice of life",
+        "comedy"
+      ],
+      "seasons": [
+        {
+          "number": 1,
+          "episodes": [
+            {
+              "title": "Diálogo Normal",
+              "videoUrl": "https://files.catbox.moe/8rzp8h.mp4",
+              "duration": 1466,
+              "opening": {
+                "start": 86,
+                "end": 176
+              }
+            },
+            {
+              "title": "Bastidores Riquezas",
+              "videoUrl": "https://files.catbox.moe/uj5462.mp4",
+              "duration": 1448,
+              "opening": {
+                "start": 0,
+                "end": 90
+              }
+            },
+            {
+              "title": "Um Banho Para Além",
+              "videoUrl": "https://files.catbox.moe/553orz.mp4",
+              "duration": 1448,
+              "opening": {
+                "start": 0,
+                "end": 90
+              }
+            },
+            {
+              "title": "Garota Óculos",
+              "videoUrl": "https://files.catbox.moe/romyv9.mp4",
+              "duration": 1448,
+              "opening": {
+                "start": 0,
+                "end": 90
+              }
+            },
+            {
+              "title": "Elogie A Menina",
+              "videoUrl": "https://files.catbox.moe/wixj9n.mp4",
+              "duration": 1450,
+              "opening": {
+                "start": 0,
+                "end": 90
+              }
+            },
+            {
+              "title": "Quatro Emociona",
+              "videoUrl": "https://files.catbox.moe/yv3gt2.mp4",
+              "duration": 1450,
+              "opening": {
+                "start": 0,
+                "end": 90
+              }
+            },
+            {
+              "title": "Yankees São Assustadores",
+              "videoUrl": "https://files.catbox.moe/kfks7k.mp4",
+              "duration": 1434,
+              "opening": {
+                "start": 0,
+                "end": 90
+              }
+            },
+            {
+              "title": "Saco De Ouro",
+              "videoUrl": "https://files.catbox.moe/jv1iwc.mp4",
+              "duration": 1434,
+              "opening": {
+                "start": 0,
+                "end": 90
+              }
+            },
+            {
+              "title": "Butttofu",
+              "videoUrl": "https://files.catbox.moe/7n7aso.mp4",
+              "duration": 1434,
+              "opening": {
+                "start": 0,
+                "end": 90
+              }
+            },
+            {
+              "title": "Banda De Abóbora",
+              "videoUrl": "https://files.catbox.moe/y23b90.mp4",
+              "duration": 1434,
+              "opening": {
+                "start": 0,
+                "end": 90
+              }
+            },
+            {
+              "title": "Jogo Família",
+              "videoUrl": "https://files.catbox.moe/j00nuh.mp4",
+              "duration": 1434,
+              "opening": {
+                "start": 0,
+                "end": 90
+              }
+            },
+            {
+              "title": "O Sonhador Contra Ataca!",
+              "videoUrl": "https://files.catbox.moe/bply33.mp4",
+              "duration": 1434,
+              "opening": {
+                "start": 0,
+                "end": 90
+              }
+            },
+            {
+              "title": "Coragem Do Personagem",
+              "videoUrl": "https://files.catbox.moe/9yhua2.mp4",
+              "duration": 1419,
+              "opening": {
+                "start": 0,
+                "end": 90
+              }
+            }
+          ]
+        }
+      ],
+      "year": 2012,
+      "rating": 7,
+      "openings": [
+        {
+          "title": "Oato ga Yoroshikutte... yo!",
+          "artist": "Gokuraku Jokai",
+          "audio": "https://files.catbox.moe/ouerl4.mp3",
+          "cover": "https://m.media-amazon.com/images/I/715ax108MTL._UF1000,1000_QL80_.jpg",
+          "type": "opening",
+          "season": 1
+        }
+      ],
+      "endings": [
+        {
+          "title": "Nippon Egao Hyakkei",
+          "artist": "Momokurotei Ichimon",
+          "audio": "https://files.catbox.moe/pzb0yb.mp3",
+          "cover": "https://i.scdn.co/image/ab67616d0000b273d4a4f25d06fa3717eb4b2193",
+          "type": "ending",
+          "season": 1
+        }
+      ],
+      "osts": {},
+      "banner": "https://files.catbox.moe/qfer7v.jpg"
+    },
+    {
+      "id": 14,
+      "title": "Joshiraku OVA",
+      "description": "Episódio OVA incluído no quinto volume do mangá.",
+      "thumbnail": "https://simkl.in/fanart/67/678476efef177c6c_w.jpg",
+      "trailer": "assasina",
+      "type": "ova",
+      "dateAdded": "2025-07-10",
+      "categories": [
+        "comedy",
+        "slice of life"
+      ],
+      "seasons": [
+        {
+          "number": 1,
+          "episodes": [
+            {
+              "title": "Episódio 14",
+              "videoUrl": "https://files.catbox.moe/rzewv2.mp4",
+              "duration": 1420,
+              "opening": {
+                "start": 0,
+                "end": 90
+              }
+            }
+          ]
+        }
+      ],
+      "year": 2013,
+      "rating": 7.3,
+      "openings": [],
+      "endings": [],
+      "osts": {}
+    },
+    {
+      "id": 15,
+      "title": "Dan Da Dan",
+      "description": "Quando as crenças de Momo e Okarun entram em conflito, eles são jogados em um mundo de fantasmas, alienígenas e poderes despertos.",
+      "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/main/images/thumbnails/dandadanime.png",
+      "banner": "https://files.catbox.moe/fhnk72.jpg",
+      "trailer": "https://www.youtube.com/embed/MGRm4IzK1SQ?autoplay=1&mute=1&enablejsapi=1",
+      "type": "anime",
+      "dateAdded": "2025-07-12",
+      "categories": [
+        "action",
+        "comedy",
+        "slice of life"
+      ],
+      "seasons": [
+        {
+          "number": 1,
+          "episodes": [
+            {
+              "title": "É Assim Que um Amor Começa!",
+              "videoUrl": "https://zggg98sgwbg1gh.bitchute.com/8xBkY2iNMQ05/86EFkNp06Q1s.mp4",
+              "duration": 1479,
+              "opening": {
+                "start": 0,
+                "end": 90
+              }
+            },
+            {
+              "title": "Isso Aí É um Alienígena, Né?!",
+              "videoUrl": "https://files.catbox.moe/tbstae.mp4",
+              "duration": 1477,
+              "opening": {
+                "start": 121,
+                "end": 211
+              }
+            },
+            {
+              "title": "Uma Disputa de Velha contra Velha",
+              "videoUrl": "https://files.catbox.moe/rtt8bk.mp4",
+              "duration": 1483,
+              "opening": {
+                "start": 114,
+                "end": 204
+              }
+            },
+            {
+              "title": "Hora de Arrebentar Com a Velha Turbo",
+              "videoUrl": "https://seed132.bitchute.com/8xBkY2iNMQ05/01ojoyeEC9RT.mp4",
+              "duration": 1483,
+              "opening": {
+                "start": 394,
+                "end": 484
+              }
+            },
+            {
+              "title": "Cadê Tuas Bolas, Cara?",
+              "videoUrl": "https://files.catbox.moe/veucsu.mp4",
+              "duration": 1485,
+              "opening": {
+                "start": 78,
+                "end": 168
+              }
+            },
+            {
+              "title": "Surge uma Mulher Perigosa",
+              "videoUrl": "https://seed167.bitchute.com/8xBkY2iNMQ05/mg9pyIGEYUgb.mp4",
+              "duration": 1483,
+              "opening": {
+                "start": 445,
+                "end": 535
+              }
+            },
+            {
+              "title": "Rumo a um Mundo Gentil",
+              "videoUrl": "https://seed132.bitchute.com/8xBkY2iNMQ05/6DRBdpGgJhHI.mp4",
+              "duration": 1483,
+              "opening": {
+                "start": 334,
+                "end": 424
+              }
+            },
+            {
+              "title": "Ela Tá Meio Bolada",
+              "videoUrl": "https://files.catbox.moe/779gfr.mp4",
+              "duration": 1470,
+              "opening": {
+                "start": 235,
+                "end": 325
+              }
+            },
+            {
+              "title": "Fusão! Serpiano Demônio de Dover Nessie!",
+              "videoUrl": "https://seed122.bitchute.com/8xBkY2iNMQ05/78yz8FGtp3WR.mp4",
+              "duration": 1472,
+              "opening": {
+                "start": 317,
+                "end": 407
+              }
+            },
+            {
+              "title": "Você Já Viu uma Abdução de Gado?",
+              "videoUrl": "https://files.catbox.moe/ayu0q7.mp4",
+              "duration": 1470,
+              "opening": {
+                "start": 0,
+                "end": 90
+              }
+            },
+            {
+              "title": "O Primeiro Amor",
+              "videoUrl": "https://files.catbox.moe/br7lxd.mp4",
+              "duration": 1470,
+              "opening": {
+                "start": 521,
+                "end": 611
+              }
+            },
+            {
+              "title": "Simbora Pra Casa Amaldiçoada!",
+              "videoUrl": "https://files.catbox.moe/xsfqa8.mp4",
+              "duration": 1455,
+              "opening": {
+                "start": 417,
+                "end": 507
+              }
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "episodes": [
+            {
+              "title": "Então essa é a lendária cobra gigante?",
+              "videoUrl": "https://zggg98sgwbg1gh.bitchute.com/8xBkY2iNMQ05/AbKx8aUh8yP1.mp4",
+              "duration": 1499,
+              "opening": {
+                "start": 230,
+                "end": 320
+              }
+            },
+            {
+              "title": "O Olho Demoníaco",
+              "videoUrl": "https://zn21g5kls-n995.bitchute.com/8xBkY2iNMQ05/1tUfYdthvHjD.mp4",
+              "duration": 1495,
+              "opening": {
+                "start": 326,
+                "end": 417
+              }
+            },
+            {
+              "title": "Imperdoável",
+              "videoUrl": "https://seed171.bitchute.com/8xBkY2iNMQ05/xAMfdbb9tzaB.mp4",
+              "duration": 1495,
+              "opening": {
+                "start": 398,
+                "end": 488
+              }
+            },
+            {
+              "title": "A gente tá muito ferrado!",
+              "videoUrl": "https://seed171.bitchute.com/8xBkY2iNMQ05/KK42xU3JqPsn.mp4",
+              "duration": 1499,
+              "opening": {
+                "start": 271,
+                "end": 361
+              }
+            },
+            {
+              "title": "Vamos todos morar juntos",
+              "videoUrl": "https://seed122.bitchute.com/8xBkY2iNMQ05/uEv56IaF1pgq.mp4",
+              "duration": 1499,
+              "opening": {
+                "start": 83,
+                "end": 173
+              }
+            },
+            {
+              "title": "Viramos uma família",
+              "videoUrl": "https://seed306.bitchute.com/8xBkY2iNMQ05/bw3J04tUEh0X.mp4",
+              "duration": 1497,
+              "opening": {
+                "start": 144,
+                "end": 234
+              }
+            },
+            {
+              "title": "Ele tá meio bolado",
+              "videoUrl": "https://seed163.bitchute.com/8xBkY2iNMQ05/yGyqYZ8tYNcX.mp4",
+              "duration": 1497,
+              "opening": {
+                "start": 137,
+                "end": 227
+              }
+            },
+            {
+              "title": "Manda ver Okarun!",
+              "videoUrl": "https://seed126.bitchute.com/8xBkY2iNMQ05/xddkbCxQa0iA.mp4",
+              "duration": 1482,
+              "opening": {
+                "start": 98,
+                "end": 187
+              }
+            },
+            {
+              "title": "Quero reconstruir minha casa",
+              "videoUrl": "https://files.catbox.moe/pd9ljj.mp4",
+              "duration": 1480,
+              "opening": {
+                "start": 370,
+                "end": 460
+              }
+            },
+            {
+              "title": "Qual o segredo da sua popularidade?",
+              "videoUrl": "https://files.catbox.moe/bfx001.mp4",
+              "duration": 1480,
+              "opening": {
+                "start": 391,
+                "end": 481
+              }
+            },
+            {
+              "title": "Um Kaiju!",
+              "videoUrl": "https://seed167.bitchute.com/8xBkY2iNMQ05/uyeo91y1O8db.mp4",
+              "duration": 1470,
+              "opening": {
+                "start": 140,
+                "end": 231
+              }
+            },
+            {
+              "title": "Confronto! Kaiju Especial Vs Robô Gigante!",
+              "videoUrl": "https://seed163.bitchute.com/8xBkY2iNMQ05/bnKIIUQ1P1qr.mp4",
+              "duration": 1465,
+              "opening": {
+                "start": 335,
+                "end": 425
+              }
+            }
+          ]
+        }
+      ],
+      "year": 2024,
+      "rating": 8.3,
+      "openings": [
+        {
+          "title": "Otonoke",
+          "artist": "Creepy Nuts",
+          "audio": "https://files.catbox.moe/s9x422.mp3",
+          "cover": "https://static.wikia.nocookie.net/dandadan/images/0/07/Otonoke_Cover.png",
+          "type": "opening",
+          "season": 1
+        },
+        {
+          "title": "On The Way",
+          "artist": "AiNA THE END",
+          "audio": "https://files.catbox.moe/9oojg2.mp3",
+          "cover": "https://static.wikia.nocookie.net/dandadan/images/0/04/Ontheway.png",
+          "type": "opening",
+          "season": 2
+        }
+      ],
+      "endings": [
+        {
+          "title": "TAIDADA",
+          "artist": "ZUTOMAYO",
+          "audio": "https://files.catbox.moe/cqtcsj.mp3",
+          "cover": "https://static.wikia.nocookie.net/dandadan/images/4/4c/TAIDADA_Cover.png",
+          "type": "ending",
+          "season": 1
+        },
+        {
+          "title": "Something's Wrong with Them",
+          "artist": " WurtS",
+          "audio": "https://files.catbox.moe/iuw9wk.mp3",
+          "cover": "https://static.wikia.nocookie.net/dandadan/images/d/d4/Doukashiteru_Cover.png",
+          "type": "ending",
+          "season": 2
+        }
+      ],
+      "osts": {}
+    },
+    {
+      "id": 16,
+      "title": "FLCL - Fã Dublagem",
+      "description": "Coisas misteriosas começam a acontecer com Naota, um jovem de 12 anos, encontra uma mulher estranha em uma Vespa junto com seu grande baixo.",
+      "thumbnail": "https://files.catbox.moe/77hqc3.png",
+      "trailer": "tenao",
+      "type": "anime",
+      "dateAdded": "2025-08-07",
+      "categories": [
+        "action",
+        "comedy",
+        "horror",
+        "psychological"
+      ],
+      "seasons": [
+        {
+          "number": 1,
+          "episodes": [
+            {
+              "title": "Fooly Cooly",
+              "videoUrl": "https://seed167.bitchute.com/8xBkY2iNMQ05/1z8u42Q8eP53.mp4",
+              "duration": 1497
+            }
+          ]
+        }
+      ],
+      "year": 2000,
+      "rating": 8.1,
+      "openings": [
+        {
+          "title": "One Life",
+          "artist": "The Pillows",
+          "audio": "https://files.catbox.moe/zstsbu.mp3",
+          "cover": "https://images.genius.com/a8a5e93fea230d6fd840d135e5258193.465x465x1.jpg",
+          "type": "opening",
+          "season": 1
+        },
+        {
+          "title": "Instant Music",
+          "artist": "The Pillows",
+          "audio": "https://files.catbox.moe/7y6tnj.mp3",
+          "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/ae/9e/9f/ae9e9f26-a0e2-88bd-28f5-23586a42527f/8720766609171.png/1200x630bb.jpg",
+          "type": "opening",
+          "season": 1
+        },
+        {
+          "title": "Happy Bivouac",
+          "artist": "The Pillows",
+          "audio": "https://files.catbox.moe/4zf7nj.mp3",
+          "cover": "https://cdn-images.dzcdn.net/images/cover/32599ab5f37ed18c1a811d55ea14d144/0x1900-000000-80-0-0.jpg",
+          "type": "opening",
+          "season": 1
+        },
+        {
+          "title": "Runners High",
+          "artist": "The Pillows",
+          "audio": "https://files.catbox.moe/mohuj9.mp3",
+          "cover": "https://i.scdn.co/image/ab67616d0000b2731c1f2c36b568473ec546d691",
+          "type": "opening",
+          "season": 1
+        },
+        {
+          "title": "Carnival",
+          "artist": "The Pillows",
+          "audio": "https://files.catbox.moe/yp0xup.mp3",
+          "cover": "https://i.scdn.co/image/ab67616d0000b273c03a29523ae9543551f8b4c3",
+          "type": "opening",
+          "season": 1
+        }
+      ],
+      "endings": [
+        {
+          "title": "Ride on Shooting Star",
+          "artist": "The Pillows",
+          "audio": "https://files.catbox.moe/31mdu3.mp3",
+          "cover": "https://i.scdn.co/image/ab67616d0000b2735c75c417c99ccf9139ce546c",
+          "type": "ending",
+          "season": 1
+        }
+      ],
+      "osts": {},
+      "banner": "https://files.catbox.moe/i84e36.jpg"
+    },
+    {
+      "id": 17,
+      "title": "Ichigo Mashimaro",
+      "type": "anime",
+      "year": 2005,
+      "description": "A premissa básica da série pode ser resumida em \"garotas fofas fazendo coisas fofas de maneiras fofas\", seja saindo para brincar, comemorando um feriado ou fazendo tarefas escolares.",
+      "thumbnail": "https://files.catbox.moe/1sg3nl.jpg",
+      "banner": "https://files.catbox.moe/3p6nri.jpg",
+      "trailer": "https://www.youtube.com/watch?v=vwx8MwaVhKI",
+      "categories": [
+        "comedy",
+        "slice of life"
+      ],
+      "seasons": [
+        {
+          "number": 1,
+          "episodes": [
+            {
+              "title": "Especial",
+              "videoUrl": "https://files.catbox.moe/9vpzq0.mp4",
+              "duration": 231
+            },
+            {
+              "title": "Aniversário",
+              "videoUrl": "https://files.catbox.moe/ycm3gg.mp4",
+              "duration": 1451,
+              "opening": {
+                "start": 0,
+                "end": 90
+              }
+            },
+            {
+              "title": "Ana",
+              "videoUrl": "https://files.catbox.moe/34tvb1.mp4",
+              "duration": 1451,
+              "opening": {
+                "start": 0,
+                "end": 90
+              }
+            },
+            {
+              "title": "Reunião em casa",
+              "videoUrl": "https://files.catbox.moe/h19k7e.mp4",
+              "duration": 1451,
+              "opening": {
+                "start": 0,
+                "end": 90
+              }
+            },
+            {
+              "title": "Trabalho temporário",
+              "videoUrl": "https://files.catbox.moe/cdt269.mp4",
+              "duration": 1464,
+              "opening": {
+                "start": 0,
+                "end": 96
+              }
+            },
+            {
+              "title": "Dormir juntas",
+              "videoUrl": "https://files.catbox.moe/692zug.mp4",
+              "duration": 1451,
+              "opening": {
+                "start": 0,
+                "end": 90
+              }
+            },
+            {
+              "title": "Dia de Verão",
+              "videoUrl": "https://files.catbox.moe/vbzhkn.mp4",
+              "duration": 1451,
+              "opening": {
+                "start": 0,
+                "end": 90
+              }
+            },
+            {
+              "title": "Banho de mar",
+              "videoUrl": "https://files.catbox.moe/0r0oj4.mp4",
+              "duration": 1451,
+              "opening": {
+                "start": 0,
+                "end": 90
+              }
+            },
+            {
+              "title": "Festival",
+              "videoUrl": "https://files.catbox.moe/3e3pjp.mp4",
+              "duration": 1451,
+              "opening": {
+                "start": 0,
+                "end": 90
+              }
+            },
+            {
+              "title": "Crescendo",
+              "videoUrl": "https://files.catbox.moe/xlerde.mp4",
+              "duration": 1451,
+              "opening": {
+                "start": 0,
+                "end": 90
+              }
+            },
+            {
+              "title": "Flor",
+              "videoUrl": "https://files.catbox.moe/2rc32n.mp4",
+              "duration": 1451,
+              "opening": {
+                "start": 0,
+                "end": 90
+              }
+            },
+            {
+              "title": "Primeira neve",
+              "videoUrl": "https://files.catbox.moe/h9ojsb.mp4",
+              "duration": 1451,
+              "opening": {
+                "start": 0,
+                "end": 90
+              }
+            },
+            {
+              "title": "Presente",
+              "videoUrl": "https://files.catbox.moe/kc4ig0.mp4",
+              "duration": 1421,
+              "opening": {
+                "start": 0,
+                "end": 90
+              }
+            }
+          ]
+        }
+      ],
+      "openings": [
+        {
+          "title": "Ichigo Complete",
+          "artist": "Saeko Chiba, Fumiko Orikasa, Ayako Kawasumi and Mamiko Noto",
+          "audio": "https://files.catbox.moe/ta14d7.m4a",
+          "type": "opening",
+          "cover": "https://files.catbox.moe/3yi31v.png"
+        }
+      ],
+      "endings": [
+        {
+          "title": "Classmate",
+          "artist": "Fumiko Orikasa",
+          "audio": "https://files.catbox.moe/tg7sk3.mp3",
+          "type": "ending",
+          "cover": "https://files.catbox.moe/roynp5.png"
+        }
+      ],
+      "osts": {},
+      "dateAdded": "2025-12-30",
+      "rating": 7.62
+    },
+    {
+      "id": 18,
+      "title": "Ichigo Mashimaro Encore",
+      "type": "ova",
+      "year": 2007,
+      "description": "Episódios OVA incluído após a série com 5 novos episódios.",
+      "thumbnail": "https://files.catbox.moe/9ihgt7.png",
+      "banner": "https://files.catbox.moe/3p6nri.jpg",
+      "trailer": "",
+      "categories": [
+        "comedy",
+        "slice of life"
+      ],
+      "seasons": [
+        {
+          "number": 1,
+          "episodes": [
+            {
+              "title": "Paisagem",
+              "videoUrl": "https://files.catbox.moe/nblgp4.mp4",
+              "duration": 0,
+              "opening": {
+                "start": 0,
+                "end": 101
+              }
+            },
+            {
+              "title": "O de sempre",
+              "videoUrl": "https://files.catbox.moe/19d4rg.mp4",
+              "duration": 1539,
+              "opening": {
+                "start": 0,
+                "end": 101
+              }
+            },
+            {
+              "title": "Rotina",
+              "videoUrl": "https://files.catbox.moe/lr5i03.mp4",
+              "duration": 1561,
+              "opening": {
+                "start": 0,
+                "end": 101
+              }
+            },
+            {
+              "title": "Olá",
+              "videoUrl": "https://files.catbox.moe/vwjnbz.mp4",
+              "duration": 1610,
+              "opening": {
+                "start": 276,
+                "end": 375
+              }
+            },
+            {
+              "title": "Até amanhã",
+              "videoUrl": "https://files.catbox.moe/aqqqyb.mp4",
+              "duration": 1652,
+              "opening": {
+                "start": 127,
+                "end": 226
+              }
+            }
+          ]
+        }
+      ],
+      "openings": [
+        {
+          "title": "Akkan Berry Berry",
+          "artist": "Chiba Saeko, Orikasa Fumiko, Kawasumi Ayako, Noto Mamiko & Nabatame Hitomi",
+          "audio": "https://files.catbox.moe/s1ak45.wav",
+          "type": "opening",
+          "cover": "https://files.catbox.moe/jrdscm.png"
+        },
+        {
+          "title": "Ichigo Splash",
+          "artist": "Saeko Chiba, Mamiko Noto, Ayako Kawasumi, Fumiko Orikasa & Hitomi Nabatame",
+          "audio": "https://files.catbox.moe/fg58ov.mp3",
+          "type": "opening",
+          "cover": "https://files.catbox.moe/jrdscm.png"
+        }
+      ],
+      "endings": [
+        {
+          "title": "Yuu Machi no Kaze",
+          "artist": "Orikasa Fumiko",
+          "audio": "https://files.catbox.moe/2v3cl3.mp3",
+          "type": "ending",
+          "cover": "https://files.catbox.moe/oy9ppy.png"
+        },
+        {
+          "title": "Zutto, Zutto",
+          "artist": "Fumiko Orikasa",
+          "audio": "https://files.catbox.moe/5659mt.mp3",
+          "type": "ending",
+          "cover": "https://files.catbox.moe/oazwdh.jpg"
+        }
+      ],
+      "osts": {},
+      "dateAdded": "2025-12-30",
+      "rating": 7.65
+    },
+    {
+      "id": 19,
+      "title": "Ao Oni the Animation",
+      "type": "anime",
+      "year": 2016,
+      "description": "Enquanto Hiroshi e seus amigos tentam resolver os vários enigmas da mansão e escapar de seu novo inimigo azul, eles se deparam com diversos finais terríveis ao fracassarem miseravelmente.",
+      "thumbnail": "https://files.catbox.moe/u7qxwb.png",
+      "banner": "https://files.catbox.moe/8nhxx3.jpg",
+      "trailer": "",
+      "categories": [
+        "comedy",
+        "terror"
+      ],
+      "seasons": [
+        {
+          "number": 1,
+          "episodes": [
+            {
+              "title": "Tem 5 Pessoas Aqui!",
+              "videoUrl": "https://files.catbox.moe/5ki9v6.mp4",
+              "duration": 184,
+              "opening": {
+                "start": 0,
+                "end": 34
+              }
+            },
+            {
+              "title": "Usina de Força Takeshi",
+              "videoUrl": "https://files.catbox.moe/utdlzw.mp4",
+              "duration": 184,
+              "opening": {
+                "start": 0,
+                "end": 34
+              }
+            },
+            {
+              "title": "Confissão",
+              "videoUrl": "https://files.catbox.moe/olht6v.mp4",
+              "duration": 184,
+              "opening": {
+                "start": 0,
+                "end": 34
+              }
+            },
+            {
+              "title": "O Requintado Cotidiano do Aooni",
+              "videoUrl": "https://files.catbox.moe/2bl3rl.mp4",
+              "duration": 184,
+              "opening": {
+                "start": 0,
+                "end": 34
+              }
+            },
+            {
+              "title": "Estilo Rococó",
+              "videoUrl": "https://files.catbox.moe/1ef22k.mp4",
+              "duration": 184,
+              "opening": {
+                "start": 0,
+                "end": 34
+              }
+            },
+            {
+              "title": "Elegia aos Homens",
+              "videoUrl": "https://files.catbox.moe/jk1be9.mp4",
+              "duration": 184,
+              "opening": {
+                "start": 0,
+                "end": 34
+              }
+            },
+            {
+              "title": "Quebra-cabeça",
+              "videoUrl": "https://files.catbox.moe/0mv5do.mp4",
+              "duration": 184,
+              "opening": {
+                "start": 0,
+                "end": 34
+              }
+            },
+            {
+              "title": "Barras de Ferro",
+              "videoUrl": "https://files.catbox.moe/w7dfct.mp4",
+              "duration": 184,
+              "opening": {
+                "start": 0,
+                "end": 34
+              }
+            },
+            {
+              "title": "Mascote Local",
+              "videoUrl": "https://files.catbox.moe/e3na5n.mp4",
+              "duration": 184,
+              "opening": {
+                "start": 0,
+                "end": 34
+              }
+            },
+            {
+              "title": "Aooni Supersônico",
+              "videoUrl": "https://files.catbox.moe/au2wap.mp4",
+              "duration": 184,
+              "opening": {
+                "start": 0,
+                "end": 34
+              }
+            },
+            {
+              "title": "Ao-tim-bum",
+              "videoUrl": "https://files.catbox.moe/8gbncp.mp4",
+              "duration": 184,
+              "opening": {
+                "start": 0,
+                "end": 34
+              }
+            },
+            {
+              "title": "Mundo Oposto",
+              "videoUrl": "https://files.catbox.moe/q8whxd.mp4",
+              "duration": 184,
+              "opening": {
+                "start": 0,
+                "end": 34
+              }
+            },
+            {
+              "title": "Presos Por 70 Anos",
+              "videoUrl": "https://files.catbox.moe/b382kb.mp4",
+              "duration": 184,
+              "opening": {
+                "start": 0,
+                "end": 34
+              }
+            }
+          ]
+        }
+      ],
+      "openings": [],
+      "endings": [
+        {
+          "title": "Kimi koso Ao Oni",
+          "artist": "Machigerita",
+          "audio": "https://files.catbox.moe/pbrfpx.mp3",
+          "type": "ending",
+          "cover": "https://files.catbox.moe/gysd7v.jpg"
+        }
+      ],
+      "osts": {},
+      "dateAdded": "2025-12-31",
+      "rating": 5.11
+    },
+    {
+      "id": 20,
+      "title": "Miss Kobayashi's Dragon Something",
+      "type": "anime",
+      "seasons": [
+        {
+          "number": 1,
+          "episodes": [
+            {
+              "title": "A OO Dragão da Senhorita Kobayashi",
+              "duration": 148,
+              "videoUrl": "https://files.catbox.moe/2rts4e.mp4"
+            },
+            {
+              "title": "O Animal Dragão da Senhorita Kobayashi",
+              "duration": 166,
+              "videoUrl": "https://files.catbox.moe/rr9uy5.mp4"
+            },
+            {
+              "title": "O Uniforme da Dragão da Senhorita Kobayashi",
+              "duration": 207,
+              "videoUrl": "https://files.catbox.moe/dz6lx0.mp4"
+            },
+            {
+              "title": "A Batalha de Dragão da Senhorita Kobayashi",
+              "duration": 195,
+              "videoUrl": "https://files.catbox.moe/ciejje.mp4"
+            },
+            {
+              "title": "A Esportista Dragão da Senhorita Kobayashi",
+              "duration": 172,
+              "videoUrl": "https://files.catbox.moe/4sct17.mp4"
+            },
+            {
+              "title": "O Mistério do Dragão da Senhorita Kobayashi",
+              "duration": 215,
+              "videoUrl": "https://files.catbox.moe/dery7l.mp4"
+            },
+            {
+              "title": "O Casamento do Dragão da Senhorita Kobayashi",
+              "duration": 209,
+              "videoUrl": "https://files.catbox.moe/i8e8g4.mp4"
+            }
+          ]
+        }
+      ],
+      "categories": [
+        "comedy"
+      ],
+      "osts": {},
+      "dateAdded": "2025-12-01",
+      "description": "Conteúdo extra incluído na edição em BD/DVD de Miss Kobayashi Dragon Maid.",
+      "year": 2017,
+      "rating": 7.25,
+      "banner": "https://files.catbox.moe/0vkic6.jpg",
+      "thumbnail": "https://files.catbox.moe/3g8646.png",
+      "trailer": "tem nn"
+    },
+    {
+      "id": 21,
+      "title": "Mini Dora",
+      "type": "ova",
+      "seasons": [],
+      "categories": [
+        "comedy",
+        "slice of life"
+      ],
+      "osts": {},
+      "thumbnail": "https://files.catbox.moe/c8afbm.png",
+      "banner": "https://files.catbox.moe/0vkic6.jpg",
+      "year": 2021,
+      "dateAdded": "2026-01-02",
+      "description": "Uma minissérie do anime comemorativa que foi lançada no canal do YouTube da Kyoani antes da estreia de Miss Kobayashi Dragon Maid S.",
+      "rating": 7.34
+    }
   ],
   "collections": [
     {
       "id": "joshiraku",
       "name": "Joshiraku",
       "description": "A coleção completa de Joshiraku inclui a série principal e o OVA",
-      "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/main/images/thumbnails/joshiraku.png",
-      "animeIds": [13, 14]
+      "thumbnail": "https://files.catbox.moe/5gtu26.jpg",
+      "animeIds": [
+        13,
+        14
+      ]
     },
     {
       "id": "azumanga",
       "name": "Azumanga Daioh",
-      "description": "A coleção completa de Azumanga Daioh inclui a série principal, o Web Daioh e o filme curto",
-      "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/main/images/thumbnails/azudaioh.png",
-      "animeIds": [7, 11, 12]
+      "description": "A coleção completa de Azumanga Daioh inclui a série principal, o Web Daioh e o curta que passava nos cinemas",
+      "thumbnail": "https://files.catbox.moe/mp4lbq.png",
+      "animeIds": [
+        11,
+        12,
+        7
+      ]
     },
     {
       "id": "ichigo-mashimaro",
       "name": "Ichigo Mashimaro",
       "description": "A coleção completa de Ichigo Mashimaro inclui a série principal e o OVA Encore",
-      "thumbnail": "https://files.catbox.moe/1sg3nl.jpg",
-      "animeIds": [17, 18]
+      "thumbnail": "https://files.catbox.moe/lbrv54.jpg",
+      "animeIds": [
+        17,
+        18
+      ]
+    },
+    {
+      "id": "kobayashi",
+      "name": "",
+      "animeIds": []
     }
   ]
 }
