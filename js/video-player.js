@@ -354,7 +354,8 @@
         if (window.currentWatchingAnime) {
             if (overlayTitle) overlayTitle.textContent = window.currentWatchingAnime.title || 'Anime';
             if (overlayEpisode) {
-                overlayEpisode.textContent = `Temporada ${window.currentWatchingAnime.season} • Episódio ${window.currentWatchingAnime.episode}`;
+                const seasonText = window.currentWatchingAnime.seasonName || `Temporada ${window.currentWatchingAnime.season}`;
+                overlayEpisode.textContent = `${seasonText} • Episódio ${window.currentWatchingAnime.episode}`;
             }
         }
     }

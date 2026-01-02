@@ -212,8 +212,14 @@ function openEpisode(anime, seasonNumber, episodeIndex){
     if (titleEl) titleEl.textContent = anime.title || 'Título do Anime';
     if (descEl) descEl.textContent = anime.description || 'Descrição do anime...';
     
+    // Determine season name (custom or default)
+    const seasonName = season && season.name ? season.name : `Temporada ${seasonNumber}`;
+    
     const sl = document.getElementById('current-season-label'), elb = document.getElementById('current-episode-label');
-    if (sl) sl.textContent = `Temporada ${seasonNumber}`; if (elb) elb.textContent = `Episódio ${episodeIndex+1}${episode && episode.title ? ' — '+episode.title : ''}`;
+    if (sl) {
+        sl.textContent = seasonName;
+    }
+    if (elb) elb.textContent = `Episódio ${episodeIndex+1}${episode && episode.title ? ' — '+episode.title : ''}`;
     
     // Store anime info globally for progress updates and auto-advance
     window.currentAnime = anime; // Store full anime object for auto-advance
@@ -222,6 +228,7 @@ function openEpisode(anime, seasonNumber, episodeIndex){
         title: anime.title,
         thumbnail: anime.thumbnail || anime.cover,
         season: seasonNumber,
+        seasonName: seasonName,
         episode: episodeIndex + 1
     };
     

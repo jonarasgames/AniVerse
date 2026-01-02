@@ -112,7 +112,7 @@
       anime.seasons.forEach((s, idx) => {
         const option = document.createElement('option');
         option.value = s.number;
-        option.textContent = `Temporada ${s.number}`;
+        option.textContent = s.name || `Temporada ${s.number}`;
         if (s.number === season) option.selected = true;
         newSeasonSelect.appendChild(option);
       });
