@@ -1320,6 +1320,7 @@
       "seasons": [
         {
           "number": 1,
+          "name": "Arco de Turbo Vovó",
           "episodes": [
             {
               "title": "É Assim Que um Amor Começa!",
@@ -1433,6 +1434,7 @@
         },
         {
           "number": 2,
+          "name": "Arco da Casa Amaldiçoada",
           "episodes": [
             {
               "title": "Então essa é a lendária cobra gigante?",
