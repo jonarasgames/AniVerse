@@ -45,15 +45,15 @@
     card.innerHTML = `
       <div class="anime-thumbnail">
         <img src="${escapeHtml(thumbnail)}" alt="${title}">
-        ${ageRatingBadge}
+        <div class="trailer-overlay">
+          <i class="fas fa-play"></i>
+          <p>Assistir</p>
+          ${ageRatingBadge}
+        </div>
       </div>
       <div class="anime-info">
         <h3 class="anime-title">${title}</h3>
         <p class="anime-meta">${type.toUpperCase()}</p>
-      </div>
-      <div class="trailer-overlay">
-        <i class="fas fa-play"></i>
-        <p>Assistir</p>
       </div>
     `;
     
@@ -77,19 +77,21 @@
     const progress = anime.progress || 0;
     const season = anime.season || 1;
     const episode = anime.episode || 1;
+    const ageRatingBadge = getAgeRatingBadge(anime.rating_age);
     
     card.innerHTML = `
       <div class="anime-thumbnail">
         <img src="${escapeHtml(thumbnail)}" alt="${title}">
         <div class="progress-bar" style="width: ${Math.min(100, Math.max(0, progress))}%;"></div>
+        <div class="trailer-overlay">
+          <i class="fas fa-play"></i>
+          <p>Continuar</p>
+          ${ageRatingBadge}
+        </div>
       </div>
       <div class="anime-info">
         <h3 class="anime-title">${title}</h3>
         <p class="anime-meta">T${season} • EP${episode} • ${Math.round(progress)}%</p>
-      </div>
-      <div class="trailer-overlay">
-        <i class="fas fa-play"></i>
-        <p>Continuar</p>
       </div>
     `;
     

@@ -3140,21 +3140,23 @@ html.theme-dark select {
    Age Rating Styles
    =============================================== */
 
-/* Age rating badge on anime cards */
+/* Age rating badge on anime cards - DEVE APARECER APENAS NO HOVER */
 .age-rating-badge {
     position: absolute;
     bottom: 8px;
     right: 8px;
-    width: 24px;
-    height: 24px;
-    z-index: 5;
-    opacity: 0.9;
-    transition: opacity 0.2s ease, transform 0.2s ease;
+    width: 32px;  /* Tamanho pequeno mas visível */
+    height: 32px;
+    z-index: 10;  /* Maior que o overlay para ficar por cima */
+    opacity: 0;   /* ESCONDIDA por padrão */
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    pointer-events: none; /* Não interfere com cliques */
 }
 
+/* MOSTRAR a badge apenas quando hover no card */
 .anime-card:hover .age-rating-badge {
-    opacity: 1;
-    transform: scale(1.1);
+    opacity: 1;  /* VISÍVEL no hover */
+    transform: scale(1);
 }
 
 /* Age rating section in video player */
@@ -3193,8 +3195,8 @@ body.dark-mode .age-rating-section {
 /* Mobile responsive */
 @media (max-width: 768px) {
     .age-rating-badge {
-        width: 20px;
-        height: 20px;
+        width: 28px;
+        height: 28px;
         bottom: 6px;
         right: 6px;
     }
