@@ -14,12 +14,9 @@ test.describe('Age Rating Badge Visibility', () => {
       { timeout: 10000 }
     ).catch(() => null);
     
-    // Wait for rendering
-    await page.waitForTimeout(2000);
-    
-    // Find an anime card with an age rating badge
+    // Wait for anime cards to be rendered
     const animeCard = page.locator('.anime-card').first();
-    await animeCard.waitFor({ state: 'visible' });
+    await animeCard.waitFor({ state: 'visible', timeout: 10000 });
     
     const ageRatingBadge = animeCard.locator('.age-rating-badge');
     
@@ -81,9 +78,10 @@ test.describe('Age Rating Badge Visibility', () => {
     await page.setViewportSize({ width: 1920, height: 1080 });
     await page.goto('https://jonarasgames.github.io/AniVerse/');
     await page.waitForLoadState('domcontentloaded');
-    await page.waitForTimeout(2000);
     
+    // Wait for anime cards to be rendered
     const animeCard = page.locator('.anime-card').first();
+    await animeCard.waitFor({ state: 'visible', timeout: 10000 });
     const ageRatingBadge = animeCard.locator('.age-rating-badge');
     
     const badgeCount = await ageRatingBadge.count();
@@ -104,7 +102,13 @@ test.describe('Age Rating Badge Visibility', () => {
       
       // Test mobile size
       await page.setViewportSize({ width: 375, height: 667 });
-      await page.waitForTimeout(500);
+      // Wait for styles to be recalculated after viewport change
+      await page.waitForFunction(() => {
+        const badge = document.querySelector('.age-rating-badge');
+        return badge && window.getComputedStyle(badge).width === '28px';
+      }, { timeout: 5000 }).catch(() => {
+        // Fallback if width doesn't update, badge might not exist
+      });
       
       const mobileSize = await ageRatingBadge.evaluate(el => {
         const styles = window.getComputedStyle(el);
