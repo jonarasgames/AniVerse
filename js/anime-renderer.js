@@ -45,11 +45,11 @@
     card.innerHTML = `
       <div class="anime-thumbnail">
         <img src="${escapeHtml(thumbnail)}" alt="${title}">
+        ${ageRatingBadge}
       </div>
       <div class="anime-info">
         <h3 class="anime-title">${title}</h3>
         <p class="anime-meta">${type.toUpperCase()}</p>
-        ${ageRatingBadge}
       </div>
       <div class="trailer-overlay">
         <i class="fas fa-play"></i>
