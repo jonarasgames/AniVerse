@@ -10,6 +10,25 @@
     return div.innerHTML;
   }
 
+  // Age rating image URLs mapping
+  const AGE_RATING_IMAGES = {
+    'L': 'https://upload.wikimedia.org/wikipedia/commons/a/a7/Classifica%C3%A7%C3%A3o_Indicativa_Livre.svg',
+    '10': 'https://upload.wikimedia.org/wikipedia/commons/9/92/Classifica%C3%A7%C3%A3o_Indicativa_10_anos.svg',
+    '12': 'https://upload.wikimedia.org/wikipedia/commons/6/60/Classifica%C3%A7%C3%A3o_Indicativa_12_anos.svg',
+    '14': 'https://upload.wikimedia.org/wikipedia/commons/3/35/Classifica%C3%A7%C3%A3o_Indicativa_14_anos.svg',
+    '16': 'https://upload.wikimedia.org/wikipedia/commons/f/fc/Classifica%C3%A7%C3%A3o_Indicativa_16_anos.svg',
+    '18': 'https://upload.wikimedia.org/wikipedia/commons/e/e0/Classifica%C3%A7%C3%A3o_Indicativa_18_anos.png'
+  };
+
+  // Helper function to get age rating badge HTML
+  function getAgeRatingBadge(ratingAge) {
+    if (!ratingAge || !AGE_RATING_IMAGES[ratingAge]) return '';
+    return `<img src="${AGE_RATING_IMAGES[ratingAge]}" alt="Classificação ${ratingAge === 'L' ? 'Livre' : ratingAge + ' anos'}" class="age-rating-badge">`;
+  }
+
+  // Export for use in other files
+  window.AGE_RATING_IMAGES = AGE_RATING_IMAGES;
+
   // Create an anime card element
   function createAnimeCard(anime) {
     if (!anime) return null;
@@ -21,10 +40,12 @@
     const thumbnail = anime.thumbnail || anime.cover || 'images/bg-default.jpg';
     const title = escapeHtml(anime.title || anime.name || 'Sem título');
     const type = escapeHtml(anime.type || 'anime');
+    const ageRatingBadge = getAgeRatingBadge(anime.rating_age);
     
     card.innerHTML = `
       <div class="anime-thumbnail">
         <img src="${escapeHtml(thumbnail)}" alt="${title}">
+        ${ageRatingBadge}
       </div>
       <div class="anime-info">
         <h3 class="anime-title">${title}</h3>
