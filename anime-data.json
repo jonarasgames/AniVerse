@@ -1002,7 +1002,13 @@
               "videoUrl": "a",
               "duration": 0
             }
-          ]
+          ],
+          "name": "Miss Kobayashi's Dragon Maid"
+        },
+        {
+          "number": 2,
+          "episodes": [],
+          "name": "Miss Kobayashi's Dragon Maid S"
         }
       ],
       "year": 2017,
@@ -1320,7 +1326,6 @@
       "seasons": [
         {
           "number": 1,
-          "name": "Arco de Turbo Vovó",
           "episodes": [
             {
               "title": "É Assim Que um Amor Começa!",
@@ -1434,7 +1439,6 @@
         },
         {
           "number": 2,
-          "name": "Arco da Casa Amaldiçoada",
           "episodes": [
             {
               "title": "Então essa é a lendária cobra gigante?",
@@ -2080,7 +2084,7 @@
     {
       "id": 20,
       "title": "Miss Kobayashi's Dragon Something",
-      "type": "anime",
+      "type": "ova",
       "seasons": [
         {
           "number": 1,
@@ -2127,7 +2131,7 @@
         "comedy"
       ],
       "osts": {},
-      "dateAdded": "2025-12-01",
+      "dateAdded": "2026-01-02",
       "description": "Conteúdo extra incluído na edição em BD/DVD de Miss Kobayashi Dragon Maid.",
       "year": 2017,
       "rating": 7.25,
@@ -2139,7 +2143,183 @@
       "id": 21,
       "title": "Mini Dora",
       "type": "ova",
-      "seasons": [],
+      "seasons": [
+        {
+          "number": 1,
+          "episodes": [
+            {
+              "title": "Manhã Típica (Todo Dia é Todo Dia)",
+              "duration": 101,
+              "videoUrl": "https://files.catbox.moe/cjkdvn.mp4",
+              "opening": {
+                "start": 0,
+                "end": 15
+              }
+            },
+            {
+              "title": "Relaxamento (O que é conforto...?)",
+              "duration": 113,
+              "opening": {
+                "start": 0,
+                "end": 15
+              },
+              "videoUrl": "https://files.catbox.moe/b038vw.mp4"
+            },
+            {
+              "title": "Em Busca de um Lugar para Descansar (E Já Estava Lá)",
+              "duration": 105,
+              "opening": {
+                "start": 0,
+                "end": 15
+              },
+              "videoUrl": "https://files.catbox.moe/xaac7b.mp4"
+            },
+            {
+              "title": "Liberdade de Expressão (A Menina dos Meus Olhos)",
+              "duration": 102,
+              "opening": {
+                "start": 0,
+                "end": 15
+              },
+              "videoUrl": "https://files.catbox.moe/gdtoql.mp4"
+            },
+            {
+              "title": "Estado de Emergência (Eu Tenho uma Fonte de Alimentação Ininterrupta)",
+              "duration": 99,
+              "opening": {
+                "start": 0,
+                "end": 15
+              },
+              "videoUrl": "https://files.catbox.moe/ml8tup.mp4"
+            },
+            {
+              "title": "Identidade Revelada (Eu Queria Nunca Ter Visto)",
+              "duration": 95,
+              "opening": {
+                "start": 0,
+                "end": 15
+              },
+              "videoUrl": "https://files.catbox.moe/da8fvr.mp4"
+            },
+            {
+              "title": "Apertar (Apertar♥ Apertar♥ Apertar♥)",
+              "duration": 102,
+              "opening": {
+                "start": 0,
+                "end": 15
+              },
+              "videoUrl": "https://files.catbox.moe/7s11df.mp4"
+            },
+            {
+              "title": "Sinalização Temporal (É Conveniente de Certa Forma)",
+              "duration": 100,
+              "videoUrl": "https://files.catbox.moe/xstsxm.mp4",
+              "opening": {
+                "start": 0,
+                "end": 15
+              }
+            },
+            {
+              "title": "Transformação (Você é Fofa, Senhorita Kobayashi)",
+              "duration": 126,
+              "videoUrl": "https://files.catbox.moe/yd6m61.mp4",
+              "opening": {
+                "start": 0,
+                "end": 15
+              }
+            },
+            {
+              "title": "Estudos Gerais (Humanos São Tão Dificeis)",
+              "duration": 108,
+              "opening": {
+                "start": 0,
+                "end": 15
+              },
+              "videoUrl": "https://files.catbox.moe/y9324h.mp4"
+            },
+            {
+              "title": "Saikawa-Veterana (Uma Dupla Improvável)",
+              "duration": 100,
+              "opening": {
+                "start": 0,
+                "end": 15
+              },
+              "videoUrl": "https://files.catbox.moe/3b86ib.mp4"
+            },
+            {
+              "title": "Satisfacão do Cliente (É Assim Que Deve Ser)",
+              "duration": 109,
+              "opening": {
+                "start": 0,
+                "end": 15
+              },
+              "videoUrl": "https://files.catbox.moe/9w2yhc.mp4"
+            },
+            {
+              "title": "Lua de Mel (Claro, É Assim Que Termina)",
+              "duration": 141,
+              "opening": {
+                "start": 0,
+                "end": 15
+              },
+              "videoUrl": "https://files.catbox.moe/6zinpo.mp4"
+            }
+          ],
+          "name": "Mini Dora"
+        },
+        {
+          "number": 2,
+          "episodes": [
+            {
+              "title": "Novo",
+              "duration": 0
+            },
+            {
+              "title": "Novo",
+              "duration": 0
+            },
+            {
+              "title": "Novo",
+              "duration": 0
+            }
+          ],
+          "name": "Mini Dora SP"
+        },
+        {
+          "number": 3,
+          "episodes": [
+            {
+              "title": "Série \"Se Fosse\" (É uma ilusão de bêbado)",
+              "duration": 0,
+              "opening": {
+                "start": 0,
+                "end": 15
+              }
+            },
+            {
+              "title": "Influenciador (Se você comer com isso)",
+              "duration": 0,
+              "opening": {
+                "start": 0,
+                "end": 15
+              }
+            },
+            {
+              "title": "Pressão de arrastamento (É um dragão humanizado)",
+              "duration": 0
+            },
+            {
+              "title": "Demanda e oferta (Não consigo fazer o que quero com eles)",
+              "duration": 0
+            },
+            {
+              "title": "Treinamento (Não consigo me concentrar)",
+              "duration": 0
+            }
+          ],
+          "name": "Mini Dora EX"
+        }
+      ],
       "categories": [
         "comedy",
         "slice of life"
@@ -2187,8 +2367,14 @@
     },
     {
       "id": "kobayashi",
-      "name": "",
-      "animeIds": []
+      "name": "Miss Kobayashi's Dragon Maid",
+      "animeIds": [
+        10,
+        20,
+        21
+      ],
+      "description": "A coleção completa de Miss Kobayashi's Dragon Maid inclui as duas temporadas da série principal, todos os OVAs e os curtas de animação Mini Dora.",
+      "thumbnail": "https://files.catbox.moe/tx2q38.jpg"
     }
   ]
 }
