@@ -34,7 +34,18 @@ test.describe('Age Rating Badge Visibility', () => {
       
       // Hover over the card
       await animeCard.hover();
-      await page.waitForTimeout(500); // Wait for transition
+      
+      // Wait for the opacity transition to complete
+      await page.waitForFunction(
+        (el) => {
+          const badge = el.querySelector('.age-rating-badge');
+          return badge && parseFloat(window.getComputedStyle(badge).opacity) === 1;
+        },
+        animeCard.elementHandle(),
+        { timeout: 2000 }
+      ).catch(() => {
+        // Transition might not complete if badge doesn't exist
+      });
       
       // Badge should be visible on hover (opacity: 1)
       const opacityOnHover = await ageRatingBadge.evaluate(el => {
