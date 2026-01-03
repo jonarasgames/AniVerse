@@ -41,37 +41,30 @@ test.describe('Image Retry System', () => {
   test('should handle broken image with retry', async ({ page }) => {
     await page.goto('/');
     
-    // Inject a broken image and track retries
-    const retryAttempts = await page.evaluate(() => {
+    // Inject a broken image and verify it starts retrying
+    const retryInfo = await page.evaluate(() => {
       return new Promise((resolve) => {
         const img = document.createElement('img');
         img.src = 'https://invalid-url-that-will-fail.test/image.jpg';
         img.alt = 'Test broken image';
         document.body.appendChild(img);
         
-        let attempts = 0;
-        const originalOnerror = img.onerror;
-        
-        img.onerror = function() {
-          attempts++;
-          if (originalOnerror) {
-            originalOnerror.call(this);
-          }
-        };
-        
-        // Wait for retries to complete (10 retries * 1.5s delay + buffer)
+        // Wait just long enough to see if retry mechanism kicks in (3 seconds for 2 retries)
         setTimeout(() => {
           resolve({
-            attempts,
-            finalSrc: img.src,
-            retryCount: img.dataset.retryCount
+            retrySetup: img.dataset.retrySetup,
+            retryCount: img.dataset.retryCount,
+            hasErrorHandler: typeof img.onerror === 'function'
           });
-        }, 20000); // 20 seconds to allow all retries
+        }, 3000);
       });
     });
     
-    // Should have attempted retries
-    expect(parseInt(retryAttempts.retryCount)).toBeGreaterThan(0);
+    // Should have retry setup and started retrying
+    expect(retryInfo.retrySetup).toBe('true');
+    expect(retryInfo.hasErrorHandler).toBe(true);
+    // Should have at least started retrying (retry count should be > 0)
+    expect(parseInt(retryInfo.retryCount || '0')).toBeGreaterThan(0);
   });
 
   test('should setup retry for dynamically added images', async ({ page }) => {
