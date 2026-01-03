@@ -12,8 +12,11 @@
         "comedy",
         "slice of life"
       ],
-      "rating_age": "L",
-      "rating_content": [],
+      "rating_age": "12",
+      "rating_content": [
+        "Consumo de Drogas Lícitas (álcool, cigarro)",
+        "Linguagem Imprópria"
+      ],
       "seasons": [
         {
           "number": 1,
@@ -49,8 +52,11 @@
       "categories": [
         "comedy"
       ],
-      "rating_age": "L",
-      "rating_content": [],
+      "rating_age": "12",
+      "rating_content": [
+        "Consumo de Drogas Lícitas (álcool, cigarro)",
+        "Linguagem Imprópria"
+      ],
       "seasons": [
         {
           "number": 1,
@@ -217,7 +223,9 @@
         "supernatural"
       ],
       "rating_age": "14",
-      "rating_content": ["Violência"],
+      "rating_content": [
+        "Violência"
+      ],
       "seasons": [
         {
           "number": 1,
@@ -280,7 +288,9 @@
         "adventure"
       ],
       "rating_age": "12",
-      "rating_content": ["Violência"],
+      "rating_content": [
+        "Violência"
+      ],
       "seasons": [
         {
           "number": 1,
@@ -343,7 +353,9 @@
         "superhero"
       ],
       "rating_age": "12",
-      "rating_content": ["Violência"],
+      "rating_content": [
+        "Violência"
+      ],
       "seasons": [
         {
           "number": 1,
@@ -406,8 +418,13 @@
         "mecha",
         "psychological"
       ],
-      "rating_age": "18",
-      "rating_content": ["Violência Extrema", "Conteúdo Sexual", "Temas Sensíveis"],
+      "rating_age": "16",
+      "rating_content": [
+        "Conteúdo Sexual",
+        "Linguagem Imprópria",
+        "Violência Extrema",
+        "Temas Sensíveis"
+      ],
       "seasons": [
         {
           "number": 1,
@@ -470,8 +487,12 @@
         "comedy",
         "slice of life"
       ],
-      "rating_age": "L",
-      "rating_content": [],
+      "rating_age": "10",
+      "rating_content": [
+        "Consumo de Drogas Lícitas (álcool, cigarro)",
+        "Linguagem Imprópria",
+        "Violência Fantasiosa"
+      ],
       "seasons": [
         {
           "number": 1,
@@ -752,7 +773,11 @@
         "romance"
       ],
       "rating_age": "12",
-      "rating_content": ["Linguagem Imprópria"],
+      "rating_content": [
+        "Linguagem Imprópria",
+        "Violência Leve",
+        "Nudez"
+      ],
       "seasons": [
         {
           "number": 1,
@@ -857,8 +882,11 @@
         "comedy",
         "slice of life"
       ],
-      "rating_age": "L",
-      "rating_content": [],
+      "rating_age": "12",
+      "rating_content": [
+        "Nudez",
+        "Linguagem Imprópria"
+      ],
       "seasons": [
         {
           "number": 1,
@@ -1011,8 +1039,12 @@
         "adventure",
         "slice of life"
       ],
-      "rating_age": "12",
-      "rating_content": [],
+      "rating_age": "14",
+      "rating_content": [
+        "Conteúdo Sexual",
+        "Violência Fantasiosa",
+        "Consumo de Drogas Lícitas (álcool, cigarro)"
+      ],
       "seasons": [
         {
           "number": 1,
@@ -1151,7 +1183,11 @@
         "comedy"
       ],
       "rating_age": "10",
-      "rating_content": [],
+      "rating_content": [
+        "Conteúdo Sexual",
+        "Linguagem Imprópria",
+        "Violência Fantasiosa"
+      ],
       "seasons": [
         {
           "number": 1,
@@ -1314,7 +1350,9 @@
         "slice of life"
       ],
       "rating_age": "10",
-      "rating_content": [],
+      "rating_content": [
+        "Violência Fantasiosa"
+      ],
       "seasons": [
         {
           "number": 1,
@@ -1351,8 +1389,12 @@
         "comedy",
         "slice of life"
       ],
-      "rating_age": "14",
-      "rating_content": ["Violência", "Linguagem Imprópria"],
+      "rating_age": "16",
+      "rating_content": [
+        "Violência",
+        "Linguagem Imprópria",
+        "Conteúdo Sexual"
+      ],
       "seasons": [
         {
           "number": 1,
@@ -1635,8 +1677,12 @@
         "horror",
         "psychological"
       ],
-      "rating_age": "14",
-      "rating_content": ["Violência", "Temas Sensíveis"],
+      "rating_age": "12",
+      "rating_content": [
+        "Violência",
+        "Temas Sensíveis",
+        "Conteúdo Sexual"
+      ],
       "seasons": [
         {
           "number": 1,
@@ -1720,7 +1766,9 @@
         "slice of life"
       ],
       "rating_age": "L",
-      "rating_content": [],
+      "rating_content": [
+        "Consumo de Drogas Lícitas (álcool, cigarro)"
+      ],
       "seasons": [
         {
           "number": 1,
@@ -1877,7 +1925,9 @@
         "slice of life"
       ],
       "rating_age": "L",
-      "rating_content": [],
+      "rating_content": [
+        "Consumo de Drogas Lícitas (álcool, cigarro)"
+      ],
       "seasons": [
         {
           "number": 1,
@@ -1973,14 +2023,18 @@
       "year": 2016,
       "description": "Enquanto Hiroshi e seus amigos tentam resolver os vários enigmas da mansão e escapar de seu novo inimigo azul, eles se deparam com diversos finais terríveis ao fracassarem miseravelmente.",
       "thumbnail": "https://files.catbox.moe/u7qxwb.png",
-      "banner": "https://files.catbox.moe/8nhxx3.jpg",
+      "banner": "https://files.catbox.moe/leveif.png",
       "trailer": "",
       "categories": [
         "comedy",
         "terror"
       ],
       "rating_age": "12",
-      "rating_content": ["Terror"],
+      "rating_content": [
+        "Terror",
+        "Presença de Sangue",
+        "Tortura ou Crueldade"
+      ],
       "seasons": [
         {
           "number": 1,
@@ -2123,8 +2177,11 @@
       "id": 20,
       "title": "Miss Kobayashi's Dragon Something",
       "type": "ova",
-      "rating_age": "12",
-      "rating_content": [],
+      "rating_age": "14",
+      "rating_content": [
+        "Conteúdo Sexual",
+        "Violência"
+      ],
       "seasons": [
         {
           "number": 1,
@@ -2183,8 +2240,11 @@
       "id": 21,
       "title": "Mini Dora",
       "type": "ova",
-      "rating_age": "L",
-      "rating_content": [],
+      "rating_age": "14",
+      "rating_content": [
+        "Conteúdo Sexual",
+        "Consumo de Drogas Lícitas (álcool, cigarro)"
+      ],
       "seasons": [
         {
           "number": 1,
@@ -2313,16 +2373,31 @@
           "number": 2,
           "episodes": [
             {
-              "title": "Novo",
-              "duration": 0
+              "title": "Manobra fingida (Vou permitir, pois é fofa)",
+              "duration": 105,
+              "opening": {
+                "start": 0,
+                "end": 15
+              },
+              "videoUrl": "https://files.catbox.moe/o1021k.mp4"
             },
             {
-              "title": "Novo",
-              "duration": 0
+              "title": "Amor Incondicional (É quente, mesmo quando molhado)",
+              "duration": 93,
+              "opening": {
+                "start": 0,
+                "end": 15
+              },
+              "videoUrl": "https://files.catbox.moe/h12q7r.mp4"
             },
             {
-              "title": "Novo",
-              "duration": 0
+              "title": "Escrito como \"Inimigo Poderoso\" (e lido como \"Amigo\")",
+              "duration": 90,
+              "opening": {
+                "start": 0,
+                "end": 15
+              },
+              "videoUrl": "https://files.catbox.moe/fm7wh7.mp4"
             }
           ],
           "name": "Mini Dora SP"
@@ -2332,31 +2407,48 @@
           "episodes": [
             {
               "title": "Série \"Se Fosse\" (É uma ilusão de bêbado)",
-              "duration": 0,
+              "duration": 90,
               "opening": {
                 "start": 0,
                 "end": 15
-              }
+              },
+              "videoUrl": "https://files.catbox.moe/0xpfj1.mp4"
             },
             {
               "title": "Influenciador (Se você comer com isso)",
-              "duration": 0,
+              "duration": 97,
+              "opening": {
+                "start": 0,
+                "end": 15
+              },
+              "videoUrl": "https://files.catbox.moe/e0wrix.mp4"
+            },
+            {
+              "title": "Pressão de arrastamento (É um dragão humanizado)",
+              "duration": 78,
+              "videoUrl": "https://files.catbox.moe/i6ifx0.mp4",
               "opening": {
                 "start": 0,
                 "end": 15
               }
             },
             {
-              "title": "Pressão de arrastamento (É um dragão humanizado)",
-              "duration": 0
-            },
-            {
               "title": "Demanda e oferta (Não consigo fazer o que quero com eles)",
-              "duration": 0
+              "duration": 102,
+              "videoUrl": "https://files.catbox.moe/8sqzsj.mp4",
+              "opening": {
+                "start": 0,
+                "end": 15
+              }
             },
             {
               "title": "Treinamento (Não consigo me concentrar)",
-              "duration": 0
+              "duration": 89,
+              "videoUrl": "https://files.catbox.moe/rkbu2g.mp4",
+              "opening": {
+                "start": 0,
+                "end": 15
+              }
             }
           ],
           "name": "Mini Dora EX"
