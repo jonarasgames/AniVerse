@@ -4,7 +4,7 @@
 
   const MAX_RETRIES = 10;
   const RETRY_DELAY = 1500; // 1.5 seconds
-  const PLACEHOLDER_IMAGE = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="300" height="400" viewBox="0 0 300 400"%3E%3Crect fill="%23333" width="300" height="400"/%3E%3Ctext x="50%25" y="50%25" fill="%23999" font-family="Arial" font-size="18" text-anchor="middle" dominant-baseline="middle"%3EImagem indisponível%3C/text%3E%3C/svg%3E';
+  const PLACEHOLDER_IMAGE = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100%25" height="100%25" viewBox="0 0 300 400"%3E%3Crect fill="%23333" width="300" height="400"/%3E%3Ctext x="50%25" y="50%25" fill="%23999" font-family="Arial" font-size="18" text-anchor="middle" dominant-baseline="middle"%3EImagem indisponível%3C/text%3E%3C/svg%3E';
 
   /**
    * Setup retry logic for an image element
@@ -53,7 +53,7 @@
         // Add cache-busting timestamp to force reload
         const separator = originalSrc.includes('?') ? '&' : '?';
         const timestamp = new Date().getTime();
-        img.src = `${originalSrc}${separator}_retry=${timestamp}`;
+        img.src = `${originalSrc}${separator}_img_retry_ts=${timestamp}`;
       }, RETRY_DELAY);
     };
 
