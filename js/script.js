@@ -190,6 +190,29 @@ function openEpisode(anime, seasonNumber, episodeIndex){
     if (bannerEl) bannerEl.style.backgroundImage = `url('${bannerUrl}')`;
     if (episode && episode.opening && typeof episode.opening.start === 'number' && typeof episode.opening.end === 'number') window.updateOpeningData && window.updateOpeningData({ start: episode.opening.start, end: episode.opening.end }); else window.updateOpeningData && window.updateOpeningData(null);
     
+    // Update age rating section
+    const ageRatingSection = document.getElementById('age-rating-section');
+    const ageRatingImage = document.getElementById('age-rating-image');
+    const ageRatingContent = document.getElementById('age-rating-content');
+    
+    if (ageRatingSection && ageRatingImage && ageRatingContent) {
+        if (anime.rating_age && window.AGE_RATING_IMAGES && window.AGE_RATING_IMAGES[anime.rating_age]) {
+            ageRatingImage.src = window.AGE_RATING_IMAGES[anime.rating_age];
+            ageRatingImage.alt = `Classificação ${anime.rating_age === 'L' ? 'Livre' : anime.rating_age + ' anos'}`;
+            
+            // Set content warnings
+            if (anime.rating_content && anime.rating_content.length > 0) {
+                ageRatingContent.textContent = anime.rating_content.join(' • ');
+            } else {
+                ageRatingContent.textContent = '';
+            }
+            
+            ageRatingSection.classList.add('visible');
+        } else {
+            ageRatingSection.classList.remove('visible');
+        }
+    }
+    
     // Try to restore playback position from profile's continue watching
     let resumeTime = 0;
     if (window.profileManager) {

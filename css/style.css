@@ -3135,3 +3135,81 @@ html.theme-dark select {
         height: 32px;
     }
 }
+
+/* ===============================================
+   Age Rating Styles
+   =============================================== */
+
+/* Age rating badge on anime cards */
+.age-rating-badge {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    width: 24px;
+    height: 24px;
+    z-index: 5;
+    opacity: 0.9;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.anime-card:hover .age-rating-badge {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+/* Age rating section in video player */
+.age-rating-section {
+    display: none;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 15px;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    margin: 10px 0;
+}
+
+.age-rating-section.visible {
+    display: flex;
+}
+
+.age-rating-image {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+}
+
+.age-rating-content {
+    font-size: 0.9rem;
+    color: var(--text-color);
+    opacity: 0.8;
+}
+
+/* Dark mode adjustments */
+html.theme-dark .age-rating-section,
+body.dark-mode .age-rating-section {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .age-rating-badge {
+        width: 20px;
+        height: 20px;
+        bottom: 6px;
+        right: 6px;
+    }
+    
+    .age-rating-section {
+        padding: 8px 12px;
+        gap: 10px;
+    }
+    
+    .age-rating-image {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .age-rating-content {
+        font-size: 0.85rem;
+    }
+}

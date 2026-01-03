@@ -12,6 +12,8 @@
         "comedy",
         "slice of life"
       ],
+      "rating_age": "L",
+      "rating_content": [],
       "seasons": [
         {
           "number": 1,
@@ -47,6 +49,8 @@
       "categories": [
         "comedy"
       ],
+      "rating_age": "L",
+      "rating_content": [],
       "seasons": [
         {
           "number": 1,
@@ -212,6 +216,8 @@
         "action",
         "supernatural"
       ],
+      "rating_age": "14",
+      "rating_content": ["Violência"],
       "seasons": [
         {
           "number": 1,
@@ -273,6 +279,8 @@
         "action",
         "adventure"
       ],
+      "rating_age": "12",
+      "rating_content": ["Violência"],
       "seasons": [
         {
           "number": 1,
@@ -334,6 +342,8 @@
         "action",
         "superhero"
       ],
+      "rating_age": "12",
+      "rating_content": ["Violência"],
       "seasons": [
         {
           "number": 1,
@@ -396,6 +406,8 @@
         "mecha",
         "psychological"
       ],
+      "rating_age": "18",
+      "rating_content": ["Violência Extrema", "Conteúdo Sexual", "Temas Sensíveis"],
       "seasons": [
         {
           "number": 1,
@@ -458,6 +470,8 @@
         "comedy",
         "slice of life"
       ],
+      "rating_age": "L",
+      "rating_content": [],
       "seasons": [
         {
           "number": 1,
@@ -737,6 +751,8 @@
         "comedy",
         "romance"
       ],
+      "rating_age": "12",
+      "rating_content": ["Linguagem Imprópria"],
       "seasons": [
         {
           "number": 1,
@@ -841,6 +857,8 @@
         "comedy",
         "slice of life"
       ],
+      "rating_age": "L",
+      "rating_content": [],
       "seasons": [
         {
           "number": 1,
@@ -993,6 +1011,8 @@
         "adventure",
         "slice of life"
       ],
+      "rating_age": "12",
+      "rating_content": [],
       "seasons": [
         {
           "number": 1,
@@ -1064,6 +1084,8 @@
         "comedy",
         "slice of life"
       ],
+      "rating_age": "L",
+      "rating_content": [],
       "seasons": [
         {
           "number": 1,
@@ -1095,6 +1117,8 @@
         "comedy",
         "slice of life"
       ],
+      "rating_age": "L",
+      "rating_content": [],
       "seasons": [
         {
           "number": 1,
@@ -1126,6 +1150,8 @@
         "slice of life",
         "comedy"
       ],
+      "rating_age": "10",
+      "rating_content": [],
       "seasons": [
         {
           "number": 1,
@@ -1287,6 +1313,8 @@
         "comedy",
         "slice of life"
       ],
+      "rating_age": "10",
+      "rating_content": [],
       "seasons": [
         {
           "number": 1,
@@ -1323,6 +1351,8 @@
         "comedy",
         "slice of life"
       ],
+      "rating_age": "14",
+      "rating_content": ["Violência", "Linguagem Imprópria"],
       "seasons": [
         {
           "number": 1,
@@ -1605,6 +1635,8 @@
         "horror",
         "psychological"
       ],
+      "rating_age": "14",
+      "rating_content": ["Violência", "Temas Sensíveis"],
       "seasons": [
         {
           "number": 1,
@@ -1687,6 +1719,8 @@
         "comedy",
         "slice of life"
       ],
+      "rating_age": "L",
+      "rating_content": [],
       "seasons": [
         {
           "number": 1,
@@ -1842,6 +1876,8 @@
         "comedy",
         "slice of life"
       ],
+      "rating_age": "L",
+      "rating_content": [],
       "seasons": [
         {
           "number": 1,
@@ -1943,6 +1979,8 @@
         "comedy",
         "terror"
       ],
+      "rating_age": "12",
+      "rating_content": ["Terror"],
       "seasons": [
         {
           "number": 1,
@@ -2085,6 +2123,8 @@
       "id": 20,
       "title": "Miss Kobayashi's Dragon Something",
       "type": "ova",
+      "rating_age": "12",
+      "rating_content": [],
       "seasons": [
         {
           "number": 1,
@@ -2143,6 +2183,8 @@
       "id": 21,
       "title": "Mini Dora",
       "type": "ova",
+      "rating_age": "L",
+      "rating_content": [],
       "seasons": [
         {
           "number": 1,
