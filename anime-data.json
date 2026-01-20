@@ -211,203 +211,8 @@
       "banner": "https://files.catbox.moe/umn2v5.jpg"
     },
     {
-      "id": 3,
-      "title": "Jujutsu Kaisen 0",
-      "description": "Yuta Okkotsu ganha o controle de um espírito amaldiçoado extremamente poderoso e se matricula na Tokyo Prefectural Jujutsu High School sob a orientação de Satoru Gojo.",
-      "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/main/images/thumbnails/jujutsumovie.png",
-      "trailer": "https://www.youtube.com/embed/2docezZl574?autoplay=1&mute=1&enablejsapi=1",
-      "type": "movie",
-      "dateAdded": "2023-10-18",
-      "categories": [
-        "action",
-        "supernatural"
-      ],
-      "rating_age": "14",
-      "rating_content": [
-        "Violência"
-      ],
-      "seasons": [
-        {
-          "number": 1,
-          "episodes": [
-            {
-              "title": "Jujutsu Kaisen 0",
-              "videoUrl": "https://example.com/jujutsu-kaisen-0.mp4",
-              "duration": 6300
-            }
-          ]
-        }
-      ],
-      "year": 2021,
-      "rating": 4.7,
-      "openings": [
-        {
-          "title": "Ichizu",
-          "artist": "King Gnu",
-          "audio": "https://example.com/jujutsu0-op1.mp3",
-          "cover": "https://example.com/jujutsu0-op1-cover.jpg",
-          "type": "opening",
-          "season": 1
-        }
-      ],
-      "endings": [
-        {
-          "title": "Sakayume",
-          "artist": "King Gnu",
-          "audio": "https://example.com/jujutsu0-ed1.mp3",
-          "cover": "https://example.com/jujutsu0-ed1-cover.jpg",
-          "type": "ending",
-          "season": 1
-        }
-      ],
-      "osts": {
-        "Jujutsu Kaisen 0 Original Soundtrack": {
-          "year": 2021,
-          "cover": "https://example.com/jujutsu0-ost1-cover.jpg",
-          "tracks": [
-            {
-              "title": "Yuta Okkotsu's Theme",
-              "artist": "Hiroaki Tsutsumi",
-              "audio": "https://example.com/jujutsu0-ost1.mp3",
-              "duration": 210
-            }
-          ]
-        }
-      }
-    },
-    {
-      "id": 4,
-      "title": "One Piece: Stampede",
-      "description": "Piratas de todo o mundo se reúnem para o Pirate Expo, organizado pelo misterioso Buena Festa, onde o tesouro deixado pelo lendário Gol D. Roger está em jogo.",
-      "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/main/images/thumbnails/onepiecemovie.png",
-      "trailer": "https://www.youtube.com/embed/CZzQ6dJkik0?autoplay=1&mute=1&enablejsapi=1",
-      "type": "movie",
-      "dateAdded": "2023-10-17",
-      "categories": [
-        "action",
-        "adventure"
-      ],
-      "rating_age": "12",
-      "rating_content": [
-        "Violência"
-      ],
-      "seasons": [
-        {
-          "number": 1,
-          "episodes": [
-            {
-              "title": "One Piece: Stampede",
-              "videoUrl": "https://example.com/one-piece-stampede.mp4",
-              "duration": 6300
-            }
-          ]
-        }
-      ],
-      "year": 2019,
-      "rating": 4.6,
-      "openings": [
-        {
-          "title": "GONG",
-          "artist": "WANIMA",
-          "audio": "https://example.com/op-stampede-op1.mp3",
-          "cover": "https://example.com/op-stampede-op1-cover.jpg",
-          "type": "opening",
-          "season": 1
-        }
-      ],
-      "endings": [
-        {
-          "title": "Memories",
-          "artist": "Maki Otsuki",
-          "audio": "https://example.com/op-stampede-ed1.mp3",
-          "cover": "https://example.com/op-stampede-ed1-cover.jpg",
-          "type": "ending",
-          "season": 1
-        }
-      ],
-      "osts": {
-        "One Piece: Stampede Original Soundtrack": {
-          "year": 2019,
-          "cover": "https://example.com/op-stampede-ost1-cover.jpg",
-          "tracks": [
-            {
-              "title": "Stampede Theme",
-              "artist": "Kohei Tanaka",
-              "audio": "https://example.com/op-stampede-ost1.mp3",
-              "duration": 245
-            }
-          ]
-        }
-      }
-    },
-    {
-      "id": 5,
-      "title": "My Hero Academia: Heroes Rising",
-      "description": "Os alunos da Classe 1-A visitam a Ilha Nabu, onde eventualmente acabam enfrentando um vilão com uma peculiaridade alarmante.",
-      "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/main/images/thumbnails/mhamovie.png",
-      "trailer": "https://www.youtube.com/embed/VQGCKyvzIM4?autoplay=1&mute=1&enablejsapi=1",
-      "type": "movie",
-      "dateAdded": "2023-10-16",
-      "categories": [
-        "action",
-        "superhero"
-      ],
-      "rating_age": "12",
-      "rating_content": [
-        "Violência"
-      ],
-      "seasons": [
-        {
-          "number": 1,
-          "episodes": [
-            {
-              "title": "My Hero Academia: Heroes Rising",
-              "videoUrl": "https://example.com/mha-heroes-rising.mp4",
-              "duration": 6240
-            }
-          ]
-        }
-      ],
-      "year": 2019,
-      "rating": 4.8,
-      "openings": [
-        {
-          "title": "Higher Ground",
-          "artist": "Survive Said The Prophet",
-          "audio": "https://example.com/mha-movie-op1.mp3",
-          "cover": "https://example.com/mha-movie-op1-cover.jpg",
-          "type": "opening",
-          "season": 1
-        }
-      ],
-      "endings": [
-        {
-          "title": "Dakara, Hitori ja nai",
-          "artist": "Little Glee Monster",
-          "audio": "https://example.com/mha-movie-ed1.mp3",
-          "cover": "https://example.com/mha-movie-ed1-cover.jpg",
-          "type": "ending",
-          "season": 1
-        }
-      ],
-      "osts": {
-        "My Hero Academia: Heroes Rising Original Soundtrack": {
-          "year": 2019,
-          "cover": "https://example.com/mha-movie-ost1-cover.jpg",
-          "tracks": [
-            {
-              "title": "Heroes Rising Theme",
-              "artist": "Yuki Hayashi",
-              "audio": "https://example.com/mha-movie-ost1.mp3",
-              "duration": 245
-            }
-          ]
-        }
-      }
-    },
-    {
       "id": 6,
-      "title": "Neon Genesis Evangelion: The End of Evangelion",
+      "title": "The End of Evangelion",
       "description": "A SEELE ordena um ataque à NERV para destruir os EVAs antes que Gendo consiga provocar o terceiro impacto e a união das almas humanas.",
       "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/main/images/thumbnails/evangelionmovie.png",
       "trailer": "https://geo.dailymotion.com/player.html?video=x24kdhz",
@@ -1030,7 +835,7 @@
       "id": 10,
       "title": "Miss Kobayashi's Dragon Maid",
       "description": "Um funcionário de escritório contrata um dragão de coração bondoso para servir como sua empregada e entra em um mundo de desventuras cômicas.",
-      "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/main/images/thumbnails/misskobayashianime.jpg",
+      "thumbnail": "https://files.catbox.moe/tx2q38.jpg",
       "trailer": "https://www.youtube.com/watch?v=4N6ozeZ2cA0",
       "type": "anime",
       "dateAdded": "2025-07-02",
@@ -2696,6 +2501,150 @@
       "dateAdded": "2026-01-02",
       "description": "Uma minissérie do anime comemorativa que foi lançada no canal do YouTube da Kyoani antes da estreia de Miss Kobayashi Dragon Maid S.",
       "rating": 7.34
+    },
+    {
+      "id": 22,
+      "title": "Neon Genesis Evangelion",
+      "type": "anime",
+      "seasons": [],
+      "categories": [],
+      "rating_age": "L",
+      "rating_content": [],
+      "osts": {},
+      "banner": "https://images.fanart.tv/fanart/neon-genesis-evangelion-608d062ae7534.jpg",
+      "thumbnail": "https://image.tmdb.org/t/p/original/7FUk9pqkT04yBMXfpBuNpYMVgRm.jpg",
+      "trailer": "his the drop drip",
+      "year": 1995
+    },
+    {
+      "id": 23,
+      "title": "Evangelion: Death (True)²",
+      "type": "movie",
+      "seasons": [],
+      "categories": [],
+      "rating_age": "L",
+      "rating_content": [],
+      "osts": {},
+      "year": 1998,
+      "thumbnail": "https://files.catbox.moe/kytmos.jpg",
+      "banner": "https://files.catbox.moe/cs4qcr.png"
+    },
+    {
+      "id": 24,
+      "title": "Petit Eva: Evangelion@School",
+      "type": "ova",
+      "seasons": [],
+      "categories": [],
+      "rating_age": "L",
+      "rating_content": [],
+      "osts": {},
+      "year": 2007,
+      "banner": "https://files.catbox.moe/6o8ij0.jpg",
+      "thumbnail": "https://files.catbox.moe/2zt7qa.webp"
+    },
+    {
+      "id": 25,
+      "title": "Evangelion: 1.11 You Are (Not) Alone",
+      "type": "movie",
+      "seasons": [],
+      "categories": [],
+      "rating_age": "L",
+      "rating_content": [],
+      "osts": {},
+      "year": 2008,
+      "thumbnail": "https://files.catbox.moe/hsqpuj.jpg",
+      "banner": "https://files.catbox.moe/t8em8r.jpg"
+    },
+    {
+      "id": 26,
+      "title": "Evangelion: 2.22 You Can (Not) Advance",
+      "type": "movie",
+      "seasons": [],
+      "categories": [],
+      "rating_age": "L",
+      "rating_content": [],
+      "osts": {},
+      "year": 2009,
+      "thumbnail": "https://files.catbox.moe/4wjwx8.jpg",
+      "banner": "https://files.catbox.moe/jltt93.jpg"
+    },
+    {
+      "id": 27,
+      "title": "Evangelion: 3.333 You Can (Not) Redo",
+      "type": "movie",
+      "seasons": [],
+      "categories": [],
+      "rating_age": "L",
+      "rating_content": [],
+      "osts": {},
+      "year": 2012,
+      "thumbnail": "https://files.catbox.moe/izgavk.jpg",
+      "banner": "https://files.catbox.moe/2777ob.jpg"
+    },
+    {
+      "id": 28,
+      "title": "Neon Genesis Impacts",
+      "type": "ova",
+      "seasons": [],
+      "categories": [],
+      "rating_age": "L",
+      "rating_content": [],
+      "osts": {},
+      "year": 2015,
+      "thumbnail": "https://files.catbox.moe/ibkign.png",
+      "banner": "https://files.catbox.moe/v19vvw.webp"
+    },
+    {
+      "id": 29,
+      "title": "Evangelion: Another Impact (Confidential)",
+      "type": "ova",
+      "seasons": [],
+      "categories": [],
+      "rating_age": "L",
+      "rating_content": [],
+      "osts": {},
+      "thumbnail": "https://files.catbox.moe/pwzpkf.webp",
+      "year": 2015,
+      "banner": "https://files.catbox.moe/hyljaw.webp"
+    },
+    {
+      "id": 30,
+      "title": "Evangelion: 3.0+1.11 Thrice Upon a Time",
+      "type": "anime",
+      "seasons": [],
+      "categories": [],
+      "rating_age": "L",
+      "rating_content": [],
+      "osts": {},
+      "year": 2021,
+      "banner": "https://files.catbox.moe/q71l5q.jpg",
+      "thumbnail": "https://files.catbox.moe/wreabl.jpg"
+    },
+    {
+      "id": 31,
+      "title": "Evangelion: 3.0 (-120 min)",
+      "type": "anime",
+      "seasons": [],
+      "categories": [],
+      "rating_age": "L",
+      "rating_content": [],
+      "osts": {},
+      "year": 2023,
+      "thumbnail": "https://files.catbox.moe/0w2rgn.webp",
+      "banner": "https://files.catbox.moe/vus2fe.webp"
+    },
+    {
+      "id": 32,
+      "title": "Evangelion: 3.0 (-46h)",
+      "type": "anime",
+      "seasons": [],
+      "categories": [],
+      "rating_age": "L",
+      "rating_content": [],
+      "osts": {},
+      "year": 2023,
+      "banner": "https://files.catbox.moe/q408m7.webp",
+      "thumbnail": "https://files.catbox.moe/y7c8ut.webp"
     }
   ],
   "collections": [
@@ -2738,8 +2687,28 @@
         20,
         21
       ],
-      "description": "A coleção completa de Miss Kobayashi's Dragon Maid inclui as duas temporadas da série principal, todos os OVAs e os curtas de animação Mini Dora.",
-      "thumbnail": "https://files.catbox.moe/tx2q38.jpg"
+      "description": "A coleção completa de Miss Kobayashi's Dragon Maid inclui as duas temporadas da série principal, todos os OVAs e os curtas de animação Mini Dora",
+      "thumbnail": "https://raw.githubusercontent.com/jonarasgames/AniVerse/main/images/thumbnails/misskobayashianime.jpg"
+    },
+    {
+      "id": "evangelion",
+      "name": "Neon Genesis Evangelion",
+      "animeIds": [
+        22,
+        6,
+        23,
+        24,
+        25,
+        26,
+        27,
+        31,
+        32,
+        28,
+        29,
+        30
+      ],
+      "description": "A coleção completa de Neon Genesis Evangelion inclui a série original completa (com as versões Director's Cut), os filmes que encerram a saga clássica, a recente tetralogia Rebuild of Evangelion, além de todas as curtas-metragens, prólogos inéditos e a série spin-off Petit Eva",
+      "thumbnail": "https://files.catbox.moe/ms6mfy.jpg"
     }
   ]
 }
