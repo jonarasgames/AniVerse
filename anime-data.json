@@ -1050,16 +1050,247 @@
           "number": 1,
           "episodes": [
             {
-              "title": "Episódio 1",
-              "videoUrl": "a",
-              "duration": 0
+              "title": "A Empregada Mais Forte Da História, Tohru! (Bom, Ela é Um Dragão)",
+              "videoUrl": "https://www.udrop.com/file/Ob3c/Epis%C3%B3dio_1.mp4",
+              "duration": 1508,
+              "opening": {
+                "start": 132,
+                "end": 222
+              }
+            },
+            {
+              "title": "Segundo Dragão, Kanna! (Estamos Te Spoilando Aqui)",
+              "duration": 1419,
+              "videoUrl": "https://www.udrop.com/file/Ob3t/Episódio_2.mp4",
+              "opening": {
+                "start": 33,
+                "end": 123
+              }
+            },
+            {
+              "title": "Começo De Uma Nova Vida! (Que Não Vai Bem, Claro)",
+              "duration": 1419,
+              "videoUrl": "https://www.udrop.com/file/Ob3l/Episódio_3.mp4",
+              "opening": {
+                "start": 35,
+                "end": 125
+              }
+            },
+            {
+              "title": "Kanna Vai Para A Escola! (Não Que Ela Precise)",
+              "duration": 1419,
+              "videoUrl": "https://www.udrop.com/file/Ob3k/Episódio_4.mp4",
+              "opening": {
+                "start": 68,
+                "end": 158
+              }
+            },
+            {
+              "title": " Lições Do Mundo Real Da Tooru! (Ela Acha Que Já Sabe De Tudo!)",
+              "duration": 1419,
+              "videoUrl": "https://www.udrop.com/file/Ob3b/Episódio_5.mp4",
+              "opening": {
+                "start": 53,
+                "end": 143
+              }
+            },
+            {
+              "title": " Visita Doméstica! (E Domicílios Não Visitados)",
+              "duration": 1419,
+              "videoUrl": "https://www.udrop.com/file/Ob3h/Episódio_6.mp4",
+              "opening": {
+                "start": 41,
+                "end": 131
+              }
+            },
+            {
+              "title": "Um Verão De Se Esperar! (O Episódio De Fanservice, Francamente)",
+              "duration": 1420,
+              "videoUrl": "https://www.udrop.com/file/Ob3g/Episódio_7.mp4",
+              "opening": {
+                "start": 45,
+                "end": 135
+              }
+            },
+            {
+              "title": "Novo Dragão, Elma! (Ela Finalmente Vai Aparecer?)",
+              "duration": 1420,
+              "videoUrl": "https://www.udrop.com/file/Ob3s/Episódio_8.mp4",
+              "opening": {
+                "start": 82,
+                "end": 172
+              }
+            },
+            {
+              "title": "Festival de Esportes! (Não Há Nada de Especial Nele) ",
+              "duration": 1419,
+              "videoUrl": "https://www.udrop.com/file/Ob3e/Episódio_9.mp4",
+              "opening": {
+                "start": 58,
+                "end": 148
+              }
+            },
+            {
+              "title": "Grupo De Dragões Chegando! (Eles Tinham Um Nome De Grupo?)",
+              "duration": 1419,
+              "videoUrl": "https://www.udrop.com/file/Ob3m/Episódio_10.mp4",
+              "opening": {
+                "start": 57,
+                "end": 147
+              }
+            },
+            {
+              "title": "Fim De Ano, Ano Novo! (Sem Comiket Dessa Vez)",
+              "duration": 1420,
+              "videoUrl": "https://www.udrop.com/file/Ob3o/Episódio_11.mp4",
+              "opening": {
+                "start": 84,
+                "end": 174
+              }
+            },
+            {
+              "title": "O Encontro Impactante De Tooru E Kobayashi! (Estamos Aumentando As Expectativas)",
+              "duration": 1419,
+              "videoUrl": "https://www.udrop.com/file/Ob3n/Episódio_12.mp4",
+              "opening": {
+                "start": 70,
+                "end": 160
+              }
+            },
+            {
+              "title": "O Imperador Do Fim Chega! (Nem Percebemos Que O Último Episódio Estava Chegando)",
+              "duration": 1419,
+              "videoUrl": "https://www.udrop.com/file/Ob3p/Episódio_13.mp4",
+              "opening": {
+                "start": 70,
+                "end": 160
+              }
+            },
+            {
+              "title": "Dia dos namorados e águas termais! (Por favor não se animem muito)",
+              "duration": 1419,
+              "videoUrl": "https://www.udrop.com/file/Ob3q/Episódio_14.mp4",
+              "opening": {
+                "start": 51,
+                "end": 141
+              }
             }
           ],
           "name": "Miss Kobayashi's Dragon Maid"
         },
         {
           "number": 2,
-          "episodes": [],
+          "episodes": [
+            {
+              "title": "Ilulu, a Nova Dragão! (Por favor, cuidem bem dela.)",
+              "duration": 1420,
+              "videoUrl": "https://lightspeedst.net/s1/mp4/kobayashi-san-chi-no-maid-dragon-s-dublado/sd/1.mp4",
+              "opening": {
+                "start": 67,
+                "end": 157
+              }
+            },
+            {
+              "title": "Kobayashi, o Garanhão! (Em Vários Sentidos)",
+              "duration": 1420,
+              "videoUrl": "https://lightspeedst.net/s1/mp4/kobayashi-san-chi-no-maid-dragon-s-dublado/sd/2.mp4",
+              "opening": {
+                "start": 47,
+                "end": 137
+              }
+            },
+            {
+              "title": "Atividades Extracurriculares (É Claro Que Não São Normais)",
+              "duration": 1420,
+              "videoUrl": "https://lightspeedst.net/s1/mp4/kobayashi-san-chi-no-maid-dragon-s-dublado/sd/3.mp4",
+              "opening": {
+                "start": 66,
+                "end": 156
+              }
+            },
+            {
+              "title": "Em Roma, Faça Como Os Romanos (É Difícil Se Misturar)",
+              "duration": 1420,
+              "videoUrl": "https://lightspeedst.net/s1/mp4/kobayashi-san-chi-no-maid-dragon-s-dublado/sd/4.mp4",
+              "opening": {
+                "start": 25,
+                "end": 115
+              }
+            },
+            {
+              "title": "Junto Com Você (Bem, Se A Gente Se Der Bem)",
+              "duration": 1420,
+              "videoUrl": "https://lightspeedst.net/s1/mp4/kobayashi-san-chi-no-maid-dragon-s-dublado/sd/5.mp4",
+              "opening": {
+                "start": 34,
+                "end": 124
+              }
+            },
+            {
+              "title": "Casal Improvável (Um dos Dois é um Dragão)",
+              "duration": 1420,
+              "videoUrl": "https://lightspeedst.net/s1/mp4/kobayashi-san-chi-no-maid-dragon-s-dublado/sd/6.mp4",
+              "opening": {
+                "start": 38,
+                "end": 128
+              }
+            },
+            {
+              "title": "Bom Senso (Cada Um Tem o Seu)",
+              "duration": 1420,
+              "videoUrl": "https://lightspeedst.net/s1/mp4/kobayashi-san-chi-no-maid-dragon-s-dublado/sd/7.mp4",
+              "opening": {
+                "start": 33,
+                "end": 123
+              }
+            },
+            {
+              "title": "No Mundo Todo, Só Tem Uma (Coloque Aqui Sua Palavra Favorita)",
+              "duration": 1420,
+              "videoUrl": "https://lightspeedst.net/s1/mp4/kobayashi-san-chi-no-maid-dragon-s-dublado/sd/8.mp4"
+            },
+            {
+              "title": "Tem Uma Série de Motivos (Elma Pra Dar e Vender)",
+              "duration": 1420,
+              "videoUrl": "https://lightspeedst.net/s1/mp4/kobayashi-san-chi-no-maid-dragon-s-dublado/sd/9.mp4",
+              "opening": {
+                "start": 52,
+                "end": 142
+              }
+            },
+            {
+              "title": "Férias de Verão da Kanna (Exibido em Duas Línguas?!)",
+              "duration": 1420,
+              "videoUrl": "https://lightspeedst.net/s1/mp4/kobayashi-san-chi-no-maid-dragon-s-dublado/sd/10.mp4",
+              "opening": {
+                "start": 57,
+                "end": 147
+              }
+            },
+            {
+              "title": "Cadeira Premium (Sem Custo Adicional)",
+              "duration": 1420,
+              "videoUrl": "https://lightspeedst.net/s1/mp4/kobayashi-san-chi-no-maid-dragon-s-dublado/sd/11.mp4",
+              "opening": {
+                "start": 26,
+                "end": 116
+              }
+            },
+            {
+              "title": "A Vida é um Ciclo sem Fim (Mas Você Pode Fazer Pausas)",
+              "duration": 1420,
+              "videoUrl": "https://lightspeedst.net/s1/mp4/kobayashi-san-chi-no-maid-dragon-s-dublado/sd/12.mp4"
+            },
+            {
+              "title": "Hospitalidade Japonesa (Os Guias São Dragões)",
+              "duration": 1420,
+              "videoUrl": "https://lightspeedst.net/s4/mp4/kobayashi-san-chi-no-maid-dragon-s-nippon-no-omotenashi---attend-wa-dragon-desu-dublado/sd/1.mp4",
+              "opening": {
+                "start": 57,
+                "end": 147
+              }
+            }
+          ],
           "name": "Miss Kobayashi's Dragon Maid S"
         }
       ],
