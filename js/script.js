@@ -151,6 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const newsImageFile = document.getElementById('news-image-file');
   const newsFormClear = document.getElementById('news-form-clear');
   const newsDownloadJson = document.getElementById('news-download-json');
+  const newsFormatting = document.querySelector('.news-formatting');
   const newsDot = newsFab ? newsFab.querySelector('.news-fab-dot') : null;
   let newsToast = null;
 
@@ -248,6 +249,24 @@ document.addEventListener('DOMContentLoaded', () => {
     updateNewsToast(latest, shouldShow && hasNew);
   }
 
+  function escapeHtml(value) {
+    return value
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#039;');
+  }
+
+  function formatNewsMessage(message) {
+    const safe = escapeHtml(message || '');
+    const withLineBreaks = safe.replace(/\n/g, '<br>');
+    return withLineBreaks
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.+?)\*/g, '<em>$1</em>')
+      .replace(/\[(.+?)\]\((https?:\/\/[^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+  }
+
   function updateNewsToast(latest, shouldShow) {
     if (!latest || !shouldShow) {
       if (newsToast) newsToast.style.display = 'none';
@@ -295,12 +314,35 @@ document.addEventListener('DOMContentLoaded', () => {
         const card = document.createElement('div');
         card.className = 'news-card';
         const createdAt = new Date(item.createdAt);
-        card.innerHTML = `
-          <h4>${item.title}</h4>
-          <time datetime="${item.createdAt}">${createdAt.toLocaleDateString('pt-BR')}</time>
-          <p>${item.message}</p>
-          ${item.imageUrl ? `<img src="${item.imageUrl}" alt="${item.title}" class="news-card-image">` : ''}
+        const hasImage = Boolean(item.imageUrl);
+        const header = document.createElement('div');
+        header.className = 'news-card-header';
+        header.innerHTML = `
+          <div class="news-card-summary">
+            ${hasImage ? `<img src="${item.imageUrl}" alt="${item.title}" class="news-card-thumb">` : ''}
+            <div>
+              <h4>${escapeHtml(item.title)}</h4>
+              <time datetime="${item.createdAt}">${createdAt.toLocaleDateString('pt-BR')}</time>
+            </div>
+          </div>
+          <button type="button" class="news-card-toggle">Ver</button>
         `;
+
+        const body = document.createElement('div');
+        body.className = 'news-card-body';
+        body.innerHTML = `
+          <p>${formatNewsMessage(item.message)}</p>
+          ${hasImage ? `<img src="${item.imageUrl}" alt="${item.title}" class="news-card-image">` : ''}
+        `;
+
+        header.addEventListener('click', () => {
+          const isOpen = card.classList.toggle('is-open');
+          const toggle = header.querySelector('.news-card-toggle');
+          if (toggle) toggle.textContent = isOpen ? 'Fechar' : 'Ver';
+        });
+
+        card.appendChild(header);
+        card.appendChild(body);
 
         if (isAdmin()) {
           const actions = document.createElement('div');
@@ -426,6 +468,42 @@ document.addEventListener('DOMContentLoaded', () => {
       ]);
       newsForm.reset();
       renderNews();
+    });
+  }
+
+  function insertAtCursor(textarea, value) {
+    const start = textarea.selectionStart ?? textarea.value.length;
+    const end = textarea.selectionEnd ?? textarea.value.length;
+    const before = textarea.value.slice(0, start);
+    const after = textarea.value.slice(end);
+    textarea.value = `${before}${value}${after}`;
+    const caret = start + value.length;
+    textarea.setSelectionRange(caret, caret);
+    textarea.focus();
+  }
+
+  if (newsFormatting && newsMessage) {
+    newsFormatting.addEventListener('click', (event) => {
+      const button = event.target.closest('button[data-format]');
+      if (!button) return;
+      const format = button.dataset.format;
+      switch (format) {
+        case 'bold':
+          insertAtCursor(newsMessage, '**texto**');
+          break;
+        case 'italic':
+          insertAtCursor(newsMessage, '*texto*');
+          break;
+        case 'list':
+          insertAtCursor(newsMessage, '\n- item 1\n- item 2');
+          break;
+        case 'link':
+          insertAtCursor(newsMessage, '[texto](https://exemplo.com)');
+          break;
+        case 'break':
+          insertAtCursor(newsMessage, '\n');
+          break;
+      }
     });
   }
 
