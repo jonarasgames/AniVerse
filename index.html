@@ -131,6 +131,58 @@
         </section>
     </main>
 
+    <button id="news-fab" class="news-fab" aria-label="Novidades">
+        <i class="fas fa-bullhorn"></i>
+        <span class="news-fab-dot" aria-hidden="true"></span>
+    </button>
+
+    <div id="news-modal" class="modal">
+        <div class="modal-content news-modal-content">
+            <span class="close-modal" id="close-news-modal">&times;</span>
+            <div class="news-modal-header">
+                <div>
+                    <h2>Novidades &amp; Anúncios</h2>
+                    <p class="news-modal-subtitle">Fique por dentro das atualizações mais recentes.</p>
+                </div>
+                <div class="news-admin-actions" id="news-admin-actions">
+                    <button class="btn btn-secondary" id="news-admin-toggle">Modo admin</button>
+                    <button class="btn btn-secondary" id="news-admin-logout">Sair</button>
+                </div>
+            </div>
+            <div id="news-list" class="news-list"></div>
+
+            <div id="news-admin-panel" class="news-admin-panel">
+                <h3>Publicar nova notícia</h3>
+                <form id="news-form" class="news-form">
+                    <label>
+                        Título
+                        <input type="text" id="news-title" placeholder="Título da notícia" required>
+                    </label>
+                    <label>
+                        Mensagem
+                        <textarea id="news-message" rows="4" placeholder="Escreva a atualização..." required></textarea>
+                    </label>
+                    <label>
+                        URL da imagem (opcional)
+                        <input type="url" id="news-image-url" placeholder="https://exemplo.com/imagem.jpg">
+                    </label>
+                    <label>
+                        Upload de imagem (opcional)
+                        <input type="file" id="news-image-file" accept="image/*">
+                    </label>
+                    <div class="news-form-actions">
+                        <button type="submit" class="btn btn-primary">Publicar</button>
+                        <button type="button" class="btn btn-secondary" id="news-form-clear">Limpar</button>
+                        <button type="button" class="btn btn-secondary" id="news-download-json">Baixar JSON</button>
+                    </div>
+                </form>
+                <p class="news-admin-hint">
+                    Atalho para ativar o modo admin: <strong>Ctrl + Shift + A</strong>. Depois de editar, baixe o JSON e substitua o arquivo <strong>news-data.json</strong>.
+                </p>
+            </div>
+        </div>
+    </div>
+
     <div id="video-modal" class="modal">
         <div class="modal-content">
             <span class="close-modal" id="close-video">&times;</span>
@@ -442,6 +494,7 @@
             <div class="footer-links">
                 <a href="#" class="footer-link terms-link">Termos de Serviço</a>
                 <a href="#" class="footer-link privacy-link">Política de Privacidade</a>
+                <a href="#" class="footer-link news-link">Novidades</a>
             </div>
         </div>
     </footer>
