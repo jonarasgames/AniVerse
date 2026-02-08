@@ -128,6 +128,318 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
+document.addEventListener('DOMContentLoaded', () => {
+  const NEWS_DATA_URL = 'news-data.json';
+  const NEWS_LAST_SEEN_KEY = 'aniVerseNewsLastSeen';
+  const NEWS_TOAST_KEY = 'aniVerseNewsToastSeen';
+  const NEWS_ADMIN_PIN = 'rafaaxprs';
+  const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+
+  const newsFab = document.getElementById('news-fab');
+  const newsModal = document.getElementById('news-modal');
+  const closeNewsModal = document.getElementById('close-news-modal');
+  const newsList = document.getElementById('news-list');
+  const newsLink = document.querySelector('.news-link');
+  const newsAdminPanel = document.getElementById('news-admin-panel');
+  const newsAdminActions = document.getElementById('news-admin-actions');
+  const newsAdminToggle = document.getElementById('news-admin-toggle');
+  const newsAdminLogout = document.getElementById('news-admin-logout');
+  const newsForm = document.getElementById('news-form');
+  const newsTitle = document.getElementById('news-title');
+  const newsMessage = document.getElementById('news-message');
+  const newsImageUrl = document.getElementById('news-image-url');
+  const newsImageFile = document.getElementById('news-image-file');
+  const newsFormClear = document.getElementById('news-form-clear');
+  const newsDownloadJson = document.getElementById('news-download-json');
+  const newsDot = newsFab ? newsFab.querySelector('.news-fab-dot') : null;
+  let newsToast = null;
+
+  if (!newsModal || !newsList || !newsForm || !newsFab) return;
+
+  let newsItems = [];
+  let adminEnabled = false;
+
+  async function loadNewsItems() {
+    try {
+      const response = await fetch(NEWS_DATA_URL, { cache: 'no-store' });
+      if (!response.ok) return [];
+      const data = await response.json();
+      return Array.isArray(data) ? data : [];
+    } catch (error) {
+      return [];
+    }
+  }
+
+  function setNewsItems(items) {
+    newsItems = Array.isArray(items) ? items : [];
+  }
+
+  function getLatestItem(items) {
+    return items.reduce((latest, item) => {
+      if (!latest) return item;
+      return new Date(item.createdAt).getTime() > new Date(latest.createdAt).getTime() ? item : latest;
+    }, null);
+  }
+
+  function isRecent(item) {
+    if (!item || !item.createdAt) return false;
+    const createdAt = new Date(item.createdAt).getTime();
+    if (Number.isNaN(createdAt)) return false;
+    const ageMs = Math.max(0, Date.now() - createdAt);
+    return ageMs <= ONE_WEEK_MS;
+  }
+
+  function isAdmin() {
+    return adminEnabled;
+  }
+
+  function setAdmin(enabled) {
+    adminEnabled = enabled;
+    updateAdminUI();
+  }
+
+  function promptAdminAccess() {
+    const pin = prompt('Digite o PIN para acessar o modo admin:');
+    if (!pin) return;
+    if (pin === NEWS_ADMIN_PIN) {
+      setAdmin(true);
+      renderNews();
+      return;
+    }
+    alert('PIN incorreto.');
+  }
+
+  function readFileAsDataURL(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = () => reject(reader.error);
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function downloadNewsJsonFile(items) {
+    const payload = JSON.stringify(items, null, 2);
+    const blob = new Blob([payload], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'news-data.json';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  function updateAdminUI() {
+    const adminActive = isAdmin();
+    if (newsAdminPanel) newsAdminPanel.style.display = adminActive ? 'block' : 'none';
+    if (newsAdminActions) newsAdminActions.style.display = adminActive ? 'flex' : 'none';
+  }
+
+  function updateFabVisibility(items) {
+    const latest = getLatestItem(items);
+    const shouldShow = isRecent(latest);
+    newsFab.style.display = shouldShow ? 'flex' : 'none';
+    if (!latest || !newsDot) return;
+    const lastSeen = localStorage.getItem(NEWS_LAST_SEEN_KEY);
+    const hasNew = !lastSeen || new Date(latest.createdAt).getTime() > new Date(lastSeen).getTime();
+    newsDot.style.display = shouldShow && hasNew ? 'block' : 'none';
+    updateNewsToast(latest, shouldShow && hasNew);
+  }
+
+  function updateNewsToast(latest, shouldShow) {
+    if (!latest || !shouldShow) {
+      if (newsToast) newsToast.style.display = 'none';
+      return;
+    }
+
+    if (!newsToast) {
+      newsToast = document.createElement('div');
+      newsToast.className = 'news-toast';
+      newsToast.innerHTML = `
+        <span>Tem novidade nova no AniVerse.</span>
+        <button type="button">Ver agora</button>
+      `;
+      document.body.appendChild(newsToast);
+      const button = newsToast.querySelector('button');
+      if (button) {
+        button.addEventListener('click', () => {
+          openNewsModal();
+          newsToast.style.display = 'none';
+          localStorage.setItem(NEWS_TOAST_KEY, 'true');
+        });
+      }
+    }
+
+    if (localStorage.getItem(NEWS_TOAST_KEY) === 'true') {
+      newsToast.style.display = 'none';
+      return;
+    }
+
+    newsToast.style.display = 'flex';
+  }
+
+  function renderNews() {
+    newsList.innerHTML = '';
+    if (!newsItems.length) {
+      newsList.innerHTML = '<p>Nenhuma novidade publicada ainda.</p>';
+      updateFabVisibility(newsItems);
+      return;
+    }
+
+    newsItems
+      .slice()
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'news-card';
+        const createdAt = new Date(item.createdAt);
+        card.innerHTML = `
+          <h4>${item.title}</h4>
+          <time datetime="${item.createdAt}">${createdAt.toLocaleDateString('pt-BR')}</time>
+          <p>${item.message}</p>
+          ${item.imageUrl ? `<img src="${item.imageUrl}" alt="${item.title}" class="news-card-image">` : ''}
+        `;
+
+        if (isAdmin()) {
+          const actions = document.createElement('div');
+          actions.className = 'news-card-actions';
+          const deleteBtn = document.createElement('button');
+          deleteBtn.className = 'btn btn-secondary';
+          deleteBtn.textContent = 'Apagar';
+          deleteBtn.addEventListener('click', () => {
+            if (!confirm('Deseja apagar esta notícia?')) return;
+            setNewsItems(newsItems.filter(news => news.id !== item.id));
+            renderNews();
+          });
+          actions.appendChild(deleteBtn);
+          card.appendChild(actions);
+        }
+
+        newsList.appendChild(card);
+      });
+
+    updateFabVisibility(newsItems);
+  }
+
+  function openNewsModal() {
+    newsModal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    const latest = getLatestItem(newsItems);
+    if (latest) {
+      localStorage.setItem(NEWS_LAST_SEEN_KEY, latest.createdAt);
+      localStorage.removeItem(NEWS_TOAST_KEY);
+      updateFabVisibility(newsItems);
+    }
+  }
+
+  function closeModal() {
+    newsModal.style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
+  if (newsFab) {
+    newsFab.addEventListener('click', openNewsModal);
+  }
+  if (newsLink) {
+    newsLink.addEventListener('click', (event) => {
+      event.preventDefault();
+      openNewsModal();
+    });
+  }
+  if (closeNewsModal) {
+    closeNewsModal.addEventListener('click', closeModal);
+  }
+
+  window.addEventListener('click', (event) => {
+    if (event.target === newsModal) {
+      closeModal();
+    }
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === 'a') {
+      promptAdminAccess();
+    }
+  });
+
+  if (newsAdminToggle) {
+    newsAdminToggle.addEventListener('click', () => {
+      promptAdminAccess();
+    });
+  }
+
+  if (newsAdminLogout) {
+    newsAdminLogout.addEventListener('click', () => {
+      setAdmin(false);
+      renderNews();
+    });
+  }
+
+  if (newsFormClear) {
+    newsFormClear.addEventListener('click', () => {
+      newsForm.reset();
+    });
+  }
+
+  if (newsDownloadJson) {
+    newsDownloadJson.addEventListener('click', () => {
+      if (!isAdmin()) {
+        alert('Acesso admin necessário.');
+        return;
+      }
+      downloadNewsJsonFile(newsItems);
+    });
+  }
+
+  if (newsForm) {
+    newsForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (!isAdmin()) {
+        alert('Acesso admin necessário.');
+        return;
+      }
+
+      const title = newsTitle.value.trim();
+      const message = newsMessage.value.trim();
+      if (!title || !message) return;
+
+      let imageUrl = newsImageUrl.value.trim();
+      if (newsImageFile.files && newsImageFile.files[0]) {
+        try {
+          imageUrl = await readFileAsDataURL(newsImageFile.files[0]);
+        } catch (error) {
+          alert('Falha ao ler a imagem.');
+        }
+      }
+
+      setNewsItems([
+        {
+          id: `${Date.now()}`,
+          title,
+          message,
+          imageUrl,
+          createdAt: new Date().toISOString()
+        },
+        ...newsItems
+      ]);
+      newsForm.reset();
+      renderNews();
+    });
+  }
+
+  if (window.location.hash === '#admin-news') {
+    promptAdminAccess();
+  }
+
+  updateAdminUI();
+  loadNewsItems().then(items => {
+    setNewsItems(items);
+    renderNews();
+  });
+});
+
 // Video error helpers
 function showVideoError(msg){
   let el = document.getElementById('video-error-container');
