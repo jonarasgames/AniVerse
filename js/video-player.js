@@ -729,7 +729,7 @@
 })();
 
 // Keyboard shortcuts for video player
-document.addEventListener('keydown', (e) => {
+window.addEventListener('keydown', (e) => {
     // PRIORIDADE 1: Se modal de vídeo está aberto, responder APENAS vídeo
     const videoModal = document.getElementById('video-modal');
     const player = document.getElementById('anime-player');
@@ -804,7 +804,7 @@ document.addEventListener('keydown', (e) => {
         // IMPORTANTE: Retornar aqui para NÃO processar comandos de música
         return;
     }
-}, true);
+}, { capture: true });
 
 function updateVideoVolumeIcon() {
     const player = document.getElementById('anime-player');

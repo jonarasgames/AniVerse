@@ -493,6 +493,13 @@ function openEpisode(anime, seasonNumber, episodeIndex){
         videoModal.style.display = 'flex';
         document.body.style.overflow = 'hidden';
     }
+    const videoContainer = document.getElementById('video-player-container');
+    if (videoContainer) {
+        if (!videoContainer.hasAttribute('tabindex')) {
+            videoContainer.setAttribute('tabindex', '-1');
+        }
+        videoContainer.focus({ preventScroll: true });
+    }
     
     const season = (anime.seasons || []).find(s => s.number === seasonNumber);
     const episode = season && Array.isArray(season.episodes) ? season.episodes[episodeIndex] : null;
