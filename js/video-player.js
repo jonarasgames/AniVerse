@@ -738,10 +738,11 @@ document.addEventListener('keydown', (e) => {
         // Don't trigger if user is typing in an input
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
         const key = e.key.toLowerCase();
-        const isSpace = e.code === 'Space' || e.key === ' ';
+        const code = e.code || '';
+        const isSpace = code === 'Space' || e.key === ' ';
 
         // Prevenir ações padrão do navegador
-        if (isSpace || ['arrowleft', 'arrowright', 'arrowup', 'arrowdown', 'k', 'm', 'f'].includes(key)) {
+        if (isSpace || ['arrowleft', 'arrowright', 'arrowup', 'arrowdown', 'k', 'm', 'f'].includes(key) || code === 'KeyK') {
             e.preventDefault();
         }
         

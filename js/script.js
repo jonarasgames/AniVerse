@@ -131,6 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('DOMContentLoaded', () => {
   const NEWS_DATA_URL = 'news-data.json';
   const NEWS_LAST_SEEN_KEY = 'aniVerseNewsLastSeen';
+  const NEWS_TOAST_KEY = 'aniVerseNewsToastSeen';
   const NEWS_ADMIN_PIN = 'rafaaxprs';
   const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
@@ -151,6 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const newsFormClear = document.getElementById('news-form-clear');
   const newsDownloadJson = document.getElementById('news-download-json');
   const newsDot = newsFab ? newsFab.querySelector('.news-fab-dot') : null;
+  let newsToast = null;
 
   if (!newsModal || !newsList || !newsForm || !newsFab) return;
 
@@ -243,6 +245,39 @@ document.addEventListener('DOMContentLoaded', () => {
     const lastSeen = localStorage.getItem(NEWS_LAST_SEEN_KEY);
     const hasNew = !lastSeen || new Date(latest.createdAt).getTime() > new Date(lastSeen).getTime();
     newsDot.style.display = shouldShow && hasNew ? 'block' : 'none';
+    updateNewsToast(latest, shouldShow && hasNew);
+  }
+
+  function updateNewsToast(latest, shouldShow) {
+    if (!latest || !shouldShow) {
+      if (newsToast) newsToast.style.display = 'none';
+      return;
+    }
+
+    if (!newsToast) {
+      newsToast = document.createElement('div');
+      newsToast.className = 'news-toast';
+      newsToast.innerHTML = `
+        <span>Tem novidade nova no AniVerse.</span>
+        <button type="button">Ver agora</button>
+      `;
+      document.body.appendChild(newsToast);
+      const button = newsToast.querySelector('button');
+      if (button) {
+        button.addEventListener('click', () => {
+          openNewsModal();
+          newsToast.style.display = 'none';
+          localStorage.setItem(NEWS_TOAST_KEY, 'true');
+        });
+      }
+    }
+
+    if (localStorage.getItem(NEWS_TOAST_KEY) === 'true') {
+      newsToast.style.display = 'none';
+      return;
+    }
+
+    newsToast.style.display = 'flex';
   }
 
   function renderNews() {
@@ -294,6 +329,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const latest = getLatestItem(newsItems);
     if (latest) {
       localStorage.setItem(NEWS_LAST_SEEN_KEY, latest.createdAt);
+      localStorage.removeItem(NEWS_TOAST_KEY);
       updateFabVisibility(newsItems);
     }
   }
