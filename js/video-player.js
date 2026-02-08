@@ -488,18 +488,15 @@
         });
     }
     
-    // Center zone - single click to play/pause (only when controls visible)
+    // Center zone - single click to play/pause
     if (tapZoneCenter) {
         tapZoneCenter.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            // Only pause/play if controls are visible (to avoid accidental taps)
-            if (controlsVisible) {
-                if (player.paused) {
-                    player.play().catch(() => {});
-                } else {
-                    player.pause();
-                }
+            if (player.paused) {
+                player.play().catch(() => {});
+            } else {
+                player.pause();
             }
         });
         // Also allow double tap to hide controls
@@ -527,18 +524,30 @@
         });
     }
     
-    // PC: click on video to toggle pause/play (when controls visible)
+    // PC: click on video/container to toggle pause/play
+    const videoContainer = document.getElementById('video-player-container');
+    const togglePlayback = () => {
+        if (player.paused) {
+            player.play().catch(() => {});
+        } else {
+            player.pause();
+        }
+    };
+
     player.addEventListener('click', (e) => {
         if (e.target !== player) return;
-        // Only toggle if controls are visible
-        if (controlsVisible) {
-            if (player.paused) {
-                player.play().catch(() => {});
-            } else {
-                player.pause();
-            }
-        }
+        togglePlayback();
     });
+
+    if (videoContainer) {
+        videoContainer.addEventListener('click', (e) => {
+            if (e.target.closest('#custom-video-controls')) return;
+            if (e.target.closest('#video-info-overlay')) return;
+            if (e.target.closest('.video-banner')) return;
+            if (e.target.closest('#video-tap-zones')) return;
+            togglePlayback();
+        });
+    }
     
     // Mobile: Double-tap detection on video element for seek
     let videoLastTapTime = 0;
@@ -720,39 +729,57 @@
 })();
 
 // Keyboard shortcuts for video player
-document.addEventListener('keydown', (e) => {
+window.addEventListener('keydown', (e) => {
     // PRIORIDADE 1: Se modal de vídeo está aberto, responder APENAS vídeo
     const videoModal = document.getElementById('video-modal');
     const player = document.getElementById('anime-player');
-    
-    if (videoModal && videoModal.style.display === 'flex' && player) {
+
+    const isFullscreen = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement;
+    const isVideoActive = (videoModal && videoModal.style.display === 'flex') || isFullscreen;
+
+    if (player && isVideoActive) {
         // Don't trigger if user is typing in an input
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-        
+        const key = e.key.toLowerCase();
+        const code = e.code || '';
+        const isSpace = code === 'Space' || e.key === ' ' || e.key === 'Spacebar';
+
         // Prevenir ações padrão do navegador
-        if ([' ', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'k', 'm', 'f'].includes(e.key)) {
+        if (isSpace || ['arrowleft', 'arrowright', 'arrowup', 'arrowdown', 'k', 'm', 'f'].includes(key) || code === 'KeyK') {
             e.preventDefault();
         }
         
-        switch(e.key) {
-            case ' ':
+        const togglePlayback = () => {
+            if (player.paused) {
+                player.play().catch(() => {});
+            } else {
+                player.pause();
+            }
+        };
+
+        if (isSpace) {
+            togglePlayback();
+            return;
+        }
+
+        switch(key) {
             case 'k':
-                if (player.paused) {
-                    player.play().catch(() => {});
-                } else {
-                    player.pause();
+                togglePlayback();
+                break;
+            default:
+                if (code === 'KeyK') {
+                    togglePlayback();
                 }
                 break;
-                
-            case 'ArrowLeft':
+            case 'arrowleft':
                 player.currentTime = Math.max(0, player.currentTime - 5);
                 break;
                 
-            case 'ArrowRight':
+            case 'arrowright':
                 player.currentTime = Math.min(player.duration || 0, player.currentTime + 5);
                 break;
                 
-            case 'ArrowUp':
+            case 'arrowup':
                 player.volume = Math.min(1, player.volume + 0.1);
                 player.muted = false;
                 updateVideoVolumeIcon();
@@ -760,7 +787,7 @@ document.addEventListener('keydown', (e) => {
                 localStorage.setItem('videoVolume', player.volume.toString());
                 break;
                 
-            case 'ArrowDown':
+            case 'arrowdown':
                 player.volume = Math.max(0, player.volume - 0.1);
                 updateVideoVolumeIcon();
                 // Save video volume preference
@@ -785,7 +812,7 @@ document.addEventListener('keydown', (e) => {
         // IMPORTANTE: Retornar aqui para NÃO processar comandos de música
         return;
     }
-});
+}, { capture: true });
 
 function updateVideoVolumeIcon() {
     const player = document.getElementById('anime-player');

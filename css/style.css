@@ -169,6 +169,65 @@ nav a:hover, nav a.active {
     transform: scale(1.1);
 }
 
+.news-fab {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(26, 26, 46, 0.85);
+    color: white;
+    box-shadow: var(--shadow);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1500;
+    transition: var(--transition);
+}
+
+.news-fab:hover {
+    background: rgba(26, 26, 46, 1);
+    transform: translateY(-2px);
+}
+
+.news-fab-dot {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    display: none;
+}
+
+.news-toast {
+    position: fixed;
+    right: 24px;
+    bottom: 84px;
+    background: rgba(26, 26, 46, 0.95);
+    color: #fff;
+    padding: 12px 16px;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    display: none;
+    align-items: center;
+    gap: 12px;
+    z-index: 1500;
+}
+
+.news-toast button {
+    background: var(--primary-color);
+    color: #fff;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
 .hero {
     background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('../images/bg-default.jpg');
     background-size: cover;
@@ -517,6 +576,154 @@ nav a:hover, nav a.active {
     border-radius: 8px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
     animation: slideUp 0.4s ease;
+}
+
+.news-modal-content {
+    max-width: 720px;
+}
+
+.news-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.news-modal-subtitle {
+    color: #666;
+    margin-top: 6px;
+}
+
+.news-admin-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.news-list {
+    display: grid;
+    gap: 16px;
+}
+
+.news-card {
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 8px;
+    padding: 16px;
+    background: var(--card-bg);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.news-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    cursor: pointer;
+}
+
+.news-card-summary {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+}
+
+.news-card-thumb {
+    width: 72px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+.news-card-toggle {
+    border: none;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 6px;
+    padding: 4px 8px;
+    cursor: pointer;
+}
+
+.news-card-body {
+    margin-top: 12px;
+    display: none;
+}
+
+.news-card.is-open .news-card-body {
+    display: block;
+}
+
+.news-card h4 {
+    margin-bottom: 6px;
+}
+
+.news-card time {
+    font-size: 0.85rem;
+    color: #777;
+}
+
+.news-card p {
+    margin-top: 10px;
+}
+
+.news-card-image {
+    width: 100%;
+    max-height: 240px;
+    object-fit: cover;
+    border-radius: 6px;
+    margin-top: 12px;
+}
+
+.news-card-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 12px;
+}
+
+.news-admin-panel {
+    display: none;
+    margin-top: 24px;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    padding-top: 16px;
+}
+
+.news-form {
+    display: grid;
+    gap: 12px;
+}
+
+.news-form label {
+    display: grid;
+    gap: 6px;
+    font-weight: 600;
+}
+
+.news-form input,
+.news-form textarea {
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    font-family: inherit;
+}
+
+.news-form-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.news-formatting {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.news-formatting .btn {
+    padding: 6px 10px;
+}
+
+.news-admin-hint {
+    margin-top: 12px;
+    font-size: 0.85rem;
+    color: #777;
 }
 
 .close-modal, .close-terms, .close-privacy, .close-profile {
