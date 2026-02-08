@@ -131,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('DOMContentLoaded', () => {
   const NEWS_DATA_URL = 'news-data.json';
   const NEWS_LAST_SEEN_KEY = 'aniVerseNewsLastSeen';
-  const NEWS_ADMIN_PIN = 'mudar-este-pin';
+  const NEWS_ADMIN_PIN = 'rafaaxprs';
   const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
   const newsFab = document.getElementById('news-fab');
@@ -181,7 +181,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function isRecent(item) {
     if (!item || !item.createdAt) return false;
-    return Date.now() - new Date(item.createdAt).getTime() <= ONE_WEEK_MS;
+    const createdAt = new Date(item.createdAt).getTime();
+    if (Number.isNaN(createdAt)) return false;
+    const ageMs = Math.max(0, Date.now() - createdAt);
+    return ageMs <= ONE_WEEK_MS;
   }
 
   function isAdmin() {

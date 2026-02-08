@@ -524,15 +524,30 @@
         });
     }
     
-    // PC: click on video to toggle pause/play
-    player.addEventListener('click', (e) => {
-        if (e.target !== player) return;
+    // PC: click on video/container to toggle pause/play
+    const videoContainer = document.getElementById('video-player-container');
+    const togglePlayback = () => {
         if (player.paused) {
             player.play().catch(() => {});
         } else {
             player.pause();
         }
+    };
+
+    player.addEventListener('click', (e) => {
+        if (e.target !== player) return;
+        togglePlayback();
     });
+
+    if (videoContainer) {
+        videoContainer.addEventListener('click', (e) => {
+            if (e.target.closest('#custom-video-controls')) return;
+            if (e.target.closest('#video-info-overlay')) return;
+            if (e.target.closest('.video-banner')) return;
+            if (e.target.closest('#video-tap-zones')) return;
+            togglePlayback();
+        });
+    }
     
     // Mobile: Double-tap detection on video element for seek
     let videoLastTapTime = 0;
@@ -730,24 +745,23 @@ document.addEventListener('keydown', (e) => {
             e.preventDefault();
         }
         
+        const togglePlayback = () => {
+            if (player.paused) {
+                player.play().catch(() => {});
+            } else {
+                player.pause();
+            }
+        };
+
+        if (isSpace) {
+            togglePlayback();
+            return;
+        }
+
         switch(key) {
             case 'k':
-                if (player.paused) {
-                    player.play().catch(() => {});
-                } else {
-                    player.pause();
-                }
+                togglePlayback();
                 break;
-            default:
-                if (isSpace) {
-                    if (player.paused) {
-                        player.play().catch(() => {});
-                    } else {
-                        player.pause();
-                    }
-                }
-                break;
-                
             case 'arrowleft':
                 player.currentTime = Math.max(0, player.currentTime - 5);
                 break;
@@ -789,7 +803,7 @@ document.addEventListener('keydown', (e) => {
         // IMPORTANTE: Retornar aqui para NÃO processar comandos de música
         return;
     }
-});
+}, true);
 
 function updateVideoVolumeIcon() {
     const player = document.getElementById('anime-player');
