@@ -733,13 +733,16 @@ window.addEventListener('keydown', (e) => {
     // PRIORIDADE 1: Se modal de vídeo está aberto, responder APENAS vídeo
     const videoModal = document.getElementById('video-modal');
     const player = document.getElementById('anime-player');
-    
-    if (videoModal && videoModal.style.display === 'flex' && player) {
+
+    const isFullscreen = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement;
+    const isVideoActive = (videoModal && videoModal.style.display === 'flex') || isFullscreen;
+
+    if (player && isVideoActive) {
         // Don't trigger if user is typing in an input
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
         const key = e.key.toLowerCase();
         const code = e.code || '';
-        const isSpace = code === 'Space' || e.key === ' ';
+        const isSpace = code === 'Space' || e.key === ' ' || e.key === 'Spacebar';
 
         // Prevenir ações padrão do navegador
         if (isSpace || ['arrowleft', 'arrowright', 'arrowup', 'arrowdown', 'k', 'm', 'f'].includes(key) || code === 'KeyK') {
@@ -762,6 +765,11 @@ window.addEventListener('keydown', (e) => {
         switch(key) {
             case 'k':
                 togglePlayback();
+                break;
+            default:
+                if (code === 'KeyK') {
+                    togglePlayback();
+                }
                 break;
             case 'arrowleft':
                 player.currentTime = Math.max(0, player.currentTime - 5);
