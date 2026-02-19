@@ -2645,6 +2645,305 @@
       "year": 2023,
       "banner": "https://files.catbox.moe/q408m7.webp",
       "thumbnail": "https://files.catbox.moe/y7c8ut.webp"
+    },
+    {
+      "id": 33,
+      "title": "Panty & Stocking with Garterbelt",
+      "type": "anime",
+      "seasons": [
+        {
+          "number": 1,
+          "episodes": [
+            {
+              "title": "Episódio 1",
+              "duration": 1420,
+              "videoUrl": "https://www.udrop.com/file/Oe9t/1_-_Excrecão_Sem_Honra_e_Nem_Humildade.mp4",
+              "opening": {
+                "start": 0,
+                "end": 31
+              }
+            },
+            {
+              "title": "Episódio 2",
+              "duration": 1420,
+              "videoUrl": "https://www.udrop.com/file/Oe9u/2_-_Tumulto_na_Colméia.mp4",
+              "opening": {
+                "start": 0,
+                "end": 31
+              }
+            },
+            {
+              "title": "Episódio 3",
+              "duration": 1420,
+              "videoUrl": "https://www.udrop.com/file/Oe9v/3_-_Clube_da_Luta.mp4",
+              "opening": {
+                "start": 0,
+                "end": 31
+              }
+            },
+            {
+              "title": "Episódio 4",
+              "duration": 1419,
+              "videoUrl": "https://www.udrop.com/file/Oe9w/4_-_Síndrome_da_Dieta.mp4",
+              "opening": {
+                "start": 0,
+                "end": 31
+              }
+            },
+            {
+              "title": "Episódio 5",
+              "duration": 1420,
+              "videoUrl": "https://www.udrop.com/file/Oefw/5_-_Episódio_5.mp4",
+              "opening": {
+                "start": 0,
+                "end": 31
+              }
+            },
+            {
+              "title": "Episódio 6",
+              "duration": 1420,
+              "videoUrl": "https://www.udrop.com/file/Oefy/6_-_Episódio_6.mp4",
+              "opening": {
+                "start": 0,
+                "end": 31
+              }
+            },
+            {
+              "title": "Episódio 7",
+              "duration": 1419,
+              "videoUrl": "https://www.udrop.com/file/Oefx/7_-_Episódio_7.mp4",
+              "opening": {
+                "start": 0,
+                "end": 31
+              }
+            },
+            {
+              "title": "Episódio 8",
+              "duration": 1419,
+              "videoUrl": "https://www.udrop.com/file/OefA/8_-_Episódio_8.mp4",
+              "opening": {
+                "start": 0,
+                "end": 31
+              }
+            },
+            {
+              "title": "Episódio 9",
+              "duration": 1419,
+              "videoUrl": "https://www.udrop.com/file/Oefz/9_-_Episódio_9.mp4",
+              "opening": {
+                "start": 0,
+                "end": 31
+              }
+            },
+            {
+              "title": "Episódio 10",
+              "duration": 1419,
+              "videoUrl": "https://www.udrop.com/file/OefB/10_-_Episódio_10.mp4",
+              "opening": {
+                "start": 0,
+                "end": 31
+              }
+            },
+            {
+              "title": "Episódio 11",
+              "duration": 1419,
+              "videoUrl": "https://www.udrop.com/file/OefC/11_-_Episódio_11.mp4",
+              "opening": {
+                "start": 0,
+                "end": 6
+              }
+            },
+            {
+              "title": "Episódio 12",
+              "duration": 1420,
+              "videoUrl": "https://www.udrop.com/file/OhZy/12_-_Episódio_12.mp4",
+              "opening": {
+                "start": 0,
+                "end": 4
+              }
+            },
+            {
+              "title": "Episódio 13",
+              "duration": 1420,
+              "videoUrl": "https://www.udrop.com/file/OhZz/13_-_Episódio_13.mp4"
+            },
+            {
+              "title": "OVA - Episódio 14",
+              "duration": 517,
+              "videoUrl": "https://www.udrop.com/file/OhZx/14_-_Episódio_14_OVA.mp4",
+              "opening": {
+                "start": 0,
+                "end": 13
+              }
+            }
+          ],
+          "name": "Panty & Stocking with Garterbelt"
+        },
+        {
+          "number": 2,
+          "episodes": [
+            {
+              "title": "Episódio 1",
+              "duration": 1445,
+              "videoUrl": "https://www.udrop.com/file/OhZD/Episódio_01.mp4"
+            },
+            {
+              "title": "Episódio 2",
+              "duration": 1476,
+              "videoUrl": "https://www.udrop.com/file/OhZC/Episódio_02.mp4",
+              "opening": {
+                "start": 0,
+                "end": 30
+              }
+            },
+            {
+              "title": "Episódio 3",
+              "duration": 1446,
+              "videoUrl": "https://www.udrop.com/file/OhZB/Episódio_03.mp4",
+              "opening": {
+                "start": 0,
+                "end": 30
+              }
+            },
+            {
+              "title": "Episódio 4",
+              "duration": 1519,
+              "videoUrl": "https://www.udrop.com/file/OhZE/Episódio_04.mp4",
+              "opening": {
+                "start": 0,
+                "end": 30
+              }
+            },
+            {
+              "title": "Episódio 5",
+              "duration": 1447,
+              "videoUrl": "https://www.udrop.com/file/OhZF/Episódio_05.mp4",
+              "opening": {
+                "start": 0,
+                "end": 30
+              }
+            },
+            {
+              "title": "Episódio 6",
+              "duration": 1475,
+              "videoUrl": "https://www.udrop.com/file/OhZH/Episódio_06.mp4",
+              "opening": {
+                "start": 0,
+                "end": 30
+              }
+            },
+            {
+              "title": "Episódio 7",
+              "duration": 1460,
+              "videoUrl": "https://www.udrop.com/file/OhZG/Episódio_07.mp4",
+              "opening": {
+                "start": 0,
+                "end": 30
+              }
+            },
+            {
+              "title": "Episódio 8",
+              "duration": 1446,
+              "videoUrl": "https://www.udrop.com/file/OhZI/Episódio_08.mp4",
+              "opening": {
+                "start": 0,
+                "end": 30
+              }
+            },
+            {
+              "title": "Episódio 9",
+              "duration": 1490,
+              "videoUrl": "https://www.udrop.com/file/OhZK/Episódio_09.mp4",
+              "opening": {
+                "start": 0,
+                "end": 30
+              }
+            },
+            {
+              "title": "Episódio 10",
+              "duration": 1444,
+              "videoUrl": "https://www.udrop.com/file/OhZJ/Episódio_10.mp4",
+              "opening": {
+                "start": 0,
+                "end": 30
+              }
+            },
+            {
+              "title": "Episódio 11",
+              "duration": 1520,
+              "videoUrl": "https://www.udrop.com/file/OhZL/Episódio_11.mp4",
+              "opening": {
+                "start": 0,
+                "end": 30
+              }
+            },
+            {
+              "title": "Episódio 12",
+              "duration": 1447,
+              "videoUrl": "https://www.udrop.com/file/OhZM/Episódio_12.mp4",
+              "opening": {
+                "start": 0,
+                "end": 30
+              }
+            },
+            {
+              "title": "Episódio 13",
+              "duration": 1537,
+              "videoUrl": "https://www.udrop.com/file/OhZN/Episódio_13.mp4"
+            }
+          ],
+          "name": "New Panty & Stocking with Garterbelt"
+        }
+      ],
+      "categories": [],
+      "rating_age": "18",
+      "rating_content": [
+        "Violência Fantasiosa",
+        "Presença de Sangue",
+        "Nudez",
+        "Conteúdo Sexual",
+        "Linguagem Imprópria",
+        "Consumo de Drogas Lícitas (álcool, cigarro)"
+      ],
+      "osts": {},
+      "year": 2010,
+      "rating": 7.3,
+      "dateAdded": "2026-02-19",
+      "description": "Dois anjos, Panty e Stocking, são expulsos do céu por mau comportamento e enviados para caçar fantasmas pelo Garterbelt, um padre da Cidade Derrotada.",
+      "thumbnail": "https://files.catbox.moe/foucdf.jpg",
+      "banner": "https://files.catbox.moe/j19ztl.jpg",
+      "openings": [
+        {
+          "title": "Theme for Panty & Stocking",
+          "type": "opening",
+          "artist": "Hoshina Anniversary",
+          "cover": "https://files.catbox.moe/j2fljo.jpg",
+          "audio": "https://files.catbox.moe/6bqo43.mp3"
+        },
+        {
+          "title": "Theme of New PANTY & STOCKING",
+          "type": "opening",
+          "audio": "https://files.catbox.moe/1y75z1.mp3",
+          "cover": "https://files.catbox.moe/jouvhw.jpeg",
+          "artist": "TeddyLoid, ☆Taku Takahashi Feat. Ashley, E.V.P"
+        }
+      ],
+      "endings": [
+        {
+          "title": "Fallen Angel",
+          "type": "ending",
+          "artist": "Mitsunori Ikeda, Aimee B",
+          "cover": "https://files.catbox.moe/j2fljo.jpg",
+          "audio": "https://files.catbox.moe/m0z0lz.mp3"
+        },
+        {
+          "title": "Reckless",
+          "type": "ending",
+          "cover": "https://files.catbox.moe/ae40gn.webp",
+          "artist": "m-flo, Adee A",
+          "audio": "https://files.catbox.moe/q3uey4.mp3"
+        }
+      ]
     }
   ],
   "collections": [
