@@ -83,7 +83,7 @@
     right: 0 !important;
     background: linear-gradient(transparent, rgba(0,0,0,0.9)) !important;
     padding: 30px 20px 20px !important;
-    z-index: 10 !important;
+    z-index: 2000 !important;
 }
 
 /* Aumentar tamanho dos botões em fullscreen */

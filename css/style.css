@@ -2113,6 +2113,14 @@ footer {
   padding: 20px 15px 15px;
 }
 
+
+#video-player-container:fullscreen #custom-video-controls,
+#video-player-container.is-fullscreen #custom-video-controls,
+#video-player-container:-webkit-full-screen #custom-video-controls {
+    z-index: 2000 !important;
+    pointer-events: auto !important;
+}
+
 /* Auto-hide controls in fullscreen mode */
 #video-player-container:fullscreen #custom-video-controls,
 #video-player-container.is-fullscreen #custom-video-controls,
