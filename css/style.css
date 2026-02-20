@@ -748,6 +748,12 @@ nav a:hover, nav a.active {
     position: relative;
 }
 
+#custom-video-controls .controls-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
 /* Banner with proper aspect ratio (1000x185 = 5.41:1) */
 #player-banner {
     width: 100%;
@@ -1833,7 +1839,7 @@ footer {
         margin: 0 auto 20px;
     }
 
-    .controls-row {
+    .music-modal-content .controls-row {
         flex-direction: column;
         gap: 15px;
     }
@@ -2687,6 +2693,15 @@ html.theme-dark select {
     
     #custom-video-controls {
         padding: 8px;
+    }
+
+    #custom-video-controls .controls-row {
+        flex-direction: row !important;
+        flex-wrap: nowrap;
+    }
+
+    #custom-video-controls .controls-row:last-child {
+        justify-content: flex-start;
     }
     
     .controls-row {
