@@ -530,28 +530,293 @@ function showVideoError(msg){
 }
 function clearVideoError(){ const el=document.getElementById('video-error-container'); if(el) el.remove(); }
 
-function onVideoSetSource(player){
-  if (!player) return;
-  if (videoLoadTimeout){ clearTimeout(videoLoadTimeout); videoLoadTimeout = null; }
-  clearVideoError();
-  videoLoadTimeout = setTimeout(() => {
-    if (player && player.readyState < 3 && !player.paused) showVideoError('Tempo de carregamento excedido. Clique no play para tentar novamente.');
-    videoLoadTimeout = null;
-  }, 15000);
+function parseQualityRank(source){
+  const raw = `${source.quality || source.label || ''}`;
+  const match = raw.match(/(\d{3,4})/);
+  if (match) return parseInt(match[1], 10);
 
-  const onPlaying = function(){
+  const lower = raw.toLowerCase();
+  if (lower.includes('4k')) return 2160;
+  if (lower.includes('fullhd')) return 1080;
+  if (lower.includes('hd')) return 720;
+  if (lower.includes('sd')) return 480;
+  return 0;
+}
+
+function normalizeEpisodeSources(episode){
+  const sources = [];
+  if (!episode) return sources;
+
+  if (Array.isArray(episode.videoSources)) {
+    episode.videoSources.forEach((source, idx) => {
+      if (source && source.url) {
+        sources.push({
+          url: source.url,
+          label: source.label || source.quality || `Fonte ${idx + 1}`,
+          rank: parseQualityRank(source)
+        });
+      }
+    });
+  }
+
+  if (episode.videoQualities && typeof episode.videoQualities === 'object') {
+    Object.entries(episode.videoQualities).forEach(([quality, url]) => {
+      if (!url) return;
+      sources.push({
+        url,
+        label: quality,
+        rank: parseQualityRank({ quality })
+      });
+    });
+  }
+
+  if (episode.videoUrl) {
+    sources.push({
+      url: episode.videoUrl,
+      label: episode.videoQuality || 'Auto',
+      rank: parseQualityRank({ quality: episode.videoQuality || '' })
+    });
+  }
+
+  const seen = new Set();
+  const unique = sources.filter((source) => {
+    if (!source || !source.url || seen.has(source.url)) return false;
+    seen.add(source.url);
+    return true;
+  });
+
+  return unique.sort((a, b) => (b.rank || 0) - (a.rank || 0));
+}
+
+function addCacheBust(url){
+  try {
+    const parsed = new URL(url, window.location.href);
+    parsed.searchParams.set('_retry', String(Date.now()));
+    return parsed.toString();
+  } catch (_) {
+    const sep = url.includes('?') ? '&' : '?';
+    return `${url}${sep}_retry=${Date.now()}`;
+  }
+}
+
+function onVideoSetSource(player, episode){
+  if (!player || !episode) return;
+
+  if (player.__adaptiveCleanup) {
+    try { player.__adaptiveCleanup(); } catch (_) {}
+    player.__adaptiveCleanup = null;
+  }
+
+  const sources = normalizeEpisodeSources(episode);
+  if (!sources.length) return;
+
+  const state = {
+    token: Date.now() + Math.random(),
+    sources,
+    currentIndex: 0,
+    retriesInSource: 0,
+    maxRetriesPerSource: 3,
+    loadTimeoutMs: 15000,
+    loadTimeoutId: null,
+    retryTimeoutId: null,
+    upgradeIntervalId: null,
+    recoverInFlight: false,
+    fallbackInUse: false
+  };
+  player.__adaptivePlayback = state;
+
+  const clearTimers = () => {
+    if (state.loadTimeoutId) {
+      clearTimeout(state.loadTimeoutId);
+      state.loadTimeoutId = null;
+    }
+    if (state.retryTimeoutId) {
+      clearTimeout(state.retryTimeoutId);
+      state.retryTimeoutId = null;
+    }
+  };
+
+  const setLoadTimeout = () => {
+    if (state.loadTimeoutId) clearTimeout(state.loadTimeoutId);
+    state.loadTimeoutId = setTimeout(() => {
+      recoverPlayback('timeout');
+    }, state.loadTimeoutMs);
+  };
+
+  const setSource = (index, options = {}) => {
+    const source = state.sources[index];
+    if (!source || player.__adaptivePlayback?.token !== state.token) return;
+
+    const shouldAutoPlay = options.autoPlay !== false;
+    const preserveTime = Number.isFinite(options.preserveTime) ? options.preserveTime : (player.currentTime || 0);
+
+    state.currentIndex = index;
+
+    if (state.upgradeIntervalId && index === 0) {
+      clearInterval(state.upgradeIntervalId);
+      state.upgradeIntervalId = null;
+      state.fallbackInUse = false;
+    }
+
+    let nextUrl = source.url;
+    if (options.cacheBust) nextUrl = addCacheBust(nextUrl);
+
     if (videoLoadTimeout){ clearTimeout(videoLoadTimeout); videoLoadTimeout = null; }
     clearVideoError();
-    player.removeEventListener('playing', onPlaying);
-  };
-  player.addEventListener('playing', onPlaying);
 
-  const onError = function(){
-    showVideoError('Erro ao reproduzir. Clique no play para tentar novamente.');
-    if (videoLoadTimeout){ clearTimeout(videoLoadTimeout); videoLoadTimeout = null; }
-    player.removeEventListener('error', onError);
+    player.src = nextUrl;
+    player.load();
+
+    if (preserveTime > 0) {
+      player.addEventListener('loadedmetadata', () => {
+        if (player.__adaptivePlayback?.token !== state.token) return;
+        try { player.currentTime = preserveTime; } catch (_) {}
+      }, { once: true });
+    }
+
+    setLoadTimeout();
+
+    if (shouldAutoPlay) {
+      player.play().catch(() => {});
+    }
   };
-  player.addEventListener('error', onError);
+
+  const tryBackgroundUpgrade = () => {
+    if (state.currentIndex <= 0) return;
+    if (state.upgradeIntervalId) return;
+
+    state.upgradeIntervalId = setInterval(() => {
+      if (player.__adaptivePlayback?.token !== state.token) return;
+      const targetIndex = state.currentIndex - 1;
+      const target = state.sources[targetIndex];
+      if (!target) return;
+
+      const probe = document.createElement('video');
+      let settled = false;
+      const cleanupProbe = () => {
+        probe.removeAttribute('src');
+        probe.load();
+      };
+
+      const success = () => {
+        if (settled) return;
+        settled = true;
+        cleanupProbe();
+
+        if (player.__adaptivePlayback?.token !== state.token) return;
+        const resumeFrom = player.currentTime || 0;
+        const wasPlaying = !player.paused;
+        showVideoError(`Conexão estabilizada. Voltando para ${target.label || 'qualidade maior'}...`);
+        setTimeout(clearVideoError, 1400);
+
+        state.fallbackInUse = targetIndex > 0;
+        state.retriesInSource = 0;
+        setSource(targetIndex, { preserveTime: resumeFrom, autoPlay: wasPlaying, cacheBust: true });
+      };
+
+      const fail = () => {
+        if (settled) return;
+        settled = true;
+        cleanupProbe();
+      };
+
+      probe.preload = 'metadata';
+      probe.muted = true;
+      probe.addEventListener('loadedmetadata', success, { once: true });
+      probe.addEventListener('canplay', success, { once: true });
+      probe.addEventListener('error', fail, { once: true });
+      setTimeout(fail, 6000);
+      probe.src = addCacheBust(target.url);
+      probe.load();
+    }, 30000);
+  };
+
+  const recoverPlayback = (reason) => {
+    if (player.__adaptivePlayback?.token !== state.token || state.recoverInFlight) return;
+    state.recoverInFlight = true;
+
+    clearTimers();
+
+    const timeSnapshot = player.currentTime || 0;
+
+    if (state.retriesInSource < state.maxRetriesPerSource) {
+      state.retriesInSource += 1;
+      showVideoError(`Reconectando vídeo (${state.retriesInSource}/${state.maxRetriesPerSource})...`);
+      state.retryTimeoutId = setTimeout(() => {
+        state.recoverInFlight = false;
+        setSource(state.currentIndex, { preserveTime: timeSnapshot, autoPlay: true, cacheBust: true });
+      }, 700);
+      return;
+    }
+
+    if (state.currentIndex < state.sources.length - 1) {
+      const nextIndex = state.currentIndex + 1;
+      const nextSource = state.sources[nextIndex];
+      state.currentIndex = nextIndex;
+      state.retriesInSource = 0;
+      state.fallbackInUse = true;
+      showVideoError(`Internet instável. Reproduzindo em ${nextSource.label || 'qualidade menor'} para evitar travamentos...`);
+      state.retryTimeoutId = setTimeout(() => {
+        state.recoverInFlight = false;
+        setSource(nextIndex, { preserveTime: timeSnapshot, autoPlay: true, cacheBust: true });
+      }, 900);
+      return;
+    }
+
+    const reasonLabel = reason === 'timeout'
+      ? 'carregamento excedeu o tempo limite'
+      : 'houve falha na reprodução';
+    showVideoError(`Não foi possível reproduzir agora (${reasonLabel}). Tente novamente em alguns instantes.`);
+    state.recoverInFlight = false;
+  };
+
+  const handlePlaying = () => {
+    if (player.__adaptivePlayback?.token !== state.token) return;
+    clearTimers();
+    clearVideoError();
+    state.recoverInFlight = false;
+    state.retriesInSource = 0;
+    if (state.fallbackInUse) tryBackgroundUpgrade();
+  };
+
+  const handleCanPlay = () => {
+    if (player.__adaptivePlayback?.token !== state.token) return;
+    if (state.loadTimeoutId) {
+      clearTimeout(state.loadTimeoutId);
+      state.loadTimeoutId = null;
+    }
+  };
+
+  const handleWaiting = () => {
+    if (player.__adaptivePlayback?.token !== state.token) return;
+    if (!state.fallbackInUse) return;
+    showVideoError('Carregando... Ajustando qualidade automaticamente');
+  };
+
+  const handleError = () => {
+    recoverPlayback('error');
+  };
+
+  player.addEventListener('playing', handlePlaying);
+  player.addEventListener('canplay', handleCanPlay);
+  player.addEventListener('waiting', handleWaiting);
+  player.addEventListener('stalled', handleWaiting);
+  player.addEventListener('error', handleError);
+
+  player.__adaptiveCleanup = () => {
+    clearTimers();
+    if (state.upgradeIntervalId) {
+      clearInterval(state.upgradeIntervalId);
+      state.upgradeIntervalId = null;
+    }
+    player.removeEventListener('playing', handlePlaying);
+    player.removeEventListener('canplay', handleCanPlay);
+    player.removeEventListener('waiting', handleWaiting);
+    player.removeEventListener('stalled', handleWaiting);
+    player.removeEventListener('error', handleError);
+  };
+
+  setSource(0, { autoPlay: true });
 }
 
 // openEpisode helper: set src, resume, banner, opening
@@ -582,7 +847,7 @@ function openEpisode(anime, seasonNumber, episodeIndex){
     const season = (anime.seasons || []).find(s => s.number === seasonNumber);
     const episode = season && Array.isArray(season.episodes) ? season.episodes[episodeIndex] : null;
     const player = document.getElementById('anime-player'); if (!player) return;
-    if (episode && episode.videoUrl){ player.src = episode.videoUrl; onVideoSetSource(player); }
+    if (episode){ onVideoSetSource(player, episode); }
     const bannerEl = document.querySelector('.video-banner'); const bannerUrl = anime.banner || anime.cover || 'images/bg-default.jpg';
     if (bannerEl) bannerEl.style.backgroundImage = `url('${bannerUrl}')`;
     if (episode && episode.opening && typeof episode.opening.start === 'number' && typeof episode.opening.end === 'number') window.updateOpeningData && window.updateOpeningData({ start: episode.opening.start, end: episode.opening.end }); else window.updateOpeningData && window.updateOpeningData(null);
