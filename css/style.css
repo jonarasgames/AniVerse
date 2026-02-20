@@ -748,6 +748,23 @@ nav a:hover, nav a.active {
     position: relative;
 }
 
+#custom-video-controls .controls-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+
+#custom-video-controls {
+    position: relative;
+    z-index: 1200;
+    pointer-events: auto;
+}
+
+#custom-video-controls .timeline-container {
+    pointer-events: auto;
+}
+
 /* Banner with proper aspect ratio (1000x185 = 5.41:1) */
 #player-banner {
     width: 100%;
@@ -1833,7 +1850,7 @@ footer {
         margin: 0 auto 20px;
     }
 
-    .controls-row {
+    .music-modal-content .controls-row {
         flex-direction: column;
         gap: 15px;
     }
@@ -2105,6 +2122,14 @@ footer {
   z-index: 10000;
   background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%);
   padding: 20px 15px 15px;
+}
+
+
+#video-player-container:fullscreen #custom-video-controls,
+#video-player-container.is-fullscreen #custom-video-controls,
+#video-player-container:-webkit-full-screen #custom-video-controls {
+    z-index: 2000 !important;
+    pointer-events: auto !important;
 }
 
 /* Auto-hide controls in fullscreen mode */
@@ -2688,6 +2713,15 @@ html.theme-dark select {
     #custom-video-controls {
         padding: 8px;
     }
+
+    #custom-video-controls .controls-row {
+        flex-direction: row !important;
+        flex-wrap: nowrap;
+    }
+
+    #custom-video-controls .controls-row:last-child {
+        justify-content: flex-start;
+    }
     
     .controls-row {
         gap: 5px !important;
@@ -2927,7 +2961,7 @@ html.theme-dark select {
     top: 0;
     left: 0;
     right: 0;
-    bottom: 60px; /* Above controls */
+    bottom: clamp(90px, 16vh, 140px); /* Keep clear of controls across portrait/landscape/fullscreen */
     display: flex;
     z-index: 500;
     pointer-events: none;
@@ -3045,6 +3079,8 @@ html.theme-dark select {
     position: relative;
     cursor: pointer;
     transition: height 0.1s ease;
+    touch-action: none;
+    user-select: none;
 }
 
 .timeline-container:hover {
