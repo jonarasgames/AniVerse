@@ -345,6 +345,11 @@
     
     // Controls visibility state for click-to-pause
     let controlsVisible = true;
+    let suppressTapToggleUntil = 0;
+
+    function shouldSuppressTapToggle() {
+        return Date.now() < suppressTapToggleUntil;
+    }
 
     function setControlsVisibility(visible) {
         const container = document.getElementById('video-player-container');
@@ -455,6 +460,11 @@
             }
         });
         tapZoneLeft.addEventListener('click', (e) => {
+            if (shouldSuppressTapToggle()) {
+                e.preventDefault();
+                return;
+            }
+
             // Single click - toggle controls visibility
             setControlsVisibility(!controlsVisible);
         });
@@ -476,6 +486,11 @@
             }
         });
         tapZoneRight.addEventListener('click', (e) => {
+            if (shouldSuppressTapToggle()) {
+                e.preventDefault();
+                return;
+            }
+
             // Single click - toggle controls visibility
             setControlsVisibility(!controlsVisible);
         });
@@ -486,6 +501,11 @@
         tapZoneCenter.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
+
+            if (shouldSuppressTapToggle()) {
+                return;
+            }
+
             if (player.paused) {
                 player.play().catch(() => {});
             } else {
@@ -578,6 +598,10 @@
             // Single tap - toggle controls
             videoLastTapTime = currentTime;
             videoLastTapZone = zone;
+
+            if (shouldSuppressTapToggle()) {
+                return;
+            }
             
             setControlsVisibility(!controlsVisible);
         }
@@ -655,12 +679,17 @@
             showControls();
         });
         
-        // Touchstart should only keep controls alive when already visible.
-        // If we force-show here, touchend single tap toggles right after and causes a flicker.
+        // Touch behavior:
+        // - If controls are already visible, keep the auto-hide timer alive.
+        // - If controls are hidden, first touch should only reveal controls (no immediate re-toggle).
         container.addEventListener('touchstart', () => {
             if (controlsVisible) {
                 showControls();
+                return;
             }
+
+            setControlsVisibility(true);
+            suppressTapToggleUntil = Date.now() + 350;
         }, { passive: true });
         
         // When mouse leaves container, start hide timer
