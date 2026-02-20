@@ -345,6 +345,19 @@
     
     // Controls visibility state for click-to-pause
     let controlsVisible = true;
+
+    function setControlsVisibility(visible) {
+        const container = document.getElementById('video-player-container');
+        if (!container) return;
+
+        if (visible) {
+            showControls();
+            return;
+        }
+
+        // Manual toggle should work even outside fullscreen
+        hideControls(true);
+    }
     
     // Update overlay info when video metadata changes
     function updateVideoOverlay() {
@@ -443,17 +456,7 @@
         });
         tapZoneLeft.addEventListener('click', (e) => {
             // Single click - toggle controls visibility
-            const container = document.getElementById('video-player-container');
-            if (container) {
-                controlsVisible = !controlsVisible;
-                if (controlsVisible) {
-                    container.classList.remove('controls-hidden');
-                    container.classList.add('controls-visible');
-                } else {
-                    container.classList.add('controls-hidden');
-                    container.classList.remove('controls-visible');
-                }
-            }
+            setControlsVisibility(!controlsVisible);
         });
     }
     
@@ -474,17 +477,7 @@
         });
         tapZoneRight.addEventListener('click', (e) => {
             // Single click - toggle controls visibility
-            const container = document.getElementById('video-player-container');
-            if (container) {
-                controlsVisible = !controlsVisible;
-                if (controlsVisible) {
-                    container.classList.remove('controls-hidden');
-                    container.classList.add('controls-visible');
-                } else {
-                    container.classList.add('controls-hidden');
-                    container.classList.remove('controls-visible');
-                }
-            }
+            setControlsVisibility(!controlsVisible);
         });
     }
     
@@ -504,17 +497,7 @@
             const currentTime = Date.now();
             if (lastTapZone === 'center' && currentTime - lastTapTime < DOUBLE_TAP_DELAY) {
                 // Double tap on center - toggle controls
-                const container = document.getElementById('video-player-container');
-                if (container) {
-                    controlsVisible = !controlsVisible;
-                    if (controlsVisible) {
-                        container.classList.remove('controls-hidden');
-                        container.classList.add('controls-visible');
-                    } else {
-                        container.classList.add('controls-hidden');
-                        container.classList.remove('controls-visible');
-                    }
-                }
+                setControlsVisibility(!controlsVisible);
                 lastTapTime = 0;
                 lastTapZone = null;
             } else {
@@ -596,17 +579,7 @@
             videoLastTapTime = currentTime;
             videoLastTapZone = zone;
             
-            const container = document.getElementById('video-player-container');
-            if (container) {
-                controlsVisible = !controlsVisible;
-                if (controlsVisible) {
-                    container.classList.remove('controls-hidden');
-                    container.classList.add('controls-visible');
-                } else {
-                    container.classList.add('controls-hidden');
-                    container.classList.remove('controls-visible');
-                }
-            }
+            setControlsVisibility(!controlsVisible);
         }
     });
 
@@ -666,9 +639,9 @@
         }
     }
     
-    function hideControls() {
+    function hideControls(force = false) {
         const container = document.getElementById('video-player-container');
-        if (!container || !isInFullscreen()) return;
+        if (!container || (!force && !isInFullscreen())) return;
         
         container.classList.add('controls-hidden');
         container.classList.remove('controls-visible');
@@ -682,11 +655,10 @@
             showControls();
         });
         
-        // Touch events - show controls (mobile)
-        // Note: We don't preventDefault here to avoid interfering with double-tap detection
+        // Touchstart should only keep controls alive when already visible.
+        // If we force-show here, touchend single tap toggles right after and causes a flicker.
         container.addEventListener('touchstart', () => {
-            // Show controls if hidden
-            if (!controlsVisible) {
+            if (controlsVisible) {
                 showControls();
             }
         }, { passive: true });
