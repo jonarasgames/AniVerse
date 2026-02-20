@@ -212,9 +212,9 @@
     if (timelineContainer) {
       let isDraggingTimeline = false;
       let wasPlayingBeforeDrag = false;
-      let dragSource = null; // 'mouse' | 'touch'
+      let dragSource = null; // 'pointer' | 'mouse' | 'touch'
+      let activePointerId = null;
 
-      // Helper function to seek to position
       function seekToPosition(clientX) {
         const rect = timelineContainer.getBoundingClientRect();
         if (!rect.width || !player.duration || Number.isNaN(player.duration)) return;
@@ -226,28 +226,65 @@
         }
       }
 
-      function beginTimelineDrag(clientX, source) {
+      function beginTimelineDrag(clientX, source, pointerId = null) {
         isDraggingTimeline = true;
         dragSource = source;
+        activePointerId = pointerId;
         wasPlayingBeforeDrag = !player.paused;
         if (wasPlayingBeforeDrag) player.pause();
         seekToPosition(clientX);
       }
 
-      function updateTimelineDrag(clientX, source) {
+      function updateTimelineDrag(clientX, source, pointerId = null) {
         if (!isDraggingTimeline || dragSource !== source) return;
+        if (source === 'pointer' && activePointerId !== null && pointerId !== activePointerId) return;
         seekToPosition(clientX);
       }
 
-      function endTimelineDrag(source) {
+      function endTimelineDrag(source, pointerId = null) {
         if (!isDraggingTimeline || dragSource !== source) return;
+        if (source === 'pointer' && activePointerId !== null && pointerId !== activePointerId) return;
+
         isDraggingTimeline = false;
         dragSource = null;
+        activePointerId = null;
         if (wasPlayingBeforeDrag) player.play().catch(() => {});
       }
 
-      // Mouse drag
+      // Pointer-first support (handles most mobile/desktop browsers)
+      timelineContainer.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        beginTimelineDrag(e.clientX, 'pointer', e.pointerId);
+        if (timelineContainer.setPointerCapture) {
+          try { timelineContainer.setPointerCapture(e.pointerId); } catch (_) {}
+        }
+      });
+
+      timelineContainer.addEventListener('pointermove', (e) => {
+        if (!isDraggingTimeline) return;
+        e.preventDefault();
+        updateTimelineDrag(e.clientX, 'pointer', e.pointerId);
+      });
+
+      timelineContainer.addEventListener('pointerup', (e) => {
+        if (timelineContainer.releasePointerCapture) {
+          try { timelineContainer.releasePointerCapture(e.pointerId); } catch (_) {}
+        }
+        endTimelineDrag('pointer', e.pointerId);
+      });
+
+      timelineContainer.addEventListener('pointercancel', (e) => {
+        endTimelineDrag('pointer', e.pointerId);
+      });
+
+      timelineContainer.addEventListener('lostpointercapture', () => {
+        endTimelineDrag('pointer');
+      });
+
+      // Mouse fallback
       timelineContainer.addEventListener('mousedown', (e) => {
+        if (isDraggingTimeline) return;
         e.preventDefault();
         e.stopPropagation();
         beginTimelineDrag(e.clientX, 'mouse');
@@ -255,7 +292,6 @@
 
       document.addEventListener('mousemove', (e) => {
         if (!isDraggingTimeline) return;
-        e.preventDefault();
         updateTimelineDrag(e.clientX, 'mouse');
       });
 
@@ -263,9 +299,9 @@
         endTimelineDrag('mouse');
       });
 
-      // Touch drag (mobile/fullscreen)
+      // Touch fallback
       timelineContainer.addEventListener('touchstart', (e) => {
-        if (!e.touches.length) return;
+        if (isDraggingTimeline || !e.touches.length) return;
         const touch = e.touches[0];
         e.preventDefault();
         e.stopPropagation();
