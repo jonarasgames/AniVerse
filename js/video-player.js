@@ -212,70 +212,76 @@
     if (timelineContainer) {
       let isDraggingTimeline = false;
       let wasPlayingBeforeDrag = false;
-      
+      let activePointerId = null;
+
       // Helper function to seek to position
       function seekToPosition(clientX) {
         const rect = timelineContainer.getBoundingClientRect();
+        if (!rect.width || !player.duration || Number.isNaN(player.duration)) return;
+
         const percent = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
-        if (player.duration) {
-          player.currentTime = percent * player.duration;
-          if (timelineProgress) {
-            timelineProgress.style.width = (percent * 100) + '%';
-          }
+        player.currentTime = percent * player.duration;
+        if (timelineProgress) {
+          timelineProgress.style.width = (percent * 100) + '%';
         }
       }
-      
-      // Mouse events for desktop drag
-      timelineContainer.addEventListener('mousedown', (e) => {
+
+      function beginTimelineDrag(clientX, pointerId = null) {
         isDraggingTimeline = true;
+        activePointerId = pointerId;
         wasPlayingBeforeDrag = !player.paused;
         if (wasPlayingBeforeDrag) player.pause();
-        seekToPosition(e.clientX);
+        seekToPosition(clientX);
+      }
+
+      function updateTimelineDrag(clientX) {
+        if (!isDraggingTimeline) return;
+        seekToPosition(clientX);
+      }
+
+      function endTimelineDrag() {
+        if (!isDraggingTimeline) return;
+        isDraggingTimeline = false;
+        activePointerId = null;
+        if (wasPlayingBeforeDrag) player.play().catch(() => {});
+      }
+
+      // Pointer events unify mouse + touch drag behavior
+      timelineContainer.addEventListener('pointerdown', (e) => {
         e.preventDefault();
-      });
-      
-      document.addEventListener('mousemove', (e) => {
-        if (isDraggingTimeline) {
-          seekToPosition(e.clientX);
+        e.stopPropagation();
+        beginTimelineDrag(e.clientX, e.pointerId);
+        if (timelineContainer.setPointerCapture) {
+          try { timelineContainer.setPointerCapture(e.pointerId); } catch (_) {}
         }
       });
-      
-      document.addEventListener('mouseup', () => {
-        if (isDraggingTimeline) {
-          isDraggingTimeline = false;
-          if (wasPlayingBeforeDrag) player.play().catch(() => {});
-        }
-      });
-      
-      // Touch events for mobile drag
-      timelineContainer.addEventListener('touchstart', (e) => {
-        isDraggingTimeline = true;
-        wasPlayingBeforeDrag = !player.paused;
-        if (wasPlayingBeforeDrag) player.pause();
-        const touch = e.touches[0];
-        seekToPosition(touch.clientX);
+
+      timelineContainer.addEventListener('pointermove', (e) => {
+        if (!isDraggingTimeline) return;
+        if (activePointerId !== null && e.pointerId !== activePointerId) return;
         e.preventDefault();
-      }, { passive: false });
-      
-      document.addEventListener('touchmove', (e) => {
-        if (isDraggingTimeline && e.touches.length > 0) {
-          e.preventDefault(); // Prevent scrolling while dragging timeline
-          seekToPosition(e.touches[0].clientX);
-        }
-      }, { passive: false });
-      
-      document.addEventListener('touchend', () => {
-        if (isDraggingTimeline) {
-          isDraggingTimeline = false;
-          if (wasPlayingBeforeDrag) player.play().catch(() => {});
-        }
+        updateTimelineDrag(e.clientX);
       });
-      
-      // Also keep simple click for quick seeks
+
+      const onPointerEnd = (e) => {
+        if (activePointerId !== null && e.pointerId !== activePointerId) return;
+        if (timelineContainer.releasePointerCapture && activePointerId !== null) {
+          try { timelineContainer.releasePointerCapture(activePointerId); } catch (_) {}
+        }
+        endTimelineDrag();
+      };
+
+      timelineContainer.addEventListener('pointerup', onPointerEnd);
+      timelineContainer.addEventListener('pointercancel', onPointerEnd);
+      timelineContainer.addEventListener('lostpointercapture', () => {
+        endTimelineDrag();
+      });
+
+      // Quick seek on click/tap when not dragging
       timelineContainer.addEventListener('click', (e) => {
-        if (!isDraggingTimeline) {
-          seekToPosition(e.clientX);
-        }
+        e.stopPropagation();
+        if (isDraggingTimeline) return;
+        seekToPosition(e.clientX);
       });
     }
     
@@ -345,6 +351,24 @@
     
     // Controls visibility state for click-to-pause
     let controlsVisible = true;
+    let suppressTapToggleUntil = 0;
+
+    function shouldSuppressTapToggle() {
+        return Date.now() < suppressTapToggleUntil;
+    }
+
+    function setControlsVisibility(visible) {
+        const container = document.getElementById('video-player-container');
+        if (!container) return;
+
+        if (visible) {
+            showControls();
+            return;
+        }
+
+        // Manual toggle should work even outside fullscreen
+        hideControls(true);
+    }
     
     // Update overlay info when video metadata changes
     function updateVideoOverlay() {
@@ -442,18 +466,13 @@
             }
         });
         tapZoneLeft.addEventListener('click', (e) => {
-            // Single click - toggle controls visibility
-            const container = document.getElementById('video-player-container');
-            if (container) {
-                controlsVisible = !controlsVisible;
-                if (controlsVisible) {
-                    container.classList.remove('controls-hidden');
-                    container.classList.add('controls-visible');
-                } else {
-                    container.classList.add('controls-hidden');
-                    container.classList.remove('controls-visible');
-                }
+            if (shouldSuppressTapToggle()) {
+                e.preventDefault();
+                return;
             }
+
+            // Single click - toggle controls visibility
+            setControlsVisibility(!controlsVisible);
         });
     }
     
@@ -473,18 +492,13 @@
             }
         });
         tapZoneRight.addEventListener('click', (e) => {
-            // Single click - toggle controls visibility
-            const container = document.getElementById('video-player-container');
-            if (container) {
-                controlsVisible = !controlsVisible;
-                if (controlsVisible) {
-                    container.classList.remove('controls-hidden');
-                    container.classList.add('controls-visible');
-                } else {
-                    container.classList.add('controls-hidden');
-                    container.classList.remove('controls-visible');
-                }
+            if (shouldSuppressTapToggle()) {
+                e.preventDefault();
+                return;
             }
+
+            // Single click - toggle controls visibility
+            setControlsVisibility(!controlsVisible);
         });
     }
     
@@ -493,6 +507,11 @@
         tapZoneCenter.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
+
+            if (shouldSuppressTapToggle()) {
+                return;
+            }
+
             if (player.paused) {
                 player.play().catch(() => {});
             } else {
@@ -504,17 +523,7 @@
             const currentTime = Date.now();
             if (lastTapZone === 'center' && currentTime - lastTapTime < DOUBLE_TAP_DELAY) {
                 // Double tap on center - toggle controls
-                const container = document.getElementById('video-player-container');
-                if (container) {
-                    controlsVisible = !controlsVisible;
-                    if (controlsVisible) {
-                        container.classList.remove('controls-hidden');
-                        container.classList.add('controls-visible');
-                    } else {
-                        container.classList.add('controls-hidden');
-                        container.classList.remove('controls-visible');
-                    }
-                }
+                setControlsVisibility(!controlsVisible);
                 lastTapTime = 0;
                 lastTapZone = null;
             } else {
@@ -595,18 +604,12 @@
             // Single tap - toggle controls
             videoLastTapTime = currentTime;
             videoLastTapZone = zone;
-            
-            const container = document.getElementById('video-player-container');
-            if (container) {
-                controlsVisible = !controlsVisible;
-                if (controlsVisible) {
-                    container.classList.remove('controls-hidden');
-                    container.classList.add('controls-visible');
-                } else {
-                    container.classList.add('controls-hidden');
-                    container.classList.remove('controls-visible');
-                }
+
+            if (shouldSuppressTapToggle()) {
+                return;
             }
+            
+            setControlsVisibility(!controlsVisible);
         }
     });
 
@@ -666,9 +669,9 @@
         }
     }
     
-    function hideControls() {
+    function hideControls(force = false) {
         const container = document.getElementById('video-player-container');
-        if (!container || !isInFullscreen()) return;
+        if (!container || (!force && !isInFullscreen())) return;
         
         container.classList.add('controls-hidden');
         container.classList.remove('controls-visible');
@@ -682,13 +685,17 @@
             showControls();
         });
         
-        // Touch events - show controls (mobile)
-        // Note: We don't preventDefault here to avoid interfering with double-tap detection
+        // Touch behavior:
+        // - If controls are already visible, keep the auto-hide timer alive.
+        // - If controls are hidden, first touch should only reveal controls (no immediate re-toggle).
         container.addEventListener('touchstart', () => {
-            // Show controls if hidden
-            if (!controlsVisible) {
+            if (controlsVisible) {
                 showControls();
+                return;
             }
+
+            setControlsVisibility(true);
+            suppressTapToggleUntil = Date.now() + 350;
         }, { passive: true });
         
         // When mouse leaves container, start hide timer
