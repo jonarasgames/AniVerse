@@ -345,6 +345,24 @@
     
     // Controls visibility state for click-to-pause
     let controlsVisible = true;
+    let suppressTapToggleUntil = 0;
+
+    function shouldSuppressTapToggle() {
+        return Date.now() < suppressTapToggleUntil;
+    }
+
+    function setControlsVisibility(visible) {
+        const container = document.getElementById('video-player-container');
+        if (!container) return;
+
+        if (visible) {
+            showControls();
+            return;
+        }
+
+        // Manual toggle should work even outside fullscreen
+        hideControls(true);
+    }
     
     // Update overlay info when video metadata changes
     function updateVideoOverlay() {
@@ -442,18 +460,13 @@
             }
         });
         tapZoneLeft.addEventListener('click', (e) => {
-            // Single click - toggle controls visibility
-            const container = document.getElementById('video-player-container');
-            if (container) {
-                controlsVisible = !controlsVisible;
-                if (controlsVisible) {
-                    container.classList.remove('controls-hidden');
-                    container.classList.add('controls-visible');
-                } else {
-                    container.classList.add('controls-hidden');
-                    container.classList.remove('controls-visible');
-                }
+            if (shouldSuppressTapToggle()) {
+                e.preventDefault();
+                return;
             }
+
+            // Single click - toggle controls visibility
+            setControlsVisibility(!controlsVisible);
         });
     }
     
@@ -473,18 +486,13 @@
             }
         });
         tapZoneRight.addEventListener('click', (e) => {
-            // Single click - toggle controls visibility
-            const container = document.getElementById('video-player-container');
-            if (container) {
-                controlsVisible = !controlsVisible;
-                if (controlsVisible) {
-                    container.classList.remove('controls-hidden');
-                    container.classList.add('controls-visible');
-                } else {
-                    container.classList.add('controls-hidden');
-                    container.classList.remove('controls-visible');
-                }
+            if (shouldSuppressTapToggle()) {
+                e.preventDefault();
+                return;
             }
+
+            // Single click - toggle controls visibility
+            setControlsVisibility(!controlsVisible);
         });
     }
     
@@ -493,6 +501,11 @@
         tapZoneCenter.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
+
+            if (shouldSuppressTapToggle()) {
+                return;
+            }
+
             if (player.paused) {
                 player.play().catch(() => {});
             } else {
@@ -504,17 +517,7 @@
             const currentTime = Date.now();
             if (lastTapZone === 'center' && currentTime - lastTapTime < DOUBLE_TAP_DELAY) {
                 // Double tap on center - toggle controls
-                const container = document.getElementById('video-player-container');
-                if (container) {
-                    controlsVisible = !controlsVisible;
-                    if (controlsVisible) {
-                        container.classList.remove('controls-hidden');
-                        container.classList.add('controls-visible');
-                    } else {
-                        container.classList.add('controls-hidden');
-                        container.classList.remove('controls-visible');
-                    }
-                }
+                setControlsVisibility(!controlsVisible);
                 lastTapTime = 0;
                 lastTapZone = null;
             } else {
@@ -595,18 +598,12 @@
             // Single tap - toggle controls
             videoLastTapTime = currentTime;
             videoLastTapZone = zone;
-            
-            const container = document.getElementById('video-player-container');
-            if (container) {
-                controlsVisible = !controlsVisible;
-                if (controlsVisible) {
-                    container.classList.remove('controls-hidden');
-                    container.classList.add('controls-visible');
-                } else {
-                    container.classList.add('controls-hidden');
-                    container.classList.remove('controls-visible');
-                }
+
+            if (shouldSuppressTapToggle()) {
+                return;
             }
+            
+            setControlsVisibility(!controlsVisible);
         }
     });
 
@@ -666,9 +663,9 @@
         }
     }
     
-    function hideControls() {
+    function hideControls(force = false) {
         const container = document.getElementById('video-player-container');
-        if (!container || !isInFullscreen()) return;
+        if (!container || (!force && !isInFullscreen())) return;
         
         container.classList.add('controls-hidden');
         container.classList.remove('controls-visible');
@@ -682,13 +679,17 @@
             showControls();
         });
         
-        // Touch events - show controls (mobile)
-        // Note: We don't preventDefault here to avoid interfering with double-tap detection
+        // Touch behavior:
+        // - If controls are already visible, keep the auto-hide timer alive.
+        // - If controls are hidden, first touch should only reveal controls (no immediate re-toggle).
         container.addEventListener('touchstart', () => {
-            // Show controls if hidden
-            if (!controlsVisible) {
+            if (controlsVisible) {
                 showControls();
+                return;
             }
+
+            setControlsVisibility(true);
+            suppressTapToggleUntil = Date.now() + 350;
         }, { passive: true });
         
         // When mouse leaves container, start hide timer
