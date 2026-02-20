@@ -237,13 +237,13 @@
 
       function updateTimelineDrag(clientX, source, pointerId = null) {
         if (!isDraggingTimeline || dragSource !== source) return;
-        if (source === 'pointer' && activePointerId !== null && pointerId !== null && pointerId !== activePointerId) return;
+        if (source === 'pointer' && activePointerId !== null && pointerId !== activePointerId) return;
         seekToPosition(clientX);
       }
 
       function endTimelineDrag(source, pointerId = null) {
         if (!isDraggingTimeline || dragSource !== source) return;
-        if (source === 'pointer' && activePointerId !== null && pointerId !== null && pointerId !== activePointerId) return;
+        if (source === 'pointer' && activePointerId !== null && pointerId !== activePointerId) return;
 
         isDraggingTimeline = false;
         dragSource = null;
@@ -278,8 +278,8 @@
         endTimelineDrag('pointer', e.pointerId);
       });
 
-      timelineContainer.addEventListener('lostpointercapture', (e) => {
-        endTimelineDrag('pointer', e.pointerId);
+      timelineContainer.addEventListener('lostpointercapture', () => {
+        endTimelineDrag('pointer');
       });
 
       // Mouse fallback
