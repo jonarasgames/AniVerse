@@ -64,11 +64,11 @@
     
     // Create mini-player UI
     function createMiniPlayer() {
-        if (document.getElementById('mini-player')) return;
+        if (document.getElementById('music-mini-player')) return;
         
         const miniPlayer = document.createElement('div');
-        miniPlayer.id = 'mini-player';
-        miniPlayer.className = 'mini-player hidden';
+        miniPlayer.id = 'music-mini-player';
+        miniPlayer.className = 'mini-player music-mini-player hidden';
         miniPlayer.innerHTML = `
             <img id="mini-player-thumb" src="" alt="Album art" class="mini-player-thumb">
             <div class="mini-player-info">
@@ -406,7 +406,7 @@
         audio.pause();
         audio.src = '';
         
-        const miniPlayer = document.getElementById('mini-player');
+        const miniPlayer = document.getElementById('music-mini-player');
         if (miniPlayer) {
             miniPlayer.classList.add('hidden');
         }
@@ -420,7 +420,7 @@
     function playMusic(src, title, artist, thumb, card) {
         createMiniPlayer();
         
-        const miniPlayer = document.getElementById('mini-player');
+        const miniPlayer = document.getElementById('music-mini-player');
         const audio = getMusicAudio();
         
         // Store current music data for fullscreen
@@ -658,7 +658,7 @@ document.addEventListener('keydown', (e) => {
     }
     
     // Só processar se mini-player de música estiver visível
-    const miniPlayer = document.getElementById('mini-player');
+    const miniPlayer = document.getElementById('music-mini-player');
     if (!miniPlayer || miniPlayer.classList.contains('hidden')) {
         return;
     }

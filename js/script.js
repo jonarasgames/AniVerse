@@ -969,6 +969,85 @@ function openEpisode(anime, seasonNumber, episodeIndex){
 }
 window.openEpisode = openEpisode;
 
+function getNextEpisodeTarget(){
+  if (!window.currentAnime || !window.currentWatchingAnime) return null;
+
+  const currentSeason = window.currentAnime.seasons?.find(s => s.number === window.currentWatchingAnime.season);
+  if (currentSeason && currentSeason.episodes) {
+    const nextEpisodeIndex = window.currentWatchingAnime.episode;
+    if (nextEpisodeIndex < currentSeason.episodes.length) {
+      return {
+        anime: window.currentAnime,
+        season: window.currentWatchingAnime.season,
+        episodeIndex: nextEpisodeIndex,
+        episode: currentSeason.episodes[nextEpisodeIndex]
+      };
+    }
+  }
+
+  const nextSeason = window.currentAnime?.seasons?.find(s => s.number === window.currentWatchingAnime.season + 1);
+  if (nextSeason && nextSeason.episodes && nextSeason.episodes.length > 0) {
+    return {
+      anime: window.currentAnime,
+      season: nextSeason.number,
+      episodeIndex: 0,
+      episode: nextSeason.episodes[0]
+    };
+  }
+
+  return null;
+}
+
+function preloadNextEpisodeIfNeeded(player){
+  if (!player || !window.currentWatchingAnime || !window.currentAnime || !Number.isFinite(player.duration) || player.duration <= 0) return;
+
+  const remaining = player.duration - player.currentTime;
+  if (remaining > 25) return;
+
+  const target = getNextEpisodeTarget();
+  if (!target || !target.episode) return;
+
+  const preloadKey = `${target.anime.id}-${target.season}-${target.episodeIndex}`;
+  if (window.__nextEpisodePreloadKey === preloadKey) return;
+
+  const sources = normalizeEpisodeSources(target.episode);
+  const best = sources[0];
+  if (!best || !best.url) return;
+
+  let preloader = window.__nextEpisodePreloader;
+  if (!preloader) {
+    preloader = document.createElement('video');
+    preloader.id = 'next-episode-preloader';
+    preloader.muted = true;
+    preloader.preload = 'auto';
+    preloader.playsInline = true;
+    preloader.style.display = 'none';
+    document.body.appendChild(preloader);
+    window.__nextEpisodePreloader = preloader;
+  }
+
+  const currentOrigin = (() => {
+    try { return new URL(player.currentSrc || player.src, window.location.href).origin; } catch (_) { return ''; }
+  })();
+  const nextOrigin = (() => {
+    try { return new URL(best.url, window.location.href).origin; } catch (_) { return ''; }
+  })();
+
+  if (nextOrigin && nextOrigin !== currentOrigin && !document.querySelector(`link[data-next-preconnect="${nextOrigin}"]`)) {
+    const preconnect = document.createElement('link');
+    preconnect.rel = 'preconnect';
+    preconnect.href = nextOrigin;
+    preconnect.crossOrigin = 'anonymous';
+    preconnect.dataset.nextPreconnect = nextOrigin;
+    document.head.appendChild(preconnect);
+  }
+
+  preloader.src = best.url;
+  preloader.load();
+  window.__nextEpisodePreloadKey = preloadKey;
+  console.log(`⏭️ Pré-carregando próximo episódio: S${target.season}E${target.episodeIndex + 1}`);
+}
+
 // Update progress periodically while video is playing
 document.addEventListener('DOMContentLoaded', () => {
   const player = document.getElementById('anime-player');
@@ -976,6 +1055,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let progressUpdateInterval = null;
     
     player.addEventListener('timeupdate', () => {
+      preloadNextEpisodeIfNeeded(player);
+
       // Update progress every 5 seconds while playing
       if (!progressUpdateInterval && !player.paused) {
         progressUpdateInterval = setInterval(() => {

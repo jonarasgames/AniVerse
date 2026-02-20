@@ -1,37 +1,28 @@
-/* js/music-player-new.js - Enhanced music player with anime grouping */
+/* js/music-player-new.js - Mobile-safe music mini-player enhancements */
 (function() {
     'use strict';
 
-    // This file ensures the music player appears and functions correctly
-    // The main logic is in music.js, this file adds enhancements
-
     function ensureMiniPlayerCSS() {
-        // Check if mini-player styles exist
         const existingStyle = document.getElementById('mini-player-enhanced-styles');
         if (existingStyle) return;
 
         const style = document.createElement('style');
         style.id = 'mini-player-enhanced-styles';
         style.textContent = `
-            /* Enhanced mini-player visibility */
-            .mini-player {
-                position: fixed !important;
-                bottom: 20px !important;
-                right: 20px !important;
-                display: flex !important;
-                z-index: 10000 !important;
-                transition: transform 0.3s ease, opacity 0.3s ease;
+            /* Only target the MUSIC mini-player to avoid conflict with video PiP mini-player */
+            #music-mini-player {
+                z-index: 10000;
             }
 
-            .mini-player.hidden {
-                transform: translateY(150%) !important;
-                opacity: 0 !important;
-                pointer-events: none !important;
+            #music-mini-player.hidden {
+                transform: translateY(100%);
+                opacity: 0;
+                pointer-events: none;
             }
 
-            /* Ensure proper display when active */
-            #mini-player:not(.hidden) {
-                display: flex !important;
+            #music-mini-player:not(.hidden) {
+                display: flex;
+                opacity: 1;
             }
         `;
         document.head.appendChild(style);
@@ -39,32 +30,12 @@
 
     function init() {
         ensureMiniPlayerCSS();
-        
-        // Log initialization
-        console.log('✅ Music player enhancements loaded');
-        
-        // Observe for mini-player creation
-        const observer = new MutationObserver((mutations) => {
-            mutations.forEach((mutation) => {
-                mutation.addedNodes.forEach((node) => {
-                    if (node.id === 'mini-player') {
-                        console.log('✅ Mini-player detected and enhanced');
-                    }
-                });
-            });
-        });
-
-        observer.observe(document.body, {
-            childList: true,
-            subtree: false
-        });
+        console.log('✅ Music mini-player enhancements loaded');
     }
 
-    // Initialize when DOM is ready
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
     } else {
         init();
     }
-
 })();
