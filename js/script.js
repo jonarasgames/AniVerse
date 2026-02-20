@@ -547,64 +547,36 @@ function normalizeEpisodeSources(episode){
   const sources = [];
   if (!episode) return sources;
 
-  const addSource = (url, label, rankHint = '') => {
-    if (!url || typeof url !== 'string') return;
-    sources.push({
-      url,
-      label: label || rankHint || 'Auto',
-      rank: parseQualityRank({ quality: rankHint || label || '' })
-    });
-  };
-
   if (Array.isArray(episode.videoSources)) {
     episode.videoSources.forEach((source, idx) => {
-      if (!source) return;
-      addSource(source.url, source.label || source.quality || `Fonte ${idx + 1}`, source.quality || source.label || '');
+      if (source && source.url) {
+        sources.push({
+          url: source.url,
+          label: source.label || source.quality || `Fonte ${idx + 1}`,
+          rank: parseQualityRank(source)
+        });
+      }
     });
   }
 
   if (episode.videoQualities && typeof episode.videoQualities === 'object') {
     Object.entries(episode.videoQualities).forEach(([quality, url]) => {
-      addSource(url, quality, quality);
-    });
-  }
-
-  // formatos alternativos usados em alguns catálogos
-  if (episode.sources && typeof episode.sources === 'object') {
-    if (Array.isArray(episode.sources)) {
-      episode.sources.forEach((source, idx) => {
-        if (!source) return;
-        addSource(source.url || source.src, source.label || source.quality || `Fonte ${idx + 1}`, source.quality || source.label || '');
+      if (!url) return;
+      sources.push({
+        url,
+        label: quality,
+        rank: parseQualityRank({ quality })
       });
-    } else {
-      Object.entries(episode.sources).forEach(([quality, url]) => {
-        addSource(url, quality, quality);
-      });
-    }
-  }
-
-  if (Array.isArray(episode.qualities)) {
-    episode.qualities.forEach((source, idx) => {
-      if (!source) return;
-      if (typeof source === 'string') {
-        addSource(source, `Fonte ${idx + 1}`, '');
-      } else {
-        addSource(source.url || source.src, source.label || source.quality || `Fonte ${idx + 1}`, source.quality || source.label || '');
-      }
     });
   }
 
   if (episode.videoUrl) {
-    addSource(episode.videoUrl, episode.videoQuality || 'Auto', episode.videoQuality || '');
+    sources.push({
+      url: episode.videoUrl,
+      label: episode.videoQuality || 'Auto',
+      rank: parseQualityRank({ quality: episode.videoQuality || '' })
+    });
   }
-
-  // suporte a chaves diretas como videoUrl240 / 240p / etc
-  Object.entries(episode).forEach(([key, value]) => {
-    if (typeof value !== 'string') return;
-    if (/\b(video)?(url)?\s*([0-9]{3,4}p?)\b/i.test(key) || /^(240p|360p|480p|720p|1080p|1440p|2160p)$/i.test(key)) {
-      addSource(value, key, key);
-    }
-  });
 
   const seen = new Set();
   const unique = sources.filter((source) => {
@@ -643,11 +615,8 @@ function onVideoSetSource(player, episode){
     sources,
     currentIndex: 0,
     retriesInSource: 0,
-    maxRetriesPerSource: 2,
-    loadTimeoutMs: 10000,
-    minBufferedAheadSeconds: 45,
-    lowBufferRecoveryCooldownMs: 8000,
-    lastLowBufferRecoveryAt: 0,
+    maxRetriesPerSource: 3,
+    loadTimeoutMs: 15000,
     loadTimeoutId: null,
     retryTimeoutId: null,
     upgradeIntervalId: null,
@@ -695,7 +664,6 @@ function onVideoSetSource(player, episode){
     if (videoLoadTimeout){ clearTimeout(videoLoadTimeout); videoLoadTimeout = null; }
     clearVideoError();
 
-    player.preload = 'auto';
     player.src = nextUrl;
     player.load();
 
@@ -787,7 +755,7 @@ function onVideoSetSource(player, episode){
       state.currentIndex = nextIndex;
       state.retriesInSource = 0;
       state.fallbackInUse = true;
-      showVideoError(`Internet instável. Reproduzindo em ${nextSource.label || 'qualidade menor (até 240p)'} para evitar travamentos...`);
+      showVideoError(`Internet instável. Reproduzindo em ${nextSource.label || 'qualidade menor'} para evitar travamentos...`);
       state.retryTimeoutId = setTimeout(() => {
         state.recoverInFlight = false;
         setSource(nextIndex, { preserveTime: timeSnapshot, autoPlay: true, cacheBust: true });
@@ -797,7 +765,7 @@ function onVideoSetSource(player, episode){
 
     const reasonLabel = reason === 'timeout'
       ? 'carregamento excedeu o tempo limite'
-      : (reason === 'buffer' ? 'buffer insuficiente' : 'houve falha na reprodução');
+      : 'houve falha na reprodução';
     showVideoError(`Não foi possível reproduzir agora (${reasonLabel}). Tente novamente em alguns instantes.`);
     state.recoverInFlight = false;
   };
@@ -819,40 +787,10 @@ function onVideoSetSource(player, episode){
     }
   };
 
-  const getBufferedAhead = () => {
-    try {
-      const t = player.currentTime || 0;
-      const ranges = player.buffered;
-      for (let i = 0; i < ranges.length; i += 1) {
-        if (ranges.start(i) <= t && ranges.end(i) >= t) {
-          return Math.max(0, ranges.end(i) - t);
-        }
-      }
-    } catch (_) {}
-    return 0;
-  };
-
-  const maybeRecoverForLowBuffer = () => {
-    if (player.__adaptivePlayback?.token !== state.token) return;
-    if (!player.duration || player.paused) return;
-
-    const remaining = player.duration - player.currentTime;
-    if (remaining <= 12) return;
-
-    const bufferedAhead = getBufferedAhead();
-    if (bufferedAhead >= state.minBufferedAheadSeconds) return;
-
-    const now = Date.now();
-    if (now - state.lastLowBufferRecoveryAt < state.lowBufferRecoveryCooldownMs) return;
-    state.lastLowBufferRecoveryAt = now;
-
-    recoverPlayback('buffer');
-  };
-
   const handleWaiting = () => {
     if (player.__adaptivePlayback?.token !== state.token) return;
+    if (!state.fallbackInUse) return;
     showVideoError('Carregando... Ajustando qualidade automaticamente');
-    maybeRecoverForLowBuffer();
   };
 
   const handleError = () => {
@@ -864,8 +802,6 @@ function onVideoSetSource(player, episode){
   player.addEventListener('waiting', handleWaiting);
   player.addEventListener('stalled', handleWaiting);
   player.addEventListener('error', handleError);
-  player.addEventListener('progress', maybeRecoverForLowBuffer);
-  player.addEventListener('timeupdate', maybeRecoverForLowBuffer);
 
   player.__adaptiveCleanup = () => {
     clearTimers();
@@ -878,8 +814,6 @@ function onVideoSetSource(player, episode){
     player.removeEventListener('waiting', handleWaiting);
     player.removeEventListener('stalled', handleWaiting);
     player.removeEventListener('error', handleError);
-    player.removeEventListener('progress', maybeRecoverForLowBuffer);
-    player.removeEventListener('timeupdate', maybeRecoverForLowBuffer);
   };
 
   setSource(0, { autoPlay: true });
@@ -913,7 +847,6 @@ function openEpisode(anime, seasonNumber, episodeIndex){
     const season = (anime.seasons || []).find(s => s.number === seasonNumber);
     const episode = season && Array.isArray(season.episodes) ? season.episodes[episodeIndex] : null;
     const player = document.getElementById('anime-player'); if (!player) return;
-    window.__nextEpisodePreloadKey = null;
     if (episode){ onVideoSetSource(player, episode); }
     const bannerEl = document.querySelector('.video-banner'); const bannerUrl = anime.banner || anime.cover || 'images/bg-default.jpg';
     if (bannerEl) bannerEl.style.backgroundImage = `url('${bannerUrl}')`;
