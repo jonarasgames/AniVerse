@@ -17,7 +17,7 @@
     '12': 'https://upload.wikimedia.org/wikipedia/commons/6/60/Classifica%C3%A7%C3%A3o_Indicativa_12_anos.svg',
     '14': 'https://upload.wikimedia.org/wikipedia/commons/3/35/Classifica%C3%A7%C3%A3o_Indicativa_14_anos.svg',
     '16': 'https://upload.wikimedia.org/wikipedia/commons/f/fc/Classifica%C3%A7%C3%A3o_Indicativa_16_anos.svg',
-    '18': 'https://upload.wikimedia.org/wikipedia/commons/e/e0/Classifica%C3%A7%C3%A3o_Indicativa_18_anos.png'
+    '18': 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Classifica%C3%A7%C3%A3o_Indicativa_18_anos.svg/3840px-Classifica%C3%A7%C3%A3o_Indicativa_18_anos.svg.png
   };
 
   // Helper function to get age rating badge HTML
