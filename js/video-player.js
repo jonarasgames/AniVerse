@@ -214,7 +214,6 @@
       let wasPlayingBeforeDrag = false;
       let dragSource = null; // 'pointer' | 'mouse' | 'touch'
       let activePointerId = null;
-      const supportsPointerEvents = 'PointerEvent' in window;
 
       function seekToPosition(clientX) {
         const rect = timelineContainer.getBoundingClientRect();
@@ -238,13 +237,13 @@
 
       function updateTimelineDrag(clientX, source, pointerId = null) {
         if (!isDraggingTimeline || dragSource !== source) return;
-        if (source === 'pointer' && activePointerId !== null && pointerId !== null && pointerId !== activePointerId) return;
+        if (source === 'pointer' && activePointerId !== null && pointerId !== activePointerId) return;
         seekToPosition(clientX);
       }
 
       function endTimelineDrag(source, pointerId = null) {
         if (!isDraggingTimeline || dragSource !== source) return;
-        if (source === 'pointer' && activePointerId !== null && pointerId !== null && pointerId !== activePointerId) return;
+        if (source === 'pointer' && activePointerId !== null && pointerId !== activePointerId) return;
 
         isDraggingTimeline = false;
         dragSource = null;
@@ -252,78 +251,75 @@
         if (wasPlayingBeforeDrag) player.play().catch(() => {});
       }
 
-      if (supportsPointerEvents) {
-        // Pointer path (mobile + desktop modern browsers)
-        timelineContainer.addEventListener('pointerdown', (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          beginTimelineDrag(e.clientX, 'pointer', e.pointerId);
-        });
-
-        document.addEventListener('pointermove', (e) => {
-          if (!isDraggingTimeline || dragSource !== 'pointer') return;
-          e.preventDefault();
-          updateTimelineDrag(e.clientX, 'pointer', e.pointerId);
-        }, { passive: false });
-
-        document.addEventListener('pointerup', (e) => {
-          endTimelineDrag('pointer', e.pointerId);
-        });
-
-        document.addEventListener('pointercancel', (e) => {
-          endTimelineDrag('pointer', e.pointerId);
-        });
-      } else {
-        // Legacy fallback (older browsers without Pointer Events)
-        timelineContainer.addEventListener('mousedown', (e) => {
-          if (isDraggingTimeline) return;
-          e.preventDefault();
-          e.stopPropagation();
-          beginTimelineDrag(e.clientX, 'mouse');
-        });
-
-        document.addEventListener('mousemove', (e) => {
-          if (!isDraggingTimeline) return;
-          updateTimelineDrag(e.clientX, 'mouse');
-        });
-
-        document.addEventListener('mouseup', () => {
-          endTimelineDrag('mouse');
-        });
-
-        timelineContainer.addEventListener('touchstart', (e) => {
-          if (isDraggingTimeline || !e.touches.length) return;
-          const touch = e.touches[0];
-          e.preventDefault();
-          e.stopPropagation();
-          beginTimelineDrag(touch.clientX, 'touch');
-        }, { passive: false });
-
-        document.addEventListener('touchmove', (e) => {
-          if (!isDraggingTimeline || dragSource !== 'touch' || !e.touches.length) return;
-          e.preventDefault();
-          updateTimelineDrag(e.touches[0].clientX, 'touch');
-        }, { passive: false });
-
-        document.addEventListener('touchend', () => {
-          endTimelineDrag('touch');
-        });
-
-        document.addEventListener('touchcancel', () => {
-          endTimelineDrag('touch');
-        });
-      }
-
-      window.addEventListener('blur', () => {
-        if (isDraggingTimeline) {
-          endTimelineDrag(dragSource || 'pointer', activePointerId);
+      // Pointer-first support (handles most mobile/desktop browsers)
+      timelineContainer.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        beginTimelineDrag(e.clientX, 'pointer', e.pointerId);
+        if (timelineContainer.setPointerCapture) {
+          try { timelineContainer.setPointerCapture(e.pointerId); } catch (_) {}
         }
       });
 
-      document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'hidden' && isDraggingTimeline) {
-          endTimelineDrag(dragSource || 'pointer', activePointerId);
+      timelineContainer.addEventListener('pointermove', (e) => {
+        if (!isDraggingTimeline) return;
+        e.preventDefault();
+        updateTimelineDrag(e.clientX, 'pointer', e.pointerId);
+      });
+
+      timelineContainer.addEventListener('pointerup', (e) => {
+        if (timelineContainer.releasePointerCapture) {
+          try { timelineContainer.releasePointerCapture(e.pointerId); } catch (_) {}
         }
+        endTimelineDrag('pointer', e.pointerId);
+      });
+
+      timelineContainer.addEventListener('pointercancel', (e) => {
+        endTimelineDrag('pointer', e.pointerId);
+      });
+
+      timelineContainer.addEventListener('lostpointercapture', () => {
+        endTimelineDrag('pointer');
+      });
+
+      // Mouse fallback
+      timelineContainer.addEventListener('mousedown', (e) => {
+        if (isDraggingTimeline) return;
+        e.preventDefault();
+        e.stopPropagation();
+        beginTimelineDrag(e.clientX, 'mouse');
+      });
+
+      document.addEventListener('mousemove', (e) => {
+        if (!isDraggingTimeline) return;
+        updateTimelineDrag(e.clientX, 'mouse');
+      });
+
+      document.addEventListener('mouseup', () => {
+        endTimelineDrag('mouse');
+      });
+
+      // Touch fallback
+      timelineContainer.addEventListener('touchstart', (e) => {
+        if (isDraggingTimeline || !e.touches.length) return;
+        const touch = e.touches[0];
+        e.preventDefault();
+        e.stopPropagation();
+        beginTimelineDrag(touch.clientX, 'touch');
+      }, { passive: false });
+
+      document.addEventListener('touchmove', (e) => {
+        if (!isDraggingTimeline || dragSource !== 'touch' || !e.touches.length) return;
+        e.preventDefault();
+        updateTimelineDrag(e.touches[0].clientX, 'touch');
+      }, { passive: false });
+
+      document.addEventListener('touchend', () => {
+        endTimelineDrag('touch');
+      });
+
+      document.addEventListener('touchcancel', () => {
+        endTimelineDrag('touch');
       });
 
       // Quick seek on click/tap

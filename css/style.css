@@ -754,17 +754,6 @@ nav a:hover, nav a.active {
     align-items: center;
 }
 
-
-#custom-video-controls {
-    position: relative;
-    z-index: 1200;
-    pointer-events: auto;
-}
-
-#custom-video-controls .timeline-container {
-    pointer-events: auto;
-}
-
 /* Banner with proper aspect ratio (1000x185 = 5.41:1) */
 #player-banner {
     width: 100%;
