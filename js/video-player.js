@@ -212,70 +212,76 @@
     if (timelineContainer) {
       let isDraggingTimeline = false;
       let wasPlayingBeforeDrag = false;
-      
+      let activePointerId = null;
+
       // Helper function to seek to position
       function seekToPosition(clientX) {
         const rect = timelineContainer.getBoundingClientRect();
+        if (!rect.width || !player.duration || Number.isNaN(player.duration)) return;
+
         const percent = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
-        if (player.duration) {
-          player.currentTime = percent * player.duration;
-          if (timelineProgress) {
-            timelineProgress.style.width = (percent * 100) + '%';
-          }
+        player.currentTime = percent * player.duration;
+        if (timelineProgress) {
+          timelineProgress.style.width = (percent * 100) + '%';
         }
       }
-      
-      // Mouse events for desktop drag
-      timelineContainer.addEventListener('mousedown', (e) => {
+
+      function beginTimelineDrag(clientX, pointerId = null) {
         isDraggingTimeline = true;
+        activePointerId = pointerId;
         wasPlayingBeforeDrag = !player.paused;
         if (wasPlayingBeforeDrag) player.pause();
-        seekToPosition(e.clientX);
+        seekToPosition(clientX);
+      }
+
+      function updateTimelineDrag(clientX) {
+        if (!isDraggingTimeline) return;
+        seekToPosition(clientX);
+      }
+
+      function endTimelineDrag() {
+        if (!isDraggingTimeline) return;
+        isDraggingTimeline = false;
+        activePointerId = null;
+        if (wasPlayingBeforeDrag) player.play().catch(() => {});
+      }
+
+      // Pointer events unify mouse + touch drag behavior
+      timelineContainer.addEventListener('pointerdown', (e) => {
         e.preventDefault();
-      });
-      
-      document.addEventListener('mousemove', (e) => {
-        if (isDraggingTimeline) {
-          seekToPosition(e.clientX);
+        e.stopPropagation();
+        beginTimelineDrag(e.clientX, e.pointerId);
+        if (timelineContainer.setPointerCapture) {
+          try { timelineContainer.setPointerCapture(e.pointerId); } catch (_) {}
         }
       });
-      
-      document.addEventListener('mouseup', () => {
-        if (isDraggingTimeline) {
-          isDraggingTimeline = false;
-          if (wasPlayingBeforeDrag) player.play().catch(() => {});
-        }
-      });
-      
-      // Touch events for mobile drag
-      timelineContainer.addEventListener('touchstart', (e) => {
-        isDraggingTimeline = true;
-        wasPlayingBeforeDrag = !player.paused;
-        if (wasPlayingBeforeDrag) player.pause();
-        const touch = e.touches[0];
-        seekToPosition(touch.clientX);
+
+      timelineContainer.addEventListener('pointermove', (e) => {
+        if (!isDraggingTimeline) return;
+        if (activePointerId !== null && e.pointerId !== activePointerId) return;
         e.preventDefault();
-      }, { passive: false });
-      
-      document.addEventListener('touchmove', (e) => {
-        if (isDraggingTimeline && e.touches.length > 0) {
-          e.preventDefault(); // Prevent scrolling while dragging timeline
-          seekToPosition(e.touches[0].clientX);
-        }
-      }, { passive: false });
-      
-      document.addEventListener('touchend', () => {
-        if (isDraggingTimeline) {
-          isDraggingTimeline = false;
-          if (wasPlayingBeforeDrag) player.play().catch(() => {});
-        }
+        updateTimelineDrag(e.clientX);
       });
-      
-      // Also keep simple click for quick seeks
+
+      const onPointerEnd = (e) => {
+        if (activePointerId !== null && e.pointerId !== activePointerId) return;
+        if (timelineContainer.releasePointerCapture && activePointerId !== null) {
+          try { timelineContainer.releasePointerCapture(activePointerId); } catch (_) {}
+        }
+        endTimelineDrag();
+      };
+
+      timelineContainer.addEventListener('pointerup', onPointerEnd);
+      timelineContainer.addEventListener('pointercancel', onPointerEnd);
+      timelineContainer.addEventListener('lostpointercapture', () => {
+        endTimelineDrag();
+      });
+
+      // Quick seek on click/tap when not dragging
       timelineContainer.addEventListener('click', (e) => {
-        if (!isDraggingTimeline) {
-          seekToPosition(e.clientX);
-        }
+        e.stopPropagation();
+        if (isDraggingTimeline) return;
+        seekToPosition(e.clientX);
       });
     }
     

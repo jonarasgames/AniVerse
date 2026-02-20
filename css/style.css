@@ -3060,6 +3060,8 @@ html.theme-dark select {
     position: relative;
     cursor: pointer;
     transition: height 0.1s ease;
+    touch-action: none;
+    user-select: none;
 }
 
 .timeline-container:hover {
