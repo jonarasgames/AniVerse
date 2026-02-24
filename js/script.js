@@ -835,6 +835,7 @@ function openEpisode(anime, seasonNumber, episodeIndex){
     if (videoModal) {
         videoModal.style.display = 'flex';
         document.body.style.overflow = 'hidden';
+        window.dispatchEvent(new CustomEvent('videoModalVisibilityChanged', { detail: { open: true } }));
     }
     const videoContainer = document.getElementById('video-player-container');
     if (videoContainer) {
@@ -905,6 +906,7 @@ function openEpisode(anime, seasonNumber, episodeIndex){
         sl.textContent = seasonName;
     }
     if (elb) elb.textContent = `Episódio ${episodeIndex+1}${episode && episode.title ? ' — '+episode.title : ''}`;
+    syncEpisodeSelectors(anime, seasonNumber, episodeIndex);
     
     // Store anime info globally for progress updates and auto-advance
     window.currentAnime = anime; // Store full anime object for auto-advance
@@ -916,6 +918,7 @@ function openEpisode(anime, seasonNumber, episodeIndex){
         seasonName: seasonName,
         episode: episodeIndex + 1
     };
+    window.dispatchEvent(new CustomEvent('episodeChanged', { detail: { animeId: anime.id, season: seasonNumber, episodeIndex } }));
     
     // Update video info overlay
     if (window.updateVideoOverlay) {
