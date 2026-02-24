@@ -79,10 +79,16 @@
                 </div>
             </div>
             <div class="mini-player-controls">
+                <button id="mini-prev-track" class="mini-control-btn" aria-label="Música anterior">
+                    <i class="fas fa-backward-step"></i>
+                </button>
                 <button id="mini-play-pause" class="mini-control-btn" aria-label="Play/Pause">
                     <i class="fas fa-pause"></i>
                 </button>
-                
+                <button id="mini-next-track" class="mini-control-btn" aria-label="Próxima música">
+                    <i class="fas fa-forward-step"></i>
+                </button>
+
                 <!-- CONTROLE DE VOLUME -->
                 <div class="mini-volume-container">
                     <button class="mini-control-btn" id="mini-music-volume-btn" aria-label="Mute/Unmute">
@@ -112,6 +118,8 @@
         
         // Event listeners
         document.getElementById('mini-play-pause').addEventListener('click', togglePlayPause);
+        document.getElementById('mini-prev-track').addEventListener('click', playPreviousTrack);
+        document.getElementById('mini-next-track').addEventListener('click', playNextTrack);
         document.getElementById('mini-close').addEventListener('click', closeMiniPlayer);
         document.getElementById('mini-music-fullscreen').addEventListener('click', openMusicFullscreen);
         
@@ -288,8 +296,14 @@
                         </div>
                     </div>
                     <div class="music-fs-controls">
+                        <button class="music-fs-control-btn" id="music-fs-prev">
+                            <i class="fas fa-backward-step"></i>
+                        </button>
                         <button class="music-fs-control-btn" id="music-fs-play-pause">
                             <i class="fas fa-pause"></i>
+                        </button>
+                        <button class="music-fs-control-btn" id="music-fs-next">
+                            <i class="fas fa-forward-step"></i>
                         </button>
                     </div>
                 </div>
@@ -299,6 +313,8 @@
             // Event listeners
             document.getElementById('music-fs-close-btn').addEventListener('click', closeMusicFullscreen);
             document.getElementById('music-fs-play-pause').addEventListener('click', togglePlayPause);
+            document.getElementById('music-fs-prev').addEventListener('click', playPreviousTrack);
+            document.getElementById('music-fs-next').addEventListener('click', playNextTrack);
             
             const fsProgressContainer = document.getElementById('music-fs-progress-container');
             fsProgressContainer.addEventListener('click', (e) => {
@@ -336,6 +352,23 @@
             document.body.style.overflow = '';
         }
     }
+
+
+    function updateFullscreenTrackInfo() {
+        const fullscreenModal = document.getElementById('music-fullscreen-modal');
+        if (!fullscreenModal || !fullscreenModal.classList.contains('visible') || !currentMusicData) return;
+
+        const thumb = currentMusicData.thumbnail || 'images/bg-default.jpg';
+        const titleEl = document.getElementById('music-fs-title');
+        const artistEl = document.getElementById('music-fs-artist');
+        const thumbEl = document.getElementById('music-fs-thumb');
+        const bgEl = document.getElementById('music-fs-bg');
+
+        if (titleEl) titleEl.textContent = currentMusicData.title || 'Título';
+        if (artistEl) artistEl.textContent = currentMusicData.artist || 'Artista';
+        if (thumbEl) thumbEl.src = thumb;
+        if (bgEl) bgEl.style.backgroundImage = `url('${thumb}')`;
+    }
     
     function updateFullscreenProgress() {
         const audio = getMusicAudio();
@@ -367,6 +400,25 @@
         }
     }
     
+    // Play previous track in the music list
+    function playPreviousTrack() {
+        if (!currentPlayingCard) return;
+
+        const allCards = document.querySelectorAll('.music-card');
+        const cardsArray = Array.from(allCards);
+        const currentIndex = cardsArray.indexOf(currentPlayingCard);
+        if (currentIndex <= 0) {
+            const audio = getMusicAudio();
+            audio.currentTime = 0;
+            return;
+        }
+
+        const prevCard = cardsArray[currentIndex - 1];
+        if (prevCard) {
+            playMusic(prevCard.dataset.src, prevCard.dataset.title, prevCard.dataset.artist, prevCard.dataset.thumb, prevCard);
+        }
+    }
+
     // Play next track in the music list
     function playNextTrack() {
         if (!currentPlayingCard) {
@@ -401,6 +453,54 @@
         }
     }
     
+    function updateMediaSession(audio) {
+        if (!('mediaSession' in navigator) || !audio) return;
+
+        try {
+            if (currentMusicData) {
+                navigator.mediaSession.metadata = new MediaMetadata({
+                    title: currentMusicData.title || 'AniVerse',
+                    artist: currentMusicData.artist || 'Desconhecido',
+                    album: 'AniVerse',
+                    artwork: [
+                        { src: currentMusicData.thumbnail || 'images/logo.png', sizes: '512x512', type: 'image/png' }
+                    ]
+                });
+            }
+
+            navigator.mediaSession.setActionHandler('play', () => audio.play().catch(() => {}));
+            navigator.mediaSession.setActionHandler('pause', () => audio.pause());
+            navigator.mediaSession.setActionHandler('previoustrack', playPreviousTrack);
+            navigator.mediaSession.setActionHandler('nexttrack', playNextTrack);
+            navigator.mediaSession.setActionHandler('stop', closeMiniPlayer);
+            navigator.mediaSession.setActionHandler('seekbackward', (details) => {
+                const delta = details?.seekOffset || 10;
+                audio.currentTime = Math.max(0, (audio.currentTime || 0) - delta);
+            });
+            navigator.mediaSession.setActionHandler('seekforward', (details) => {
+                const delta = details?.seekOffset || 10;
+                audio.currentTime = Math.min(audio.duration || 0, (audio.currentTime || 0) + delta);
+            });
+            navigator.mediaSession.setActionHandler('seekto', (details) => {
+                if (details && Number.isFinite(details.seekTime)) {
+                    audio.currentTime = Math.max(0, Math.min(audio.duration || details.seekTime, details.seekTime));
+                }
+            });
+
+            navigator.mediaSession.playbackState = audio.paused ? 'paused' : 'playing';
+
+            if ('setPositionState' in navigator.mediaSession && Number.isFinite(audio.duration) && audio.duration > 0) {
+                navigator.mediaSession.setPositionState({
+                    duration: audio.duration,
+                    position: Math.min(audio.currentTime || 0, audio.duration),
+                    playbackRate: audio.playbackRate || 1
+                });
+            }
+        } catch (error) {
+            console.warn('Media Session API error:', error);
+        }
+    }
+
     function closeMiniPlayer() {
         const audio = getMusicAudio();
         audio.pause();
@@ -414,6 +514,10 @@
         if (currentPlayingCard) {
             currentPlayingCard.classList.remove('playing');
             currentPlayingCard = null;
+        }
+
+        if ('mediaSession' in navigator) {
+            try { navigator.mediaSession.metadata = null; } catch (_) {}
         }
     }
     
@@ -472,8 +576,17 @@
         document.getElementById('mini-player-thumb').src = thumb || 'images/bg-default.jpg';
         document.getElementById('mini-player-title').textContent = title;
         document.getElementById('mini-player-artist').textContent = artist;
-        
+
+        updateFullscreenTrackInfo();
+        updateMediaSession(audio);
+        if (!audio.__mediaSessionBound) {
+            audio.addEventListener('timeupdate', () => updateMediaSession(audio));
+            audio.addEventListener('loadedmetadata', () => updateMediaSession(audio));
+            audio.__mediaSessionBound = true;
+        }
+
         miniPlayer.classList.remove('hidden');
+        syncMiniPlayerLayer();
         
         // Update current playing card
         currentPlayingCard = card;
@@ -510,6 +623,20 @@
         }, 5000);
     }
     
+
+    function syncMiniPlayerLayer() {
+        const miniPlayer = document.getElementById('music-mini-player');
+        const videoModal = document.getElementById('video-modal');
+        if (!miniPlayer) return;
+        const isVideoOpen = !!(videoModal && (videoModal.style.display === 'flex' || window.getComputedStyle(videoModal).display !== 'none'));
+        miniPlayer.classList.toggle('behind-video-modal', isVideoOpen);
+        if (isVideoOpen) {
+            miniPlayer.classList.add('hidden');
+        } else if (getMusicAudio().src) {
+            miniPlayer.classList.remove('hidden');
+        }
+    }
+
     // Render music grid grouped by anime
     function renderMusicGrid() {
         const musicGrid = document.getElementById('music-grid');
@@ -623,6 +750,8 @@
     let musicListenerAdded = false;
     
     // Initialize when anime data is loaded
+    window.addEventListener('videoModalVisibilityChanged', syncMiniPlayerLayer);
+
     function init() {
         // Adicionar listener apenas uma vez para evitar memory leaks
         if (!musicListenerAdded) {
@@ -631,6 +760,7 @@
         }
         
         // Tentar renderizar imediatamente se dados já disponíveis
+        syncMiniPlayerLayer();
         if (window.animeDB && window.animeDB.musicLibrary) {
             renderMusicGrid();
         }

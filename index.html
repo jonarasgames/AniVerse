@@ -243,6 +243,9 @@
                         <button id="next-episode-btn" class="btn-icon" title="Próximo Episódio" style="margin-left: auto;">
                             <i class="fas fa-step-forward"></i>
                         </button>
+                        <button id="clip-btn" class="btn btn-secondary" title="Criar clipe de até 60s">
+                            ✂️ Clipe
+                        </button>
                         <button id="pip-btn" class="btn-icon" title="Picture-in-Picture">
                             <i class="fas fa-tv"></i>
                         </button>
@@ -277,6 +280,17 @@
                     <select id="episode-select">
                         <option>Episódio 1</option>
                     </select>
+                </div>
+                <div id="clips-panel" class="clips-panel">
+                    <div class="clips-panel-header">
+                        <strong>Clipes do anime</strong>
+                        <div style="display:flex; gap:8px; align-items:center;">
+                            <button id="download-selected-clip-btn" class="btn btn-secondary" title="Baixar clipe selecionado">⬇️ Baixar clipe</button>
+                            <span id="clips-count">0</span>
+                        </div>
+                    </div>
+                    <div id="clips-empty" class="clips-empty">Nenhum clipe deste anime ainda. Use ✂️ Clipe para marcar início/fim.</div>
+                    <div id="clips-list" class="clips-list"></div>
                 </div>
             </div>
         </div>

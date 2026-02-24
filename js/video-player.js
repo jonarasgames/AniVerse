@@ -5,16 +5,21 @@
   function clearVideoError(){ const el=document.getElementById('video-error-container'); if(el) el.remove(); }
 
   function SkipController(player, skipId){
-    this.player = player; this.skipBtn = safe(skipId); this.opening = null;
+    this.player = player; this.skipBtn = safe(skipId); this.opening = null; this.autoSkipped = false; this.lastSource = ''; this.autoSkipEnabled = localStorage.getItem('aniverse_auto_skip_opening') !== 'false';
     if(!this.player || !this.skipBtn){ console.warn('SkipController: missing elements'); return; }
     this.player.addEventListener('timeupdate', ()=> this.update());
     this.skipBtn.addEventListener('click', ()=> { if (this.opening) this.player.currentTime = this.opening.end; });
   }
-  SkipController.prototype.setOpening = function(opening){ this.opening = opening; this.update(); };
+  SkipController.prototype.setOpening = function(opening){ this.opening = opening; this.autoSkipped = false; this.lastSource = this.player ? (this.player.currentSrc || this.player.src || '') : ''; this.update(); };
   SkipController.prototype.update = function(){
     if(!this.player || !this.skipBtn) return;
     if(!this.opening){ this.skipBtn.style.display='none'; return; }
+    const src = this.player.currentSrc || this.player.src || '';
+    if (src && src !== this.lastSource) { this.lastSource = src; this.autoSkipped = false; }
     const t = this.player.currentTime || 0; const show = (t >= this.opening.start && t < this.opening.end);
+    if (show && this.autoSkipEnabled && !this.autoSkipped) {
+      try { this.player.currentTime = this.opening.end; this.autoSkipped = true; } catch (_) {}
+    }
     this.skipBtn.style.display = show ? 'block' : 'none';
     if(show) this.skipBtn.textContent = `⏩ Pular (${Math.ceil(Math.max(0,this.opening.end - t))}s)`;
   };
@@ -155,6 +160,117 @@
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   }
 
+
+  const CLIP_MAX_DURATION_SECONDS = 60;
+  const CLIP_MAX_ITEMS = 50;
+
+  function sanitizeFileName(name) {
+    return `${name || 'episodio'}`.replace(/[\/:*?"<>|]/g, '-').slice(0, 120);
+  }
+
+  function getActiveProfileClipKey() {
+    const profileId = window.profileManager?.getActiveProfile?.()?.id || 'guest';
+    return `aniverse_clips_${profileId}`;
+  }
+
+  function getSavedClips() {
+    try {
+      const raw = localStorage.getItem(getActiveProfileClipKey());
+      const parsed = raw ? JSON.parse(raw) : [];
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (_) {
+      return [];
+    }
+  }
+
+  function saveClip(clip) {
+    const items = getSavedClips();
+    items.unshift(clip);
+    localStorage.setItem(getActiveProfileClipKey(), JSON.stringify(items.slice(0, CLIP_MAX_ITEMS)));
+  }
+
+
+  function getAnimeClips() {
+    const all = getSavedClips();
+    if (!window.currentWatchingAnime) return all;
+    return all
+      .filter((clip) => clip.animeId === window.currentWatchingAnime.id)
+      .sort((a, b) => {
+        if ((a.season || 0) !== (b.season || 0)) return (a.season || 0) - (b.season || 0);
+        if ((a.episode || 0) !== (b.episode || 0)) return (a.episode || 0) - (b.episode || 0);
+        return (b.createdAt || '').localeCompare(a.createdAt || '');
+      });
+  }
+
+  function formatClipTime(seconds) {
+    const total = Math.max(0, Math.floor(seconds || 0));
+    const m = Math.floor(total / 60);
+    const s = total % 60;
+    return `${m}:${String(s).padStart(2, '0')}`;
+  }
+
+  async function exportClipFromVideo(player, clip, fileNameBase) {
+    if (!player || !clip) return;
+    if (!player.captureStream || typeof MediaRecorder === 'undefined') {
+      alert('Seu navegador não suporta exportação de clipe direto ainda.');
+      return;
+    }
+
+    const wasPaused = player.paused;
+    const originalTime = player.currentTime || 0;
+    const originalMuted = player.muted;
+    const stream = player.captureStream();
+    const chunks = [];
+    let recorder;
+
+    try { recorder = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp8,opus' }); }
+    catch (_) { recorder = new MediaRecorder(stream); }
+
+    recorder.ondataavailable = (event) => {
+      if (event.data && event.data.size > 0) chunks.push(event.data);
+    };
+    const stopPromise = new Promise((resolve) => { recorder.onstop = resolve; });
+
+    try {
+      player.muted = true;
+      player.currentTime = clip.start;
+      recorder.start(250);
+      await player.play();
+      await new Promise((resolve) => {
+        const check = () => {
+          if (player.currentTime >= clip.end || player.ended) return resolve();
+          requestAnimationFrame(check);
+        };
+        requestAnimationFrame(check);
+      });
+      player.pause();
+      recorder.stop();
+      await stopPromise;
+
+      if (!chunks.length) {
+        alert('Não foi possível gerar o arquivo do clipe.');
+        return;
+      }
+
+      const blob = new Blob(chunks, { type: recorder.mimeType || 'video/webm' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${sanitizeFileName(fileNameBase)}.webm`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1500);
+    } catch (error) {
+      console.warn('Erro ao exportar clipe:', error);
+      alert('Falha ao exportar clipe neste vídeo/dispositivo.');
+    } finally {
+      player.muted = originalMuted;
+      player.currentTime = originalTime;
+      if (!wasPaused) player.play().catch(() => {});
+    }
+  }
+
   document.addEventListener('DOMContentLoaded', ()=>{
     const player = safe('anime-player'); if(!player){ console.warn('#anime-player not found'); return; }
     
@@ -166,7 +282,90 @@
     const volumeBtn = safe('volume-btn');
     const volumeContainer = document.querySelector('.volume-container');
     const volumeProgress = safe('volume-progress');
+    const clipBtn = safe('clip-btn');
+    const downloadClipBtn = safe('download-selected-clip-btn');
+    let clipStartTime = null;
+    let selectedClipId = null;
+    const clipsListEl = safe('clips-list');
+    const clipsEmptyEl = safe('clips-empty');
+    const clipsCountEl = safe('clips-count');
     
+
+    function resolveWatchingContext() {
+        if (window.currentWatchingAnime && Number.isFinite(window.currentWatchingAnime.season) && Number.isFinite(window.currentWatchingAnime.episode)) {
+            return window.currentWatchingAnime;
+        }
+
+        const seasonSelect = document.getElementById('season-select');
+        const episodeSelect = document.getElementById('episode-select');
+        if (!window.currentAnime || !seasonSelect || !episodeSelect) return null;
+
+        const season = Number(seasonSelect.value);
+        const episodeIndex = Number(episodeSelect.value);
+        if (!Number.isFinite(season) || !Number.isFinite(episodeIndex)) return null;
+
+        return {
+            id: window.currentAnime.id,
+            title: window.currentAnime.title,
+            thumbnail: window.currentAnime.thumbnail || window.currentAnime.cover,
+            season,
+            seasonName: `Temporada ${season}`,
+            episode: episodeIndex + 1
+        };
+    }
+
+    function renderClipsPanel() {
+        if (!clipsListEl || !clipsEmptyEl || !clipsCountEl) return;
+        const clips = getAnimeClips();
+        clipsCountEl.textContent = String(clips.length);
+        if (downloadClipBtn) {
+            downloadClipBtn.disabled = clips.length === 0;
+            downloadClipBtn.style.opacity = clips.length === 0 ? '0.55' : '1';
+        }
+
+        if (!clips.length) {
+            clipsListEl.innerHTML = '';
+            clipsEmptyEl.style.display = 'block';
+            selectedClipId = null;
+            return;
+        }
+
+        if (!selectedClipId || !clips.some(c => c.id === selectedClipId)) {
+            selectedClipId = clips[0].id;
+        }
+
+        clipsEmptyEl.style.display = 'none';
+        clipsListEl.innerHTML = clips.map((clip) => {
+            const isSelected = clip.id === selectedClipId;
+            return `<button class="clip-item ${isSelected ? 'is-selected' : ''}" data-clip-id="${clip.id}"><span class="clip-episode">T${clip.season} • Ep ${clip.episode}</span><span class="clip-range">${formatClipTime(clip.start)} → ${formatClipTime(clip.end)}</span><span class="clip-duration">${clip.duration.toFixed(1)}s</span></button>`;
+        }).join('');
+
+        clipsListEl.querySelectorAll('.clip-item').forEach((item) => {
+            item.addEventListener('click', () => {
+                selectedClipId = item.dataset.clipId;
+                const selectedClip = clips.find((clip) => clip.id === selectedClipId);
+                if (!selectedClip) {
+                  renderClipsPanel();
+                  return;
+                }
+
+                const isCurrentEpisode = window.currentWatchingAnime &&
+                  selectedClip.season === window.currentWatchingAnime.season &&
+                  selectedClip.episode === window.currentWatchingAnime.episode;
+
+                if (!isCurrentEpisode && window.currentAnime && window.openEpisode) {
+                  window.openEpisode(window.currentAnime, selectedClip.season, selectedClip.episode - 1);
+                  return;
+                }
+
+                if (Number.isFinite(selectedClip.start)) {
+                  try { player.currentTime = selectedClip.start; } catch (_) {}
+                }
+                renderClipsPanel();
+            });
+        });
+    }
+
     // Play/Pause button
     if (playPauseBtn) {
       playPauseBtn.addEventListener('click', () => {
@@ -457,31 +656,127 @@
     const nextEpisodeBtn = safe('next-episode-btn');
     if (nextEpisodeBtn) {
         nextEpisodeBtn.addEventListener('click', () => {
-            if (window.currentAnime && window.currentWatchingAnime) {
-                const currentSeason = window.currentAnime.seasons?.find(s => s.number === window.currentWatchingAnime.season);
-                if (currentSeason && currentSeason.episodes) {
-                    // episode is 1-based, openEpisode takes 0-based index
-                    // So next episode index = current episode number (e.g., watching ep 1 → next index is 1 → ep 2)
-                    const nextEpisodeIndex = window.currentWatchingAnime.episode;
-                    
-                    if (nextEpisodeIndex < currentSeason.episodes.length) {
-                        // Next episode exists in current season
-                        console.log(`⏭️ Going to next episode: S${window.currentWatchingAnime.season}E${nextEpisodeIndex + 1}`);
-                        window.openEpisode(window.currentAnime, window.currentWatchingAnime.season, nextEpisodeIndex);
-                    } else {
-                        // Check if there's a next season
-                        const nextSeason = window.currentAnime.seasons?.find(s => s.number === window.currentWatchingAnime.season + 1);
-                        if (nextSeason && nextSeason.episodes && nextSeason.episodes.length > 0) {
-                            console.log(`⏭️ Going to next season: S${nextSeason.number}E1`);
-                            window.openEpisode(window.currentAnime, nextSeason.number, 0);
-                        } else {
-                            console.log('✅ No more episodes available');
-                        }
-                    }
-                }
+            const watching = resolveWatchingContext();
+            if (!window.currentAnime || !watching) return;
+
+            const currentSeason = window.currentAnime.seasons?.find(s => s.number === watching.season);
+            if (!currentSeason || !currentSeason.episodes) return;
+
+            const nextEpisodeIndex = watching.episode;
+            if (nextEpisodeIndex < currentSeason.episodes.length) {
+                console.log(`⏭️ Going to next episode: S${watching.season}E${nextEpisodeIndex + 1}`);
+                window.openEpisode(window.currentAnime, watching.season, nextEpisodeIndex);
+                return;
+            }
+
+            const nextSeason = window.currentAnime.seasons?.find(s => s.number === watching.season + 1);
+            if (nextSeason && nextSeason.episodes && nextSeason.episodes.length > 0) {
+                console.log(`⏭️ Going to next season: S${nextSeason.number}E1`);
+                window.openEpisode(window.currentAnime, nextSeason.number, 0);
+            } else {
+                console.log('✅ No more episodes available');
             }
         });
     }
+
+
+    if (clipBtn) {
+        clipBtn.addEventListener('click', () => {
+            const watching = resolveWatchingContext();
+            if (!watching) {
+                alert('Abra um episódio para criar clipes.');
+                return;
+            }
+
+            if (clipStartTime === null) {
+                clipStartTime = Number.isFinite(player.currentTime) ? player.currentTime : 0;
+                clipBtn.textContent = '✅ Finalizar';
+                showVideoError('Início do clipe marcado. Toque novamente para finalizar.');
+                setTimeout(clearVideoError, 1300);
+                return;
+            }
+
+            const start = Math.max(0, clipStartTime);
+            const end = Math.max(start, Number.isFinite(player.currentTime) ? player.currentTime : start);
+            const duration = end - start;
+            clipStartTime = null;
+            clipBtn.innerHTML = '✂️ Clipe';
+
+            if (duration < 1) {
+                alert('O clipe precisa ter pelo menos 1 segundo.');
+                return;
+            }
+
+            if (duration > CLIP_MAX_DURATION_SECONDS) {
+                alert(`Limite de clipe: até ${CLIP_MAX_DURATION_SECONDS}s.`);
+                return;
+            }
+
+            const info = watching;
+            const clip = {
+                id: `${Date.now()}-${Math.round(Math.random() * 1000)}`,
+                animeId: info.id,
+                animeTitle: info.title,
+                title: info.title,
+                season: info.season,
+                episode: info.episode,
+                start,
+                end,
+                duration,
+                sourceUrl: player.currentSrc || player.src || '',
+                createdAt: new Date().toISOString()
+            };
+
+            saveClip(clip);
+            showVideoError(`Clipe salvo (${duration.toFixed(1)}s).`);
+            setTimeout(clearVideoError, 1800);
+            renderClipsPanel();
+        });
+
+        player.addEventListener('loadedmetadata', () => {
+            clipStartTime = null;
+            clipBtn.innerHTML = '✂️ Clipe';
+            renderClipsPanel();
+        });
+    }
+
+    if (downloadClipBtn) {
+        downloadClipBtn.addEventListener('click', async () => {
+            const clips = getAnimeClips();
+            if (!clips.length) {
+                alert('Crie um clipe primeiro para baixar.');
+                return;
+            }
+
+            const selected = clips.find(c => c.id === selectedClipId) || clips[0];
+            selectedClipId = selected.id;
+            renderClipsPanel();
+
+            const info = resolveWatchingContext() || window.currentWatchingAnime;
+            const baseName = info
+              ? `${info.title} - S${selected.season}E${selected.episode} - ${formatClipTime(selected.start)}-${formatClipTime(selected.end)}`
+              : `clipe-${Date.now()}`;
+
+            const isCurrentEpisode = info && selected.season === info.season && selected.episode === info.episode;
+            if (!isCurrentEpisode && window.currentAnime && window.openEpisode) {
+              window.openEpisode(window.currentAnime, selected.season, selected.episode - 1);
+              await new Promise((resolve) => {
+                const handler = () => {
+                  player.removeEventListener('loadedmetadata', handler);
+                  resolve();
+                };
+                player.addEventListener('loadedmetadata', handler, { once: true });
+              });
+            }
+
+            showVideoError('Exportando clipe... aguarde alguns segundos.');
+            await exportClipFromVideo(player, selected, baseName);
+            setTimeout(clearVideoError, 2200);
+        });
+    }
+
+    renderClipsPanel();
+    window.addEventListener('episodeChanged', renderClipsPanel);
     
     // Double-tap to seek (mobile) - Track tap times and positions
     let lastTapTime = 0;
