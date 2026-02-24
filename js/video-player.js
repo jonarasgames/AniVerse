@@ -155,6 +155,35 @@
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   }
 
+
+  const CLIP_MAX_DURATION_SECONDS = 60;
+  const CLIP_MAX_ITEMS = 50;
+
+  function sanitizeFileName(name) {
+    return `${name || 'episodio'}`.replace(/[\/:*?"<>|]/g, '-').slice(0, 120);
+  }
+
+  function getActiveProfileClipKey() {
+    const profileId = window.profileManager?.getActiveProfile?.()?.id || 'guest';
+    return `aniverse_clips_${profileId}`;
+  }
+
+  function getSavedClips() {
+    try {
+      const raw = localStorage.getItem(getActiveProfileClipKey());
+      const parsed = raw ? JSON.parse(raw) : [];
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (_) {
+      return [];
+    }
+  }
+
+  function saveClip(clip) {
+    const items = getSavedClips();
+    items.unshift(clip);
+    localStorage.setItem(getActiveProfileClipKey(), JSON.stringify(items.slice(0, CLIP_MAX_ITEMS)));
+  }
+
   document.addEventListener('DOMContentLoaded', ()=>{
     const player = safe('anime-player'); if(!player){ console.warn('#anime-player not found'); return; }
     
@@ -166,6 +195,9 @@
     const volumeBtn = safe('volume-btn');
     const volumeContainer = document.querySelector('.volume-container');
     const volumeProgress = safe('volume-progress');
+    const clipBtn = safe('clip-btn');
+    const downloadEpisodeBtn = safe('download-episode-btn');
+    let clipStartTime = null;
     
     // Play/Pause button
     if (playPauseBtn) {
@@ -480,6 +512,92 @@
                     }
                 }
             }
+        });
+    }
+
+
+    if (clipBtn) {
+        clipBtn.addEventListener('click', () => {
+            if (!window.currentWatchingAnime || !Number.isFinite(player.currentTime)) {
+                alert('Abra um episódio para criar clipes.');
+                return;
+            }
+
+            if (clipStartTime === null) {
+                clipStartTime = player.currentTime;
+                clipBtn.textContent = '✅ Finalizar';
+                showVideoError('Início do clipe marcado. Toque novamente para finalizar.');
+                setTimeout(clearVideoError, 1300);
+                return;
+            }
+
+            const start = Math.max(0, clipStartTime);
+            const end = Math.max(start, player.currentTime);
+            const duration = end - start;
+            clipStartTime = null;
+            clipBtn.innerHTML = '✂️ Clipe';
+
+            if (duration < 1) {
+                alert('O clipe precisa ter pelo menos 1 segundo.');
+                return;
+            }
+
+            if (duration > CLIP_MAX_DURATION_SECONDS) {
+                alert(`Limite de clipe: até ${CLIP_MAX_DURATION_SECONDS}s.`);
+                return;
+            }
+
+            const info = window.currentWatchingAnime;
+            const clip = {
+                id: `${Date.now()}-${Math.round(Math.random() * 1000)}`,
+                animeId: info.id,
+                title: info.title,
+                season: info.season,
+                episode: info.episode,
+                start,
+                end,
+                duration,
+                sourceUrl: player.currentSrc || player.src || '',
+                createdAt: new Date().toISOString()
+            };
+
+            saveClip(clip);
+            showVideoError(`Clipe salvo (${duration.toFixed(1)}s). Limite: ${CLIP_MAX_ITEMS} clipes por perfil.`);
+            setTimeout(clearVideoError, 1800);
+        });
+
+        player.addEventListener('loadedmetadata', () => {
+            clipStartTime = null;
+            clipBtn.innerHTML = '✂️ Clipe';
+        });
+    }
+
+    if (downloadEpisodeBtn) {
+        downloadEpisodeBtn.addEventListener('click', () => {
+            const sourceUrl = player.currentSrc || player.src;
+            if (!sourceUrl) {
+                alert('Nenhum vídeo carregado para baixar.');
+                return;
+            }
+
+            const info = window.currentWatchingAnime;
+            const fileName = sanitizeFileName(
+                info
+                  ? `${info.title} - S${info.season}E${info.episode}.mp4`
+                  : 'episodio-aniverse.mp4'
+            );
+
+            const link = document.createElement('a');
+            link.href = sourceUrl;
+            link.download = fileName;
+            link.rel = 'noopener';
+            link.target = '_blank';
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+
+            showVideoError('Download iniciado. Em alguns celulares, o navegador pode abrir o vídeo em nova aba antes de baixar.');
+            setTimeout(clearVideoError, 2200);
         });
     }
     
