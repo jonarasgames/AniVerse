@@ -3536,17 +3536,3 @@ body.dark-mode .age-rating-section {
   .music-mini-player .mini-player-controls { gap: 6px; }
   .music-mini-player .mini-control-btn { width: 32px; height: 32px; }
 }
-
-.clip-item {
-  flex-direction: column;
-  align-items: flex-start;
-  min-width: 140px;
-}
-.clip-episode { font-size: 11px; opacity: .78; }
-
-.music-mini-player.behind-video-modal {
-  z-index: 20 !important;
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(120%);
-}
