@@ -4,6 +4,7 @@
     
     let musicPlayerInstance = null;
     let currentPlayingCard = null;
+    let currentMusicData = null;
     
     // Get or create singleton audio element
     function getMusicAudio() {
@@ -79,10 +80,16 @@
                 </div>
             </div>
             <div class="mini-player-controls">
+                <button id="mini-prev-track" class="mini-control-btn" aria-label="Música anterior">
+                    <i class="fas fa-backward-step"></i>
+                </button>
                 <button id="mini-play-pause" class="mini-control-btn" aria-label="Play/Pause">
                     <i class="fas fa-pause"></i>
                 </button>
-                
+                <button id="mini-next-track" class="mini-control-btn" aria-label="Próxima música">
+                    <i class="fas fa-forward-step"></i>
+                </button>
+
                 <!-- CONTROLE DE VOLUME -->
                 <div class="mini-volume-container">
                     <button class="mini-control-btn" id="mini-music-volume-btn" aria-label="Mute/Unmute">
@@ -112,6 +119,8 @@
         
         // Event listeners
         document.getElementById('mini-play-pause').addEventListener('click', togglePlayPause);
+        document.getElementById('mini-prev-track').addEventListener('click', playPreviousTrack);
+        document.getElementById('mini-next-track').addEventListener('click', playNextTrack);
         document.getElementById('mini-close').addEventListener('click', closeMiniPlayer);
         document.getElementById('mini-music-fullscreen').addEventListener('click', openMusicFullscreen);
         
@@ -251,7 +260,6 @@
         return `${mins}:${secs.toString().padStart(2, '0')}`;
     }
     
-    let currentMusicData = null;
     
     function openMusicFullscreen() {
         if (!currentMusicData) return;
@@ -288,10 +296,17 @@
                         </div>
                     </div>
                     <div class="music-fs-controls">
+                        <button class="music-fs-control-btn" id="music-fs-prev">
+                            <i class="fas fa-backward-step"></i>
+                        </button>
                         <button class="music-fs-control-btn" id="music-fs-play-pause">
                             <i class="fas fa-pause"></i>
                         </button>
+                        <button class="music-fs-control-btn" id="music-fs-next">
+                            <i class="fas fa-forward-step"></i>
+                        </button>
                     </div>
+
                 </div>
             `;
             document.body.appendChild(fullscreenModal);
@@ -299,6 +314,8 @@
             // Event listeners
             document.getElementById('music-fs-close-btn').addEventListener('click', closeMusicFullscreen);
             document.getElementById('music-fs-play-pause').addEventListener('click', togglePlayPause);
+            document.getElementById('music-fs-prev').addEventListener('click', playPreviousTrack);
+            document.getElementById('music-fs-next').addEventListener('click', playNextTrack);
             
             const fsProgressContainer = document.getElementById('music-fs-progress-container');
             fsProgressContainer.addEventListener('click', (e) => {
@@ -317,10 +334,7 @@
         }
         
         // Atualizar conteúdo
-        document.getElementById('music-fs-thumb').src = currentMusicData.thumbnail;
-        document.getElementById('music-fs-title').textContent = currentMusicData.title;
-        document.getElementById('music-fs-artist').textContent = currentMusicData.artist;
-        document.getElementById('music-fs-bg').style.backgroundImage = `url('${currentMusicData.thumbnail}')`;
+        updateTrackUI(currentMusicData.title, currentMusicData.artist, currentMusicData.thumbnail);
         
         // Atualizar botão play/pause
         updateFullscreenPlayPauseIcon();
@@ -401,6 +415,27 @@
         }
     }
     
+    function playPreviousTrack() {
+        if (!currentPlayingCard) return;
+
+        const allCards = document.querySelectorAll('.music-card');
+        const cardsArray = Array.from(allCards);
+        const currentIndex = cardsArray.indexOf(currentPlayingCard);
+
+        if (currentIndex <= 0) return;
+
+        const prevCard = cardsArray[currentIndex - 1];
+        if (!prevCard) return;
+
+        playMusic(
+            prevCard.dataset.src,
+            prevCard.dataset.title,
+            prevCard.dataset.artist,
+            prevCard.dataset.thumb,
+            prevCard
+        );
+    }
+
     function closeMiniPlayer() {
         const audio = getMusicAudio();
         audio.pause();
@@ -417,6 +452,51 @@
         }
     }
     
+    function applyMusicMetadata(title, artist, thumb) {
+        if ('mediaSession' in navigator) {
+            try {
+                navigator.mediaSession.metadata = new MediaMetadata({
+                    title: title || 'AniVerse',
+                    artist: artist || 'AniVerse',
+                    album: 'AniVerse Músicas',
+                    artwork: [
+                        { src: thumb || 'images/bg-default.jpg', sizes: '512x512' }
+                    ]
+                });
+
+                navigator.mediaSession.setActionHandler('play', () => togglePlayPause());
+                navigator.mediaSession.setActionHandler('pause', () => togglePlayPause());
+                navigator.mediaSession.setActionHandler('previoustrack', () => playPreviousTrack());
+                navigator.mediaSession.setActionHandler('nexttrack', () => playNextTrack());
+            } catch (e) {
+                console.warn('MediaSession unavailable', e);
+            }
+        }
+    }
+
+    function updateTrackUI(title, artist, thumb) {
+        const safeThumb = thumb || 'images/bg-default.jpg';
+        const thumbEl = document.getElementById('mini-player-thumb');
+        const titleEl = document.getElementById('mini-player-title');
+        const artistEl = document.getElementById('mini-player-artist');
+
+        if (thumbEl) thumbEl.src = safeThumb;
+        if (titleEl) titleEl.textContent = title || 'Sem título';
+        if (artistEl) artistEl.textContent = artist || 'Artista desconhecido';
+
+        const fsThumb = document.getElementById('music-fs-thumb');
+        const fsTitle = document.getElementById('music-fs-title');
+        const fsArtist = document.getElementById('music-fs-artist');
+        const fsBg = document.getElementById('music-fs-bg');
+
+        if (fsThumb) fsThumb.src = safeThumb;
+        if (fsTitle) fsTitle.textContent = title || 'Sem título';
+        if (fsArtist) fsArtist.textContent = artist || 'Artista desconhecido';
+        if (fsBg) fsBg.style.backgroundImage = `url('${safeThumb}')`;
+
+        applyMusicMetadata(title, artist, safeThumb);
+    }
+
     function playMusic(src, title, artist, thumb, card) {
         createMiniPlayer();
         
@@ -469,9 +549,7 @@
         });
         
         // Update mini-player UI
-        document.getElementById('mini-player-thumb').src = thumb || 'images/bg-default.jpg';
-        document.getElementById('mini-player-title').textContent = title;
-        document.getElementById('mini-player-artist').textContent = artist;
+        updateTrackUI(title, artist, thumb);
         
         miniPlayer.classList.remove('hidden');
         
