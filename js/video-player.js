@@ -199,6 +199,36 @@
     const downloadEpisodeBtn = safe('download-episode-btn');
     let clipStartTime = null;
     
+    function renderClipsPanel() {
+        if (!clipsListEl || !clipsEmptyEl || !clipsCountEl) return;
+        const clips = getContextualClips();
+        clipsCountEl.textContent = String(clips.length);
+
+        if (!clips.length) {
+            clipsListEl.innerHTML = '';
+            clipsEmptyEl.style.display = 'block';
+            selectedClipId = null;
+            return;
+        }
+
+        if (!selectedClipId || !clips.some(c => c.id === selectedClipId)) {
+            selectedClipId = clips[0].id;
+        }
+
+        clipsEmptyEl.style.display = 'none';
+        clipsListEl.innerHTML = clips.map((clip) => {
+            const isSelected = clip.id === selectedClipId;
+            return `<button class="clip-item ${isSelected ? 'is-selected' : ''}" data-clip-id="${clip.id}"><span class="clip-range">${formatClipTime(clip.start)} → ${formatClipTime(clip.end)}</span><span class="clip-duration">${clip.duration.toFixed(1)}s</span></button>`;
+        }).join('');
+
+        clipsListEl.querySelectorAll('.clip-item').forEach((item) => {
+            item.addEventListener('click', () => {
+                selectedClipId = item.dataset.clipId;
+                renderClipsPanel();
+            });
+        });
+    }
+
     // Play/Pause button
     if (playPauseBtn) {
       playPauseBtn.addEventListener('click', () => {
