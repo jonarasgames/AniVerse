@@ -140,58 +140,27 @@
     try { clipRecorder.stop(); } catch (e) {}
   }
 
-  function resolveMimeType() {
-    if (!window.MediaRecorder || typeof MediaRecorder.isTypeSupported !== 'function') return '';
-
-    const preferredTypes = [
-      'video/webm;codecs=vp9,opus',
-      'video/webm;codecs=vp8,opus',
-      'video/webm',
-      'video/mp4;codecs=avc1.42E01E,mp4a.40.2',
-      'video/mp4'
-    ];
-
-    return preferredTypes.find((type) => MediaRecorder.isTypeSupported(type)) || '';
-  }
-
-  function getPlayerStream(player) {
-    if (!player) return null;
-    if (typeof player.captureStream === 'function') return player.captureStream();
-    if (typeof player.mozCaptureStream === 'function') return player.mozCaptureStream();
-    return null;
-  }
-
   function startRecording() {
     const player = document.getElementById('anime-player');
-    if (!player) {
-      alert('Player de vídeo não encontrado para gravar o clipe.');
+    if (!player || typeof player.captureStream !== 'function') {
+      alert('Seu navegador não suporta gravação de clipes nesse player.');
       return;
     }
 
-    if (!window.MediaRecorder) {
-      alert('Seu navegador ainda não suporta gravação de clipes. Tente Chrome/Edge atualizado.');
-      return;
+    let mimeType = '';
+    if (window.MediaRecorder && MediaRecorder.isTypeSupported('video/webm;codecs=vp9,opus')) {
+      mimeType = 'video/webm;codecs=vp9,opus';
+    } else if (window.MediaRecorder && MediaRecorder.isTypeSupported('video/webm;codecs=vp8,opus')) {
+      mimeType = 'video/webm;codecs=vp8,opus';
+    } else {
+      mimeType = 'video/webm';
     }
-
-    let stream = null;
-    try {
-      stream = getPlayerStream(player);
-    } catch (e) {
-      console.warn('Erro ao capturar stream do player:', e);
-    }
-
-    if (!stream) {
-      alert('Não consegui capturar o vídeo para clipar. Tente iniciar o episódio e usar Chrome atualizado no Android/PC.');
-      return;
-    }
-
-    const mimeType = resolveMimeType();
 
     try {
+      const stream = player.captureStream();
       clipRecorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
     } catch (e) {
-      console.warn('Erro ao criar MediaRecorder:', e);
-      alert('Não foi possível iniciar a gravação de clipe neste navegador/formato.');
+      alert('Não foi possível iniciar a gravação de clipe.');
       return;
     }
 
@@ -210,8 +179,7 @@
         return;
       }
 
-      const outputType = (clipRecorder && clipRecorder.mimeType) ? clipRecorder.mimeType : 'video/webm';
-      const blob = new Blob(recordedChunks, { type: outputType });
+      const blob = new Blob(recordedChunks, { type: 'video/webm' });
       const clip = registerClip(blob, duration);
       clipRecorder = null;
       recordedChunks = [];
