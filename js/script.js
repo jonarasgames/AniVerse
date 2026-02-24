@@ -96,8 +96,10 @@ document.addEventListener('DOMContentLoaded', () => {
           loadAnimeSection('ova');
         } else if (sectionId === 'collections' && typeof loadCollections === 'function') {
           loadCollections();
-        } else if (sectionId === 'openings' && typeof renderMusicLibrary === 'function' && window.animeDB) {
-          renderMusicLibrary(window.animeDB.musicLibrary);
+        } else if (sectionId === 'openings' && typeof renderMusicGrid === 'function') {
+          renderMusicGrid();
+        } else if (sectionId === 'clips' && typeof window.renderClips === 'function') {
+          window.renderClips();
         } else if (sectionId === 'continue' && typeof renderContinueWatchingGrid === 'function' && window.animeDB) {
           renderContinueWatchingGrid(window.animeDB.getContinueWatching(), 'continue-grid');
         }
@@ -819,6 +821,34 @@ function onVideoSetSource(player, episode){
   setSource(0, { autoPlay: true, preserveTime: 0 });
 }
 
+
+function syncEpisodeSelectors(anime, seasonNumber, episodeIndex) {
+  const seasonSelect = document.getElementById('season-select');
+  const episodeSelect = document.getElementById('episode-select');
+  if (!seasonSelect || !episodeSelect || !anime || !Array.isArray(anime.seasons)) return;
+
+  const season = anime.seasons.find((s) => s.number === seasonNumber);
+  if (!season) return;
+
+  if (seasonSelect.value !== String(seasonNumber)) {
+    seasonSelect.value = String(seasonNumber);
+  }
+
+  const needsRefresh = !episodeSelect.options.length || Number(episodeSelect.dataset.seasonNumber) !== seasonNumber;
+  if (needsRefresh) {
+    episodeSelect.innerHTML = '';
+    (season.episodes || []).forEach((ep, idx) => {
+      const option = document.createElement('option');
+      option.value = idx;
+      option.textContent = `Episódio ${idx + 1}${ep.title ? ' - ' + ep.title : ''}`;
+      episodeSelect.appendChild(option);
+    });
+    episodeSelect.dataset.seasonNumber = String(seasonNumber);
+  }
+
+  episodeSelect.value = String(episodeIndex);
+}
+
 // openEpisode helper: set src, resume, banner, opening
 function openEpisode(anime, seasonNumber, episodeIndex){
   try {
@@ -835,6 +865,7 @@ function openEpisode(anime, seasonNumber, episodeIndex){
     if (videoModal) {
         videoModal.style.display = 'flex';
         document.body.style.overflow = 'hidden';
+        document.body.classList.add('video-modal-active');
     }
     const videoContainer = document.getElementById('video-player-container');
     if (videoContainer) {
@@ -900,6 +931,8 @@ function openEpisode(anime, seasonNumber, episodeIndex){
     // Determine season name (custom or default)
     const seasonName = season && season.name ? season.name : `Temporada ${seasonNumber}`;
     
+    syncEpisodeSelectors(anime, seasonNumber, episodeIndex);
+
     const sl = document.getElementById('current-season-label'), elb = document.getElementById('current-episode-label');
     if (sl) {
         sl.textContent = seasonName;
@@ -1161,5 +1194,5 @@ window.addEventListener('animeDataLoaded', () => {
   try { if (typeof loadAnimeSection === 'function') loadAnimeSection('anime'); } catch(e){}
   try { if (window.animeDB && typeof renderContinueWatchingGrid === 'function') renderContinueWatchingGrid(animeDB.getContinueWatching(),'continue-watching-grid'); } catch(e){}
   try { if (typeof bindProfileModalControls === 'function') bindProfileModalControls(); } catch(e){}
-  try { if (typeof renderMusicLibrary === 'function' && window.animeDB) renderMusicLibrary(window.animeDB.musicLibrary); } catch(e){}
+  try { if (typeof renderMusicGrid === 'function') renderMusicGrid(); } catch(e){}
 });
