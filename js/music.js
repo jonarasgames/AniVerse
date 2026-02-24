@@ -473,21 +473,6 @@
             navigator.mediaSession.setActionHandler('previoustrack', playPreviousTrack);
             navigator.mediaSession.setActionHandler('nexttrack', playNextTrack);
             navigator.mediaSession.setActionHandler('stop', closeMiniPlayer);
-            navigator.mediaSession.setActionHandler('seekbackward', (details) => {
-                const delta = details?.seekOffset || 10;
-                audio.currentTime = Math.max(0, (audio.currentTime || 0) - delta);
-            });
-            navigator.mediaSession.setActionHandler('seekforward', (details) => {
-                const delta = details?.seekOffset || 10;
-                audio.currentTime = Math.min(audio.duration || 0, (audio.currentTime || 0) + delta);
-            });
-            navigator.mediaSession.setActionHandler('seekto', (details) => {
-                if (details && Number.isFinite(details.seekTime)) {
-                    audio.currentTime = Math.max(0, Math.min(audio.duration || details.seekTime, details.seekTime));
-                }
-            });
-
-            navigator.mediaSession.playbackState = audio.paused ? 'paused' : 'playing';
 
             if ('setPositionState' in navigator.mediaSession && Number.isFinite(audio.duration) && audio.duration > 0) {
                 navigator.mediaSession.setPositionState({
@@ -577,7 +562,6 @@
         document.getElementById('mini-player-title').textContent = title;
         document.getElementById('mini-player-artist').textContent = artist;
 
-        updateFullscreenTrackInfo();
         updateMediaSession(audio);
         if (!audio.__mediaSessionBound) {
             audio.addEventListener('timeupdate', () => updateMediaSession(audio));
@@ -628,13 +612,8 @@
         const miniPlayer = document.getElementById('music-mini-player');
         const videoModal = document.getElementById('video-modal');
         if (!miniPlayer) return;
-        const isVideoOpen = !!(videoModal && (videoModal.style.display === 'flex' || window.getComputedStyle(videoModal).display !== 'none'));
+        const isVideoOpen = !!(videoModal && videoModal.style.display === 'flex');
         miniPlayer.classList.toggle('behind-video-modal', isVideoOpen);
-        if (isVideoOpen) {
-            miniPlayer.classList.add('hidden');
-        } else if (getMusicAudio().src) {
-            miniPlayer.classList.remove('hidden');
-        }
     }
 
     // Render music grid grouped by anime

@@ -189,88 +189,6 @@
     localStorage.setItem(getActiveProfileClipKey(), JSON.stringify(items.slice(0, CLIP_MAX_ITEMS)));
   }
 
-
-  function getAnimeClips() {
-    const all = getSavedClips();
-    if (!window.currentWatchingAnime) return all;
-    return all
-      .filter((clip) => clip.animeId === window.currentWatchingAnime.id)
-      .sort((a, b) => {
-        if ((a.season || 0) !== (b.season || 0)) return (a.season || 0) - (b.season || 0);
-        if ((a.episode || 0) !== (b.episode || 0)) return (a.episode || 0) - (b.episode || 0);
-        return (b.createdAt || '').localeCompare(a.createdAt || '');
-      });
-  }
-
-  function formatClipTime(seconds) {
-    const total = Math.max(0, Math.floor(seconds || 0));
-    const m = Math.floor(total / 60);
-    const s = total % 60;
-    return `${m}:${String(s).padStart(2, '0')}`;
-  }
-
-  async function exportClipFromVideo(player, clip, fileNameBase) {
-    if (!player || !clip) return;
-    if (!player.captureStream || typeof MediaRecorder === 'undefined') {
-      alert('Seu navegador não suporta exportação de clipe direto ainda.');
-      return;
-    }
-
-    const wasPaused = player.paused;
-    const originalTime = player.currentTime || 0;
-    const originalMuted = player.muted;
-    const stream = player.captureStream();
-    const chunks = [];
-    let recorder;
-
-    try { recorder = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp8,opus' }); }
-    catch (_) { recorder = new MediaRecorder(stream); }
-
-    recorder.ondataavailable = (event) => {
-      if (event.data && event.data.size > 0) chunks.push(event.data);
-    };
-    const stopPromise = new Promise((resolve) => { recorder.onstop = resolve; });
-
-    try {
-      player.muted = true;
-      player.currentTime = clip.start;
-      recorder.start(250);
-      await player.play();
-      await new Promise((resolve) => {
-        const check = () => {
-          if (player.currentTime >= clip.end || player.ended) return resolve();
-          requestAnimationFrame(check);
-        };
-        requestAnimationFrame(check);
-      });
-      player.pause();
-      recorder.stop();
-      await stopPromise;
-
-      if (!chunks.length) {
-        alert('Não foi possível gerar o arquivo do clipe.');
-        return;
-      }
-
-      const blob = new Blob(chunks, { type: recorder.mimeType || 'video/webm' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `${sanitizeFileName(fileNameBase)}.webm`;
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      setTimeout(() => URL.revokeObjectURL(url), 1500);
-    } catch (error) {
-      console.warn('Erro ao exportar clipe:', error);
-      alert('Falha ao exportar clipe neste vídeo/dispositivo.');
-    } finally {
-      player.muted = originalMuted;
-      player.currentTime = originalTime;
-      if (!wasPaused) player.play().catch(() => {});
-    }
-  }
-
   document.addEventListener('DOMContentLoaded', ()=>{
     const player = safe('anime-player'); if(!player){ console.warn('#anime-player not found'); return; }
     
@@ -283,45 +201,13 @@
     const volumeContainer = document.querySelector('.volume-container');
     const volumeProgress = safe('volume-progress');
     const clipBtn = safe('clip-btn');
-    const downloadClipBtn = safe('download-selected-clip-btn');
+    const downloadEpisodeBtn = safe('download-episode-btn');
     let clipStartTime = null;
-    let selectedClipId = null;
-    const clipsListEl = safe('clips-list');
-    const clipsEmptyEl = safe('clips-empty');
-    const clipsCountEl = safe('clips-count');
     
-
-    function resolveWatchingContext() {
-        if (window.currentWatchingAnime && Number.isFinite(window.currentWatchingAnime.season) && Number.isFinite(window.currentWatchingAnime.episode)) {
-            return window.currentWatchingAnime;
-        }
-
-        const seasonSelect = document.getElementById('season-select');
-        const episodeSelect = document.getElementById('episode-select');
-        if (!window.currentAnime || !seasonSelect || !episodeSelect) return null;
-
-        const season = Number(seasonSelect.value);
-        const episodeIndex = Number(episodeSelect.value);
-        if (!Number.isFinite(season) || !Number.isFinite(episodeIndex)) return null;
-
-        return {
-            id: window.currentAnime.id,
-            title: window.currentAnime.title,
-            thumbnail: window.currentAnime.thumbnail || window.currentAnime.cover,
-            season,
-            seasonName: `Temporada ${season}`,
-            episode: episodeIndex + 1
-        };
-    }
-
     function renderClipsPanel() {
         if (!clipsListEl || !clipsEmptyEl || !clipsCountEl) return;
-        const clips = getAnimeClips();
+        const clips = getContextualClips();
         clipsCountEl.textContent = String(clips.length);
-        if (downloadClipBtn) {
-            downloadClipBtn.disabled = clips.length === 0;
-            downloadClipBtn.style.opacity = clips.length === 0 ? '0.55' : '1';
-        }
 
         if (!clips.length) {
             clipsListEl.innerHTML = '';
@@ -337,30 +223,12 @@
         clipsEmptyEl.style.display = 'none';
         clipsListEl.innerHTML = clips.map((clip) => {
             const isSelected = clip.id === selectedClipId;
-            return `<button class="clip-item ${isSelected ? 'is-selected' : ''}" data-clip-id="${clip.id}"><span class="clip-episode">T${clip.season} • Ep ${clip.episode}</span><span class="clip-range">${formatClipTime(clip.start)} → ${formatClipTime(clip.end)}</span><span class="clip-duration">${clip.duration.toFixed(1)}s</span></button>`;
+            return `<button class="clip-item ${isSelected ? 'is-selected' : ''}" data-clip-id="${clip.id}"><span class="clip-range">${formatClipTime(clip.start)} → ${formatClipTime(clip.end)}</span><span class="clip-duration">${clip.duration.toFixed(1)}s</span></button>`;
         }).join('');
 
         clipsListEl.querySelectorAll('.clip-item').forEach((item) => {
             item.addEventListener('click', () => {
                 selectedClipId = item.dataset.clipId;
-                const selectedClip = clips.find((clip) => clip.id === selectedClipId);
-                if (!selectedClip) {
-                  renderClipsPanel();
-                  return;
-                }
-
-                const isCurrentEpisode = window.currentWatchingAnime &&
-                  selectedClip.season === window.currentWatchingAnime.season &&
-                  selectedClip.episode === window.currentWatchingAnime.episode;
-
-                if (!isCurrentEpisode && window.currentAnime && window.openEpisode) {
-                  window.openEpisode(window.currentAnime, selectedClip.season, selectedClip.episode - 1);
-                  return;
-                }
-
-                if (Number.isFinite(selectedClip.start)) {
-                  try { player.currentTime = selectedClip.start; } catch (_) {}
-                }
                 renderClipsPanel();
             });
         });
@@ -682,14 +550,13 @@
 
     if (clipBtn) {
         clipBtn.addEventListener('click', () => {
-            const watching = resolveWatchingContext();
-            if (!watching) {
+            if (!window.currentWatchingAnime || !Number.isFinite(player.currentTime)) {
                 alert('Abra um episódio para criar clipes.');
                 return;
             }
 
             if (clipStartTime === null) {
-                clipStartTime = Number.isFinite(player.currentTime) ? player.currentTime : 0;
+                clipStartTime = player.currentTime;
                 clipBtn.textContent = '✅ Finalizar';
                 showVideoError('Início do clipe marcado. Toque novamente para finalizar.');
                 setTimeout(clearVideoError, 1300);
@@ -697,7 +564,7 @@
             }
 
             const start = Math.max(0, clipStartTime);
-            const end = Math.max(start, Number.isFinite(player.currentTime) ? player.currentTime : start);
+            const end = Math.max(start, player.currentTime);
             const duration = end - start;
             clipStartTime = null;
             clipBtn.innerHTML = '✂️ Clipe';
@@ -712,11 +579,10 @@
                 return;
             }
 
-            const info = watching;
+            const info = window.currentWatchingAnime;
             const clip = {
                 id: `${Date.now()}-${Math.round(Math.random() * 1000)}`,
                 animeId: info.id,
-                animeTitle: info.title,
                 title: info.title,
                 season: info.season,
                 episode: info.episode,
@@ -728,55 +594,44 @@
             };
 
             saveClip(clip);
-            showVideoError(`Clipe salvo (${duration.toFixed(1)}s).`);
+            showVideoError(`Clipe salvo (${duration.toFixed(1)}s). Limite: ${CLIP_MAX_ITEMS} clipes por perfil.`);
             setTimeout(clearVideoError, 1800);
-            renderClipsPanel();
         });
 
         player.addEventListener('loadedmetadata', () => {
             clipStartTime = null;
             clipBtn.innerHTML = '✂️ Clipe';
-            renderClipsPanel();
         });
     }
 
-    if (downloadClipBtn) {
-        downloadClipBtn.addEventListener('click', async () => {
-            const clips = getAnimeClips();
-            if (!clips.length) {
-                alert('Crie um clipe primeiro para baixar.');
+    if (downloadEpisodeBtn) {
+        downloadEpisodeBtn.addEventListener('click', () => {
+            const sourceUrl = player.currentSrc || player.src;
+            if (!sourceUrl) {
+                alert('Nenhum vídeo carregado para baixar.');
                 return;
             }
 
-            const selected = clips.find(c => c.id === selectedClipId) || clips[0];
-            selectedClipId = selected.id;
-            renderClipsPanel();
+            const info = window.currentWatchingAnime;
+            const fileName = sanitizeFileName(
+                info
+                  ? `${info.title} - S${info.season}E${info.episode}.mp4`
+                  : 'episodio-aniverse.mp4'
+            );
 
-            const info = resolveWatchingContext() || window.currentWatchingAnime;
-            const baseName = info
-              ? `${info.title} - S${selected.season}E${selected.episode} - ${formatClipTime(selected.start)}-${formatClipTime(selected.end)}`
-              : `clipe-${Date.now()}`;
+            const link = document.createElement('a');
+            link.href = sourceUrl;
+            link.download = fileName;
+            link.rel = 'noopener';
+            link.target = '_blank';
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
 
-            const isCurrentEpisode = info && selected.season === info.season && selected.episode === info.episode;
-            if (!isCurrentEpisode && window.currentAnime && window.openEpisode) {
-              window.openEpisode(window.currentAnime, selected.season, selected.episode - 1);
-              await new Promise((resolve) => {
-                const handler = () => {
-                  player.removeEventListener('loadedmetadata', handler);
-                  resolve();
-                };
-                player.addEventListener('loadedmetadata', handler, { once: true });
-              });
-            }
-
-            showVideoError('Exportando clipe... aguarde alguns segundos.');
-            await exportClipFromVideo(player, selected, baseName);
+            showVideoError('Download iniciado. Em alguns celulares, o navegador pode abrir o vídeo em nova aba antes de baixar.');
             setTimeout(clearVideoError, 2200);
         });
     }
-
-    renderClipsPanel();
-    window.addEventListener('episodeChanged', renderClipsPanel);
     
     // Double-tap to seek (mobile) - Track tap times and positions
     let lastTapTime = 0;

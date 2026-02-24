@@ -648,7 +648,7 @@ function onVideoSetSource(player, episode){
     if (!source || player.__adaptivePlayback?.token !== state.token) return;
 
     const shouldAutoPlay = options.autoPlay !== false;
-    const preserveTime = Number.isFinite(options.preserveTime) ? options.preserveTime : (player.currentTime || 0);
+    const preserveTime = Number.isFinite(options.preserveTime) ? options.preserveTime : 0;
 
     state.currentIndex = index;
 
@@ -817,29 +817,6 @@ function onVideoSetSource(player, episode){
   };
 
   setSource(0, { autoPlay: true, preserveTime: 0 });
-}
-
-
-function syncEpisodeSelectors(anime, seasonNumber, episodeIndex){
-  const seasonSelect = document.getElementById('season-select');
-  const episodeSelect = document.getElementById('episode-select');
-  if (!seasonSelect || !episodeSelect || !anime || !Array.isArray(anime.seasons)) return;
-
-  const seasons = [...anime.seasons].sort((a,b)=> (a.number||0)-(b.number||0));
-  const currentSeason = seasons.find((season) => season.number === seasonNumber) || seasons[0];
-  const episodes = Array.isArray(currentSeason?.episodes) ? currentSeason.episodes : [];
-
-  seasonSelect.innerHTML = seasons.map((season) => {
-    const seasonLabel = season.name || `Temporada ${season.number}`;
-    const selected = season.number === seasonNumber ? ' selected' : '';
-    return `<option value="${season.number}"${selected}>${seasonLabel}</option>`;
-  }).join('');
-
-  episodeSelect.innerHTML = episodes.map((ep, idx) => {
-    const epTitle = ep && ep.title ? ` - ${ep.title}` : '';
-    const selected = idx === episodeIndex ? ' selected' : '';
-    return `<option value="${idx}"${selected}>Episódio ${idx + 1}${epTitle}</option>`;
-  }).join('');
 }
 
 // openEpisode helper: set src, resume, banner, opening
