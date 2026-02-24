@@ -157,12 +157,13 @@
         });
         
         // Update play/pause icon based on audio state
-        audio.addEventListener('play', updatePlayPauseIcon);
-        audio.addEventListener('pause', updatePlayPauseIcon);
+        audio.addEventListener('play', () => { updatePlayPauseIcon(); updateMediaSession(audio); });
+        audio.addEventListener('pause', () => { updatePlayPauseIcon(); updateMediaSession(audio); });
         audio.addEventListener('timeupdate', updateProgress);
         audio.addEventListener('loadedmetadata', updateDuration);
         audio.addEventListener('volumechange', updateMusicVolume);
         audio.addEventListener('ended', () => {
+            updateMediaSession(audio);
             // Auto-advance to next track
             playNextTrack();
         });

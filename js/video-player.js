@@ -632,6 +632,9 @@
             setTimeout(clearVideoError, 2200);
         });
     }
+
+    renderClipsPanel();
+    window.addEventListener('episodeChanged', renderClipsPanel);
     
     // Double-tap to seek (mobile) - Track tap times and positions
     let lastTapTime = 0;
