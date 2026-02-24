@@ -5,16 +5,21 @@
   function clearVideoError(){ const el=document.getElementById('video-error-container'); if(el) el.remove(); }
 
   function SkipController(player, skipId){
-    this.player = player; this.skipBtn = safe(skipId); this.opening = null;
+    this.player = player; this.skipBtn = safe(skipId); this.opening = null; this.autoSkipped = false; this.lastSource = ''; this.autoSkipEnabled = localStorage.getItem('aniverse_auto_skip_opening') !== 'false';
     if(!this.player || !this.skipBtn){ console.warn('SkipController: missing elements'); return; }
     this.player.addEventListener('timeupdate', ()=> this.update());
     this.skipBtn.addEventListener('click', ()=> { if (this.opening) this.player.currentTime = this.opening.end; });
   }
-  SkipController.prototype.setOpening = function(opening){ this.opening = opening; this.update(); };
+  SkipController.prototype.setOpening = function(opening){ this.opening = opening; this.autoSkipped = false; this.lastSource = this.player ? (this.player.currentSrc || this.player.src || '') : ''; this.update(); };
   SkipController.prototype.update = function(){
     if(!this.player || !this.skipBtn) return;
     if(!this.opening){ this.skipBtn.style.display='none'; return; }
+    const src = this.player.currentSrc || this.player.src || '';
+    if (src && src !== this.lastSource) { this.lastSource = src; this.autoSkipped = false; }
     const t = this.player.currentTime || 0; const show = (t >= this.opening.start && t < this.opening.end);
+    if (show && this.autoSkipEnabled && !this.autoSkipped) {
+      try { this.player.currentTime = this.opening.end; this.autoSkipped = true; } catch (_) {}
+    }
     this.skipBtn.style.display = show ? 'block' : 'none';
     if(show) this.skipBtn.textContent = `⏩ Pular (${Math.ceil(Math.max(0,this.opening.end - t))}s)`;
   };
@@ -519,28 +524,25 @@
     const nextEpisodeBtn = safe('next-episode-btn');
     if (nextEpisodeBtn) {
         nextEpisodeBtn.addEventListener('click', () => {
-            if (window.currentAnime && window.currentWatchingAnime) {
-                const currentSeason = window.currentAnime.seasons?.find(s => s.number === window.currentWatchingAnime.season);
-                if (currentSeason && currentSeason.episodes) {
-                    // episode is 1-based, openEpisode takes 0-based index
-                    // So next episode index = current episode number (e.g., watching ep 1 → next index is 1 → ep 2)
-                    const nextEpisodeIndex = window.currentWatchingAnime.episode;
-                    
-                    if (nextEpisodeIndex < currentSeason.episodes.length) {
-                        // Next episode exists in current season
-                        console.log(`⏭️ Going to next episode: S${window.currentWatchingAnime.season}E${nextEpisodeIndex + 1}`);
-                        window.openEpisode(window.currentAnime, window.currentWatchingAnime.season, nextEpisodeIndex);
-                    } else {
-                        // Check if there's a next season
-                        const nextSeason = window.currentAnime.seasons?.find(s => s.number === window.currentWatchingAnime.season + 1);
-                        if (nextSeason && nextSeason.episodes && nextSeason.episodes.length > 0) {
-                            console.log(`⏭️ Going to next season: S${nextSeason.number}E1`);
-                            window.openEpisode(window.currentAnime, nextSeason.number, 0);
-                        } else {
-                            console.log('✅ No more episodes available');
-                        }
-                    }
-                }
+            const watching = resolveWatchingContext();
+            if (!window.currentAnime || !watching) return;
+
+            const currentSeason = window.currentAnime.seasons?.find(s => s.number === watching.season);
+            if (!currentSeason || !currentSeason.episodes) return;
+
+            const nextEpisodeIndex = watching.episode;
+            if (nextEpisodeIndex < currentSeason.episodes.length) {
+                console.log(`⏭️ Going to next episode: S${watching.season}E${nextEpisodeIndex + 1}`);
+                window.openEpisode(window.currentAnime, watching.season, nextEpisodeIndex);
+                return;
+            }
+
+            const nextSeason = window.currentAnime.seasons?.find(s => s.number === watching.season + 1);
+            if (nextSeason && nextSeason.episodes && nextSeason.episodes.length > 0) {
+                console.log(`⏭️ Going to next season: S${nextSeason.number}E1`);
+                window.openEpisode(window.currentAnime, nextSeason.number, 0);
+            } else {
+                console.log('✅ No more episodes available');
             }
         });
     }
