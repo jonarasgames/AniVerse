@@ -562,7 +562,6 @@
         document.getElementById('mini-player-title').textContent = title;
         document.getElementById('mini-player-artist').textContent = artist;
 
-        updateFullscreenTrackInfo();
         updateMediaSession(audio);
         if (!audio.__mediaSessionBound) {
             audio.addEventListener('timeupdate', () => updateMediaSession(audio));
@@ -613,7 +612,7 @@
         const miniPlayer = document.getElementById('music-mini-player');
         const videoModal = document.getElementById('video-modal');
         if (!miniPlayer) return;
-        const isVideoOpen = !!(videoModal && (videoModal.style.display === 'flex' || window.getComputedStyle(videoModal).display !== 'none'));
+        const isVideoOpen = !!(videoModal && videoModal.style.display === 'flex');
         miniPlayer.classList.toggle('behind-video-modal', isVideoOpen);
     }
 
