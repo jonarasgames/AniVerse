@@ -648,7 +648,7 @@ function onVideoSetSource(player, episode){
     if (!source || player.__adaptivePlayback?.token !== state.token) return;
 
     const shouldAutoPlay = options.autoPlay !== false;
-    const preserveTime = Number.isFinite(options.preserveTime) ? options.preserveTime : (player.currentTime || 0);
+    const preserveTime = Number.isFinite(options.preserveTime) ? options.preserveTime : 0;
 
     state.currentIndex = index;
 
