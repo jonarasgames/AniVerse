@@ -352,6 +352,23 @@
             document.body.style.overflow = '';
         }
     }
+
+
+    function updateFullscreenTrackInfo() {
+        const fullscreenModal = document.getElementById('music-fullscreen-modal');
+        if (!fullscreenModal || !fullscreenModal.classList.contains('visible') || !currentMusicData) return;
+
+        const thumb = currentMusicData.thumbnail || 'images/bg-default.jpg';
+        const titleEl = document.getElementById('music-fs-title');
+        const artistEl = document.getElementById('music-fs-artist');
+        const thumbEl = document.getElementById('music-fs-thumb');
+        const bgEl = document.getElementById('music-fs-bg');
+
+        if (titleEl) titleEl.textContent = currentMusicData.title || 'Título';
+        if (artistEl) artistEl.textContent = currentMusicData.artist || 'Artista';
+        if (thumbEl) thumbEl.src = thumb;
+        if (bgEl) bgEl.style.backgroundImage = `url('${thumb}')`;
+    }
     
     function updateFullscreenProgress() {
         const audio = getMusicAudio();
