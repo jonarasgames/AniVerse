@@ -140,88 +140,28 @@
     try { clipRecorder.stop(); } catch (e) {}
   }
 
-  async function getFallbackDisplayStream() {
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
-      return null;
-    }
-
-    try {
-      return await navigator.mediaDevices.getDisplayMedia({
-        video: true,
-        audio: true,
-        preferCurrentTab: true
-      });
-    } catch (error) {
-      console.warn('Usuário negou/fechou captura de tela para clipe:', error);
-      return null;
-    }
-  }
-
-  function resolveMimeType() {
-    if (!window.MediaRecorder || typeof MediaRecorder.isTypeSupported !== 'function') return '';
-
-    const preferredTypes = [
-      'video/webm;codecs=vp9,opus',
-      'video/webm;codecs=vp8,opus',
-      'video/webm',
-      'video/mp4;codecs=avc1.42E01E,mp4a.40.2',
-      'video/mp4'
-    ];
-
-    return preferredTypes.find((type) => MediaRecorder.isTypeSupported(type)) || '';
-  }
-
-  function getPlayerStream(player) {
-    if (!player) return null;
-    if (typeof player.captureStream === 'function') return player.captureStream();
-    if (typeof player.mozCaptureStream === 'function') return player.mozCaptureStream();
-    return null;
-  }
-
-  async function startRecording() {
+  function startRecording() {
     const player = document.getElementById('anime-player');
-    if (!player) {
-      alert('Player de vídeo não encontrado para gravar o clipe.');
+    if (!player || typeof player.captureStream !== 'function') {
+      alert('Seu navegador não suporta gravação de clipes nesse player.');
       return;
     }
 
-    if (!window.MediaRecorder) {
-      alert('Seu navegador ainda não suporta gravação de clipes. Tente Chrome/Edge atualizado.');
-      return;
+    let mimeType = '';
+    if (window.MediaRecorder && MediaRecorder.isTypeSupported('video/webm;codecs=vp9,opus')) {
+      mimeType = 'video/webm;codecs=vp9,opus';
+    } else if (window.MediaRecorder && MediaRecorder.isTypeSupported('video/webm;codecs=vp8,opus')) {
+      mimeType = 'video/webm;codecs=vp8,opus';
+    } else {
+      mimeType = 'video/webm';
     }
-
-    if (!player.currentSrc) {
-      alert('Abra um episódio e dê play antes de gravar o clipe.');
-      return;
-    }
-
-    let stream = null;
-    try {
-      stream = getPlayerStream(player);
-    } catch (e) {
-      console.warn('Erro ao capturar stream do player:', e);
-    }
-
-    if (!stream) {
-      stream = await getFallbackDisplayStream();
-      if (!stream) {
-        alert('Não foi possível clipar automaticamente. Permita capturar a aba atual quando o navegador solicitar.');
-        return;
-      }
-    }
-
-    const mimeType = resolveMimeType();
 
     try {
+      const stream = player.captureStream();
       clipRecorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
     } catch (e) {
-      try {
-        clipRecorder = new MediaRecorder(stream);
-      } catch (fallbackError) {
-        console.warn('Erro ao criar MediaRecorder:', e, fallbackError);
-        alert('Não foi possível iniciar a gravação de clipe neste navegador/formato.');
-        return;
-      }
+      alert('Não foi possível iniciar a gravação de clipe.');
+      return;
     }
 
     recordedChunks = [];
@@ -231,27 +171,15 @@
       if (event.data && event.data.size > 0) recordedChunks.push(event.data);
     });
 
-    clipRecorder.addEventListener('error', () => {
-      setRecordButtonState(false);
-      if (stream) stream.getTracks().forEach((track) => track.stop());
-      clipRecorder = null;
-      recordedChunks = [];
-      alert('A gravação falhou durante o processo. Tente novamente.');
-    }, { once: true });
-
     clipRecorder.addEventListener('stop', () => {
       setRecordButtonState(false);
       const duration = (Date.now() - recordingStart) / 1000;
-
-      if (stream) stream.getTracks().forEach((track) => track.stop());
-
       if (!recordedChunks.length) {
         clipRecorder = null;
         return;
       }
 
-      const outputType = (clipRecorder && clipRecorder.mimeType) ? clipRecorder.mimeType : 'video/webm';
-      const blob = new Blob(recordedChunks, { type: outputType });
+      const blob = new Blob(recordedChunks, { type: 'video/webm' });
       const clip = registerClip(blob, duration);
       clipRecorder = null;
       recordedChunks = [];
@@ -273,11 +201,7 @@
         if (clipRecorder && clipRecorder.state !== 'inactive') {
           stopRecording();
         } else {
-          startRecording().catch((error) => {
-            console.error('Falha ao iniciar gravação de clipe:', error);
-            setRecordButtonState(false);
-            alert('Não foi possível iniciar a clipagem agora. Tente novamente.');
-          });
+          startRecording();
         }
       });
     }
