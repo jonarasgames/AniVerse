@@ -444,6 +444,7 @@
       if (modal) {
         modal.style.display = 'none';
         document.body.style.overflow = '';
+        window.dispatchEvent(new CustomEvent('videoModalVisibilityChanged', { detail: { open: false } }));
         
         // Pause video
         const player = document.getElementById('anime-player');
