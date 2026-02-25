@@ -27,6 +27,7 @@
                     <li><a href="#" data-section="ovas">OVAs</a></li>
                     <li><a href="#" data-section="collections">Coleções</a></li>
                     <li><a href="#" data-section="openings">Músicas</a></li>
+                    <li><a href="#" data-section="clips">Clipes</a></li>
                     <li><a href="#" data-section="continue">Histórico</a></li>
                 </ul>
             </nav>
@@ -117,6 +118,15 @@
             <div id="music-player-container">
                 <div id="music-grid" class="music-grid"></div>
             </div>
+        </section>
+
+        <section id="clips-section" class="content-section">
+            <h2 class="section-title">Clipes</h2>
+            <p class="section-description">Grave momentos direto do player e baixe no celular/PC para postar onde quiser.</p>
+            <div class="clips-toolbar">
+                <button id="clear-clips-btn" class="btn btn-secondary"><i class="fas fa-trash"></i> Limpar Clipes</button>
+            </div>
+            <div id="clips-grid" class="clips-grid"></div>
         </section>
 
         <!-- Continue Watching Section -->
@@ -242,6 +252,9 @@
                         </button>
                         <button id="next-episode-btn" class="btn-icon" title="Próximo Episódio" style="margin-left: auto;">
                             <i class="fas fa-step-forward"></i>
+                        </button>
+                        <button id="clip-record-btn" class="btn-icon" title="Iniciar gravação de clipe">
+                            <i class="fas fa-circle"></i>
                         </button>
                         <button id="pip-btn" class="btn-icon" title="Picture-in-Picture">
                             <i class="fas fa-tv"></i>
@@ -520,6 +533,7 @@
     <script src="js/profile-modal-bindings.js" defer></script>
     <script src="js/music.js" defer></script>
     <script src="js/music-player.js" defer></script>
+    <script src="js/clips.js" defer></script>
     <script src="js/video-player.js" defer></script>
     <script src="js/player-fixes.js" defer></script>
     <script src="js/script.js" defer></script>

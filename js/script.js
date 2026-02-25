@@ -98,6 +98,8 @@ document.addEventListener('DOMContentLoaded', () => {
           loadCollections();
         } else if (sectionId === 'openings' && typeof renderMusicGrid === 'function') {
           renderMusicGrid();
+        } else if (sectionId === 'clips' && typeof window.renderClips === 'function') {
+          window.renderClips();
         } else if (sectionId === 'continue' && typeof renderContinueWatchingGrid === 'function' && window.animeDB) {
           renderContinueWatchingGrid(window.animeDB.getContinueWatching(), 'continue-grid');
         }
