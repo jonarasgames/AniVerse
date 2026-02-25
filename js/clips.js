@@ -2,10 +2,7 @@
   'use strict';
 
   const CLIPS_META_KEY = 'aniVerseClipsMeta';
-  const MAX_CLIP_MS = 60000;
-
   let clipRecorder = null;
-  let activeDisplayStream = null;
   let recordedChunks = [];
   let recordingStart = 0;
   let autoStopTimer = null;
@@ -14,7 +11,7 @@
   function safeParse(value, fallback) {
     try {
       return JSON.parse(value);
-    } catch (_) {
+    } catch (e) {
       return fallback;
     }
   }
@@ -35,130 +32,13 @@
   }
 
   function escapeHtml(text) {
-    return (text || '').replace(/[&<>"']/g, (char) => ({
+    return (text || '').replace(/[&<>"']/g, (c) => ({
       '&': '&amp;',
       '<': '&lt;',
       '>': '&gt;',
       '"': '&quot;',
       "'": '&#39;'
-    }[char]));
-  }
-
-  function setRecordButtonState(recording) {
-    const btn = document.getElementById('clip-record-btn');
-    if (!btn) return;
-    btn.classList.toggle('recording', recording);
-    btn.title = recording ? 'Parar gravação de clipe' : 'Iniciar gravação de clipe';
-    btn.innerHTML = recording ? '<i class="fas fa-stop"></i>' : '<i class="fas fa-circle"></i>';
-  }
-
-  function stopDisplayStream() {
-    if (!activeDisplayStream) return;
-    activeDisplayStream.getTracks().forEach((track) => {
-      try { track.stop(); } catch (_) {}
-    });
-    activeDisplayStream = null;
-  }
-
-  function stopRecording() {
-    clearTimeout(autoStopTimer);
-    autoStopTimer = null;
-
-    if (clipRecorder && clipRecorder.state !== 'inactive') {
-      try { clipRecorder.stop(); } catch (_) {}
-    }
-  }
-
-  function resolveMimeType() {
-    if (!window.MediaRecorder || typeof MediaRecorder.isTypeSupported !== 'function') return '';
-
-    const candidates = [
-      'video/webm;codecs=vp8,opus',
-      'video/webm;codecs=vp9,opus',
-      'video/webm'
-    ];
-
-    return candidates.find((type) => MediaRecorder.isTypeSupported(type)) || '';
-  }
-
-  async function getDisplayMediaStream() {
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
-      return null;
-    }
-
-    // Método totalmente diferente: sempre gravar a aba/tela escolhida pelo usuário.
-    // Isso evita incompatibilidades de captureStream/canvas no player.
-    try {
-      const stream = await navigator.mediaDevices.getDisplayMedia({
-        video: {
-          frameRate: 30,
-          displaySurface: 'browser'
-        },
-        audio: true,
-        preferCurrentTab: true,
-        selfBrowserSurface: 'include'
-      });
-
-      if (!stream.getVideoTracks().length) {
-        stream.getTracks().forEach((track) => track.stop());
-        return null;
-      }
-
-      return stream;
-    } catch (error) {
-      console.warn('Usuário cancelou/negou getDisplayMedia:', error);
-      return null;
-    }
-  }
-
-  function registerClip(blob, duration) {
-    const current = window.currentWatchingAnime || {};
-    const anime = window.currentAnime || {};
-    const clipId = `clip-${Date.now()}-${Math.random().toString(16).slice(2)}`;
-    const blobUrl = URL.createObjectURL(blob);
-
-    runtimeClipUrls.set(clipId, blobUrl);
-
-    const clip = {
-      id: clipId,
-      title: current.title || anime.title || 'Clipe AniVerse',
-      subtitle: `${current.seasonName || `Temporada ${current.season || 1}`} • Episódio ${current.episode || 1}`,
-      thumbnail: current.thumbnail || anime.cover || anime.thumbnail || 'images/bg-default.jpg',
-      duration,
-      createdAt: Date.now(),
-      filename: `${(current.title || 'anime').replace(/[^a-z0-9]+/gi, '-').toLowerCase()}-${Date.now()}.webm`
-    };
-
-    const clips = getStoredClips();
-    clips.push(clip);
-    saveStoredClips(clips);
-    renderClips();
-    return clip;
-  }
-
-  function downloadClip(clipId) {
-    const clip = getStoredClips().find((item) => item.id === clipId);
-    const url = runtimeClipUrls.get(clipId);
-    if (!clip || !url) return;
-
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = clip.filename || `${clipId}.webm`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-  }
-
-  function removeClip(clipId) {
-    const clips = getStoredClips().filter((item) => item.id !== clipId);
-    saveStoredClips(clips);
-
-    if (runtimeClipUrls.has(clipId)) {
-      URL.revokeObjectURL(runtimeClipUrls.get(clipId));
-      runtimeClipUrls.delete(clipId);
-    }
-
-    renderClips();
+    }[c]));
   }
 
   function renderClips() {
@@ -182,7 +62,7 @@
         <div class="clip-info">
           <h3>${escapeHtml(clip.title || 'Clipe')}</h3>
           <p>${escapeHtml(clip.subtitle || '')}</p>
-          <small>${new Date(clip.createdAt || Date.now()).toLocaleString('pt-BR')} • ${formatDuration(clip.duration)}</small>
+          <small>${new Date(clip.createdAt || Date.now()).toLocaleString('pt-BR')} • ${formatDuration(clip.duration)} </small>
         </div>
         <div class="clip-actions">
           <button class="btn btn-primary" data-action="download" data-id="${clip.id}" ${hasBlob ? '' : 'disabled'}>
@@ -197,83 +77,110 @@
     });
   }
 
-  async function startRecording() {
+  function registerClip(blob, duration) {
+    const current = window.currentWatchingAnime || {};
+    const anime = window.currentAnime || {};
+    const clipId = `clip-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    const blobUrl = URL.createObjectURL(blob);
+    runtimeClipUrls.set(clipId, blobUrl);
+
+    const clip = {
+      id: clipId,
+      title: current.title || anime.title || 'Clipe AniVerse',
+      subtitle: `${current.seasonName || `Temporada ${current.season || 1}`} • Episódio ${current.episode || 1}`,
+      thumbnail: current.thumbnail || anime.cover || anime.thumbnail || 'images/bg-default.jpg',
+      duration,
+      createdAt: Date.now(),
+      filename: `${(current.title || 'anime').replace(/[^a-z0-9]+/gi, '-').toLowerCase()}-${Date.now()}.webm`
+    };
+
+    const clips = getStoredClips();
+    clips.push(clip);
+    saveStoredClips(clips);
+    renderClips();
+    return clip;
+  }
+
+  function downloadClip(clipId) {
+    const clips = getStoredClips();
+    const clip = clips.find((item) => item.id === clipId);
+    const url = runtimeClipUrls.get(clipId);
+    if (!clip || !url) return;
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = clip.filename || `${clipId}.webm`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  }
+
+  function removeClip(clipId) {
+    const clips = getStoredClips().filter((item) => item.id !== clipId);
+    saveStoredClips(clips);
+    if (runtimeClipUrls.has(clipId)) {
+      URL.revokeObjectURL(runtimeClipUrls.get(clipId));
+      runtimeClipUrls.delete(clipId);
+    }
+    renderClips();
+  }
+
+  function setRecordButtonState(recording) {
+    const btn = document.getElementById('clip-record-btn');
+    if (!btn) return;
+    btn.classList.toggle('recording', recording);
+    btn.title = recording ? 'Parar gravação de clipe' : 'Iniciar gravação de clipe';
+    btn.innerHTML = recording ? '<i class="fas fa-stop"></i>' : '<i class="fas fa-circle"></i>';
+  }
+
+  function stopRecording() {
+    if (!clipRecorder) return;
+    clearTimeout(autoStopTimer);
+    autoStopTimer = null;
+    try { clipRecorder.stop(); } catch (e) {}
+  }
+
+  function startRecording() {
     const player = document.getElementById('anime-player');
-    if (!player) {
-      alert('Player de vídeo não encontrado para gravar o clipe.');
+    if (!player || typeof player.captureStream !== 'function') {
+      alert('Seu navegador não suporta gravação de clipes nesse player.');
       return;
     }
 
-    if (!window.MediaRecorder) {
-      alert('Seu navegador não suporta gravação de clipes.');
-      return;
+    let mimeType = '';
+    if (window.MediaRecorder && MediaRecorder.isTypeSupported('video/webm;codecs=vp9,opus')) {
+      mimeType = 'video/webm;codecs=vp9,opus';
+    } else if (window.MediaRecorder && MediaRecorder.isTypeSupported('video/webm;codecs=vp8,opus')) {
+      mimeType = 'video/webm;codecs=vp8,opus';
+    } else {
+      mimeType = 'video/webm';
     }
-
-    if (!player.currentSrc) {
-      alert('Abra um episódio e dê play antes de gravar o clipe.');
-      return;
-    }
-
-    const stream = await getDisplayMediaStream();
-    if (!stream) {
-      alert('Não foi possível iniciar a gravação de clipe. Permita capturar a aba atual quando solicitado.');
-      return;
-    }
-
-    const mimeType = resolveMimeType();
 
     try {
-      clipRecorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
-    } catch (errorWithMime) {
-      try {
-        clipRecorder = new MediaRecorder(stream);
-      } catch (error) {
-        console.warn('Falha ao criar MediaRecorder:', errorWithMime, error);
-        stream.getTracks().forEach((track) => track.stop());
-        alert('Não foi possível iniciar a gravação de clipe neste navegador.');
-        return;
-      }
+      const stream = player.captureStream();
+      clipRecorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
+    } catch (e) {
+      alert('Não foi possível iniciar a gravação de clipe.');
+      return;
     }
 
-    activeDisplayStream = stream;
     recordedChunks = [];
     recordingStart = Date.now();
-
-    const videoTrack = stream.getVideoTracks()[0];
-    if (videoTrack) {
-      videoTrack.addEventListener('ended', () => {
-        if (clipRecorder && clipRecorder.state !== 'inactive') {
-          stopRecording();
-        }
-      }, { once: true });
-    }
 
     clipRecorder.addEventListener('dataavailable', (event) => {
       if (event.data && event.data.size > 0) recordedChunks.push(event.data);
     });
 
-    clipRecorder.addEventListener('error', () => {
-      setRecordButtonState(false);
-      stopDisplayStream();
-      clipRecorder = null;
-      recordedChunks = [];
-      alert('A gravação falhou durante o processo. Tente novamente.');
-    }, { once: true });
-
     clipRecorder.addEventListener('stop', () => {
       setRecordButtonState(false);
-      stopDisplayStream();
-
       const duration = (Date.now() - recordingStart) / 1000;
       if (!recordedChunks.length) {
         clipRecorder = null;
         return;
       }
 
-      const outputType = clipRecorder && clipRecorder.mimeType ? clipRecorder.mimeType : 'video/webm';
-      const blob = new Blob(recordedChunks, { type: outputType });
+      const blob = new Blob(recordedChunks, { type: 'video/webm' });
       const clip = registerClip(blob, duration);
-
       clipRecorder = null;
       recordedChunks = [];
       alert(`Clipe gravado! Vá na aba "Clipes" para baixar. (${clip.title})`);
@@ -281,29 +188,21 @@
 
     clipRecorder.start(1000);
     setRecordButtonState(true);
-    autoStopTimer = setTimeout(stopRecording, MAX_CLIP_MS);
+    autoStopTimer = setTimeout(stopRecording, 60000);
   }
 
   function setupEvents() {
-    const recordBtn = document.getElementById('clip-record-btn');
     const clipsGrid = document.getElementById('clips-grid');
     const clearBtn = document.getElementById('clear-clips-btn');
-    const closeVideoBtn = document.getElementById('close-video');
+    const recordBtn = document.getElementById('clip-record-btn');
 
     if (recordBtn) {
       recordBtn.addEventListener('click', () => {
         if (clipRecorder && clipRecorder.state !== 'inactive') {
           stopRecording();
-          return;
+        } else {
+          startRecording();
         }
-
-        startRecording().catch((error) => {
-          console.error('Falha inesperada ao iniciar clipagem:', error);
-          setRecordButtonState(false);
-          stopDisplayStream();
-          clipRecorder = null;
-          alert('Não foi possível iniciar a clipagem agora.');
-        });
       });
     }
 
@@ -311,25 +210,30 @@
       clipsGrid.addEventListener('click', (event) => {
         const btn = event.target.closest('button[data-action]');
         if (!btn) return;
-
-        const clipId = btn.dataset.id;
-        if (btn.dataset.action === 'download') downloadClip(clipId);
-        if (btn.dataset.action === 'remove') removeClip(clipId);
+        const id = btn.dataset.id;
+        if (btn.dataset.action === 'download') {
+          downloadClip(id);
+        } else if (btn.dataset.action === 'remove') {
+          removeClip(id);
+        }
       });
     }
 
     if (clearBtn) {
       clearBtn.addEventListener('click', () => {
         saveStoredClips([]);
-        runtimeClipUrls.forEach((url) => URL.revokeObjectURL(url));
+        runtimeClipUrls.forEach((value) => URL.revokeObjectURL(value));
         runtimeClipUrls = new Map();
         renderClips();
       });
     }
 
+    const closeVideoBtn = document.getElementById('close-video');
     if (closeVideoBtn) {
       closeVideoBtn.addEventListener('click', () => {
-        if (clipRecorder && clipRecorder.state !== 'inactive') stopRecording();
+        if (clipRecorder && clipRecorder.state !== 'inactive') {
+          stopRecording();
+        }
       });
     }
   }
