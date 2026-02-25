@@ -444,6 +444,7 @@
       if (modal) {
         modal.style.display = 'none';
         document.body.style.overflow = '';
+        document.body.classList.remove('video-modal-active');
         
         // Pause video
         const player = document.getElementById('anime-player');
