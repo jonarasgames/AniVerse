@@ -15,29 +15,333 @@
       "rating_age": "12",
       "rating_content": [
         "Consumo de Drogas Lícitas (álcool, cigarro)",
-        "Linguagem Imprópria"
+        "Linguagem Imprópria",
+        "Conteúdo Sexual",
+        "Medo ou Tensão"
       ],
       "seasons": [
         {
           "number": 1,
           "episodes": [
             {
-              "title": "Ao Grito de 'Você Está Livre'",
-              "videoUrl": "https://store3.gofile.io/download/web/2249da05-3798-46e8-958e-f71a8c4957f9/Avatar%20IV%20Video.mp4",
-              "duration": 1440
+              "title": "A Garota Que Sai Correndo",
+              "duration": 1439,
+              "videoUrl": "https://files.catbox.moe/u87wgg.mp4",
+              "opening": {
+                "start": 0,
+                "end": 100
+              }
             },
             {
-              "title": "Aquele Dia",
-              "videoUrl": "https://example.com/attack-on-titan-s1e2.mp4",
-              "duration": 1440
+              "title": "Esforços e Resultados",
+              "duration": 1439,
+              "videoUrl": "https://files.catbox.moe/stnsuv.mp4",
+              "opening": {
+                "start": 0,
+                "end": 100
+              }
+            },
+            {
+              "title": "Várias Pessoas",
+              "duration": 1439,
+              "opening": {
+                "start": 0,
+                "end": 100
+              },
+              "videoUrl": "https://files.catbox.moe/cjxfhs.mp4"
+            },
+            {
+              "title": "Questão de Motivação",
+              "duration": 1439,
+              "opening": {
+                "start": 0,
+                "end": 100
+              },
+              "videoUrl": "https://files.catbox.moe/cwaalr.mp4"
+            },
+            {
+              "title": "O Famoso Atirador",
+              "duration": 1439,
+              "opening": {
+                "start": 0,
+                "end": 100
+              },
+              "videoUrl": "https://files.catbox.moe/xxyite.mp4"
+            },
+            {
+              "title": "Jogos de Verão",
+              "duration": 1439,
+              "opening": {
+                "start": 0,
+                "end": 100
+              },
+              "videoUrl": "https://files.catbox.moe/gglhp4.mp4"
+            },
+            {
+              "title": "Imagem",
+              "duration": 1439,
+              "opening": {
+                "start": 0,
+                "end": 100
+              },
+              "videoUrl": "https://files.catbox.moe/9ctyjl.mp4"
+            },
+            {
+              "title": "Energético, Apesar de Não Ser Eu Mesmo",
+              "duration": 1439,
+              "opening": {
+                "start": 0,
+                "end": 100
+              },
+              "videoUrl": "https://files.catbox.moe/oftynw.mp4"
+            },
+            {
+              "title": "Essa Sensação",
+              "duration": 1439,
+              "videoUrl": "https://files.catbox.moe/75lwh0.mp4",
+              "opening": {
+                "start": 0,
+                "end": 100
+              }
+            },
+            {
+              "title": "Desejos",
+              "duration": 1439,
+              "videoUrl": "https://files.catbox.moe/3xlx9u.mp4",
+              "opening": {
+                "start": 0,
+                "end": 100
+              }
+            },
+            {
+              "title": "Várias Maneiras de Passar a Véspera de Natal",
+              "duration": 1439,
+              "opening": {
+                "start": 0,
+                "end": 100
+              },
+              "videoUrl": "https://files.catbox.moe/khrkmq.mp4"
+            },
+            {
+              "title": "Vamos ao Festival",
+              "duration": 1439,
+              "opening": {
+                "start": 0,
+                "end": 100
+              },
+              "videoUrl": "https://files.catbox.moe/i5o6e9.mp4"
+            },
+            {
+              "title": "Dia Delicioso",
+              "duration": 1439,
+              "opening": {
+                "start": 0,
+                "end": 100
+              },
+              "videoUrl": "https://files.catbox.moe/cudoz7.mp4"
+            },
+            {
+              "title": "Sob o Mesmo Teto",
+              "duration": 1439,
+              "opening": {
+                "start": 0,
+                "end": 100
+              },
+              "videoUrl": "https://files.catbox.moe/koi4wh.mp4"
+            },
+            {
+              "title": "Eu Não Posso Mudar De Repente",
+              "duration": 1439,
+              "videoUrl": "https://files.catbox.moe/hntl1x.mp4",
+              "opening": {
+                "start": 0,
+                "end": 100
+              }
+            },
+            {
+              "title": "Anel",
+              "duration": 1439,
+              "opening": {
+                "start": 0,
+                "end": 100
+              },
+              "videoUrl": "https://files.catbox.moe/e8uisr.mp4"
+            },
+            {
+              "title": "Base do Sol",
+              "duration": 1439,
+              "opening": {
+                "start": 0,
+                "end": 100
+              },
+              "videoUrl": "https://files.catbox.moe/lzdyoh.mp4"
+            },
+            {
+              "title": "Cada Um Com a Sua Opinião",
+              "duration": 1439,
+              "opening": {
+                "start": 0,
+                "end": 100
+              },
+              "videoUrl": "https://files.catbox.moe/7vak4d.mp4"
+            },
+            {
+              "title": "Tem Uma Substância No 2-D",
+              "duration": 1439,
+              "videoUrl": "https://files.catbox.moe/pt2qbm.mp4",
+              "opening": {
+                "start": 0,
+                "end": 100
+              }
+            },
+            {
+              "title": "Maneiras de Aproveitar o Verão",
+              "duration": 1439,
+              "videoUrl": "https://files.catbox.moe/ldvfvs.mp4",
+              "opening": {
+                "start": 0,
+                "end": 100
+              }
+            },
+            {
+              "title": "A Caixa de Pandora",
+              "duration": 1439,
+              "opening": {
+                "start": 0,
+                "end": 100
+              },
+              "videoUrl": "https://files.catbox.moe/3rxd8n.mp4"
+            },
+            {
+              "title": "O Além Aqui",
+              "duration": 1439,
+              "opening": {
+                "start": 0,
+                "end": 100
+              },
+              "videoUrl": "https://files.catbox.moe/tnwo2w.mp4"
+            },
+            {
+              "title": "Linha Delicada",
+              "duration": 1439,
+              "opening": {
+                "start": 0,
+                "end": 100
+              },
+              "videoUrl": "https://files.catbox.moe/55bvmp.mp4"
+            },
+            {
+              "title": "A ser decidido",
+              "duration": 1439,
+              "videoUrl": "https://files.catbox.moe/865my2.mp4"
             }
           ]
         }
       ],
       "year": 2007,
       "rating": 7.76,
-      "openings": [],
-      "endings": [],
+      "openings": [
+        {
+          "title": "Motteke! Sailor Fuku",
+          "type": "opening",
+          "artist": "Aya Hirano",
+          "cover": "https://files.catbox.moe/cv247m.png",
+          "audio": "https://files.catbox.moe/b5oldq.mp3"
+        }
+      ],
+      "endings": [
+        {
+          "title": "Uchu Tetsujin Kyodain",
+          "type": "ending",
+          "cover": "https://files.catbox.moe/4szp8m.png",
+          "artist": "Aya Hirano",
+          "audio": "https://files.catbox.moe/1j5r5f.mp3"
+        },
+        {
+          "title": "Shori da! Akumaizer3",
+          "type": "ending",
+          "cover": "https://files.catbox.moe/4szp8m.png",
+          "audio": "https://files.catbox.moe/491u86.mp3",
+          "artist": "Aya Hirano"
+        },
+        {
+          "title": "Sore ga, Ai deshou",
+          "type": "ending",
+          "cover": "https://files.catbox.moe/4szp8m.png",
+          "artist": "Aya Hirano",
+          "audio": "https://files.catbox.moe/zsf3km.mp3"
+        },
+        {
+          "title": "Sailor-fuku to Kikanju",
+          "type": "ending",
+          "cover": "https://files.catbox.moe/4szp8m.png",
+          "artist": "Emiri Kato",
+          "audio": "https://files.catbox.moe/wktl9a.mp3"
+        },
+        {
+          "title": "CHA-LA HEAD-CHA-LA",
+          "type": "ending",
+          "cover": "https://files.catbox.moe/4szp8m.png",
+          "artist": "Aya Hirano",
+          "audio": "https://files.catbox.moe/xoq2h0.mp3"
+        },
+        {
+          "title": "Valentine Kiss",
+          "type": "ending",
+          "cover": "https://files.catbox.moe/4szp8m.png",
+          "artist": "Kaori Fukuhara",
+          "audio": "https://files.catbox.moe/ai2g8u.mp3"
+        },
+        {
+          "title": "Chijo no Hoshi",
+          "type": "ending",
+          "cover": "https://files.catbox.moe/4szp8m.png",
+          "audio": "https://files.catbox.moe/pa36wv.mp3",
+          "artist": "Aya Endo"
+        },
+        {
+          "title": "MONKEY MAGIC",
+          "type": "ending",
+          "cover": "https://files.catbox.moe/4szp8m.png",
+          "artist": "Aya Hirano",
+          "audio": "https://files.catbox.moe/npwek6.mp3"
+        },
+        {
+          "title": "Kogarashi ni Dakarete",
+          "type": "ending",
+          "cover": "https://files.catbox.moe/4szp8m.png",
+          "artist": "Aya Hirano",
+          "audio": "https://files.catbox.moe/ez7kcv.mp3"
+        },
+        {
+          "title": "I'm proud",
+          "type": "ending",
+          "cover": "https://files.catbox.moe/4szp8m.png",
+          "artist": "Emiri Kato",
+          "audio": "https://files.catbox.moe/4m8nac.mp3"
+        },
+        {
+          "title": "Doraemon no Uta",
+          "type": "ending",
+          "cover": "https://files.catbox.moe/4szp8m.png",
+          "artist": "Aya Hirano",
+          "audio": "https://files.catbox.moe/ew3hm7.mp3"
+        },
+        {
+          "title": "Yuke! Godman",
+          "type": "ending",
+          "cover": "https://files.catbox.moe/4szp8m.png",
+          "artist": "Aya Hirano",
+          "audio": "https://files.catbox.moe/igwrqa.mp3"
+        },
+        {
+          "title": "Makenaide",
+          "type": "ending",
+          "cover": "https://files.catbox.moe/4szp8m.png",
+          "audio": "https://files.catbox.moe/0aebuz.mp3",
+          "artist": "Aya Hirano"
+        }
+      ],
       "osts": {},
       "banner": "https://files.catbox.moe/x97qo0.jpg"
     },
@@ -2944,6 +3248,106 @@
           "audio": "https://files.catbox.moe/q3uey4.mp3"
         }
       ]
+    },
+    {
+      "id": 34,
+      "title": "Lucky☆Star: Original na Visual to Animation",
+      "type": "ova",
+      "seasons": [
+        {
+          "number": 1,
+          "episodes": [
+            {
+              "title": "Novo",
+              "duration": 2524,
+              "videoUrl": "https://www.udrop.com/file/Omou/[AnimeFire.plus]_Lucky☆Star__Original_na_Visual_to_Animation_-_Episódio_1_(HD)_(1).mp4",
+              "opening": {
+                "start": 38,
+                "end": 93
+              }
+            }
+          ]
+        }
+      ],
+      "categories": [
+        "comedy",
+        "slice of life"
+      ],
+      "rating_age": "14",
+      "rating_content": [
+        "Conteúdo Sexual",
+        "Linguagem Imprópria",
+        "Consumo de Drogas Lícitas (álcool, cigarro)"
+      ],
+      "osts": {},
+      "year": 2008,
+      "banner": "https://files.catbox.moe/x97qo0.jpg",
+      "thumbnail": "https://files.catbox.moe/nvhtdb.png",
+      "rating": 7.9,
+      "dateAdded": "2026-02-26",
+      "description": "O OVA apresenta seis histórias distintas centradas no elenco, algumas das quais beiram o bizarro; uma delas se passa em um ambiente de MMORPG jogado por Konata, Kagami, Tsukasa e Nanako Kuroi, e outra em que Kagami tem um sonho \"sugestivo\" com Konata.",
+      "openings": [
+        {
+          "title": "Ai wo Torimodose!!",
+          "type": "opening",
+          "artist": "Uchōten",
+          "cover": "https://files.catbox.moe/asqv93.png",
+          "audio": "https://files.catbox.moe/j6ik6a.mp3"
+        }
+      ]
+    },
+    {
+      "id": 35,
+      "title": "Miyakawa-ke no Kuufuku",
+      "type": "anime",
+      "seasons": [
+        {
+          "number": 1,
+          "episodes": [
+            {
+              "title": "1/10",
+              "duration": 1559,
+              "videoUrl": "https://files.catbox.moe/dar73l.mp4",
+              "opening": {
+                "start": 0,
+                "end": 102
+              }
+            }
+          ]
+        }
+      ],
+      "categories": [
+        "comedy",
+        "slice of life",
+        "parody"
+      ],
+      "rating_age": "12",
+      "rating_content": [],
+      "osts": {},
+      "thumbnail": "https://files.catbox.moe/5ibudw.png",
+      "banner": "https://files.catbox.moe/7tpmux.png",
+      "openings": [
+        {
+          "title": "Kachigumi",
+          "type": "opening",
+          "cover": "https://files.catbox.moe/8jdq3l.jpg",
+          "artist": "Aya Hirano, Emiri Katō, Yurika Kubo",
+          "audio": "https://files.catbox.moe/pt1knt.mp3"
+        }
+      ],
+      "endings": [
+        {
+          "title": "Makegumi",
+          "type": "ending",
+          "cover": "https://files.catbox.moe/w9n4dh.png",
+          "audio": "https://files.catbox.moe/q2rgbd.mp3",
+          "artist": "Maina Shimagata, Kotoe Kawasaki"
+        }
+      ],
+      "year": 2013,
+      "rating": 6.2,
+      "dateAdded": "2026-02-26",
+      "description": "Um spin-off de Lucky Star. A história gira em torno da vida cotidiana e humilde da irmã mais velha, Hinata Miyakawa, e da irmã mais nova, Hikage Miyakawa, e da vida de Hikage na escola primária."
     }
   ],
   "collections": [
@@ -3008,6 +3412,22 @@
       ],
       "description": "A coleção completa de Neon Genesis Evangelion inclui a série original completa (com as versões Director's Cut), os filmes que encerram a saga clássica, a recente tetralogia Rebuild of Evangelion, além de todas as curtas-metragens, prólogos inéditos e a série spin-off Petit Eva",
       "thumbnail": "https://files.catbox.moe/ms6mfy.jpg"
+    },
+    {
+      "id": "lucky-star",
+      "name": "Lucky☆Star",
+      "animeIds": [
+        1,
+        34,
+        35
+      ],
+      "thumbnail": "https://files.catbox.moe/l0vylx.png",
+      "description": "A coleção completa de Lucky Star inclui o anime original, o OVA e a série spin-off Miyakawa-ke no Kuufuku"
+    },
+    {
+      "id": "nova-col",
+      "name": "Nova Coleção",
+      "animeIds": []
     }
   ]
 }
