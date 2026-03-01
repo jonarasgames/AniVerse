@@ -3513,3 +3513,24 @@ body.dark-mode .age-rating-section {
         bottom: max(env(safe-area-inset-bottom, 0px), 56px);
     }
 }
+
+
+@media (max-width: 768px) {
+    .anime-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 12px;
+    }
+
+    .anime-card .anime-title {
+        font-size: 0.95rem;
+        line-height: 1.25;
+    }
+
+    .anime-card .anime-meta {
+        font-size: 0.75rem;
+    }
+
+    .anime-thumbnail {
+        aspect-ratio: 16 / 9;
+    }
+}

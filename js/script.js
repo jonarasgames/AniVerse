@@ -69,41 +69,105 @@ document.addEventListener('DOMContentLoaded', () => {
   // Navigation handling
   const navLinks = document.querySelectorAll('nav a[data-section]');
   const sections = document.querySelectorAll('.content-section');
-  
+
+  function activateSection(sectionId) {
+    navLinks.forEach(l => l.classList.remove('active'));
+    sections.forEach(s => s.classList.remove('active'));
+
+    const targetNav = document.querySelector(`nav a[data-section="${sectionId}"]`);
+    if (targetNav) targetNav.classList.add('active');
+
+    const targetSection = document.getElementById(sectionId + '-section');
+    if (targetSection) {
+      targetSection.classList.add('active');
+    }
+
+    if (sectionId === 'animes' && typeof loadAnimeSection === 'function') {
+      loadAnimeSection('anime');
+    } else if (sectionId === 'movies' && typeof loadAnimeSection === 'function') {
+      loadAnimeSection('movie');
+    } else if (sectionId === 'ovas' && typeof loadAnimeSection === 'function') {
+      loadAnimeSection('ova');
+    } else if (sectionId === 'collections' && typeof loadCollections === 'function') {
+      loadCollections();
+    } else if (sectionId === 'openings' && typeof renderMusicGrid === 'function') {
+      renderMusicGrid();
+    } else if (sectionId === 'continue' && typeof renderContinueWatchingGrid === 'function' && window.animeDB) {
+      renderContinueWatchingGrid(window.animeDB.getContinueWatching(), 'continue-grid');
+    }
+  }
+
   navLinks.forEach(link => {
     link.addEventListener('click', (e) => {
       e.preventDefault();
-      const sectionId = link.dataset.section;
-      
-      // Remove active class from all links and sections
-      navLinks.forEach(l => l.classList.remove('active'));
-      sections.forEach(s => s.classList.remove('active'));
-      
-      // Add active class to clicked link
-      link.classList.add('active');
-      
-      // Show corresponding section
-      const targetSection = document.getElementById(sectionId + '-section');
-      if (targetSection) {
-        targetSection.classList.add('active');
-        
-        // Load section-specific data
-        if (sectionId === 'animes' && typeof loadAnimeSection === 'function') {
-          loadAnimeSection('anime');
-        } else if (sectionId === 'movies' && typeof loadAnimeSection === 'function') {
-          loadAnimeSection('movie');
-        } else if (sectionId === 'ovas' && typeof loadAnimeSection === 'function') {
-          loadAnimeSection('ova');
-        } else if (sectionId === 'collections' && typeof loadCollections === 'function') {
-          loadCollections();
-        } else if (sectionId === 'openings' && typeof renderMusicLibrary === 'function' && window.animeDB) {
-          renderMusicLibrary(window.animeDB.musicLibrary);
-        } else if (sectionId === 'continue' && typeof renderContinueWatchingGrid === 'function' && window.animeDB) {
-          renderContinueWatchingGrid(window.animeDB.getContinueWatching(), 'continue-grid');
-        }
-      }
+      activateSection(link.dataset.section);
     });
   });
+
+  function renderSearchResults(query) {
+    if (!window.animeDB || !Array.isArray(window.animeDB.animes)) return;
+
+    const normalizedQuery = (query || '').trim().toLowerCase();
+    const fullCatalogGrid = document.getElementById('full-catalog-grid');
+    if (!fullCatalogGrid) return;
+
+    const source = window.animeDB.animes;
+    const filtered = normalizedQuery
+      ? source.filter(anime => {
+          const title = (anime.title || anime.name || '').toLowerCase();
+          const description = (anime.description || '').toLowerCase();
+          return title.includes(normalizedQuery) || description.includes(normalizedQuery);
+        })
+      : source.slice(0, 24);
+
+    fullCatalogGrid.innerHTML = '';
+
+    filtered.slice(0, 60).forEach(anime => {
+      const card = document.createElement('div');
+      card.className = 'anime-card';
+      card.innerHTML = `
+        <div class="anime-thumbnail">
+          <img src="${anime.thumbnail || anime.cover || 'images/bg-default.jpg'}" alt="${anime.title || anime.name || 'Anime'}">
+          <div class="trailer-overlay">
+            <i class="fas fa-play"></i>
+            <p>Assistir</p>
+          </div>
+        </div>
+        <div class="anime-info">
+          <h3 class="anime-title">${anime.title || anime.name || 'Sem título'}</h3>
+          <p class="anime-meta">${(anime.type || 'anime').toUpperCase()}</p>
+        </div>
+      `;
+      card.style.cursor = 'pointer';
+      card.addEventListener('click', () => {
+        if (typeof window.openAnimeModal === 'function') {
+          window.openAnimeModal(anime);
+        }
+      });
+      fullCatalogGrid.appendChild(card);
+    });
+
+    if (filtered.length === 0) {
+      fullCatalogGrid.innerHTML = '<p style="padding: 16px; opacity: .8;">Nenhum anime encontrado para sua busca.</p>';
+    }
+  }
+
+  const searchInput = document.getElementById('search-input');
+  const searchBtn = document.getElementById('search-btn');
+  if (searchInput && searchBtn) {
+    const handleSearch = () => {
+      activateSection('home');
+      renderSearchResults(searchInput.value);
+    };
+
+    searchBtn.addEventListener('click', handleSearch);
+    searchInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        handleSearch();
+      }
+    });
+  }
   
   // Safe bindings
   const clearBtn = document.getElementById('clear-history');

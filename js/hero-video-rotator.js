@@ -1,8 +1,67 @@
-(function(){
-  const VIDEO_BG_URLS=["https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4","https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4","https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4"];
-  const ROTATE_INTERVAL=8000, MOBILE_MAX_WIDTH=700;
-  function isMobile(){ return window.matchMedia && window.matchMedia(`(max-width: ${MOBILE_MAX_WIDTH}px)`).matches; }
-  function createVideoEl(src){ const v=document.createElement('video'); v.src=src; v.autoplay=true; v.muted=true; v.loop=true; v.playsInline=true; v.preload='auto'; v.style.objectFit='cover'; v.style.width='100%'; v.style.height='100%'; v.style.pointerEvents='none'; v.removeAttribute('controls'); return v; }
-  function init(){ const hero=document.querySelector('.hero'); if(!hero) return; if(isMobile()){ hero.classList.add('hero-static-fallback'); return; } const a=document.createElement('div'), b=document.createElement('div'); a.className='hero-video-container layer-a'; b.className='hero-video-container layer-b'; Object.assign(a.style,{position:'absolute',inset:0,zIndex:0,opacity:0,transition:'opacity 1200ms ease'}); Object.assign(b.style,{position:'absolute',inset:0,zIndex:0,opacity:0,transition:'opacity 1200ms ease'}); hero.appendChild(a); hero.appendChild(b); let idx=0, showA=true; const v0=createVideoEl(VIDEO_BG_URLS[0]); a.appendChild(v0); v0.play().catch(()=>{}); function next(){ const nextIdx=(idx+1)%VIDEO_BG_URLS.length; const target= showA?b:a; target.innerHTML=''; const nv=createVideoEl(VIDEO_BG_URLS[nextIdx]); target.appendChild(nv); nv.play().catch(()=>{}); setTimeout(()=>{ target.style.opacity='1'; (showA?a:b).style.opacity='0'; showA=!showA; idx=nextIdx; },50); } setTimeout(()=>a.style.opacity='1',200); const rot=setInterval(next,ROTATE_INTERVAL); window.addEventListener('beforeunload', ()=>clearInterval(rot)); }
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', init); else init();
+(function () {
+  const HERO_GIF_URLS = [
+    'https://media.giphy.com/media/13BORq7Zo2kulO/giphy.gif',
+    'https://media.giphy.com/media/R1G43jXwLWsxO/giphy.gif',
+    'https://media.giphy.com/media/3ohzdIuqJoo8QdKlnW/giphy.gif',
+    'https://media.giphy.com/media/9rZgYgDFQJgGs/giphy.gif'
+  ];
+
+  const ROTATE_INTERVAL = 7000;
+
+  function createLayer(src) {
+    const layer = document.createElement('div');
+    layer.className = 'hero-video-container';
+    Object.assign(layer.style, {
+      position: 'absolute',
+      inset: '0',
+      zIndex: '0',
+      opacity: '0',
+      transition: 'opacity 900ms ease',
+      backgroundImage: `url("${src}")`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat'
+    });
+    return layer;
+  }
+
+  function init() {
+    const hero = document.querySelector('.hero');
+    if (!hero) return;
+
+    const layerA = createLayer(HERO_GIF_URLS[0]);
+    const layerB = createLayer(HERO_GIF_URLS[1]);
+
+    hero.appendChild(layerA);
+    hero.appendChild(layerB);
+
+    let currentIndex = 0;
+    let showingA = true;
+
+    setTimeout(() => {
+      layerA.style.opacity = '1';
+    }, 120);
+
+    function rotate() {
+      const nextIndex = (currentIndex + 1) % HERO_GIF_URLS.length;
+      const nextLayer = showingA ? layerB : layerA;
+      const currentLayer = showingA ? layerA : layerB;
+
+      nextLayer.style.backgroundImage = `url("${HERO_GIF_URLS[nextIndex]}")`;
+      nextLayer.style.opacity = '1';
+      currentLayer.style.opacity = '0';
+
+      currentIndex = nextIndex;
+      showingA = !showingA;
+    }
+
+    const intervalId = setInterval(rotate, ROTATE_INTERVAL);
+    window.addEventListener('beforeunload', () => clearInterval(intervalId));
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
 })();
