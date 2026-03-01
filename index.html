@@ -86,6 +86,7 @@
 
             <section class="full-catalog">
                 <h2 class="section-title">Catálogo Completo</h2>
+                <p id="search-result-status" class="search-result-status" aria-live="polite"></p>
                 <div class="anime-grid" id="full-catalog-grid"></div>
             </section>
         </section>
@@ -118,8 +119,16 @@
         <!-- Openings Section -->
         <section id="openings-section" class="content-section">
             <h2 class="section-title">Músicas</h2>
+            <div class="music-download-top">
+                <button id="download-current-music-btn" class="btn btn-secondary"><i class="fas fa-download"></i> Baixar música atual</button>
+                <span id="download-music-status" class="download-status-inline"></span>
+            </div>
             <div id="music-player-container">
                 <div id="music-grid" class="music-grid"></div>
+            </div>
+            <div class="music-download-floating">
+                <button id="download-current-music-btn" class="btn btn-secondary" title="Baixar música tocando"><i class="fas fa-download"></i> Música</button>
+                <span id="download-music-status" class="download-status-inline"></span>
             </div>
         </section>
 
