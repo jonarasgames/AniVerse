@@ -16,11 +16,28 @@ class AnimeDatabase {
     }
 
     async loadData() {
+        const urls = [
+            'anime-data.json',
+            './anime-data.json',
+            `anime-data.json?v=${Date.now()}`
+        ];
+
         try {
-            const response = await fetch('anime-data.json');
-            if (!response.ok) throw new Error("Falha ao carregar anime-data.json");
-            
-            const data = await response.json();
+            let data = null;
+            let lastError = null;
+
+            for (const url of urls) {
+                try {
+                    const response = await fetch(url, { cache: 'no-store' });
+                    if (!response.ok) throw new Error(`Falha ao carregar ${url} (${response.status})`);
+                    data = await response.json();
+                    break;
+                } catch (error) {
+                    lastError = error;
+                }
+            }
+
+            if (!data) throw lastError || new Error('Falha ao carregar anime-data.json');
             
             // Support both old array format and new object format
             if (Array.isArray(data)) {
