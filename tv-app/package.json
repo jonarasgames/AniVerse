@@ -1,9 +1,0 @@
-{
-  "name": "tv-app",
-  "version": "1.0.0",
-  "private": true,
-  "dependencies": {
-    "react-native": "^0.64.0",
-    "react": "^17.0.2"
-  }
-}
