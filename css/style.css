@@ -2447,8 +2447,7 @@ footer {
         font-size: 1rem;
     }
 
-    #music-mini-player .mini-volume-container,
-    #music-mini-player #mini-close {
+    #music-mini-player .mini-volume-container {
         display: none;
     }
 
@@ -3822,6 +3821,22 @@ body.dark-mode .age-rating-section {
     margin-top: 4px;
     opacity: 0.75;
     font-size: 0.72rem;
+}
+
+.download-progress {
+    height: 4px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.15);
+    margin-top: 6px;
+    overflow: hidden;
+}
+
+.download-progress > span {
+    display: block;
+    height: 100%;
+    width: 0%;
+    background: var(--primary-color);
+    transition: width .2s ease;
 }
 
 .download-card .download-actions {

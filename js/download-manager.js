@@ -54,6 +54,13 @@
     saveDownloads(readDownloads().filter(x => itemIdentity(x) !== id));
   }
 
+  async function isReallyDownloaded(item) {
+    if (!item?.sourceUrl) return false;
+    const inList = readDownloads().some(x => itemIdentity(x) === itemIdentity(item));
+    if (!inList) return false;
+    return await isCached(item.sourceUrl);
+  }
+
   function setStatus(id, text) {
     const el = document.getElementById(id);
     if (el) el.textContent = text || '';
@@ -185,14 +192,20 @@
       return false;
     }
 
-    if (readDownloads().some(x => itemIdentity(x) === id)) {
+    const existing = readDownloads().find(x => itemIdentity(x) === id);
+    if (existing && await isCached(existing.sourceUrl)) {
       setStatus(statusId, 'Já baixado');
       return true;
     }
 
+    // registro fantasma sem arquivo em cache -> limpa e baixa de novo
+    if (existing && !(await isCached(existing.sourceUrl))) {
+      removeDownload(existing);
+    }
+
     inFlight.add(id);
-    progressState.set(item.key, 0);
-    setStatus(statusId, '0%');
+    progressState.set(item.key, 1);
+    setStatus(statusId, '1%');
     renderDownloadsSection();
 
     try {
@@ -208,6 +221,7 @@
       renderDownloadsSection();
     }
   }
+
 
   async function runBulk(items, statusId) {
     const valid = dedupeDownloads(items.filter(Boolean));
@@ -382,6 +396,7 @@
         <div class="download-info">
           <h4>${item.animeTitle} ${progressBadge(item)}</h4>
           <p>${item.type === 'music' ? item.label : `T${item.season} • E${item.episode}`}</p>
+          <div class="download-progress"><span style="width:${Math.max(0, Math.min(100, progressState.get(item.key) ?? (cached ? 100 : 0)))}%"></span></div>
           <small>${cached ? 'Offline' : 'Sem arquivo'}</small>
         </div>
         <div class="download-actions">
@@ -410,6 +425,15 @@
     setMusicStatus('');
   }
 
+  function filterContinueWatchingOffline(items) {
+    if (navigator.onLine) return items;
+    const list = readDownloads().filter(i => i.type !== 'music');
+    if (!list.length) return [];
+
+    const allowed = new Set(list.map(i => `${Number(i.animeId)}-${i.season}-${i.episode}`));
+    return (items || []).filter(item => allowed.has(`${Number(item.id || item.animeId)}-${item.season}-${item.episode}`));
+  }
+
   function bindEvents() {
     document.getElementById('download-episode-btn')?.addEventListener('click', downloadEpisode);
     document.getElementById('download-season-btn')?.addEventListener('click', downloadSeason);
@@ -418,11 +442,22 @@
     document.getElementById('download-current-music-btn')?.addEventListener('click', downloadMusic);
     document.getElementById('clear-downloads-btn')?.addEventListener('click', () => confirm('Limpar downloads?') && clearAllDownloads());
 
+    if (!window.__renderContinueWatchingGridOriginal && typeof window.renderContinueWatchingGrid === 'function') {
+      window.__renderContinueWatchingGridOriginal = window.renderContinueWatchingGrid;
+      window.renderContinueWatchingGrid = function (items, gridId) {
+        return window.__renderContinueWatchingGridOriginal(filterContinueWatchingOffline(items), gridId);
+      };
+    }
+
     window.addEventListener('online', () => {
       clearOfflineFilters();
       window.loadFullCatalog?.();
       window.loadNewReleases?.();
       window.renderMusicGrid?.();
+      if (window.animeDB && typeof window.renderContinueWatchingGrid === 'function') {
+        window.renderContinueWatchingGrid(window.animeDB.getContinueWatching(), 'continue-watching-grid');
+        window.renderContinueWatchingGrid(window.animeDB.getContinueWatching(), 'continue-grid');
+      }
     });
 
     window.addEventListener('offline', () => {
@@ -430,6 +465,10 @@
       window.loadFullCatalog?.();
       window.loadNewReleases?.();
       window.renderMusicGrid?.();
+      if (window.animeDB && typeof window.renderContinueWatchingGrid === 'function') {
+        window.renderContinueWatchingGrid(window.animeDB.getContinueWatching(), 'continue-watching-grid');
+        window.renderContinueWatchingGrid(window.animeDB.getContinueWatching(), 'continue-grid');
+      }
     });
 
     window.addEventListener('animeDataLoaded', () => {
@@ -439,6 +478,10 @@
         window.loadFullCatalog?.();
         window.loadNewReleases?.();
         window.renderMusicGrid?.();
+        if (window.animeDB && typeof window.renderContinueWatchingGrid === 'function') {
+          window.renderContinueWatchingGrid(window.animeDB.getContinueWatching(), 'continue-watching-grid');
+          window.renderContinueWatchingGrid(window.animeDB.getContinueWatching(), 'continue-grid');
+        }
       }
     });
 
