@@ -3905,3 +3905,6 @@ body.dark-mode .age-rating-section {
     font-size: 0.7rem !important;
 }
 
+
+/* Hide deprecated top music download button (download stays in mini/full player) */
+#download-current-music-btn { display: none !important; }

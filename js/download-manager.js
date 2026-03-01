@@ -2,7 +2,7 @@
 (function () {
   'use strict';
 
-  const CACHE_NAME = 'aniverse-offline-v3';
+  const CACHE_NAME = 'aniverse-offline-v4';
   const STORAGE_KEY = 'aniverseOfflineDownloads';
   const progressState = new Map();
   const inFlight = new Set();
@@ -29,7 +29,7 @@
     try {
       const raw = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
       const cleaned = dedupeDownloads(raw);
-      if ((raw || []).length !== cleaned.length) saveDownloads(cleaned);
+      if (raw.length !== cleaned.length) saveDownloads(cleaned);
       return cleaned;
     } catch (_) {
       return [];
@@ -37,7 +37,9 @@
   }
 
   function saveDownloads(list) {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(dedupeDownloads(list))); } catch (_) {}
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(dedupeDownloads(list)));
+    } catch (_) {}
   }
 
   function upsertDownload(item) {
@@ -54,42 +56,37 @@
     saveDownloads(readDownloads().filter(x => itemIdentity(x) !== id));
   }
 
-  async function isReallyDownloaded(item) {
-    if (!item?.sourceUrl) return false;
-    const inList = readDownloads().some(x => itemIdentity(x) === itemIdentity(item));
-    if (!inList) return false;
-    return await isCached(item.sourceUrl);
-  }
-
   function setStatus(id, text) {
     const el = document.getElementById(id);
     if (el) el.textContent = text || '';
   }
 
   function setMusicStatus(text) {
-    setStatus('download-music-status', text);
     setStatus('mini-download-status', text);
   }
 
   function normalizeEpisodeSources(episode) {
-    const out = [];
-    if (!episode) return out;
-
-    if (Array.isArray(episode.videoSources)) {
-      episode.videoSources.forEach((src, idx) => src?.url && out.push({ url: src.url, label: src.label || src.quality || `Fonte ${idx + 1}` }));
+    const helper = window.normalizeEpisodeSources;
+    if (typeof helper === 'function') return helper(episode);
+    const sources = [];
+    if (Array.isArray(episode?.videoSources)) {
+      episode.videoSources.forEach((source, idx) => {
+        if (source?.url) sources.push({ url: source.url, label: source.label || `Fonte ${idx + 1}` });
+      });
+    } else if (episode?.videoUrl) {
+      sources.push({ url: episode.videoUrl, label: 'Auto' });
     }
-    if (episode.videoQualities && typeof episode.videoQualities === 'object') {
-      Object.entries(episode.videoQualities).forEach(([q, url]) => url && out.push({ url, label: q || 'Auto' }));
-    }
-    if (episode.videoUrl) out.push({ url: episode.videoUrl, label: episode.videoQuality || 'Auto' });
-
-    const seen = new Set();
-    return out.filter(s => s?.url && !seen.has(s.url) && seen.add(s.url));
+    return sources;
   }
 
   async function cacheBlob(url, blob) {
     const cache = await caches.open(CACHE_NAME);
     await cache.put(url, new Response(blob));
+  }
+
+  async function cacheResponse(url, response) {
+    const cache = await caches.open(CACHE_NAME);
+    await cache.put(url, response);
   }
 
   async function isCached(url) {
@@ -101,7 +98,9 @@
     const cache = await caches.open(CACHE_NAME);
     const match = await cache.match(url);
     if (!match) return null;
-    return URL.createObjectURL(await match.blob());
+    const blob = await match.blob();
+    if (!blob || blob.size === 0) return null;
+    return URL.createObjectURL(blob);
   }
 
   async function removeCachedUrl(url) {
@@ -114,28 +113,68 @@
       const xhr = new XMLHttpRequest();
       xhr.open('GET', url, true);
       xhr.responseType = 'blob';
-      xhr.onprogress = (e) => {
-        if (e.lengthComputable) onProgress(Math.round((e.loaded / e.total) * 100));
+      xhr.onprogress = e => {
+        if (e.lengthComputable) {
+          const pct = Math.max(1, Math.min(99, Math.round((e.loaded / e.total) * 100)));
+          onProgress(pct);
+        }
       };
-      xhr.onload = () => (xhr.status >= 200 && xhr.status < 300) ? resolve(xhr.response) : reject(new Error(String(xhr.status)));
+      xhr.onload = () => {
+        if (xhr.status >= 200 && xhr.status < 300) return resolve(xhr.response);
+        reject(new Error(String(xhr.status)));
+      };
       xhr.onerror = () => reject(new Error('network'));
       xhr.send();
     });
   }
 
-  async function downloadToCache(url, key) {
-    try {
-      const blob = await xhrDownload(url, pct => {
-        progressState.set(key, pct);
-        renderDownloadsSection();
-      });
-      await cacheBlob(url, blob);
-      progressState.set(key, 100);
-    } catch (_) {
-      const blob = await (await fetch(url, { mode: 'cors' })).blob();
-      await cacheBlob(url, blob);
-      progressState.set(key, 100);
+  async function fetchWithProgress(url, onProgress) {
+    const response = await fetch(url, { mode: 'cors' });
+    if (!response.ok) throw new Error(`http-${response.status}`);
+    const total = Number(response.headers.get('content-length')) || 0;
+    if (!response.body || !total) {
+      onProgress(90);
+      return await response.blob();
     }
+
+    const reader = response.body.getReader();
+    const chunks = [];
+    let loaded = 0;
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      chunks.push(value);
+      loaded += value.length;
+      const pct = Math.max(1, Math.min(99, Math.round((loaded / total) * 100)));
+      onProgress(pct);
+    }
+    return new Blob(chunks);
+  }
+
+  async function downloadToCache(url, key) {
+    const pushProgress = pct => {
+      progressState.set(key, pct);
+      renderDownloadsSection();
+    };
+
+    try {
+      const blob = await xhrDownload(url, pushProgress);
+      await cacheBlob(url, blob);
+      progressState.set(key, 100);
+      return;
+    } catch (_) {}
+
+    try {
+      const blob = await fetchWithProgress(url, pushProgress);
+      await cacheBlob(url, blob);
+      progressState.set(key, 100);
+      return;
+    } catch (_) {}
+
+    // fallback for restrictive CORS endpoints
+    const opaqueResp = await fetch(url, { mode: 'no-cors' });
+    await cacheResponse(url, opaqueResp.clone());
+    progressState.set(key, 100);
   }
 
   function currentEpisodeCtx() {
@@ -187,6 +226,7 @@
     if (!item?.sourceUrl) return false;
     const id = itemIdentity(item);
     if (!id) return false;
+
     if (inFlight.has(id)) {
       setStatus(statusId, 'Já em download');
       return false;
@@ -195,33 +235,43 @@
     const existing = readDownloads().find(x => itemIdentity(x) === id);
     if (existing && await isCached(existing.sourceUrl)) {
       setStatus(statusId, 'Já baixado');
+      progressState.set(item.key, 100);
+      renderDownloadsSection();
       return true;
     }
 
-    // registro fantasma sem arquivo em cache -> limpa e baixa de novo
     if (existing && !(await isCached(existing.sourceUrl))) {
       removeDownload(existing);
     }
 
+    upsertDownload(item);
     inFlight.add(id);
     progressState.set(item.key, 1);
     setStatus(statusId, '1%');
     renderDownloadsSection();
 
+    const timer = setInterval(() => {
+      const pct = progressState.get(item.key);
+      if (pct != null) setStatus(statusId, `${pct}%`);
+    }, 200);
+
     try {
       await downloadToCache(item.sourceUrl, item.key);
       upsertDownload(item);
       setStatus(statusId, '100% ✅');
+      progressState.set(item.key, 100);
       return true;
-    } catch (_) {
+    } catch (err) {
+      removeDownload(item);
+      progressState.delete(item.key);
       setStatus(statusId, 'Falhou');
       return false;
     } finally {
+      clearInterval(timer);
       inFlight.delete(id);
       renderDownloadsSection();
     }
   }
-
 
   async function runBulk(items, statusId) {
     const valid = dedupeDownloads(items.filter(Boolean));
@@ -261,27 +311,33 @@
     const ctx = currentEpisodeCtx();
     if (!ctx || !window.animeDB?.getCollectionForAnime) return setStatus('download-episode-status', 'Sem coleção');
     const collection = window.animeDB.getCollectionForAnime(ctx.anime.id);
-    if (!collection) return setStatus('download-episode-status', 'Sem coleção');
+    if (!collection?.animeIds?.length) return setStatus('download-episode-status', 'Coleção vazia');
 
     const items = [];
-    (window.animeDB.getAnimesInCollection(collection.id) || []).forEach(anime => {
-      (anime.seasons || []).forEach(s => (s.episodes || []).forEach((_, i) => items.push(makeEpisodeItem(anime, s.number, i))));
+    collection.animeIds.forEach(id => {
+      const anime = window.animeDB.getAnimeById(id);
+      (anime?.seasons || []).forEach(s => (s.episodes || []).forEach((_, i) => items.push(makeEpisodeItem(anime, s.number, i))));
     });
+
     await runBulk(items, 'download-episode-status');
   }
 
   async function downloadMusic() {
     const audio = document.getElementById('music-playing-audio');
-    if (!audio?.src) return setMusicStatus('Toque uma música');
+    const card = document.querySelector('.music-card.playing');
+    const src = card?.dataset.src || audio?.src || '';
+    if (!src) return setMusicStatus('Toque uma música');
+
     const track = {
-      url: audio.src,
-      title: document.getElementById('mini-player-title')?.textContent,
-      artist: document.getElementById('mini-player-artist')?.textContent,
-      cover: document.getElementById('mini-player-thumb')?.src,
-      anime: 'Música'
+      url: src,
+      title: card?.dataset.title || document.getElementById('mini-player-title')?.textContent,
+      artist: card?.dataset.artist || document.getElementById('mini-player-artist')?.textContent,
+      cover: card?.dataset.thumb || document.getElementById('mini-player-thumb')?.src,
+      anime: card?.closest('.music-section')?.querySelector('.music-anime-title')?.textContent || 'Música'
     };
-    await queueDownload(makeMusicItem(track), 'mini-download-status');
-    setMusicStatus(document.getElementById('mini-download-status')?.textContent || '');
+
+    const ok = await queueDownload(makeMusicItem(track), 'mini-download-status');
+    if (!ok) setMusicStatus(document.getElementById('mini-download-status')?.textContent || 'Falhou');
   }
 
   function getOfflineMaps() {
@@ -351,8 +407,8 @@
     if (item.type === 'music') {
       const audio = document.getElementById('music-playing-audio');
       const blobUrl = await getCachedBlobUrl(item.sourceUrl);
-      if (audio && blobUrl) {
-        audio.src = blobUrl;
+      if (audio) {
+        audio.src = blobUrl || item.sourceUrl;
         audio.play().catch(() => {});
       }
       return;
@@ -371,10 +427,24 @@
     }
   }
 
-  function progressBadge(item) {
+  async function playDownloadedEpisodeFromContinue(item) {
+    if (!item) return false;
+    const match = readDownloads().find(d => (
+      d.type !== 'music' &&
+      Number(d.animeId) === Number(item.id || item.animeId) &&
+      Number(d.season) === Number(item.season) &&
+      Number(d.episode) === Number(item.episode)
+    ));
+    if (!match || !(await isCached(match.sourceUrl))) return false;
+    await playItem(match);
+    return true;
+  }
+
+  function progressBadge(item, cached) {
     const pct = progressState.get(item.key);
-    if (pct == null) return '';
-    return `<span class="dl-pill ${pct >= 100 ? 'done' : ''}">${pct}%</span>`;
+    const value = pct == null ? (cached ? 100 : 0) : pct;
+    if (value <= 0) return '';
+    return `<span class="dl-pill ${value >= 100 ? 'done' : ''}">${value}%</span>`;
   }
 
   async function renderDownloadsSection() {
@@ -389,21 +459,23 @@
 
     for (const item of list.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0))) {
       const cached = await isCached(item.sourceUrl);
+      const pct = Math.max(0, Math.min(100, progressState.get(item.key) ?? (cached ? 100 : 0)));
       const card = document.createElement('div');
       card.className = 'download-card';
       card.innerHTML = `
         <img src="${item.animeThumb}" alt="${item.animeTitle}">
         <div class="download-info">
-          <h4>${item.animeTitle} ${progressBadge(item)}</h4>
+          <h4>${item.animeTitle} ${progressBadge(item, cached)}</h4>
           <p>${item.type === 'music' ? item.label : `T${item.season} • E${item.episode}`}</p>
-          <div class="download-progress"><span style="width:${Math.max(0, Math.min(100, progressState.get(item.key) ?? (cached ? 100 : 0)))}%"></span></div>
-          <small>${cached ? 'Offline' : 'Sem arquivo'}</small>
+          <div class="download-progress"><span style="width:${pct}%"></span></div>
+          <small>${cached ? 'Offline' : (inFlight.has(itemIdentity(item)) ? 'Baixando...' : 'Sem arquivo')}</small>
         </div>
         <div class="download-actions">
           <button class="btn btn-primary dl-play">▶</button>
           <button class="btn btn-secondary dl-remove">✕</button>
         </div>
       `;
+
       card.querySelector('.dl-play').addEventListener('click', () => playItem(item));
       card.querySelector('.dl-remove').addEventListener('click', async () => {
         await removeCachedUrl(item.sourceUrl);
@@ -434,12 +506,22 @@
     return (items || []).filter(item => allowed.has(`${Number(item.id || item.animeId)}-${item.season}-${item.episode}`));
   }
 
+  function refreshOfflineViews() {
+    window.loadFullCatalog?.();
+    window.loadNewReleases?.();
+    window.renderMusicGrid?.();
+    if (window.animeDB && typeof window.renderContinueWatchingGrid === 'function') {
+      const list = window.animeDB.getContinueWatching();
+      window.renderContinueWatchingGrid(list, 'continue-watching-grid');
+      window.renderContinueWatchingGrid(list, 'continue-grid');
+    }
+  }
+
   function bindEvents() {
     document.getElementById('download-episode-btn')?.addEventListener('click', downloadEpisode);
     document.getElementById('download-season-btn')?.addEventListener('click', downloadSeason);
     document.getElementById('download-anime-btn')?.addEventListener('click', downloadAnime);
     document.getElementById('download-collection-btn')?.addEventListener('click', downloadCollection);
-    document.getElementById('download-current-music-btn')?.addEventListener('click', downloadMusic);
     document.getElementById('clear-downloads-btn')?.addEventListener('click', () => confirm('Limpar downloads?') && clearAllDownloads());
 
     if (!window.__renderContinueWatchingGridOriginal && typeof window.renderContinueWatchingGrid === 'function') {
@@ -451,38 +533,18 @@
 
     window.addEventListener('online', () => {
       clearOfflineFilters();
-      window.loadFullCatalog?.();
-      window.loadNewReleases?.();
-      window.renderMusicGrid?.();
-      if (window.animeDB && typeof window.renderContinueWatchingGrid === 'function') {
-        window.renderContinueWatchingGrid(window.animeDB.getContinueWatching(), 'continue-watching-grid');
-        window.renderContinueWatchingGrid(window.animeDB.getContinueWatching(), 'continue-grid');
-      }
+      refreshOfflineViews();
     });
 
     window.addEventListener('offline', () => {
       applyOfflineModeFilters();
-      window.loadFullCatalog?.();
-      window.loadNewReleases?.();
-      window.renderMusicGrid?.();
-      if (window.animeDB && typeof window.renderContinueWatchingGrid === 'function') {
-        window.renderContinueWatchingGrid(window.animeDB.getContinueWatching(), 'continue-watching-grid');
-        window.renderContinueWatchingGrid(window.animeDB.getContinueWatching(), 'continue-grid');
-      }
+      refreshOfflineViews();
     });
 
     window.addEventListener('animeDataLoaded', () => {
       applyOfflineModeFilters();
       renderDownloadsSection();
-      if (!navigator.onLine) {
-        window.loadFullCatalog?.();
-        window.loadNewReleases?.();
-        window.renderMusicGrid?.();
-        if (window.animeDB && typeof window.renderContinueWatchingGrid === 'function') {
-          window.renderContinueWatchingGrid(window.animeDB.getContinueWatching(), 'continue-watching-grid');
-          window.renderContinueWatchingGrid(window.animeDB.getContinueWatching(), 'continue-grid');
-        }
-      }
+      if (!navigator.onLine) refreshOfflineViews();
     });
 
     applyOfflineModeFilters();
@@ -494,4 +556,5 @@
 
   window.renderDownloadsSection = renderDownloadsSection;
   window.downloadCurrentMusic = downloadMusic;
+  window.playDownloadedEpisodeFromContinue = playDownloadedEpisodeFromContinue;
 })();

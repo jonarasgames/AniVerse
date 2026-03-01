@@ -1,5 +1,5 @@
-const STATIC_CACHE = 'aniverse-static-v2';
-const RUNTIME_CACHE = 'aniverse-runtime-v2';
+const STATIC_CACHE = 'aniverse-static-v3';
+const RUNTIME_CACHE = 'aniverse-runtime-v3';
 
 const APP_SHELL = [
   './',
@@ -29,10 +29,18 @@ self.addEventListener('install', event => {
 
 self.addEventListener('activate', event => {
   event.waitUntil(
-    caches.keys().then(keys => Promise.all(
-      keys.filter(k => ![STATIC_CACHE, RUNTIME_CACHE].includes(k)).map(k => caches.delete(k))
-    )).then(() => self.clients.claim())
+    caches.keys()
+      .then(keys => Promise.all(keys
+        .filter(k => ![STATIC_CACHE, RUNTIME_CACHE].includes(k))
+        .map(k => caches.delete(k))))
+      .then(() => self.clients.claim())
   );
+});
+
+self.addEventListener('message', event => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });
 
 function shouldNetworkFirst(request) {
@@ -44,7 +52,7 @@ function shouldNetworkFirst(request) {
 async function networkFirst(request) {
   const cache = await caches.open(RUNTIME_CACHE);
   try {
-    const fresh = await fetch(request);
+    const fresh = await fetch(request, { cache: 'no-store' });
     cache.put(request, fresh.clone()).catch(() => {});
     return fresh;
   } catch (_) {
@@ -67,7 +75,7 @@ self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
   if (shouldNetworkFirst(event.request)) {
     event.respondWith(networkFirst(event.request));
-  } else {
-    event.respondWith(cacheFirst(event.request));
+    return;
   }
+  event.respondWith(cacheFirst(event.request));
 });

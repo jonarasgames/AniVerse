@@ -96,7 +96,11 @@
     `;
     
     card.style.cursor = 'pointer';
-    card.addEventListener('click', () => {
+    card.addEventListener('click', async () => {
+      if (!navigator.onLine && typeof window.playDownloadedEpisodeFromContinue === 'function') {
+        const playedOffline = await window.playDownloadedEpisodeFromContinue(anime);
+        if (playedOffline) return;
+      }
       openAnimeModal(anime, season, episode - 1);
     });
     
