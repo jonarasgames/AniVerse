@@ -1,12 +1,12 @@
 (function () {
   // Pequenos vídeos (sem som) com cenas estilo anime
   const HERO_VIDEO_URLS = [
-    'https://media3.giphy.com/media/xUNd9HzQ5cNfL4x6mQ/giphy.mp4',
-    'https://media3.giphy.com/media/3ohzdIuqJoo8QdKlnW/giphy.mp4',
-    'https://media3.giphy.com/media/13BORq7Zo2kulO/giphy.mp4',
-    'https://media3.giphy.com/media/R1G43jXwLWsxO/giphy.mp4',
-    'https://media3.giphy.com/media/9rZgYgDFQJgGs/giphy.mp4',
-    'https://media3.giphy.com/media/2y98KScHKeaQM/giphy.mp4'
+    'https://media3.giphy.com/media/v1.Y2lkPTZjMDliOTUyam13YnoxcnNhOGpkOXg2eHp0bXh2YWhrZ3FvNHl1Yzh6Y3kwazJtZiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/FIZ1QC610AAhi/giphy.gif',
+    'https://media3.giphy.com/media/v1.Y2lkPTZjMDliOTUyMnhveXYxM202ZHdycm4xaXR2eGo4ZWU3Z3Z0b3gzOXVpcDg4dnUwaSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/k63gNYkfIxbwY/giphy.gif',
+    'https://media3.giphy.com/media/v1.Y2lkPTZjMDliOTUyMTVma21xY3ZvbzF1YjdpM3lvaHZ1bTF6bnI5aTZycXFwcG9hNTE3MSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/uB2szZH5JSIU0/giphy.gif',
+    'https://media4.giphy.com/media/v1.Y2lkPTZjMDliOTUyZmc5ZnJibThnaGRwbnljODhoNHR4cm85bDdxazZwMXlmZWRtY3VmZyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/ftZ8Smav6dMPe3e99W/giphy.gif',
+    'https://media0.giphy.com/media/v1.Y2lkPTZjMDliOTUyeWNnOHZzemo1aWxqcGRoaGxibjhnd3VwdDBsZHlzN2YyMnBycjlsdiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9dg/KWYQJh3lldhemCEFaP/giphy.gif',
+    'https://media2.giphy.com/media/v1.Y2lkPTZjMDliOTUyc3I1a3M2OHducWZkODZ4MmlucmR1aWlndHAyOWtnMHlyc2p2dTR5NyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9dg/WveVPjLbE3H22747UO/giphy.gif'
   ];
 
   const ROTATE_INTERVAL = 9000;
