@@ -96,7 +96,11 @@
     `;
     
     card.style.cursor = 'pointer';
-    card.addEventListener('click', () => {
+    card.addEventListener('click', async () => {
+      if (!navigator.onLine && typeof window.playDownloadedEpisodeFromContinue === 'function') {
+        const playedOffline = await window.playDownloadedEpisodeFromContinue(anime);
+        if (playedOffline) return;
+      }
       openAnimeModal(anime, season, episode - 1);
     });
     
@@ -162,6 +166,26 @@
     modal.style.display = 'flex';
     document.body.style.overflow = 'hidden';
   }
+
+
+  window.syncEpisodeSelectors = function(anime, seasonNumber, episodeIndex) {
+    if (!anime || !anime.seasons) return;
+
+    const seasonSelect = document.getElementById('season-select');
+    if (seasonSelect) {
+      const targetSeason = String(seasonNumber);
+      if (seasonSelect.value !== targetSeason) {
+        seasonSelect.value = targetSeason;
+      }
+    }
+
+    populateEpisodes(anime, seasonNumber, episodeIndex);
+
+    const refreshedEpisodeSelect = document.getElementById('episode-select');
+    if (refreshedEpisodeSelect) {
+      refreshedEpisodeSelect.value = String(episodeIndex);
+    }
+  };
 
   function populateEpisodes(anime, seasonNumber, selectedEpisodeIndex) {
     const episodeSelect = document.getElementById('episode-select');
