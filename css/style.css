@@ -292,6 +292,139 @@ nav a:hover, nav a.active {
     border-radius: 0 4px 4px 0;
 }
 
+
+.search-suggestions {
+    max-width: 600px;
+    margin: 6px auto 0;
+    background: rgba(10, 10, 20, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    overflow: hidden;
+    display: none;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+}
+
+.search-suggestions.active {
+    display: block;
+}
+
+.search-suggestion-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 8px 10px;
+    border: 0;
+    background: transparent;
+    color: #fff;
+    text-align: left;
+    cursor: pointer;
+}
+
+.search-suggestion-item:hover {
+    background: rgba(230, 57, 70, 0.18);
+}
+
+.search-suggestion-item img {
+    width: 44px;
+    height: 44px;
+    border-radius: 6px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.search-suggestion-item .title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+
+#search-clear-btn {
+    border-radius: 4px;
+    margin-left: 8px;
+}
+
+
+.search-inline-results {
+    max-width: 600px;
+    margin: 10px auto 0;
+    display: none;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.search-inline-results.active {
+    display: flex;
+}
+
+.search-inline-header {
+    color: #fff;
+    background: rgba(230, 57, 70, 0.92);
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.search-inline-list {
+    background: rgba(10, 10, 20, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.search-inline-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    border: 0;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    background: transparent;
+    color: #fff;
+    text-align: left;
+    padding: 8px 10px;
+    cursor: pointer;
+}
+
+.search-inline-item:last-child {
+    border-bottom: 0;
+}
+
+.search-inline-item:hover {
+    background: rgba(230, 57, 70, 0.14);
+}
+
+.search-inline-item img {
+    width: 42px;
+    height: 42px;
+    object-fit: cover;
+    border-radius: 6px;
+    flex-shrink: 0;
+}
+
+.search-inline-item .meta {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.search-inline-item .meta .title {
+    font-size: 0.92rem;
+    font-weight: 700;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.search-inline-item .meta .type {
+    font-size: 0.75rem;
+    opacity: 0.8;
+    margin-top: 2px;
+}
+
 .user-welcome {
     background-color: var(--secondary-color);
     padding: 15px 0;
@@ -2170,7 +2303,7 @@ footer {
     gap: 15px;
     padding: 0 20px;
     box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
-    z-index: 9999;
+    z-index: 1500;
     border-top: 1px solid var(--border-color, #333);
     transition: transform 0.3s ease;
 }
@@ -2229,6 +2362,11 @@ footer {
     background: rgba(255, 255, 255, 0.1);
 }
 
+.mini-control-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
 /* Volume Control no Mini Player de Música */
 .mini-volume-container {
     display: flex;
@@ -2261,11 +2399,64 @@ footer {
     transition: width 0.1s;
 }
 
-/* Mobile: Mostrar volume sempre */
+/* Mobile: layout compacto para evitar cortes no título/artista */
 @media (max-width: 768px) {
-    .mini-volume-slider {
-        width: 50px;
-        opacity: 1;
+    html {
+        font-size: 88%;
+    }
+
+    body {
+        -webkit-text-size-adjust: 92%;
+        text-size-adjust: 92%;
+    }
+
+    #music-mini-player {
+        height: auto;
+        min-height: 86px;
+        padding: 8px 10px 10px;
+        gap: 8px;
+        display: grid;
+        grid-template-columns: 46px minmax(0, 1fr) auto;
+        align-items: center;
+    }
+
+    #music-mini-player .mini-player-thumb {
+        width: 46px;
+        height: 46px;
+        border-radius: 6px;
+    }
+
+    #music-mini-player .mini-player-info {
+        min-width: 0;
+        width: 100%;
+    }
+
+    #music-mini-player .mini-player-title,
+    #music-mini-player .mini-player-artist {
+        max-width: 100%;
+        line-height: 1.2;
+    }
+
+    #music-mini-player .mini-player-controls {
+        gap: 2px;
+        justify-content: flex-end;
+    }
+
+    #music-mini-player .mini-control-btn {
+        padding: 6px;
+        font-size: 1rem;
+    }
+
+    #music-mini-player .mini-volume-container,
+    #music-mini-player #mini-close {
+        display: none;
+    }
+
+    #music-mini-player .mini-player-progress-container {
+        position: static;
+        grid-column: 1 / -1;
+        height: 3px;
+        margin-top: 4px;
     }
 }
 
@@ -2603,6 +2794,25 @@ html.theme-dark select {
     
     .hero-content p {
         font-size: 1rem;
+    }
+    
+    .search-bar {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .search-bar input {
+        border-radius: 6px;
+    }
+
+    .search-bar button,
+    #search-clear-btn {
+        border-radius: 6px;
+    }
+
+    .search-inline-results,
+    .search-suggestions {
+        max-width: 100%;
     }
     
     .anime-grid {
@@ -3453,5 +3663,89 @@ body.dark-mode .age-rating-section {
 @media (max-width: 768px) {
     #music-mini-player {
         bottom: max(env(safe-area-inset-bottom, 0px), 56px);
+    }
+}
+
+
+@media (max-width: 768px) {
+    .anime-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 12px;
+    }
+
+    .anime-card .anime-title {
+        font-size: 0.95rem;
+        line-height: 1.25;
+    }
+
+    .anime-card .anime-meta {
+        font-size: 0.75rem;
+    }
+
+    .anime-thumbnail {
+        aspect-ratio: 16 / 9;
+    }
+}
+
+
+.downloads-grid {
+    display: grid;
+    gap: 12px;
+}
+
+.download-card {
+    display: grid;
+    grid-template-columns: 100px 1fr auto;
+    gap: 12px;
+    align-items: center;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color, rgba(255,255,255,0.12));
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.download-card img {
+    width: 100px;
+    height: 64px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.download-info h4 {
+    margin: 0 0 6px;
+    font-size: 1rem;
+}
+
+.download-info p {
+    margin: 0;
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.download-info small {
+    display: inline-block;
+    margin-top: 6px;
+    opacity: 0.8;
+}
+
+.download-card .download-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+@media (max-width: 768px) {
+    .download-card {
+        grid-template-columns: 70px 1fr;
+    }
+
+    .download-card img {
+        width: 70px;
+        height: 70px;
+    }
+
+    .download-card .download-actions {
+        grid-column: 1 / -1;
+        flex-direction: row;
     }
 }
