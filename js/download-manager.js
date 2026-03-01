@@ -9,7 +9,7 @@
 
   function itemIdentity(item) {
     if (!item) return '';
-    if (item.type === 'music') return `music|${item.sourceUrl || ''}`;
+    if (item.type === 'music') return `music|${normalizeMediaUrl(item.sourceUrl || '')}`;
     return `ep|${item.animeId}|${item.season}|${item.episode}`;
   }
 
@@ -63,6 +63,15 @@
 
   function setMusicStatus(text) {
     setStatus('mini-download-status', text);
+  }
+
+  function normalizeMediaUrl(url) {
+    if (!url) return '';
+    try {
+      return new URL(url, window.location.href).href;
+    } catch (_) {
+      return String(url);
+    }
   }
 
   function normalizeEpisodeSources(episode) {
@@ -205,7 +214,7 @@
       season: seasonNumber,
       episode: ep,
       label: epObj.title || `Episódio ${ep}`,
-      sourceUrl: source.url,
+      sourceUrl: normalizeMediaUrl(source.url),
       createdAt: Date.now()
     };
   }
@@ -217,7 +226,7 @@
       animeTitle: track.anime || 'Música',
       animeThumb: track.cover || 'images/bg-default.jpg',
       label: `${track.title || 'Música'} • ${track.artist || 'Artista'}`,
-      sourceUrl: track.url,
+      sourceUrl: normalizeMediaUrl(track.url),
       createdAt: Date.now()
     };
   }
@@ -329,7 +338,7 @@
     if (!src) return setMusicStatus('Toque uma música');
 
     const track = {
-      url: src,
+      url: normalizeMediaUrl(src),
       title: card?.dataset.title || document.getElementById('mini-player-title')?.textContent,
       artist: card?.dataset.artist || document.getElementById('mini-player-artist')?.textContent,
       cover: card?.dataset.thumb || document.getElementById('mini-player-thumb')?.src,
@@ -368,7 +377,8 @@
     if (!window.__aniverseOriginalData) {
       window.__aniverseOriginalData = {
         animes: JSON.parse(JSON.stringify(window.animeDB.animes || [])),
-        musicLibrary: JSON.parse(JSON.stringify(window.animeDB.musicLibrary || { themes: [], osts: {} }))
+        musicLibrary: JSON.parse(JSON.stringify(window.animeDB.musicLibrary || { themes: [], osts: {} })),
+        collections: JSON.parse(JSON.stringify(window.animeDB.collections || []))
       };
     }
 
@@ -393,14 +403,20 @@
     const baseMusic = window.__aniverseOriginalData.musicLibrary || { themes: [], osts: {} };
     window.animeDB.musicLibrary = {
       ...baseMusic,
-      themes: (baseMusic.themes || []).filter(track => musicUrls.has(track.audio))
+      themes: (baseMusic.themes || []).filter(track => musicUrls.has(normalizeMediaUrl(track.audio)))
     };
+
+    const availableAnimeIds = new Set(filteredAnimes.map(a => Number(a.id)));
+    window.animeDB.collections = (window.__aniverseOriginalData.collections || []).filter(collection =>
+      Array.isArray(collection?.animeIds) && collection.animeIds.some(id => availableAnimeIds.has(Number(id)))
+    );
   }
 
   function clearOfflineFilters() {
     if (!window.__aniverseOriginalData || !window.animeDB) return;
     window.animeDB.animes = JSON.parse(JSON.stringify(window.__aniverseOriginalData.animes || []));
     window.animeDB.musicLibrary = JSON.parse(JSON.stringify(window.__aniverseOriginalData.musicLibrary || { themes: [], osts: {} }));
+    window.animeDB.collections = JSON.parse(JSON.stringify(window.__aniverseOriginalData.collections || []));
   }
 
   async function playItem(item) {
@@ -420,8 +436,8 @@
 
     const player = document.getElementById('anime-player');
     const blobUrl = await getCachedBlobUrl(item.sourceUrl);
-    if (player && blobUrl) {
-      player.src = blobUrl;
+    if (player) {
+      player.src = blobUrl || item.sourceUrl;
       player.load();
       player.play().catch(() => {});
     }
