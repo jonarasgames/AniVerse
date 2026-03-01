@@ -339,90 +339,21 @@ nav a:hover, nav a.active {
     line-height: 1.2;
 }
 
+.search-result-status {
+    margin: -8px 0 14px;
+    font-size: 0.95rem;
+    color: var(--primary-color);
+    font-weight: 600;
+    display: none;
+}
+
+.search-result-status.active {
+    display: block;
+}
 
 #search-clear-btn {
     border-radius: 4px;
     margin-left: 8px;
-}
-
-
-.search-inline-results {
-    max-width: 600px;
-    margin: 10px auto 0;
-    display: none;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.search-inline-results.active {
-    display: flex;
-}
-
-.search-inline-header {
-    color: #fff;
-    background: rgba(230, 57, 70, 0.92);
-    border-radius: 8px;
-    padding: 8px 10px;
-    font-size: 0.9rem;
-    font-weight: 700;
-}
-
-.search-inline-list {
-    background: rgba(10, 10, 20, 0.92);
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-.search-inline-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    width: 100%;
-    border: 0;
-    border-bottom: 1px solid rgba(255,255,255,0.08);
-    background: transparent;
-    color: #fff;
-    text-align: left;
-    padding: 8px 10px;
-    cursor: pointer;
-}
-
-.search-inline-item:last-child {
-    border-bottom: 0;
-}
-
-.search-inline-item:hover {
-    background: rgba(230, 57, 70, 0.14);
-}
-
-.search-inline-item img {
-    width: 42px;
-    height: 42px;
-    object-fit: cover;
-    border-radius: 6px;
-    flex-shrink: 0;
-}
-
-.search-inline-item .meta {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-}
-
-.search-inline-item .meta .title {
-    font-size: 0.92rem;
-    font-weight: 700;
-    line-height: 1.2;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.search-inline-item .meta .type {
-    font-size: 0.75rem;
-    opacity: 0.8;
-    margin-top: 2px;
 }
 
 .user-welcome {
@@ -2808,11 +2739,6 @@ html.theme-dark select {
     .search-bar button,
     #search-clear-btn {
         border-radius: 6px;
-    }
-
-    .search-inline-results,
-    .search-suggestions {
-        max-width: 100%;
     }
     
     .anime-grid {
