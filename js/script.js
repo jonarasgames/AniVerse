@@ -899,6 +899,10 @@ function openEpisode(anime, seasonNumber, episodeIndex){
     
     // Determine season name (custom or default)
     const seasonName = season && season.name ? season.name : `Temporada ${seasonNumber}`;
+
+    if (typeof window.syncEpisodeSelectors === 'function') {
+        window.syncEpisodeSelectors(anime, seasonNumber, episodeIndex);
+    }
     
     const sl = document.getElementById('current-season-label'), elb = document.getElementById('current-episode-label');
     if (sl) {

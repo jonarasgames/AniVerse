@@ -82,6 +82,13 @@
                 <button id="mini-play-pause" class="mini-control-btn" aria-label="Play/Pause">
                     <i class="fas fa-pause"></i>
                 </button>
+
+                <button id="mini-prev-track" class="mini-control-btn" aria-label="Faixa anterior">
+                    <i class="fas fa-step-backward"></i>
+                </button>
+                <button id="mini-next-track" class="mini-control-btn" aria-label="Próxima faixa">
+                    <i class="fas fa-step-forward"></i>
+                </button>
                 
                 <!-- CONTROLE DE VOLUME -->
                 <div class="mini-volume-container">
@@ -112,6 +119,8 @@
         
         // Event listeners
         document.getElementById('mini-play-pause').addEventListener('click', togglePlayPause);
+        document.getElementById('mini-prev-track').addEventListener('click', playPreviousTrack);
+        document.getElementById('mini-next-track').addEventListener('click', playNextTrack);
         document.getElementById('mini-close').addEventListener('click', closeMiniPlayer);
         document.getElementById('mini-music-fullscreen').addEventListener('click', openMusicFullscreen);
         
@@ -161,6 +170,8 @@
         
         // Initialize volume display
         updateMusicVolume();
+        setupMediaSessionHandlers();
+        updateTrackNavigationButtons();
     }
     
     function updatePlayPauseIcon() {
@@ -168,6 +179,10 @@
         const icon = document.querySelector('#mini-play-pause i');
         if (icon) {
             icon.className = audio.paused ? 'fas fa-play' : 'fas fa-pause';
+        }
+
+        if ('mediaSession' in navigator) {
+            navigator.mediaSession.playbackState = audio.paused ? 'paused' : 'playing';
         }
     }
     
@@ -252,6 +267,98 @@
     }
     
     let currentMusicData = null;
+
+    function getAllMusicCards() {
+        return Array.from(document.querySelectorAll('.music-card'));
+    }
+
+    function getCurrentTrackIndex() {
+        if (!currentPlayingCard) return -1;
+        return getAllMusicCards().indexOf(currentPlayingCard);
+    }
+
+    function updateMediaSessionMetadata() {
+        if (!('mediaSession' in navigator) || !currentMusicData) return;
+
+        try {
+            navigator.mediaSession.metadata = new MediaMetadata({
+                title: currentMusicData.title || 'AniVerse',
+                artist: currentMusicData.artist || 'AniVerse',
+                album: currentMusicData.anime || 'AniVerse Music',
+                artwork: [{
+                    src: currentMusicData.thumbnail || 'images/bg-default.jpg',
+                    sizes: '512x512',
+                    type: 'image/png'
+                }]
+            });
+        } catch (error) {
+            console.warn('Media Session metadata error:', error);
+        }
+    }
+
+    function updateTrackNavigationButtons() {
+        const index = getCurrentTrackIndex();
+        const cards = getAllMusicCards();
+        const hasPrevious = index > 0;
+        const hasNext = index >= 0 && index < cards.length - 1;
+
+        ['mini-prev-track', 'music-fs-prev'].forEach(id => {
+            const btn = document.getElementById(id);
+            if (btn) btn.disabled = !hasPrevious;
+        });
+
+        ['mini-next-track', 'music-fs-next'].forEach(id => {
+            const btn = document.getElementById(id);
+            if (btn) btn.disabled = !hasNext;
+        });
+    }
+
+    function refreshMusicPlayerUI() {
+        if (!currentMusicData) return;
+
+        const thumb = currentMusicData.thumbnail || 'images/bg-default.jpg';
+        const title = currentMusicData.title || 'Sem título';
+        const artist = currentMusicData.artist || 'Artista desconhecido';
+
+        const miniThumb = document.getElementById('mini-player-thumb');
+        const miniTitle = document.getElementById('mini-player-title');
+        const miniArtist = document.getElementById('mini-player-artist');
+        if (miniThumb) miniThumb.src = thumb;
+        if (miniTitle) miniTitle.textContent = title;
+        if (miniArtist) miniArtist.textContent = artist;
+
+        const fsThumb = document.getElementById('music-fs-thumb');
+        const fsTitle = document.getElementById('music-fs-title');
+        const fsArtist = document.getElementById('music-fs-artist');
+        const fsBg = document.getElementById('music-fs-bg');
+        if (fsThumb) fsThumb.src = thumb;
+        if (fsTitle) fsTitle.textContent = title;
+        if (fsArtist) fsArtist.textContent = artist;
+        if (fsBg) fsBg.style.backgroundImage = `url('${thumb}')`;
+
+        updateTrackNavigationButtons();
+        updateMediaSessionMetadata();
+    }
+
+    function setupMediaSessionHandlers() {
+        if (!('mediaSession' in navigator)) return;
+
+        const audio = getMusicAudio();
+        try {
+            navigator.mediaSession.setActionHandler('play', () => audio.play().catch(() => {}));
+            navigator.mediaSession.setActionHandler('pause', () => audio.pause());
+            navigator.mediaSession.setActionHandler('previoustrack', playPreviousTrack);
+            navigator.mediaSession.setActionHandler('nexttrack', playNextTrack);
+            navigator.mediaSession.setActionHandler('seekbackward', () => {
+                audio.currentTime = Math.max(0, audio.currentTime - 10);
+            });
+            navigator.mediaSession.setActionHandler('seekforward', () => {
+                audio.currentTime = Math.min(audio.duration || 0, audio.currentTime + 10);
+            });
+        } catch (error) {
+            console.warn('Media Session handlers not fully supported:', error);
+        }
+    }
     
     function openMusicFullscreen() {
         if (!currentMusicData) return;
@@ -288,8 +395,14 @@
                         </div>
                     </div>
                     <div class="music-fs-controls">
-                        <button class="music-fs-control-btn" id="music-fs-play-pause">
+                        <button class="music-fs-control-btn" id="music-fs-prev" aria-label="Faixa anterior">
+                            <i class="fas fa-step-backward"></i>
+                        </button>
+                        <button class="music-fs-control-btn" id="music-fs-play-pause" aria-label="Reproduzir/Pausar">
                             <i class="fas fa-pause"></i>
+                        </button>
+                        <button class="music-fs-control-btn" id="music-fs-next" aria-label="Próxima faixa">
+                            <i class="fas fa-step-forward"></i>
                         </button>
                     </div>
                 </div>
@@ -299,6 +412,8 @@
             // Event listeners
             document.getElementById('music-fs-close-btn').addEventListener('click', closeMusicFullscreen);
             document.getElementById('music-fs-play-pause').addEventListener('click', togglePlayPause);
+            document.getElementById('music-fs-prev').addEventListener('click', playPreviousTrack);
+            document.getElementById('music-fs-next').addEventListener('click', playNextTrack);
             
             const fsProgressContainer = document.getElementById('music-fs-progress-container');
             fsProgressContainer.addEventListener('click', (e) => {
@@ -317,10 +432,7 @@
         }
         
         // Atualizar conteúdo
-        document.getElementById('music-fs-thumb').src = currentMusicData.thumbnail;
-        document.getElementById('music-fs-title').textContent = currentMusicData.title;
-        document.getElementById('music-fs-artist').textContent = currentMusicData.artist;
-        document.getElementById('music-fs-bg').style.backgroundImage = `url('${currentMusicData.thumbnail}')`;
+        refreshMusicPlayerUI();
         
         // Atualizar botão play/pause
         updateFullscreenPlayPauseIcon();
@@ -375,8 +487,7 @@
         }
         
         // Find all music cards
-        const allCards = document.querySelectorAll('.music-card');
-        const cardsArray = Array.from(allCards);
+        const cardsArray = getAllMusicCards();
         const currentIndex = cardsArray.indexOf(currentPlayingCard);
         
         if (currentIndex === -1 || currentIndex >= cardsArray.length - 1) {
@@ -400,11 +511,36 @@
             closeMiniPlayer();
         }
     }
+
+    function playPreviousTrack() {
+        if (!currentPlayingCard) {
+            return;
+        }
+
+        const cardsArray = getAllMusicCards();
+        const currentIndex = cardsArray.indexOf(currentPlayingCard);
+
+        if (currentIndex <= 0) {
+            return;
+        }
+
+        const previousCard = cardsArray[currentIndex - 1];
+        if (previousCard) {
+            playMusic(
+                previousCard.dataset.src,
+                previousCard.dataset.title,
+                previousCard.dataset.artist,
+                previousCard.dataset.thumb,
+                previousCard
+            );
+        }
+    }
     
     function closeMiniPlayer() {
         const audio = getMusicAudio();
         audio.pause();
         audio.src = '';
+        currentMusicData = null;
         
         const miniPlayer = document.getElementById('music-mini-player');
         if (miniPlayer) {
@@ -428,7 +564,8 @@
             src: src,
             title: title,
             artist: artist,
-            thumbnail: thumb
+            thumbnail: thumb,
+            anime: card?.closest('.music-section')?.querySelector('.music-anime-title')?.textContent || ''
         };
         
         // Stop if clicking same track
@@ -468,10 +605,8 @@
             showMusicError('Erro ao reproduzir. Clique para tentar novamente.');
         });
         
-        // Update mini-player UI
-        document.getElementById('mini-player-thumb').src = thumb || 'images/bg-default.jpg';
-        document.getElementById('mini-player-title').textContent = title;
-        document.getElementById('mini-player-artist').textContent = artist;
+        // Update mini-player/fullscreen/system UI
+        refreshMusicPlayerUI();
         
         miniPlayer.classList.remove('hidden');
         
@@ -480,6 +615,8 @@
         if (card) {
             card.classList.add('playing');
         }
+
+        updateTrackNavigationButtons();
     }
     
     function showMusicError(msg) {

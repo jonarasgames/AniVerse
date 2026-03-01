@@ -2170,7 +2170,7 @@ footer {
     gap: 15px;
     padding: 0 20px;
     box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
-    z-index: 9999;
+    z-index: 1500;
     border-top: 1px solid var(--border-color, #333);
     transition: transform 0.3s ease;
 }
@@ -2227,6 +2227,11 @@ footer {
 
 .mini-control-btn:hover {
     background: rgba(255, 255, 255, 0.1);
+}
+
+.mini-control-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
 }
 
 /* Volume Control no Mini Player de Música */
