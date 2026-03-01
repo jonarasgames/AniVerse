@@ -55,6 +55,7 @@
         }
 
         audio.addEventListener('stalled', () => recoverPlayback('stalled'));
+        audio.addEventListener('waiting', () => recoverPlayback('buffering'));
         audio.addEventListener('error', () => recoverPlayback('error'));
     }
 

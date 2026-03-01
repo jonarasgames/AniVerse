@@ -1,13 +1,5 @@
 (function () {
   const TV_MODE_KEY = 'aniVerseTvMode';
-  const KEY_CODES = {
-    LEFT: [37, 29460],
-    RIGHT: [39, 29461],
-    UP: [38, 29462],
-    DOWN: [40, 29463],
-    ENTER: [13],
-    BACK: [10009, 27]
-  };
   const focusableSelector = [
     'nav a[data-section]',
     '.anime-card',
@@ -64,24 +56,10 @@
   }
 
   function prepareCardsForFocus() {
-    document.querySelectorAll('.anime-card, .music-card, nav a[data-section], .btn, .btn-icon, button, .close-modal, .close-modal-btn, .footer-link').forEach((card) => {
+    document.querySelectorAll('.anime-card, .music-card').forEach((card) => {
       if (!card.hasAttribute('tabindex')) {
         card.setAttribute('tabindex', '0');
       }
-    });
-  }
-
-  function keyMatches(event, names) {
-    const key = (event.key || '').toLowerCase();
-    const keyCode = Number(event.keyCode || event.which || 0);
-    return names.some((name) => {
-      if (name === 'left') return key === 'arrowleft' || key === 'left' || KEY_CODES.LEFT.includes(keyCode);
-      if (name === 'right') return key === 'arrowright' || key === 'right' || KEY_CODES.RIGHT.includes(keyCode);
-      if (name === 'up') return key === 'arrowup' || key === 'up' || KEY_CODES.UP.includes(keyCode);
-      if (name === 'down') return key === 'arrowdown' || key === 'down' || KEY_CODES.DOWN.includes(keyCode);
-      if (name === 'enter') return key === 'enter' || KEY_CODES.ENTER.includes(keyCode);
-      if (name === 'back') return key === 'escape' || key === 'back' || key === 'backspace' || KEY_CODES.BACK.includes(keyCode);
-      return false;
     });
   }
 
@@ -150,7 +128,7 @@
     const tagName = (event.target && event.target.tagName) ? event.target.tagName.toLowerCase() : '';
     const editingText = tagName === 'input' || tagName === 'textarea';
 
-    if (keyMatches(event, ['back'])) {
+    if (event.key === 'Escape' || event.keyCode === 10009) {
       if (closeOpenModal()) {
         event.preventDefault();
       }
@@ -159,19 +137,19 @@
 
     if (editingText) return;
 
-    if (keyMatches(event, ['left'])) {
+    if (event.key === 'ArrowLeft' || event.keyCode === 37) {
       event.preventDefault();
       moveFocus('left');
-    } else if (keyMatches(event, ['right'])) {
+    } else if (event.key === 'ArrowRight' || event.keyCode === 39) {
       event.preventDefault();
       moveFocus('right');
-    } else if (keyMatches(event, ['up'])) {
+    } else if (event.key === 'ArrowUp' || event.keyCode === 38) {
       event.preventDefault();
       moveFocus('up');
-    } else if (keyMatches(event, ['down'])) {
+    } else if (event.key === 'ArrowDown' || event.keyCode === 40) {
       event.preventDefault();
       moveFocus('down');
-    } else if (keyMatches(event, ['enter'])) {
+    } else if (event.key === 'Enter' || event.keyCode === 13) {
       const active = document.activeElement;
       if (active && typeof active.click === 'function') {
         event.preventDefault();

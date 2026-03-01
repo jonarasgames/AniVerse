@@ -45,17 +45,3 @@ body.tv-mode .hero {
 body.tv-mode .section-title {
     font-size: 2rem;
 }
-
-
-body.tizen-app,
-body.tizen-app * {
-    cursor: none !important;
-}
-
-body.tizen-app .anime-card,
-body.tizen-app .music-card,
-body.tizen-app nav a,
-body.tizen-app .btn,
-body.tizen-app button {
-    -webkit-tap-highlight-color: transparent;
-}
