@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>AniVerse - Seu Universo de Animes</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/profile-enhancements.css">
@@ -28,6 +28,7 @@
                     <li><a href="#" data-section="collections">Coleções</a></li>
                     <li><a href="#" data-section="openings">Músicas</a></li>
                     <li><a href="#" data-section="continue">Histórico</a></li>
+                    <li><a href="#" data-section="downloads">Downloads</a></li>
                 </ul>
             </nav>
             <div class="user-controls">
@@ -53,9 +54,12 @@
                     <h2>Assista aos melhores animes</h2>
                     <p>Milhares de episódios disponíveis a qualquer momento</p>
                     <div class="search-bar">
-                        <input type="text" id="search-input" placeholder="Buscar animes...">
+                        <input type="text" id="search-input" placeholder="Buscar animes..." autocomplete="off">
                         <button class="btn btn-primary" id="search-btn"><i class="fas fa-search"></i></button>
+                        <button class="btn btn-secondary" id="search-clear-btn" type="button" style="display: none;">Limpar</button>
                     </div>
+                    <div id="search-suggestions" class="search-suggestions"></div>
+                    <div id="search-inline-results" class="search-inline-results"></div>
                 </div>
             </div>
 
@@ -128,6 +132,16 @@
                 </button>
             </div>
             <div class="anime-grid" id="continue-grid"></div>
+        </section>
+
+        <section id="downloads-section" class="content-section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 class="section-title" style="margin: 0;">Downloads</h2>
+                <button id="clear-downloads-btn" class="btn btn-secondary">
+                    <i class="fas fa-trash"></i> Limpar Downloads
+                </button>
+            </div>
+            <div id="downloads-grid" class="downloads-grid"></div>
         </section>
     </main>
 
@@ -269,6 +283,13 @@
                     <i class="fas fa-layer-group"></i>
                     <span id="collection-name">Coleção</span>
                     <div id="collection-items" class="collection-items"></div>
+                </div>
+                <div class="download-actions compact-download-actions" style="margin: 10px 0;">
+                    <button id="download-episode-btn" class="btn btn-primary" title="Baixar episódio"><i class="fas fa-download"></i> Episódio</button>
+                    <button id="download-season-btn" class="btn btn-secondary" title="Baixar temporada"><i class="fas fa-layer-group"></i> Temporada</button>
+                    <button id="download-anime-btn" class="btn btn-secondary" title="Baixar anime"><i class="fas fa-film"></i> Anime</button>
+                    <button id="download-collection-btn" class="btn btn-secondary" title="Baixar coleção"><i class="fas fa-box-open"></i> Coleção</button>
+                    <span id="download-episode-status" class="download-status-inline"></span>
                 </div>
                 <div class="episode-selector">
                     <select id="season-select">
@@ -522,6 +543,7 @@
     <script src="js/music-player.js" defer></script>
     <script src="js/video-player.js" defer></script>
     <script src="js/player-fixes.js" defer></script>
+    <script src="js/download-manager.js" defer></script>
     <script src="js/script.js" defer></script>
     <script src="js/info-section.js" defer></script>
     <script src="js/fixes.js" defer></script>
@@ -529,6 +551,14 @@
     <script src="js/profile-multi.js" defer></script>
     <script src="js/profile-modal-new.js" defer></script>
     <script src="js/music-player-new.js" defer></script>
+    
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('sw.js').catch(() => {});
+        });
+      }
+    </script>
     <script id="ani-diagnostic-init">/* ANI-diagnostic-init-check */(function(){try{console.log("AniVerse init check running"); fetch(window.location.pathname.replace(/\/[^\/]*$/, "") + "/anime-data.json", {cache: "no-store"}).then(function(r){console.log("fetch anime-data.json ->", r.status, r.statusText); if(r.ok){ try{ window.dispatchEvent(new Event("animeDataLoaded")); console.log("Dispatched animeDataLoaded for diagnostic"); } catch(e){console.warn("dispatch error", e);} } }).catch(function(err){console.warn("fetch anime-data.json failed:", err); });}catch(e){console.error("ANI-diagnostic error:", e);}})();</script>
 </body>
 </html>
