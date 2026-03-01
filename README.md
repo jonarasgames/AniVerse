@@ -79,31 +79,3 @@ Clique no botão abaixo para acessar:
 
 <img src="https://www.animatedimages.org/data/media/1154/animated-star-image-0016.gif" width="40" style="position: fixed; top: 10px; left: 10px; animation: float 5s ease-in-out infinite;">
 <img src="https://www.animatedimages.org/data/media/1154/animated-star-image-0023.gif" width="40" style="position: fixed; bottom: 10px; right: 10px; animation: float 4s ease-in-out infinite reverse;">
-
----
-
-## 📺 Samsung TV (Tizen) + modo TV no projeto
-
-Se você quer transformar este projeto em app para **Samsung TV**, o caminho mais simples é usar o próprio site como **Web App Tizen**.
-
-### 1) O que já foi adaptado neste repositório
-- Suporte de navegação por controle remoto (setas + Enter + voltar).
-- Modo TV com foco visual maior para cards e botões.
-- Ativação automática em user-agent de TV Samsung/Tizen.
-- Ativação manual via URL: `?tv=1` (desativar: `?tv=0`).
-
-### 2) Como criar um app Samsung com este projeto
-1. Instale o **Tizen Studio** + extensão de TV.
-2. Crie um projeto **Web Application**.
-3. Copie os arquivos deste repositório para dentro do projeto.
-4. Ajuste o `config.xml` com permissões mínimas de internet e resolução Full HD.
-5. Rode no emulador de TV Samsung e teste o controle remoto.
-6. Gere o pacote `.wgt` para instalar na TV (modo dev).
-
-### 3) Dicas de compatibilidade para TV
-- Prefira vídeos em HLS/MP4 amplamente compatíveis.
-- Evite dependências pesadas e animações excessivas.
-- Sempre teste navegação sem mouse (somente setas/Enter/Back).
-- Garanta foco visível em todos os elementos interativos.
-
-Se quiser, no próximo passo eu também posso montar um `config.xml` completo e checklist de publicação na loja da Samsung.
