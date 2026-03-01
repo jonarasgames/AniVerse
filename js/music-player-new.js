@@ -11,7 +11,7 @@
         style.textContent = `
             /* Only target the MUSIC mini-player to avoid conflict with video PiP mini-player */
             #music-mini-player {
-                z-index: 10000;
+                z-index: 1500;
             }
 
             #music-mini-player.hidden {
