@@ -76,6 +76,7 @@
                 <div id="mini-player-artist" class="mini-player-artist">Artist</div>
                 <div class="mini-player-time">
                     <span id="music-current-time">0:00</span> / <span id="music-duration">0:00</span>
+                    <span id="mini-download-status" class="mini-download-status"></span>
                 </div>
             </div>
             <div class="mini-player-controls">
@@ -103,6 +104,9 @@
                 <button id="mini-music-fullscreen" class="mini-control-btn" aria-label="Fullscreen">
                     <i class="fas fa-expand"></i>
                 </button>
+                <button id="mini-download-track" class="mini-control-btn" aria-label="Baixar música">
+                    <i class="fas fa-download"></i>
+                </button>
                 <button id="mini-close" class="mini-control-btn" aria-label="Close">
                     <i class="fas fa-times"></i>
                 </button>
@@ -123,6 +127,11 @@
         document.getElementById('mini-next-track').addEventListener('click', playNextTrack);
         document.getElementById('mini-close').addEventListener('click', closeMiniPlayer);
         document.getElementById('mini-music-fullscreen').addEventListener('click', openMusicFullscreen);
+        document.getElementById('mini-download-track').addEventListener('click', () => {
+            if (typeof window.downloadCurrentMusic === 'function') {
+                window.downloadCurrentMusic();
+            }
+        });
         
         // VOLUME BUTTON
         const volumeBtn = document.getElementById('mini-music-volume-btn');
@@ -404,6 +413,9 @@
                         <button class="music-fs-control-btn" id="music-fs-next" aria-label="Próxima faixa">
                             <i class="fas fa-step-forward"></i>
                         </button>
+                        <button class="music-fs-control-btn" id="music-fs-download" aria-label="Baixar música">
+                            <i class="fas fa-download"></i>
+                        </button>
                     </div>
                 </div>
             `;
@@ -414,6 +426,11 @@
             document.getElementById('music-fs-play-pause').addEventListener('click', togglePlayPause);
             document.getElementById('music-fs-prev').addEventListener('click', playPreviousTrack);
             document.getElementById('music-fs-next').addEventListener('click', playNextTrack);
+            document.getElementById('music-fs-download').addEventListener('click', () => {
+                if (typeof window.downloadCurrentMusic === 'function') {
+                    window.downloadCurrentMusic();
+                }
+            });
             
             const fsProgressContainer = document.getElementById('music-fs-progress-container');
             fsProgressContainer.addEventListener('click', (e) => {

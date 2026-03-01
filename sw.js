@@ -1,5 +1,5 @@
-const STATIC_CACHE = 'aniverse-static-v1';
-const RUNTIME_CACHE = 'aniverse-runtime-v1';
+const STATIC_CACHE = 'aniverse-static-v2';
+const RUNTIME_CACHE = 'aniverse-runtime-v2';
 
 const APP_SHELL = [
   './',
@@ -20,48 +20,54 @@ const APP_SHELL = [
 ];
 
 self.addEventListener('install', event => {
-  event.waitUntil(caches.open(STATIC_CACHE).then(cache => cache.addAll(APP_SHELL)).then(() => self.skipWaiting()));
+  event.waitUntil(
+    caches.open(STATIC_CACHE)
+      .then(cache => cache.addAll(APP_SHELL))
+      .then(() => self.skipWaiting())
+  );
 });
 
 self.addEventListener('activate', event => {
   event.waitUntil(
-    caches.keys().then(keys => Promise.all(keys
-      .filter(k => ![STATIC_CACHE, RUNTIME_CACHE].includes(k))
-      .map(k => caches.delete(k))
+    caches.keys().then(keys => Promise.all(
+      keys.filter(k => ![STATIC_CACHE, RUNTIME_CACHE].includes(k)).map(k => caches.delete(k))
     )).then(() => self.clients.claim())
   );
 });
 
-self.addEventListener('fetch', event => {
-  const req = event.request;
-  if (req.method !== 'GET') return;
+function shouldNetworkFirst(request) {
+  const url = new URL(request.url);
+  if (url.origin !== self.location.origin) return false;
+  return /\.(html|css|js|json)$/.test(url.pathname) || url.pathname === '/' || url.pathname.endsWith('/index.html');
+}
 
-  const url = new URL(req.url);
-  const isSameOrigin = url.origin === self.location.origin;
-
-  if (isSameOrigin) {
-    event.respondWith(
-      caches.match(req).then(cached => {
-        if (cached) return cached;
-        return fetch(req).then(res => {
-          const copy = res.clone();
-          caches.open(RUNTIME_CACHE).then(cache => cache.put(req, copy)).catch(() => {});
-          return res;
-        }).catch(() => caches.match('./index.html'));
-      })
-    );
-    return;
+async function networkFirst(request) {
+  const cache = await caches.open(RUNTIME_CACHE);
+  try {
+    const fresh = await fetch(request);
+    cache.put(request, fresh.clone()).catch(() => {});
+    return fresh;
+  } catch (_) {
+    const cached = await caches.match(request);
+    if (cached) return cached;
+    return caches.match('./index.html');
   }
+}
 
-  // Cross-origin media/runtime cache first (for downloaded assets)
-  event.respondWith(
-    caches.match(req).then(cached => {
-      if (cached) return cached;
-      return fetch(req).then(res => {
-        const copy = res.clone();
-        caches.open(RUNTIME_CACHE).then(cache => cache.put(req, copy)).catch(() => {});
-        return res;
-      });
-    })
-  );
+async function cacheFirst(request) {
+  const cached = await caches.match(request);
+  if (cached) return cached;
+  const response = await fetch(request);
+  const cache = await caches.open(RUNTIME_CACHE);
+  cache.put(request, response.clone()).catch(() => {});
+  return response;
+}
+
+self.addEventListener('fetch', event => {
+  if (event.request.method !== 'GET') return;
+  if (shouldNetworkFirst(event.request)) {
+    event.respondWith(networkFirst(event.request));
+  } else {
+    event.respondWith(cacheFirst(event.request));
+  }
 });
