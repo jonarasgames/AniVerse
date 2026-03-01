@@ -339,90 +339,21 @@ nav a:hover, nav a.active {
     line-height: 1.2;
 }
 
+.search-result-status {
+    margin: -8px 0 14px;
+    font-size: 0.95rem;
+    color: var(--primary-color);
+    font-weight: 600;
+    display: none;
+}
+
+.search-result-status.active {
+    display: block;
+}
 
 #search-clear-btn {
     border-radius: 4px;
     margin-left: 8px;
-}
-
-
-.search-inline-results {
-    max-width: 600px;
-    margin: 10px auto 0;
-    display: none;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.search-inline-results.active {
-    display: flex;
-}
-
-.search-inline-header {
-    color: #fff;
-    background: rgba(230, 57, 70, 0.92);
-    border-radius: 8px;
-    padding: 8px 10px;
-    font-size: 0.9rem;
-    font-weight: 700;
-}
-
-.search-inline-list {
-    background: rgba(10, 10, 20, 0.92);
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-.search-inline-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    width: 100%;
-    border: 0;
-    border-bottom: 1px solid rgba(255,255,255,0.08);
-    background: transparent;
-    color: #fff;
-    text-align: left;
-    padding: 8px 10px;
-    cursor: pointer;
-}
-
-.search-inline-item:last-child {
-    border-bottom: 0;
-}
-
-.search-inline-item:hover {
-    background: rgba(230, 57, 70, 0.14);
-}
-
-.search-inline-item img {
-    width: 42px;
-    height: 42px;
-    object-fit: cover;
-    border-radius: 6px;
-    flex-shrink: 0;
-}
-
-.search-inline-item .meta {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-}
-
-.search-inline-item .meta .title {
-    font-size: 0.92rem;
-    font-weight: 700;
-    line-height: 1.2;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.search-inline-item .meta .type {
-    font-size: 0.75rem;
-    opacity: 0.8;
-    margin-top: 2px;
 }
 
 .user-welcome {
@@ -2809,11 +2740,6 @@ html.theme-dark select {
     #search-clear-btn {
         border-radius: 6px;
     }
-
-    .search-inline-results,
-    .search-suggestions {
-        max-width: 100%;
-    }
     
     .anime-grid {
         grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -3684,172 +3610,5 @@ body.dark-mode .age-rating-section {
 
     .anime-thumbnail {
         aspect-ratio: 16 / 9;
-    }
-}
-
-
-.downloads-grid {
-    display: grid;
-    gap: 12px;
-}
-
-.download-card {
-    display: grid;
-    grid-template-columns: 100px 1fr auto;
-    gap: 12px;
-    align-items: center;
-    background: var(--card-bg);
-    border: 1px solid var(--border-color, rgba(255,255,255,0.12));
-    border-radius: 10px;
-    padding: 10px;
-}
-
-.download-card img {
-    width: 100px;
-    height: 64px;
-    object-fit: cover;
-    border-radius: 8px;
-}
-
-.download-info h4 {
-    margin: 0 0 6px;
-    font-size: 1rem;
-}
-
-.download-info p {
-    margin: 0;
-    font-size: 0.9rem;
-    opacity: 0.9;
-}
-
-.download-info small {
-    display: inline-block;
-    margin-top: 6px;
-    opacity: 0.8;
-}
-
-.download-card .download-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-@media (max-width: 768px) {
-    .download-card {
-        grid-template-columns: 70px 1fr;
-    }
-
-    .download-card img {
-        width: 70px;
-        height: 70px;
-    }
-
-    .download-card .download-actions {
-        grid-column: 1 / -1;
-        flex-direction: row;
-    }
-}
-
-
-.music-download-top {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 10px;
-    flex-wrap: wrap;
-}
-
-.compact-download-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    align-items: center;
-}
-
-.download-status-inline {
-    font-size: 0.85rem;
-    opacity: 0.9;
-    margin-left: 4px;
-}
-
-.downloads-grid {
-    display: grid;
-    gap: 10px;
-}
-
-.download-card {
-    display: grid;
-    grid-template-columns: 72px 1fr auto;
-    gap: 10px;
-    align-items: center;
-    background: var(--card-bg);
-    border: 1px solid var(--border-color, rgba(255,255,255,0.12));
-    border-radius: 10px;
-    padding: 8px;
-}
-
-.download-card img {
-    width: 72px;
-    height: 48px;
-    object-fit: cover;
-    border-radius: 8px;
-}
-
-.download-info h4 {
-    margin: 0 0 4px;
-    font-size: 0.95rem;
-    display: flex;
-    gap: 6px;
-    align-items: center;
-}
-
-.download-info p {
-    margin: 0;
-    font-size: 0.82rem;
-    opacity: 0.9;
-}
-
-.download-info small {
-    display: inline-block;
-    margin-top: 4px;
-    opacity: 0.75;
-    font-size: 0.72rem;
-}
-
-.download-card .download-actions {
-    display: flex;
-    gap: 6px;
-}
-
-.download-card .download-actions .btn {
-    min-width: 34px;
-    padding: 6px 8px;
-}
-
-.dl-pill {
-    font-size: 0.72rem;
-    padding: 2px 6px;
-    border-radius: 999px;
-    background: rgba(230,57,70,.2);
-    color: #fff;
-}
-
-.dl-pill.done {
-    background: rgba(46, 204, 113, 0.25);
-}
-
-@media (max-width: 768px) {
-    .compact-download-actions .btn {
-        padding: 6px 8px;
-        font-size: 0.8rem;
-    }
-
-    .download-card {
-        grid-template-columns: 56px 1fr auto;
-    }
-
-    .download-card img {
-        width: 56px;
-        height: 56px;
     }
 }

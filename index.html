@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=0.82, maximum-scale=1.0, viewport-fit=cover">
     <title>AniVerse - Seu Universo de Animes</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/profile-enhancements.css">
@@ -59,7 +59,6 @@
                         <button class="btn btn-secondary" id="search-clear-btn" type="button" style="display: none;">Limpar</button>
                     </div>
                     <div id="search-suggestions" class="search-suggestions"></div>
-                    <div id="search-inline-results" class="search-inline-results"></div>
                 </div>
             </div>
 
@@ -86,6 +85,7 @@
 
             <section class="full-catalog">
                 <h2 class="section-title">Catálogo Completo</h2>
+                <p id="search-result-status" class="search-result-status" aria-live="polite"></p>
                 <div class="anime-grid" id="full-catalog-grid"></div>
             </section>
         </section>
@@ -140,7 +140,7 @@
 
         <section id="downloads-section" class="content-section">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h2 class="section-title" style="margin: 0;">Downloads</h2>
+                <h2 class="section-title" style="margin: 0;">Downloads Offline</h2>
                 <button id="clear-downloads-btn" class="btn btn-secondary">
                     <i class="fas fa-trash"></i> Limpar Downloads
                 </button>
@@ -288,12 +288,11 @@
                     <span id="collection-name">Coleção</span>
                     <div id="collection-items" class="collection-items"></div>
                 </div>
-                <div class="download-actions compact-download-actions" style="margin: 10px 0;">
-                    <button id="download-episode-btn" class="btn btn-primary" title="Baixar episódio"><i class="fas fa-download"></i> Episódio</button>
-                    <button id="download-season-btn" class="btn btn-secondary" title="Baixar temporada"><i class="fas fa-layer-group"></i> Temporada</button>
-                    <button id="download-anime-btn" class="btn btn-secondary" title="Baixar anime"><i class="fas fa-film"></i> Anime</button>
-                    <button id="download-collection-btn" class="btn btn-secondary" title="Baixar coleção"><i class="fas fa-box-open"></i> Coleção</button>
-                    <span id="download-episode-status" class="download-status-inline"></span>
+                <div class="download-actions" style="margin: 10px 0;">
+                    <button id="download-episode-btn" class="btn btn-primary">
+                        <i class="fas fa-download"></i> Baixar episódio para offline
+                    </button>
+                    <span id="download-episode-status" style="margin-left: 10px; opacity: 0.8; font-size: 0.9rem;"></span>
                 </div>
                 <div class="episode-selector">
                     <select id="season-select">
