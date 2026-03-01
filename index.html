@@ -118,6 +118,10 @@
         <!-- Openings Section -->
         <section id="openings-section" class="content-section">
             <h2 class="section-title">Músicas</h2>
+            <div class="music-download-top">
+                <button id="download-current-music-btn" class="btn btn-secondary"><i class="fas fa-download"></i> Baixar música atual</button>
+                <span id="download-music-status" class="download-status-inline"></span>
+            </div>
             <div id="music-player-container">
                 <div id="music-grid" class="music-grid"></div>
             </div>
@@ -550,6 +554,14 @@
     <script src="js/profile-multi.js" defer></script>
     <script src="js/profile-modal-new.js" defer></script>
     <script src="js/music-player-new.js" defer></script>
+    
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('sw.js').catch(() => {});
+        });
+      }
+    </script>
     <script id="ani-diagnostic-init">/* ANI-diagnostic-init-check */(function(){try{console.log("AniVerse init check running"); fetch(window.location.pathname.replace(/\/[^\/]*$/, "") + "/anime-data.json", {cache: "no-store"}).then(function(r){console.log("fetch anime-data.json ->", r.status, r.statusText); if(r.ok){ try{ window.dispatchEvent(new Event("animeDataLoaded")); console.log("Dispatched animeDataLoaded for diagnostic"); } catch(e){console.warn("dispatch error", e);} } }).catch(function(err){console.warn("fetch anime-data.json failed:", err); });}catch(e){console.error("ANI-diagnostic error:", e);}})();</script>
 </body>
 </html>
