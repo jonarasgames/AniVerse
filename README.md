@@ -1,5 +1,3 @@
-<!-- README.md com ANIMAÇÃO inline no estilo anos 2000 + Frutiger Aero -->
-
 <div align="center">
   <img src="https://raw.githubusercontent.com/jonarasgames/AniVerse/main/images/logo.png" width="120" style="border-radius: 50%; animation: pulse 2s infinite;">
 </div>
@@ -27,7 +25,7 @@
 <div style="animation: slide-in 1s ease-out;">
   <strong>AniVerse</strong> é um portal visualmente encantado para fãs de animes.
   <br><br>
-  Tudo aqui foi feito por <strong>Jonaras</strong> — programação, layout, identidade e glitter visual.
+  Tudo aqui foi feito por <strong>Jonaras</strong> — lógica, layout, identidade e glitter visual.
 </div>
 
 ---
@@ -35,12 +33,12 @@
 ## 🎉 Destaques animados
 
 <ul style="animation: bounce-in 1.2s ease-in-out;">
-  <li>🌈 Visual chamativo e colorido</li>
-  <li>📺 Player com temporadas e episódios</li>
-  <li>🎵 Músicas de animes com player retrô</li>
-  <li>🖼️ Galeria de personagens com avatar custom</li>
-  <li>🌙 Modo escuro incluso</li>
-  <li>💾 Totalmente feito por mim (Jonaras)</li>
+  <li>Visual chamativo e colorido</li>
+  <li>Player com temporadas e episódios</li>
+  <li>Músicas de animes com player retrô</li>
+  <li>Galeria de personagens com avatar custom</li>
+  <li>Modo escuro incluso</li>
+  <li>Totalmente feito por mim e ajudinha de Copilot (Jonaras)</li>
 </ul>
 
 ---
@@ -79,11 +77,5 @@ Clique no botão abaixo para acessar:
 
 ---
 
-<!-- ANIMAÇÕES CSS INLINE -->
-<!-- GitHub não aceita <style>, mas inline funciona se embutido no style -->
-
 <img src="https://www.animatedimages.org/data/media/1154/animated-star-image-0016.gif" width="40" style="position: fixed; top: 10px; left: 10px; animation: float 5s ease-in-out infinite;">
 <img src="https://www.animatedimages.org/data/media/1154/animated-star-image-0023.gif" width="40" style="position: fixed; bottom: 10px; right: 10px; animation: float 4s ease-in-out infinite reverse;">
-
-<!-- KEYFRAMES INLINE VIA STYLE ATTRIBUTE (simulado em GIFs e transitions visuais) -->
-
