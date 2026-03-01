@@ -53,9 +53,11 @@
                     <h2>Assista aos melhores animes</h2>
                     <p>Milhares de episódios disponíveis a qualquer momento</p>
                     <div class="search-bar">
-                        <input type="text" id="search-input" placeholder="Buscar animes...">
+                        <input type="text" id="search-input" placeholder="Buscar animes..." autocomplete="off">
                         <button class="btn btn-primary" id="search-btn"><i class="fas fa-search"></i></button>
+                        <button class="btn btn-secondary" id="search-clear-btn" type="button" style="display: none;">Limpar</button>
                     </div>
+                    <div id="search-suggestions" class="search-suggestions"></div>
                 </div>
             </div>
 
@@ -82,6 +84,7 @@
 
             <section class="full-catalog">
                 <h2 class="section-title">Catálogo Completo</h2>
+                <p id="search-result-status" class="search-result-status" aria-live="polite"></p>
                 <div class="anime-grid" id="full-catalog-grid"></div>
             </section>
         </section>

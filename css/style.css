@@ -292,6 +292,70 @@ nav a:hover, nav a.active {
     border-radius: 0 4px 4px 0;
 }
 
+
+.search-suggestions {
+    max-width: 600px;
+    margin: 6px auto 0;
+    background: rgba(10, 10, 20, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    overflow: hidden;
+    display: none;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+}
+
+.search-suggestions.active {
+    display: block;
+}
+
+.search-suggestion-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 8px 10px;
+    border: 0;
+    background: transparent;
+    color: #fff;
+    text-align: left;
+    cursor: pointer;
+}
+
+.search-suggestion-item:hover {
+    background: rgba(230, 57, 70, 0.18);
+}
+
+.search-suggestion-item img {
+    width: 44px;
+    height: 44px;
+    border-radius: 6px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.search-suggestion-item .title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.search-result-status {
+    margin: -8px 0 14px;
+    font-size: 0.95rem;
+    color: var(--primary-color);
+    font-weight: 600;
+    display: none;
+}
+
+.search-result-status.active {
+    display: block;
+}
+
+#search-clear-btn {
+    border-radius: 4px;
+    margin-left: 8px;
+}
+
 .user-welcome {
     background-color: var(--secondary-color);
     padding: 15px 0;
@@ -2661,6 +2725,20 @@ html.theme-dark select {
     
     .hero-content p {
         font-size: 1rem;
+    }
+    
+    .search-bar {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .search-bar input {
+        border-radius: 6px;
+    }
+
+    .search-bar button,
+    #search-clear-btn {
+        border-radius: 6px;
     }
     
     .anime-grid {
