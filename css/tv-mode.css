@@ -1,0 +1,47 @@
+body.tv-mode {
+    font-size: 18px;
+}
+
+body.tv-mode .container {
+    max-width: 1800px;
+}
+
+body.tv-mode .anime-grid {
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    gap: 24px;
+}
+
+body.tv-mode nav a,
+body.tv-mode .btn,
+body.tv-mode .btn-icon,
+body.tv-mode select,
+body.tv-mode input,
+body.tv-mode textarea,
+body.tv-mode .anime-card,
+body.tv-mode .music-card,
+body.tv-mode .footer-link {
+    outline: none;
+}
+
+body.tv-mode nav a:focus,
+body.tv-mode .btn:focus,
+body.tv-mode .btn-icon:focus,
+body.tv-mode select:focus,
+body.tv-mode input:focus,
+body.tv-mode textarea:focus,
+body.tv-mode .anime-card:focus,
+body.tv-mode .music-card:focus,
+body.tv-mode .footer-link:focus,
+body.tv-mode .close-modal:focus,
+body.tv-mode .close-modal-btn:focus {
+    box-shadow: 0 0 0 4px #ffffff, 0 0 0 8px var(--primary-color);
+    border-radius: 8px;
+}
+
+body.tv-mode .hero {
+    min-height: 320px;
+}
+
+body.tv-mode .section-title {
+    font-size: 2rem;
+}
