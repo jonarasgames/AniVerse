@@ -107,9 +107,3 @@ Se você quer transformar este projeto em app para **Samsung TV**, o caminho mai
 - Garanta foco visível em todos os elementos interativos.
 
 Se quiser, no próximo passo eu também posso montar um `config.xml` completo e checklist de publicação na loja da Samsung.
-
-
-### 4) Troubleshooting rápido (TV no navegador)
-- Se as setas não navegarem e só moverem o cursor do mouse, ative o modo com `?tv=1` e pressione o botão central/OK para focar no site.
-- Se a música travar durante a reprodução, teste outra rede/qualidade e recarregue a faixa (alguns streams oscilam em TVs com conexão instável).
-- O player agora tenta reconectar automaticamente quando detectar buffering/stall.
