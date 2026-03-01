@@ -2170,7 +2170,7 @@ footer {
     gap: 15px;
     padding: 0 20px;
     box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
-    z-index: 9999;
+    z-index: 1500;
     border-top: 1px solid var(--border-color, #333);
     transition: transform 0.3s ease;
 }
@@ -2229,6 +2229,11 @@ footer {
     background: rgba(255, 255, 255, 0.1);
 }
 
+.mini-control-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
 /* Volume Control no Mini Player de Música */
 .mini-volume-container {
     display: flex;
@@ -2261,11 +2266,64 @@ footer {
     transition: width 0.1s;
 }
 
-/* Mobile: Mostrar volume sempre */
+/* Mobile: layout compacto para evitar cortes no título/artista */
 @media (max-width: 768px) {
-    .mini-volume-slider {
-        width: 50px;
-        opacity: 1;
+    html {
+        font-size: 88%;
+    }
+
+    body {
+        -webkit-text-size-adjust: 92%;
+        text-size-adjust: 92%;
+    }
+
+    #music-mini-player {
+        height: auto;
+        min-height: 86px;
+        padding: 8px 10px 10px;
+        gap: 8px;
+        display: grid;
+        grid-template-columns: 46px minmax(0, 1fr) auto;
+        align-items: center;
+    }
+
+    #music-mini-player .mini-player-thumb {
+        width: 46px;
+        height: 46px;
+        border-radius: 6px;
+    }
+
+    #music-mini-player .mini-player-info {
+        min-width: 0;
+        width: 100%;
+    }
+
+    #music-mini-player .mini-player-title,
+    #music-mini-player .mini-player-artist {
+        max-width: 100%;
+        line-height: 1.2;
+    }
+
+    #music-mini-player .mini-player-controls {
+        gap: 2px;
+        justify-content: flex-end;
+    }
+
+    #music-mini-player .mini-control-btn {
+        padding: 6px;
+        font-size: 1rem;
+    }
+
+    #music-mini-player .mini-volume-container,
+    #music-mini-player #mini-close {
+        display: none;
+    }
+
+    #music-mini-player .mini-player-progress-container {
+        position: static;
+        grid-column: 1 / -1;
+        height: 3px;
+        margin-top: 4px;
     }
 }
 
@@ -3453,5 +3511,26 @@ body.dark-mode .age-rating-section {
 @media (max-width: 768px) {
     #music-mini-player {
         bottom: max(env(safe-area-inset-bottom, 0px), 56px);
+    }
+}
+
+
+@media (max-width: 768px) {
+    .anime-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 12px;
+    }
+
+    .anime-card .anime-title {
+        font-size: 0.95rem;
+        line-height: 1.25;
+    }
+
+    .anime-card .anime-meta {
+        font-size: 0.75rem;
+    }
+
+    .anime-thumbnail {
+        aspect-ratio: 16 / 9;
     }
 }
