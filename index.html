@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="css/profile-modal-modern.css">
     <link rel="stylesheet" href="css/hero-video-rotator.css">
     <link rel="stylesheet" href="css/dark-mode.css" id="dark-mode-style">
+    <link rel="stylesheet" href="css/tv-mode.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="icon" href="images/logo.png" type="image/png">
 </head>
@@ -529,6 +530,7 @@
     <script src="js/profile-multi.js" defer></script>
     <script src="js/profile-modal-new.js" defer></script>
     <script src="js/music-player-new.js" defer></script>
+    <script src="js/tv-support.js" defer></script>
     <script id="ani-diagnostic-init">/* ANI-diagnostic-init-check */(function(){try{console.log("AniVerse init check running"); fetch(window.location.pathname.replace(/\/[^\/]*$/, "") + "/anime-data.json", {cache: "no-store"}).then(function(r){console.log("fetch anime-data.json ->", r.status, r.statusText); if(r.ok){ try{ window.dispatchEvent(new Event("animeDataLoaded")); console.log("Dispatched animeDataLoaded for diagnostic"); } catch(e){console.warn("dispatch error", e);} } }).catch(function(err){console.warn("fetch anime-data.json failed:", err); });}catch(e){console.error("ANI-diagnostic error:", e);}})();</script>
 </body>
 </html>
