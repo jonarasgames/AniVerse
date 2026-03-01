@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=0.82, maximum-scale=1.0, viewport-fit=cover">
     <title>AniVerse - Seu Universo de Animes</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/profile-enhancements.css">
@@ -59,7 +59,6 @@
                         <button class="btn btn-secondary" id="search-clear-btn" type="button" style="display: none;">Limpar</button>
                     </div>
                     <div id="search-suggestions" class="search-suggestions"></div>
-                    <div id="search-inline-results" class="search-inline-results"></div>
                 </div>
             </div>
 
@@ -86,6 +85,7 @@
 
             <section class="full-catalog">
                 <h2 class="section-title">Catálogo Completo</h2>
+                <p id="search-result-status" class="search-result-status" aria-live="polite"></p>
                 <div class="anime-grid" id="full-catalog-grid"></div>
             </section>
         </section>
