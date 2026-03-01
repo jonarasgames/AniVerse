@@ -6,59 +6,6 @@
     let currentPlayingCard = null;
     
     // Get or create singleton audio element
-    function setupResilientAudio(audio) {
-        if (!audio || audio.dataset.resilienceReady === '1') return;
-
-        audio.dataset.resilienceReady = '1';
-        audio.dataset.retryCount = '0';
-        audio.dataset.lastSrc = '';
-        audio.dataset.lastGoodTime = '0';
-
-        const markProgress = () => {
-            if (!Number.isNaN(audio.currentTime)) {
-                audio.dataset.lastGoodTime = String(audio.currentTime || 0);
-            }
-        };
-
-        audio.addEventListener('timeupdate', markProgress);
-        audio.addEventListener('playing', () => {
-            audio.dataset.retryCount = '0';
-            clearMusicError();
-        });
-
-        function recoverPlayback(reason) {
-            const src = audio.currentSrc || audio.src;
-            if (!src || audio.paused) return;
-
-            const retries = parseInt(audio.dataset.retryCount || '0', 10);
-            if (retries >= 2) {
-                showMusicError('Conexão instável na TV. Tente outra faixa ou aguarde alguns segundos.');
-                return;
-            }
-
-            audio.dataset.retryCount = String(retries + 1);
-            const resumeTime = parseFloat(audio.dataset.lastGoodTime || '0') || 0;
-
-            showMusicError(`Reconectando áudio (${reason})...`);
-
-            const cacheBustedSrc = src.includes('?') ? `${src}&retry=${Date.now()}` : `${src}?retry=${Date.now()}`;
-            audio.src = cacheBustedSrc;
-            audio.load();
-            audio.addEventListener('loadedmetadata', () => {
-                if (resumeTime > 0 && Number.isFinite(audio.duration) && resumeTime < audio.duration) {
-                    audio.currentTime = resumeTime;
-                }
-                audio.play().catch(() => {
-                    showMusicError('Não foi possível retomar o áudio automaticamente.');
-                });
-            }, { once: true });
-        }
-
-        audio.addEventListener('stalled', () => recoverPlayback('stalled'));
-        audio.addEventListener('waiting', () => recoverPlayback('buffering'));
-        audio.addEventListener('error', () => recoverPlayback('error'));
-    }
-
     function getMusicAudio() {
         if (musicPlayerInstance) return musicPlayerInstance;
         
@@ -76,9 +23,7 @@
         if (!audio) {
             audio = document.createElement('audio');
             audio.id = 'music-playing-audio';
-            audio.preload = 'auto';
-            audio.crossOrigin = 'anonymous';
-            audio.playsInline = true;
+            audio.preload = 'metadata';
             audio.style.display = 'none';
             document.body.appendChild(audio);
             
@@ -96,8 +41,6 @@
                 console.warn('Could not restore music volume:', e);
             }
         }
-
-        setupResilientAudio(audio);
         
         // Restore saved volume preference
         const savedVolume = localStorage.getItem('musicVolume');
@@ -500,8 +443,6 @@
         }
         
         // Set new track
-        audio.dataset.retryCount = '0';
-        audio.dataset.lastGoodTime = '0';
         audio.src = src;
         audio.load();
         
@@ -710,11 +651,6 @@
 
 // Keyboard shortcuts for music player
 document.addEventListener('keydown', (e) => {
-    // Em TV mode, deixamos as setas para navegação espacial de foco.
-    if (document.body.classList.contains('tv-mode')) {
-        return;
-    }
-
     // PRIORIDADE 2: Se modal de vídeo está aberto, IGNORAR comandos de música
     const videoModal = document.getElementById('video-modal');
     if (videoModal && videoModal.style.display === 'flex') {
