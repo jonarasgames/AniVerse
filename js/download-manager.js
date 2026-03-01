@@ -74,6 +74,25 @@
     }
   }
 
+  function canonicalMediaToken(url) {
+    const normalized = normalizeMediaUrl(url);
+    if (!normalized) return '';
+    try {
+      const parsed = new URL(normalized);
+      return decodeURIComponent(`${parsed.pathname}`.replace(/\/+/, '/')).toLowerCase();
+    } catch (_) {
+      return decodeURIComponent(String(normalized).split('?')[0].split('#')[0]).toLowerCase();
+    }
+  }
+
+  function mediaUrlMatches(urlA, urlB) {
+    const a = normalizeMediaUrl(urlA);
+    const b = normalizeMediaUrl(urlB);
+    if (!a || !b) return false;
+    if (a === b) return true;
+    return canonicalMediaToken(a) === canonicalMediaToken(b);
+  }
+
   function normalizeEpisodeSources(episode) {
     const helper = window.normalizeEpisodeSources;
     if (typeof helper === 'function') return helper(episode);
@@ -352,11 +371,11 @@
   function getOfflineMaps() {
     const downloads = readDownloads();
     const epMap = new Map();
-    const musicUrls = new Set();
+    const musicUrls = [];
 
     downloads.forEach(item => {
       if (item.type === 'music') {
-        musicUrls.add(item.sourceUrl);
+        musicUrls.push(item.sourceUrl);
         return;
       }
       const animeId = Number(item.animeId);
@@ -403,7 +422,7 @@
     const baseMusic = window.__aniverseOriginalData.musicLibrary || { themes: [], osts: {} };
     window.animeDB.musicLibrary = {
       ...baseMusic,
-      themes: (baseMusic.themes || []).filter(track => musicUrls.has(normalizeMediaUrl(track.audio)))
+      themes: (baseMusic.themes || []).filter(track => musicUrls.some(url => mediaUrlMatches(url, track.audio)))
     };
 
     const availableAnimeIds = new Set(filteredAnimes.map(a => Number(a.id)));
@@ -436,6 +455,10 @@
 
     const player = document.getElementById('anime-player');
     const blobUrl = await getCachedBlobUrl(item.sourceUrl);
+    if (!blobUrl && !navigator.onLine) {
+      setStatus('download-episode-status', 'Arquivo offline indisponível');
+      return;
+    }
     if (player) {
       player.src = blobUrl || item.sourceUrl;
       player.load();
@@ -492,7 +515,9 @@
         </div>
       `;
 
-      card.querySelector('.dl-play').addEventListener('click', () => playItem(item));
+      const playBtn = card.querySelector('.dl-play');
+      playBtn.disabled = !cached;
+      playBtn.addEventListener('click', () => playItem(item));
       card.querySelector('.dl-remove').addEventListener('click', async () => {
         await removeCachedUrl(item.sourceUrl);
         removeDownload(item);
@@ -533,6 +558,39 @@
     }
   }
 
+  function applyOfflineDataWrappers() {
+    if (!window.__renderContinueWatchingGridOriginal && typeof window.renderContinueWatchingGrid === 'function') {
+      window.__renderContinueWatchingGridOriginal = window.renderContinueWatchingGrid;
+      window.renderContinueWatchingGrid = function (items, gridId) {
+        return window.__renderContinueWatchingGridOriginal(filterContinueWatchingOffline(items), gridId);
+      };
+    }
+
+    if (window.animeDB && !window.__offlineDataWrappersApplied) {
+      window.__offlineDataWrappersApplied = true;
+
+      const originalGetContinueWatching = window.animeDB.getContinueWatching?.bind(window.animeDB);
+      if (originalGetContinueWatching) {
+        window.animeDB.getContinueWatching = function () {
+          const items = originalGetContinueWatching() || [];
+          return filterContinueWatchingOffline(items);
+        };
+      }
+
+      const originalGetCollections = window.animeDB.getCollections?.bind(window.animeDB);
+      if (originalGetCollections) {
+        window.animeDB.getCollections = function () {
+          const collections = originalGetCollections() || [];
+          if (navigator.onLine) return collections;
+          const availableAnimeIds = new Set((window.animeDB.animes || []).map(a => Number(a.id)));
+          return collections.filter(collection =>
+            Array.isArray(collection?.animeIds) && collection.animeIds.some(id => availableAnimeIds.has(Number(id)))
+          );
+        };
+      }
+    }
+  }
+
   function bindEvents() {
     document.getElementById('download-episode-btn')?.addEventListener('click', downloadEpisode);
     document.getElementById('download-season-btn')?.addEventListener('click', downloadSeason);
@@ -540,12 +598,7 @@
     document.getElementById('download-collection-btn')?.addEventListener('click', downloadCollection);
     document.getElementById('clear-downloads-btn')?.addEventListener('click', () => confirm('Limpar downloads?') && clearAllDownloads());
 
-    if (!window.__renderContinueWatchingGridOriginal && typeof window.renderContinueWatchingGrid === 'function') {
-      window.__renderContinueWatchingGridOriginal = window.renderContinueWatchingGrid;
-      window.renderContinueWatchingGrid = function (items, gridId) {
-        return window.__renderContinueWatchingGridOriginal(filterContinueWatchingOffline(items), gridId);
-      };
-    }
+    applyOfflineDataWrappers();
 
     window.addEventListener('online', () => {
       clearOfflineFilters();
@@ -558,6 +611,7 @@
     });
 
     window.addEventListener('animeDataLoaded', () => {
+      applyOfflineDataWrappers();
       applyOfflineModeFilters();
       renderDownloadsSection();
       if (!navigator.onLine) refreshOfflineViews();
