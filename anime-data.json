@@ -532,7 +532,11 @@
         "Conteúdo Sexual",
         "Linguagem Imprópria",
         "Violência Extrema",
-        "Temas Sensíveis"
+        "Temas Sensíveis",
+        "Presença de Sangue",
+        "Tortura ou Crueldade",
+        "Morte Intencional",
+        "Suicídio ou Autoagressão"
       ],
       "seasons": [
         {
@@ -1293,7 +1297,7 @@
             {
               "title": "Ilulu, a Nova Dragão! (Por favor, cuidem bem dela.)",
               "duration": 1420,
-              "videoUrl": "https://lightspeedst.net/s1/mp4/kobayashi-san-chi-no-maid-dragon-s-dublado/sd/1.mp4",
+              "videoUrl": "https://files.catbox.moe/w5i73s.mp4",
               "opening": {
                 "start": 67,
                 "end": 157
@@ -1302,7 +1306,7 @@
             {
               "title": "Kobayashi, o Garanhão! (Em Vários Sentidos)",
               "duration": 1420,
-              "videoUrl": "https://lightspeedst.net/s1/mp4/kobayashi-san-chi-no-maid-dragon-s-dublado/sd/2.mp4",
+              "videoUrl": "https://www.udrop.com/file/Oo6S/epi2.mp4",
               "opening": {
                 "start": 47,
                 "end": 137
@@ -1311,7 +1315,7 @@
             {
               "title": "Atividades Extracurriculares (É Claro Que Não São Normais)",
               "duration": 1420,
-              "videoUrl": "https://lightspeedst.net/s1/mp4/kobayashi-san-chi-no-maid-dragon-s-dublado/sd/3.mp4",
+              "videoUrl": "https://www.udrop.com/file/Oo6R/epi3.mp4",
               "opening": {
                 "start": 66,
                 "end": 156
@@ -1320,7 +1324,7 @@
             {
               "title": "Em Roma, Faça Como Os Romanos (É Difícil Se Misturar)",
               "duration": 1420,
-              "videoUrl": "https://lightspeedst.net/s1/mp4/kobayashi-san-chi-no-maid-dragon-s-dublado/sd/4.mp4",
+              "videoUrl": "https://www.udrop.com/file/Oo6T/epi4.mp4",
               "opening": {
                 "start": 25,
                 "end": 115
@@ -1329,7 +1333,7 @@
             {
               "title": "Junto Com Você (Bem, Se A Gente Se Der Bem)",
               "duration": 1420,
-              "videoUrl": "https://lightspeedst.net/s1/mp4/kobayashi-san-chi-no-maid-dragon-s-dublado/sd/5.mp4",
+              "videoUrl": "https://files.catbox.moe/55x35t.mp4",
               "opening": {
                 "start": 34,
                 "end": 124
@@ -1338,7 +1342,7 @@
             {
               "title": "Casal Improvável (Um dos Dois é um Dragão)",
               "duration": 1420,
-              "videoUrl": "https://lightspeedst.net/s1/mp4/kobayashi-san-chi-no-maid-dragon-s-dublado/sd/6.mp4",
+              "videoUrl": "https://files.catbox.moe/sx8bs2.mp4",
               "opening": {
                 "start": 38,
                 "end": 128
@@ -1347,7 +1351,7 @@
             {
               "title": "Bom Senso (Cada Um Tem o Seu)",
               "duration": 1420,
-              "videoUrl": "https://lightspeedst.net/s1/mp4/kobayashi-san-chi-no-maid-dragon-s-dublado/sd/7.mp4",
+              "videoUrl": "https://files.catbox.moe/h86s4m.mp4",
               "opening": {
                 "start": 33,
                 "end": 123
@@ -1356,12 +1360,16 @@
             {
               "title": "No Mundo Todo, Só Tem Uma (Coloque Aqui Sua Palavra Favorita)",
               "duration": 1420,
-              "videoUrl": "https://lightspeedst.net/s1/mp4/kobayashi-san-chi-no-maid-dragon-s-dublado/sd/8.mp4"
+              "videoUrl": "https://files.catbox.moe/7gf6f9.mp4",
+              "opening": {
+                "start": 31,
+                "end": 121
+              }
             },
             {
               "title": "Tem Uma Série de Motivos (Elma Pra Dar e Vender)",
               "duration": 1420,
-              "videoUrl": "https://lightspeedst.net/s1/mp4/kobayashi-san-chi-no-maid-dragon-s-dublado/sd/9.mp4",
+              "videoUrl": "https://www.udrop.com/file/Oo6U/epi9.mp4",
               "opening": {
                 "start": 52,
                 "end": 142
@@ -1370,7 +1378,7 @@
             {
               "title": "Férias de Verão da Kanna (Exibido em Duas Línguas?!)",
               "duration": 1420,
-              "videoUrl": "https://lightspeedst.net/s1/mp4/kobayashi-san-chi-no-maid-dragon-s-dublado/sd/10.mp4",
+              "videoUrl": "https://www.udrop.com/file/Oo6W/epi10.mp4",
               "opening": {
                 "start": 57,
                 "end": 147
@@ -1379,7 +1387,7 @@
             {
               "title": "Cadeira Premium (Sem Custo Adicional)",
               "duration": 1420,
-              "videoUrl": "https://lightspeedst.net/s1/mp4/kobayashi-san-chi-no-maid-dragon-s-dublado/sd/11.mp4",
+              "videoUrl": "https://www.udrop.com/file/Oo6V/epi11.mp4",
               "opening": {
                 "start": 26,
                 "end": 116
@@ -1388,12 +1396,12 @@
             {
               "title": "A Vida é um Ciclo sem Fim (Mas Você Pode Fazer Pausas)",
               "duration": 1420,
-              "videoUrl": "https://lightspeedst.net/s1/mp4/kobayashi-san-chi-no-maid-dragon-s-dublado/sd/12.mp4"
+              "videoUrl": "https://www.udrop.com/file/Oo6X/epi12.mp4"
             },
             {
               "title": "Hospitalidade Japonesa (Os Guias São Dragões)",
               "duration": 1420,
-              "videoUrl": "https://lightspeedst.net/s4/mp4/kobayashi-san-chi-no-maid-dragon-s-nippon-no-omotenashi---attend-wa-dragon-desu-dublado/sd/1.mp4",
+              "videoUrl": "https://www.udrop.com/file/Oo6Y/epi13.mp4",
               "opening": {
                 "start": 57,
                 "end": 147
@@ -2811,144 +2819,283 @@
       "title": "Neon Genesis Evangelion",
       "type": "anime",
       "seasons": [],
-      "categories": [],
-      "rating_age": "L",
-      "rating_content": [],
+      "categories": [
+        "psychological",
+        "mechas"
+      ],
+      "rating_age": "16",
+      "rating_content": [
+        "Violência Fantasiosa",
+        "Medo ou Tensão",
+        "Morte Intencional",
+        "Presença de Sangue",
+        "Tortura ou Crueldade",
+        "Suicídio ou Autoagressão",
+        "Nudez",
+        "Conteúdo Sexual",
+        "Linguagem Imprópria",
+        "Consumo de Drogas Lícitas (álcool, cigarro)",
+        "Quinze anos após o Segundo Impacto, Shinji Ikari se junta ao NERV, grupo de seu pai, como um dos pilotos adolescentes de robôs gigantes que enfrentam os Anjos."
+      ],
       "osts": {},
-      "banner": "https://images.fanart.tv/fanart/neon-genesis-evangelion-608d062ae7534.jpg",
+      "banner": "https://files.catbox.moe/tmmxgr.jpg",
       "thumbnail": "https://image.tmdb.org/t/p/original/7FUk9pqkT04yBMXfpBuNpYMVgRm.jpg",
       "trailer": "his the drop drip",
-      "year": 1995
+      "year": 1995,
+      "rating": 8.5,
+      "description": "Quinze anos após o Segundo Impacto, Shinji Ikari se junta ao NERV, grupo de seu pai, como um dos pilotos adolescentes de robôs gigantes que enfrentam os Anjos."
     },
     {
       "id": 23,
       "title": "Evangelion: Death (True)²",
       "type": "movie",
       "seasons": [],
-      "categories": [],
-      "rating_age": "L",
-      "rating_content": [],
+      "categories": [
+        "psychological",
+        "mechas"
+      ],
+      "rating_age": "16",
+      "rating_content": [
+        "Violência Fantasiosa",
+        "Medo ou Tensão",
+        "Morte Intencional",
+        "Presença de Sangue",
+        "Nudez",
+        "Conteúdo Sexual",
+        "Suicídio ou Autoagressão",
+        "Consumo de Drogas Lícitas (álcool, cigarro)",
+        "Tortura ou Crueldade"
+      ],
       "osts": {},
       "year": 1998,
       "thumbnail": "https://files.catbox.moe/kytmos.jpg",
-      "banner": "https://files.catbox.moe/cs4qcr.png"
+      "banner": "https://files.catbox.moe/cs4qcr.png",
+      "rating": 6.5,
+      "description": "Quinze anos após o Segundo Impacto, o adolescente Shinji se junta à NERV para lutar contra os Anjos. Mas a verdade pode destruir o mundo todo."
     },
     {
       "id": 24,
       "title": "Petit Eva: Evangelion@School",
       "type": "ova",
       "seasons": [],
-      "categories": [],
+      "categories": [
+        "comedy",
+        "mechas"
+      ],
       "rating_age": "L",
-      "rating_content": [],
+      "rating_content": [
+        "Violência Fantasiosa",
+        "Nudez",
+        "Conteúdo Sexual",
+        "Linguagem Imprópria"
+      ],
       "osts": {},
       "year": 2007,
       "banner": "https://files.catbox.moe/6o8ij0.jpg",
-      "thumbnail": "https://files.catbox.moe/2zt7qa.webp"
+      "thumbnail": "https://files.catbox.moe/2zt7qa.webp",
+      "rating": 4.6,
+      "description": "Neon Genesis Evangelion, retratando o elenco original como estudantes em um ambiente de escola de ensino fundamental, apresentando três Rei, uma Unidade Evangelion 01 em tamanho humano como um valentão, e o robô Jet Alone reimaginado como um personagem."
     },
     {
       "id": 25,
       "title": "Evangelion: 1.11 You Are (Not) Alone",
       "type": "movie",
       "seasons": [],
-      "categories": [],
-      "rating_age": "L",
-      "rating_content": [],
+      "categories": [
+        "psychological",
+        "mechas"
+      ],
+      "rating_age": "14",
+      "rating_content": [
+        "Violência Fantasiosa",
+        "Medo ou Tensão",
+        "Presença de Sangue",
+        "Nudez",
+        "Conteúdo Sexual",
+        "Consumo de Drogas Lícitas (álcool, cigarro)"
+      ],
       "osts": {},
       "year": 2008,
       "thumbnail": "https://files.catbox.moe/hsqpuj.jpg",
-      "banner": "https://files.catbox.moe/t8em8r.jpg"
+      "banner": "https://files.catbox.moe/t8em8r.jpg",
+      "rating": 7.5,
+      "description": "Marcada pelo Segundo Impacto, Tóquio III é atacada pelo Quarto Anjo, e o destino da humanidade fica nas mãos da Agência Especial do Governo NERV. O jovem Shinji Ikari é forçado a pilotar a EVA-01. Ele e Rei Ayanami, pilota da EVA-00, têm que lutar, mas o Sexto Anjo danifica a EVA-01. Misato Katsuragi planeja focar toda a eletricidade do Japão no canhão de pósitrons da EVA-01 para derrotar o Anjo."
     },
     {
       "id": 26,
       "title": "Evangelion: 2.22 You Can (Not) Advance",
       "type": "movie",
       "seasons": [],
-      "categories": [],
-      "rating_age": "L",
-      "rating_content": [],
+      "categories": [
+        "psychological",
+        "mechas"
+      ],
+      "rating_age": "14",
+      "rating_content": [
+        "Violência Fantasiosa",
+        "Presença de Sangue",
+        "Medo ou Tensão",
+        "Nudez",
+        "Conteúdo Sexual",
+        "Tortura ou Crueldade",
+        "Consumo de Drogas Lícitas (álcool, cigarro)"
+      ],
       "osts": {},
       "year": 2009,
       "thumbnail": "https://files.catbox.moe/4wjwx8.jpg",
-      "banner": "https://files.catbox.moe/jltt93.jpg"
+      "banner": "https://files.catbox.moe/jltt93.jpg",
+      "rating": 7.9,
+      "description": "Mari pilota a Unidade-05 Provisória para derrotar o Terceiro Anjo. Asuka Langley-Shikinami e a EVA-02 derrotam o Sétimo Anjo. O Oitavo Anjo surge e ataca a sede da NERV. A EVA-03, ainda em testes, é tomada pelo Nono Anjo e Shinji vai à luta para detê-lo, mas descobre que Asuka está a bordo. Gendoh muda os controles da EVA-01 para o Dummy System e começa a lutar contra a EVA-03."
     },
     {
       "id": 27,
       "title": "Evangelion: 3.333 You Can (Not) Redo",
       "type": "movie",
       "seasons": [],
-      "categories": [],
-      "rating_age": "L",
-      "rating_content": [],
+      "categories": [
+        "psychological",
+        "mechas"
+      ],
+      "rating_age": "16",
+      "rating_content": [
+        "Violência Fantasiosa",
+        "Medo ou Tensão",
+        "Morte Intencional",
+        "Presença de Sangue",
+        "Suicídio ou Autoagressão",
+        "Nudez",
+        "Consumo de Drogas Lícitas (álcool, cigarro)"
+      ],
       "osts": {},
       "year": 2012,
       "thumbnail": "https://files.catbox.moe/izgavk.jpg",
-      "banner": "https://files.catbox.moe/2777ob.jpg"
+      "banner": "https://files.catbox.moe/2777ob.jpg",
+      "description": "Shinji acorda após 14 anos a bordo da AAA Wunder, que pertence a uma organização anti-NERV fundada por ex-membros da NERV. Shinji ouve a voz de Rei vinda da EVA Mark.09, enviada para resgatá-lo, e sai da Wunder, indo para a NERV. Kaworu Nagisa mostra a Shinji a terra transformada. Ele descobre que salvar Rei desencadeou o Quase Terceiro Impacto, que causou os danos catastróficos na Terra.",
+      "rating": 6.9
     },
     {
       "id": 28,
       "title": "Neon Genesis Impacts",
       "type": "ova",
       "seasons": [],
-      "categories": [],
-      "rating_age": "L",
-      "rating_content": [],
+      "categories": [
+        "musical",
+        "mechas"
+      ],
+      "rating_age": "14",
+      "rating_content": [
+        "Violência Fantasiosa",
+        "Medo ou Tensão",
+        "Presença de Sangue",
+        "Nudez",
+        "Conteúdo Sexual",
+        "Linguagem Imprópria"
+      ],
       "osts": {},
       "year": 2015,
       "thumbnail": "https://files.catbox.moe/ibkign.png",
-      "banner": "https://files.catbox.moe/v19vvw.webp"
+      "banner": "https://files.catbox.moe/v19vvw.webp",
+      "rating": 6.6,
+      "description": "Haruka, Izumi e Ayako estavam prestes a viver suas vidas separadas. Percebendo que seria ela quem ficaria para trás, Haruka faz uma proposta a Izumi."
     },
     {
       "id": 29,
       "title": "Evangelion: Another Impact (Confidential)",
       "type": "ova",
       "seasons": [],
-      "categories": [],
-      "rating_age": "L",
-      "rating_content": [],
+      "categories": [
+        "psychological",
+        "mechas"
+      ],
+      "rating_age": "14",
+      "rating_content": [
+        "Violência Fantasiosa",
+        "Medo ou Tensão",
+        "Presença de Sangue",
+        "Tortura ou Crueldade",
+        "Linguagem Imprópria"
+      ],
       "osts": {},
       "thumbnail": "https://files.catbox.moe/pwzpkf.webp",
       "year": 2015,
-      "banner": "https://files.catbox.moe/hyljaw.webp"
+      "banner": "https://files.catbox.moe/hyljaw.webp",
+      "rating": 6.6,
+      "description": "Outro tempo, outro lugar. Um teste de ativação de uma arma decisiva estava em andamento. Com seu desenvolvimento e testes operacionais envoltos em completo segredo, a Unidade Nula - Outro Número, subitamente se liberta do controle humano e enlouquece. Para que propósito a Unidade Nula - Outro Número foi criada? A história da ativação, fúria e uivo de um Evangelion em outro mundo."
     },
     {
       "id": 30,
       "title": "Evangelion: 3.0+1.11 Thrice Upon a Time",
-      "type": "anime",
+      "type": "movie",
       "seasons": [],
-      "categories": [],
-      "rating_age": "L",
-      "rating_content": [],
+      "categories": [
+        "psychological",
+        "mechas"
+      ],
+      "rating_age": "16",
+      "rating_content": [
+        "Violência Fantasiosa",
+        "Medo ou Tensão",
+        "Presença de Sangue",
+        "Nudez",
+        "Conteúdo Sexual",
+        "Consumo de Drogas Lícitas (álcool, cigarro)",
+        "Agressão no Ambiente Doméstico ou Familiar",
+        "Suicídio ou Autoagressão"
+      ],
       "osts": {},
       "year": 2021,
       "banner": "https://files.catbox.moe/q71l5q.jpg",
-      "thumbnail": "https://files.catbox.moe/wreabl.jpg"
+      "thumbnail": "https://files.catbox.moe/wreabl.jpg",
+      "rating": 8,
+      "description": "Misato e o grupo anti-NERV, Wille, chegam a Paris, uma cidade vermelha em função dos núcleos. A tripulação da nave Wunder pousa em uma torre de contenção. Eles têm 720 segundos para restaurar a cidade. Quando EVAs da NERV aparecem, Mari deve interceptá-los com sua nova unidade 8. Enquanto isso, Shinji, Asuka e Rei (provisório) perambulam pelo Japão."
     },
     {
       "id": 31,
       "title": "Evangelion: 3.0 (-120 min)",
-      "type": "anime",
+      "type": "ova",
       "seasons": [],
-      "categories": [],
-      "rating_age": "L",
-      "rating_content": [],
+      "categories": [
+        "psychological",
+        "mechas"
+      ],
+      "rating_age": "14",
+      "rating_content": [
+        "Violência Fantasiosa",
+        "Medo ou Tensão",
+        "Nudez",
+        "Conteúdo Sexual",
+        "Linguagem Imprópria"
+      ],
       "osts": {},
       "year": 2023,
       "thumbnail": "https://files.catbox.moe/0w2rgn.webp",
-      "banner": "https://files.catbox.moe/vus2fe.webp"
+      "banner": "https://files.catbox.moe/vus2fe.webp",
+      "rating": 7.2,
+      "description": "A história se passa aproximadamente duas horas antes do início de Evangelion: 3.0 You Can (Not) Redo. O curta foca nos preparativos da WILLE para a \"Operação US\", a missão espacial destinada a resgatar o Eva-01 (contendo Shinji Ikari) da órbita terrestre."
     },
     {
       "id": 32,
       "title": "Evangelion: 3.0 (-46h)",
-      "type": "anime",
+      "type": "ova",
       "seasons": [],
-      "categories": [],
-      "rating_age": "L",
-      "rating_content": [],
+      "categories": [
+        "psychological",
+        "mechas"
+      ],
+      "rating_age": "14",
+      "rating_content": [
+        "Medo ou Tensão",
+        "Violência Fantasiosa",
+        "Presença de Sangue",
+        "Linguagem Imprópria",
+        "Morte Intencional"
+      ],
       "osts": {},
       "year": 2023,
       "banner": "https://files.catbox.moe/q408m7.webp",
-      "thumbnail": "https://files.catbox.moe/y7c8ut.webp"
+      "thumbnail": "https://files.catbox.moe/y7c8ut.webp",
+      "rating": 7,
+      "description": "Quarenta e seis horas antes da operação de resgate em órbita, Midori Kitakami enfrenta os traumas de seu passado. Através de flashbacks do \"Near Third Impact\", este curta revela como Midori sobreviveu à catástrofe, a origem de seu marcante cabelo rosa e as razões por trás de seu profundo ressentimento contra Shinji Ikari."
     },
     {
       "id": 33,
