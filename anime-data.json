@@ -7,7 +7,7 @@
       "thumbnail": "https://files.catbox.moe/tfxcoy.jpg",
       "trailer": "akakaka",
       "type": "anime",
-      "dateAdded": "2026-02-26",
+      "dateAdded": "2026-02-09",
       "categories": [
         "comedy",
         "slice of life"
@@ -3359,7 +3359,7 @@
       "osts": {},
       "year": 2010,
       "rating": 7.3,
-      "dateAdded": "2026-02-19",
+      "dateAdded": "2026-02-09",
       "description": "Dois anjos, Panty e Stocking, são expulsos do céu por mau comportamento e enviados para caçar fantasmas pelo Garterbelt, um padre da Cidade Derrotada.",
       "thumbnail": "https://files.catbox.moe/foucdf.jpg",
       "banner": "https://files.catbox.moe/j19ztl.jpg",
@@ -3431,7 +3431,7 @@
       "banner": "https://files.catbox.moe/x97qo0.jpg",
       "thumbnail": "https://files.catbox.moe/nvhtdb.png",
       "rating": 7.9,
-      "dateAdded": "2026-02-26",
+      "dateAdded": "2026-02-09",
       "description": "O OVA apresenta seis histórias distintas centradas no elenco, algumas das quais beiram o bizarro; uma delas se passa em um ambiente de MMORPG jogado por Konata, Kagami, Tsukasa e Nanako Kuroi, e outra em que Kagami tem um sonho \"sugestivo\" com Konata.",
       "openings": [
         {
@@ -3493,8 +3493,180 @@
       ],
       "year": 2013,
       "rating": 6.2,
-      "dateAdded": "2026-02-26",
+      "dateAdded": "2026-02-09",
       "description": "Um spin-off de Lucky Star. A história gira em torno da vida cotidiana e humilde da irmã mais velha, Hinata Miyakawa, e da irmã mais nova, Hikage Miyakawa, e da vida de Hikage na escola primária."
+    },
+    {
+      "id": 36,
+      "title": "Kill Me Baby",
+      "type": "anime",
+      "seasons": [
+        {
+          "number": 1,
+          "episodes": [
+            {
+              "title": "Cachorro Furtivo, Cerejeira Florescendo",
+              "duration": 1470,
+              "videoUrl": "https://files.catbox.moe/w4wv6b.mp4",
+              "opening": {
+                "start": 59,
+                "end": 159
+              }
+            },
+            {
+              "title": "Habilidades com Nunchaku, Urso e Balão",
+              "duration": 1470,
+              "videoUrl": "https://files.catbox.moe/k1okaf.mp4",
+              "opening": {
+                "start": 42,
+                "end": 142
+              }
+            },
+            {
+              "title": "Psíquica Amaldiçoada, Chuva e Luta Livre",
+              "duration": 1470,
+              "videoUrl": "https://files.catbox.moe/n8jeit.mp4",
+              "opening": {
+                "start": 20,
+                "end": 120
+              }
+            },
+            {
+              "title": "Grito de Sorvete, Melancia e Água",
+              "duration": 1470,
+              "videoUrl": "https://files.catbox.moe/ca5tvm.mp4",
+              "opening": {
+                "start": 0,
+                "end": 100
+              }
+            },
+            {
+              "title": "Festival de Insetos, Bonecas do Mar",
+              "duration": 1470,
+              "videoUrl": "https://files.catbox.moe/wr7q0h.mp4",
+              "opening": {
+                "start": 19,
+                "end": 119
+              }
+            },
+            {
+              "title": "Mecanismo do Umbigo, Boneca de Papel e Gelo",
+              "duration": 1469,
+              "videoUrl": "https://files.catbox.moe/yx7uol.mp4",
+              "opening": {
+                "start": 60,
+                "end": 160
+              }
+            },
+            {
+              "title": "Cultura, Jogo de Almofadas e Duelo",
+              "duration": 1470,
+              "videoUrl": "https://files.catbox.moe/r12j2r.mp4",
+              "opening": {
+                "start": 0,
+                "end": 100
+              }
+            },
+            {
+              "title": "Fantasma, Arma Escondida e Diversão",
+              "duration": 1470,
+              "videoUrl": "https://files.catbox.moe/jgpx4z.mp4",
+              "opening": {
+                "start": 86,
+                "end": 186
+              }
+            },
+            {
+              "title": "Treinamento Ninja, Brincadeiras e Confusão",
+              "duration": 1460,
+              "videoUrl": "https://files.catbox.moe/99dgpt.mp4",
+              "opening": {
+                "start": 54,
+                "end": 154
+              }
+            },
+            {
+              "title": "Papai Noel, Pingentes de Gelo e Mantra da Neve",
+              "duration": 1470,
+              "videoUrl": "https://files.catbox.moe/7tvg68.mp4",
+              "opening": {
+                "start": 0,
+                "end": 100
+              }
+            },
+            {
+              "title": "Banho, Pipa, Mochi e Primeiro Sonho do Ano Novo",
+              "duration": 1470,
+              "videoUrl": "https://files.catbox.moe/swl9ot.mp4",
+              "opening": {
+                "start": 80,
+                "end": 180
+              }
+            },
+            {
+              "title": "Sonolência, Chocolate, Ferimento e Compressa",
+              "duration": 1470,
+              "videoUrl": "https://files.catbox.moe/u1rzqg.mp4",
+              "opening": {
+                "start": 0,
+                "end": 100
+              }
+            },
+            {
+              "title": "Faça o “Kill Me” e Me Faça Seu Baby",
+              "duration": 1420,
+              "videoUrl": "https://files.catbox.moe/iyu2ke.mp4",
+              "opening": {
+                "start": 36,
+                "end": 126
+              }
+            },
+            {
+              "title": "Estátua de Buda Quebrada e Halloween Falso",
+              "duration": 1646,
+              "videoUrl": "https://files.catbox.moe/3zkxsc.mp4",
+              "opening": {
+                "start": 0,
+                "end": 90
+              }
+            }
+          ]
+        }
+      ],
+      "categories": [
+        "comedy",
+        "slice of life"
+      ],
+      "rating_age": "12",
+      "rating_content": [
+        "Violência Fantasiosa",
+        "Linguagem Imprópria"
+      ],
+      "osts": {},
+      "year": 2012,
+      "dateAdded": "2026-02-11",
+      "rating": 6.6,
+      "description": "Yasuna Oribe, uma estudante, é amiga de uma assassina chamada Sonya. Yasuna é a melhor amiga dela, mas Sonya costuma bater nela sempre que cai em suas pegadinhas. Sonya é frequentemente chamada de \"a assassina\" nos episódios.",
+      "banner": "https://files.catbox.moe/b6mlvs.png",
+      "thumbnail": "https://files.catbox.moe/dz4nwk.png",
+      "openings": [
+        {
+          "title": "Kill Me no Baby!",
+          "type": "opening",
+          "cover": "https://files.catbox.moe/7jbm6x.jpg",
+          "artist": " Chinatsu Akasaki, Mutsumi Tamura",
+          "audio": "https://files.catbox.moe/pfg0wy.mp3"
+        }
+      ],
+      "endings": [
+        {
+          "title": "Futari no Kimochi no Honto no Himitsu",
+          "type": "ending",
+          "cover": "https://m.media-amazon.com/images/I/81JsfIdeiNL._AC_SL1000_.jpg",
+          "artist": " Chinatsu Akasaki, Mutsumi Tamura",
+          "audio": "https://files.catbox.moe/yjy5d2.ogg"
+        }
+      ]
     }
   ],
   "collections": [
