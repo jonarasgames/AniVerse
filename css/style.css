@@ -3908,3 +3908,79 @@ body.dark-mode .age-rating-section {
 
 /* Hide deprecated top music download button (download stays in mini/full player) */
 #download-current-music-btn { display: none !important; }
+
+/* Anime editor modal */
+.anime-editor-modal-content {
+    max-width: 900px;
+}
+
+.anime-editor-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.anime-editor-textarea {
+    width: 100%;
+    min-height: 320px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(0, 0, 0, 0.2);
+    color: var(--text-color);
+    padding: 12px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+.anime-editor-status {
+    margin-top: 8px;
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+/* Better mobile adaptation for header/nav */
+@media (max-width: 768px) {
+    header .container {
+        align-items: stretch;
+    }
+
+    .logo-container {
+        justify-content: center;
+    }
+
+    nav {
+        width: 100%;
+    }
+
+    nav ul {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    nav a {
+        display: block;
+        text-align: center;
+        padding: 8px 6px;
+        font-size: 0.95rem;
+    }
+
+    .user-controls {
+        width: 100%;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .user-controls .btn {
+        padding: 8px 10px;
+        font-size: 0.85rem;
+    }
+
+    .anime-editor-textarea {
+        min-height: 260px;
+        font-size: 0.8rem;
+    }
+}

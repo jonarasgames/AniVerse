@@ -106,6 +106,26 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+
+  function getAnimeYear(anime) {
+    return anime?.year || anime?.releaseYear || anime?.ano || anime?.launchYear || anime?.release_date?.slice?.(0,4) || null;
+  }
+
+  function getAnimeScore(anime) {
+    const value = anime?.rating ?? anime?.score ?? anime?.nota;
+    if (value === null || value === undefined || value === '') return null;
+    return String(value);
+  }
+
+  function buildAnimeMetaText(anime) {
+    const parts = [String(anime?.type || 'anime').toUpperCase()];
+    const year = getAnimeYear(anime);
+    const score = getAnimeScore(anime);
+    if (year) parts.push(String(year));
+    if (score) parts.push(`⭐ ${score}`);
+    return parts.join(' • ');
+  }
+
   function buildSearchCard(anime) {
     const card = document.createElement('div');
     card.className = 'anime-card search-result-card';
@@ -119,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
       <div class="anime-info">
         <h3 class="anime-title">${anime.title || anime.name || 'Sem título'}</h3>
-        <p class="anime-meta">${(anime.type || 'anime').toUpperCase()}</p>
+        <p class="anime-meta">${buildAnimeMetaText(anime)}</p>
       </div>
     `;
     card.style.cursor = 'pointer';
@@ -202,7 +222,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <img src="${anime.thumbnail || anime.cover || 'images/bg-default.jpg'}" alt="${anime.title || anime.name || 'Anime'}">
           <span class="meta">
             <span class="title">${anime.title || anime.name || 'Sem título'}</span>
-            <span class="type">${(anime.type || 'anime').toUpperCase()}</span>
+            <span class="type">${buildAnimeMetaText(anime)}</span>
           </span>
         `;
         item.addEventListener('click', () => {

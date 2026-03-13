@@ -41,6 +41,7 @@
                         <img src="" alt="Avatar" class="avatar-char-layer">
                         <div class="avatar-frame-layer" id="header-avatar-frame"></div>
                     </div>
+                    <button class="btn btn-secondary" id="open-anime-editor-btn"><i class="fas fa-code"></i> Editor Anime</button>
                     <button class="btn btn-primary" id="login-btn"><i class="fas fa-user"></i> Entrar</button>
                 </div>
             </div>
@@ -210,6 +211,31 @@
                     Atalho para ativar o modo admin: <strong>Ctrl + Shift + A</strong>. Depois de editar, baixe o JSON e substitua o arquivo <strong>news-data.json</strong>.
                 </p>
             </div>
+        </div>
+    </div>
+
+
+    <div id="anime-editor-modal" class="modal">
+        <div class="modal-content anime-editor-modal-content">
+            <span class="close-modal" id="close-anime-editor">&times;</span>
+            <div class="news-modal-header">
+                <div>
+                    <h2>Editor de Anime (JSON)</h2>
+                    <p class="news-modal-subtitle">Edite, copie ou baixe o <strong>anime-data.json</strong> de forma rápida.</p>
+                </div>
+            </div>
+
+            <div class="anime-editor-toolbar">
+                <button class="btn btn-secondary" id="anime-editor-load">Carregar atual</button>
+                <button class="btn btn-secondary" id="anime-editor-format">Formatar JSON</button>
+                <button class="btn btn-primary" id="anime-editor-apply">Aplicar no site</button>
+                <button class="btn btn-secondary" id="anime-editor-copy">Copiar JSON</button>
+                <button class="btn btn-secondary" id="anime-editor-download">Baixar anime-data.json</button>
+            </div>
+
+            <textarea id="anime-editor-textarea" class="anime-editor-textarea" spellcheck="false"></textarea>
+            <p id="anime-editor-status" class="anime-editor-status"></p>
+            <p class="news-admin-hint">Dica: salve o arquivo baixado e substitua o <strong>anime-data.json</strong> no seu GitHub.</p>
         </div>
     </div>
 
@@ -560,6 +586,7 @@
     <script src="js/profile-multi.js" defer></script>
     <script src="js/profile-modal-new.js" defer></script>
     <script src="js/music-player-new.js" defer></script>
+    <script src="js/anime-editor.js" defer></script>
     
     <script>
       if ('serviceWorker' in navigator) {
