@@ -3,22 +3,19 @@
   'use strict';
 
   const ADMIN_PIN = 'rafaaxprs';
-  const STORE_KEY = 'aniverse-admin-edits-v2';
+  const STORE_KEY = 'aniverse-admin-edits-v3';
+  const ADMIN_UNLOCK_KEY = 'aniverse-admin-unlocked';
 
   let adminEnabled = false;
+  let adminUnlocked = sessionStorage.getItem(ADMIN_UNLOCK_KEY) === '1';
   let dragAnimeId = null;
 
   const byId = (id) => document.getElementById(id);
   const toText = (v) => v === null || v === undefined ? '' : String(v);
   const escAttr = (v) => toText(v).replaceAll('"', '&quot;');
 
-  function getDB() {
-    return window.animeDB;
-  }
-
-  function clone(value) {
-    return JSON.parse(JSON.stringify(value));
-  }
+  function getDB() { return window.animeDB; }
+  function clone(v) { return JSON.parse(JSON.stringify(v)); }
 
   function timeToHMS(totalSeconds) {
     const sec = Math.max(0, Math.floor(Number(totalSeconds) || 0));
@@ -26,6 +23,19 @@
     const m = Math.floor((sec % 3600) / 60);
     const s = sec % 60;
     return [h, m, s].map((n) => String(n).padStart(2, '0')).join(':');
+  }
+
+  function parseTimeToSeconds(value) {
+    if (value === null || value === undefined || value === '') return 0;
+    if (typeof value === 'number' && Number.isFinite(value)) return Math.max(0, Math.floor(value));
+    const text = String(value).trim();
+    if (!text) return 0;
+    if (/^\d+(\.\d+)?$/.test(text)) return Math.max(0, Math.floor(Number(text)));
+    const parts = text.split(':').map((p) => Number(p.trim()));
+    if (parts.some((n) => !Number.isFinite(n) || n < 0)) return 0;
+    if (parts.length === 3) return Math.floor(parts[0] * 3600 + parts[1] * 60 + parts[2]);
+    if (parts.length === 2) return Math.floor(parts[0] * 60 + parts[1]);
+    return 0;
   }
 
   function parseLines(value) {
@@ -36,6 +46,31 @@
     if (Array.isArray(value)) return value.join('\n');
     if (typeof value === 'string') return value;
     return '';
+  }
+
+  function uniqueValues(list) {
+    return [...new Set((list || []).map((v) => toText(v).trim()).filter(Boolean))];
+  }
+
+  function collectOptionSets() {
+    const db = getDB();
+    const animes = Array.isArray(db?.animes) ? db.animes : [];
+
+    const categories = [];
+    const ratingContent = [];
+    const ratingAge = ['L', '10', '12', '14', '16', '18'];
+
+    animes.forEach((anime) => {
+      (Array.isArray(anime?.categories) ? anime.categories : []).forEach((c) => categories.push(c));
+      (Array.isArray(anime?.rating_content) ? anime.rating_content : []).forEach((c) => ratingContent.push(c));
+      if (anime?.rating_age) ratingAge.push(anime.rating_age);
+    });
+
+    return {
+      categories: uniqueValues(categories),
+      ratingContent: uniqueValues(ratingContent),
+      ratingAge: uniqueValues(ratingAge)
+    };
   }
 
   async function readMediaDuration(url) {
@@ -115,25 +150,52 @@
     return db.animes.find((a) => Number(a.id) === id) || null;
   }
 
-  function adminBadge(card) {
+  function adminBadge() {
     const badge = document.createElement('button');
     badge.className = 'admin-edit-chip';
     badge.type = 'button';
     badge.innerHTML = '<i class="fas fa-pen"></i>';
-    badge.title = 'Editar anime in-place';
+    badge.title = 'Editar anime';
     return badge;
   }
 
   function topLevelFields(anime) {
-    const preferred = ['title', 'description', 'thumbnail', 'cover', 'banner', 'trailer', 'type', 'year', 'rating', 'dateAdded', 'rating_age', 'rating_content'];
-    const out = [];
-    preferred.forEach((k) => out.push([k, anime?.[k]]));
+    const preferred = ['title', 'description', 'thumbnail', 'cover', 'banner', 'trailer', 'year', 'rating', 'dateAdded'];
+    const out = preferred.map((k) => [k, anime?.[k]]);
     Object.keys(anime || {}).forEach((k) => {
-      if (['id', 'seasons', 'openings', 'endings', 'osts', 'categories'].includes(k)) return;
+      if (['id', 'type', 'rating_age', 'rating_content', 'seasons', 'openings', 'endings', 'osts', 'categories'].includes(k)) return;
       if (preferred.includes(k)) return;
       out.push([k, anime[k]]);
     });
     return out;
+  }
+
+  function renderTypeChoices(selected) {
+    const opts = ['anime', 'movie', 'ova'];
+    return `
+      <div class="inplace-choice-group" data-choice-group="type">
+        ${opts.map((t) => `<button type="button" class="inplace-pill ${selected === t ? 'active' : ''}" data-type-choice="${t}">${t.toUpperCase()}</button>`).join('')}
+      </div>
+    `;
+  }
+
+  function renderTagChecklist(title, key, selected, options) {
+    const selectedSet = new Set((Array.isArray(selected) ? selected : []).map((v) => toText(v)));
+    return `
+      <div class="inplace-tag-block" data-tag-block="${key}">
+        <div class="inplace-media-group-head">
+          <strong>${title}</strong>
+          <span class="inplace-tip">Marque/desmarque (sem código)</span>
+        </div>
+        <div class="inplace-tag-list">
+          ${(options || []).map((opt) => `<label class="inplace-check"><input type="checkbox" data-tag="${key}" value="${escAttr(opt)}" ${selectedSet.has(opt) ? 'checked' : ''}>${opt}</label>`).join('')}
+        </div>
+        <div class="inplace-tag-add">
+          <input type="text" data-tag-new="${key}" placeholder="Adicionar novo ${title.toLowerCase()}">
+          <button type="button" class="btn btn-secondary" data-tag-add-btn="${key}">+ Adicionar</button>
+        </div>
+      </div>
+    `;
   }
 
   function renderArrayPreviewSection(anime) {
@@ -159,18 +221,28 @@
     const seasons = Array.isArray(anime.seasons) ? anime.seasons : [];
     return seasons.map((season, sIdx) => {
       const episodes = Array.isArray(season.episodes) ? season.episodes : [];
-      const eps = episodes.map((ep, eIdx) => `
+      const eps = episodes.map((ep, eIdx) => {
+        const opStart = Number(ep?.opening?.start ?? 0);
+        const opEnd = Number(ep?.opening?.end ?? 0);
+        return `
         <div class="inplace-episode" data-s="${sIdx}" data-e="${eIdx}">
           <input data-ep="title" placeholder="Título" value="${escAttr(ep?.title)}">
-          <input data-ep="duration" placeholder="Duração" value="${escAttr(ep?.duration)}" readonly>
+          <input data-ep="duration" placeholder="Duração" value="${escAttr(timeToHMS(ep?.duration || 0))}" readonly>
           <input data-ep="videoUrl" placeholder="URL do vídeo" value="${escAttr(ep?.videoUrl)}">
-          <input data-ep="opening" placeholder="Abertura (URL)" value="${escAttr(ep?.opening)}">
-          <span class="inplace-duration-view" data-duration-view>${escAttr(ep?.duration || '--:--:--')}</span>
+          <input data-ep="openingStart" placeholder="Abertura início (HH:MM:SS)" value="${escAttr(timeToHMS(opStart))}">
+          <input data-ep="openingEnd" placeholder="Abertura fim (HH:MM:SS)" value="${escAttr(timeToHMS(opEnd))}">
+          <span class="inplace-duration-view" data-duration-view>${escAttr(timeToHMS(ep?.duration || 0))}</span>
+          <div class="inplace-opening-actions">
+            <button type="button" class="btn btn-secondary inplace-set-opening-start">Pegar início (player)</button>
+            <button type="button" class="btn btn-secondary inplace-set-opening-end">Pegar fim (player)</button>
+            <button type="button" class="btn btn-secondary inplace-opening-add30">+30s</button>
+            <button type="button" class="btn btn-secondary inplace-opening-add90">+1:30</button>
+          </div>
           <button type="button" class="btn btn-secondary inplace-read-duration">Ler tempo</button>
           <button type="button" class="btn btn-secondary inplace-preview-episode">Preview Vídeo</button>
-          <button type="button" class="btn btn-secondary inplace-preview-opening">Preview Abertura</button>
           <button type="button" class="btn btn-secondary inplace-remove-episode">Remover EP</button>
-        </div>`).join('');
+        </div>`;
+      }).join('');
       return `
         <div class="inplace-season" data-s="${sIdx}">
           <div class="inplace-season-head">
@@ -221,8 +293,110 @@
     });
   }
 
+  function getCurrentPlayerSeconds() {
+    const player = byId('anime-player');
+    if (!player || !Number.isFinite(player.currentTime)) return null;
+    return Math.max(0, Math.floor(player.currentTime));
+  }
+
+  function getEditingContextRow(card) {
+    const playing = window.currentWatchingAnime;
+    if (!playing) return null;
+    const cardId = Number(card.dataset.animeId || 0);
+    if (!cardId || Number(playing.id) !== cardId) return null;
+    const sIdx = Number(playing.season || 1) - 1;
+    const eIdx = Number(playing.episode || 1) - 1;
+    return card.querySelector(`.inplace-episode[data-s="${sIdx}"][data-e="${eIdx}"]`);
+  }
+
+  function syncOpeningInputs(row) {
+    if (!row) return;
+    const startInput = row.querySelector('input[data-ep="openingStart"]');
+    const endInput = row.querySelector('input[data-ep="openingEnd"]');
+    if (!startInput || !endInput) return;
+
+    const startSec = parseTimeToSeconds(startInput.value);
+    const endSec = parseTimeToSeconds(endInput.value);
+    startInput.value = timeToHMS(startSec);
+    endInput.value = timeToHMS(Math.max(endSec, startSec));
+  }
+
+  function wireOpeningTimingActions(card) {
+    const applyFromPlayer = (targetSelector) => {
+      const row = getEditingContextRow(card);
+      const seconds = getCurrentPlayerSeconds();
+      if (!row || seconds === null) return;
+      const input = row.querySelector(targetSelector);
+      if (!input) return;
+      input.value = timeToHMS(seconds);
+      syncOpeningInputs(row);
+    };
+
+    card.querySelectorAll('.inplace-set-opening-start').forEach((btn) => {
+      btn.addEventListener('click', () => applyFromPlayer('input[data-ep="openingStart"]'));
+    });
+
+    card.querySelectorAll('.inplace-set-opening-end').forEach((btn) => {
+      btn.addEventListener('click', () => applyFromPlayer('input[data-ep="openingEnd"]'));
+    });
+
+    card.querySelectorAll('.inplace-opening-add30').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const row = btn.closest('.inplace-episode');
+        if (!row) return;
+        const startInput = row.querySelector('input[data-ep="openingStart"]');
+        const endInput = row.querySelector('input[data-ep="openingEnd"]');
+        if (!startInput || !endInput) return;
+        const startSec = parseTimeToSeconds(startInput.value);
+        endInput.value = timeToHMS(startSec + 30);
+        syncOpeningInputs(row);
+      });
+    });
+
+    card.querySelectorAll('.inplace-opening-add90').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const row = btn.closest('.inplace-episode');
+        if (!row) return;
+        const startInput = row.querySelector('input[data-ep="openingStart"]');
+        const endInput = row.querySelector('input[data-ep="openingEnd"]');
+        if (!startInput || !endInput) return;
+        const startSec = parseTimeToSeconds(startInput.value);
+        endInput.value = timeToHMS(startSec + 90);
+        syncOpeningInputs(row);
+      });
+    });
+  }
+
+  function wireTagUI(card, key) {
+    const addBtn = card.querySelector(`[data-tag-add-btn="${key}"]`);
+    addBtn?.addEventListener('click', () => {
+      const input = card.querySelector(`[data-tag-new="${key}"]`);
+      const value = input?.value?.trim();
+      if (!value) return;
+      const list = card.querySelector(`[data-tag-block="${key}"] .inplace-tag-list`);
+      if (!list) return;
+      const exists = [...list.querySelectorAll('input[data-tag="' + key + '"]')].some((el) => el.value.toLowerCase() === value.toLowerCase());
+      if (exists) return;
+      const label = document.createElement('label');
+      label.className = 'inplace-check';
+      label.innerHTML = `<input type="checkbox" data-tag="${key}" value="${escAttr(value)}" checked>${value}`;
+      list.appendChild(label);
+      input.value = '';
+    });
+  }
+
+  function readChecked(card, key) {
+    return [...card.querySelectorAll(`input[data-tag="${key}"]:checked`)].map((el) => el.value.trim()).filter(Boolean);
+  }
+
   function enterEditMode(card, anime, isNew) {
     card.classList.add('admin-editing-card');
+    card.classList.remove('admin-editable-card');
+
+    const options = collectOptionSets();
+    const ratingContentCurrent = Array.isArray(anime.rating_content) ? anime.rating_content : [];
+    const categoriesCurrent = Array.isArray(anime.categories) ? anime.categories : [];
+
     card.innerHTML = `
       <div class="inplace-edit">
         <div class="inplace-preview">
@@ -232,9 +406,19 @@
         </div>
 
         <div class="inplace-grid">
+          <label>Tipo
+            ${renderTypeChoices(anime.type || 'anime')}
+          </label>
+          <label>Classificação (idade)
+            <select data-k="rating_age">
+              ${options.ratingAge.map((r) => `<option value="${escAttr(r)}" ${(anime.rating_age === r) ? 'selected' : ''}>${r}</option>`).join('')}
+            </select>
+          </label>
           ${topLevelFields(anime).map(([k, v]) => `<label>${k}<input data-k="${k}" value="${escAttr(v)}"></label>`).join('')}
-          <label>categories<textarea data-array="categories">${toLines(anime.categories)}</textarea></label>
         </div>
+
+        ${renderTagChecklist('Categorias', 'categories', categoriesCurrent, options.categories)}
+        ${renderTagChecklist('Conteúdo da classificação', 'rating_content', ratingContentCurrent, options.ratingContent)}
 
         <div class="inplace-media-wrap">
           ${renderArrayPreviewSection(anime)}
@@ -255,14 +439,29 @@
       </div>
     `;
 
+    // block opening player while editing (capture phase)
+    card.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+    }, true);
+
     wireArrayPreview(card);
+    wireOpeningTimingActions(card);
+    wireTagUI(card, 'categories');
+    wireTagUI(card, 'rating_content');
+
+    card.querySelectorAll('[data-type-choice]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        card.querySelectorAll('[data-type-choice]').forEach((x) => x.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
 
     const updateImagePreview = () => {
       const image = card.querySelector('.inplace-preview-image');
       const thumb = card.querySelector('input[data-k="thumbnail"]')?.value || card.querySelector('input[data-k="cover"]')?.value;
       if (image && thumb) image.src = thumb;
     };
-
     card.querySelector('input[data-k="thumbnail"]')?.addEventListener('input', updateImagePreview);
     card.querySelector('input[data-k="cover"]')?.addEventListener('input', updateImagePreview);
 
@@ -301,24 +500,12 @@
       });
     });
 
-    card.querySelectorAll('.inplace-preview-opening').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const row = btn.closest('.inplace-episode');
-        const url = row?.querySelector('input[data-ep="opening"]')?.value?.trim();
-        const player = card.querySelector('.inplace-preview-audio');
-        if (!url || !player) return;
-        player.src = url;
-        player.style.display = 'block';
-        player.play().catch(() => {});
-      });
-    });
-
     card.querySelectorAll('.inplace-add-episode').forEach((btn) => {
       btn.addEventListener('click', () => {
         const sIdx = Number(btn.closest('.inplace-season')?.dataset.s);
         if (!Number.isFinite(sIdx)) return;
         anime.seasons[sIdx].episodes = Array.isArray(anime.seasons[sIdx].episodes) ? anime.seasons[sIdx].episodes : [];
-        anime.seasons[sIdx].episodes.push({ title: 'Novo episódio', duration: '', videoUrl: '', opening: '' });
+        anime.seasons[sIdx].episodes.push({ title: 'Novo episódio', duration: 0, videoUrl: '', opening: { start: 0, end: 90 } });
         enterEditMode(card, anime, isNew);
       });
     });
@@ -354,9 +541,15 @@
     });
 
     card.querySelector('.inplace-save')?.addEventListener('click', () => {
+      const typeBtn = card.querySelector('[data-type-choice].active');
+      anime.type = typeBtn?.dataset.typeChoice || anime.type || 'anime';
+
       card.querySelectorAll('[data-k]').forEach((el) => {
         anime[el.dataset.k] = el.value;
       });
+
+      anime.categories = readChecked(card, 'categories');
+      anime.rating_content = readChecked(card, 'rating_content');
 
       card.querySelectorAll('[data-array]').forEach((el) => {
         anime[el.dataset.array] = parseLines(el.value);
@@ -368,9 +561,11 @@
         const target = anime.seasons?.[sIdx]?.episodes?.[eIdx];
         if (!target) return;
         target.title = row.querySelector('input[data-ep="title"]')?.value || '';
-        target.duration = row.querySelector('input[data-ep="duration"]')?.value || '';
+        target.duration = parseTimeToSeconds(row.querySelector('input[data-ep="duration"]')?.value || 0);
         target.videoUrl = row.querySelector('input[data-ep="videoUrl"]')?.value || '';
-        target.opening = row.querySelector('input[data-ep="opening"]')?.value || '';
+        const opStart = parseTimeToSeconds(row.querySelector('input[data-ep="openingStart"]')?.value || 0);
+        const opEnd = parseTimeToSeconds(row.querySelector('input[data-ep="openingEnd"]')?.value || 0);
+        target.opening = { start: opStart, end: Math.max(opEnd, opStart) };
       });
 
       const db = getDB();
@@ -425,7 +620,7 @@
       enterEditMode(card, {
         id: '',
         title: '', description: '', thumbnail: 'images/bg-default.jpg', cover: 'images/bg-default.jpg', banner: '', trailer: '',
-        type: 'anime', year: '', rating: '', dateAdded: new Date().toISOString(), rating_age: '', rating_content: '',
+        type: 'anime', year: '', rating: '', dateAdded: new Date().toISOString(), rating_age: '14', rating_content: [],
         categories: [], openings: [], endings: [], osts: [], seasons: [{ number: 1, episodes: [] }]
       }, true);
     });
@@ -434,14 +629,13 @@
 
   function decorateEditableCards() {
     if (!adminEnabled) return;
-    const grids = document.querySelectorAll('.anime-grid');
-    grids.forEach((grid) => {
+    document.querySelectorAll('.anime-grid').forEach((grid) => {
       makeCardsDraggable(grid);
       grid.querySelectorAll('.anime-card[data-anime-id]').forEach((card) => {
         if (card.classList.contains('continue-card')) return;
         card.classList.add('admin-editable-card');
         if (!card.querySelector('.admin-edit-chip')) {
-          const chip = adminBadge(card);
+          const chip = adminBadge();
           chip.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -476,16 +670,13 @@
       description: '',
       thumbnail: 'images/bg-default.jpg',
       cover: 'images/bg-default.jpg',
-      banner: '',
-      trailer: '',
+      banner: '', trailer: '',
       type,
-      year: '',
-      rating: '',
+      year: '', rating: '',
       dateAdded: new Date().toISOString(),
+      rating_age: '14', rating_content: [],
       categories: [],
-      openings: [],
-      endings: [],
-      osts: [],
+      openings: [], endings: [], osts: [],
       seasons: [{ number: 1, episodes: [] }]
     });
     saveEditsLocal();
@@ -524,16 +715,17 @@
     const addOva = byId('admin-inline-add-ova');
 
     function syncButtons() {
-      [exitBtn, dlBtn, addAnime, addMovie, addOva].forEach((el) => {
-        if (el) el.style.display = adminEnabled ? 'inline-flex' : 'none';
-      });
+      [exitBtn, dlBtn, addAnime, addMovie, addOva].forEach((el) => { if (el) el.style.display = adminEnabled ? 'inline-flex' : 'none'; });
       if (toggleBtn) toggleBtn.textContent = adminEnabled ? 'Modo Admin ativo' : 'Admin';
+      bar.classList.toggle('visible', adminUnlocked);
     }
 
     toggleBtn?.addEventListener('click', () => {
       if (!adminEnabled) {
         const pin = prompt('PIN admin:');
         if (pin !== ADMIN_PIN) return;
+        adminUnlocked = true;
+        sessionStorage.setItem(ADMIN_UNLOCK_KEY, '1');
       }
       toggleAdmin();
       syncButtons();
@@ -548,6 +740,17 @@
     addAnime?.addEventListener('click', () => addTypeQuick('anime'));
     addMovie?.addEventListener('click', () => addTypeQuick('movie'));
     addOva?.addEventListener('click', () => addTypeQuick('ova'));
+
+    // Hidden unlock: Ctrl+Shift+A
+    document.addEventListener('keydown', (e) => {
+      if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'a') {
+        const pin = prompt('PIN admin:');
+        if (pin !== ADMIN_PIN) return;
+        adminUnlocked = true;
+        sessionStorage.setItem(ADMIN_UNLOCK_KEY, '1');
+        bar.classList.add('visible');
+      }
+    });
 
     syncButtons();
   }

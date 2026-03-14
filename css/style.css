@@ -583,8 +583,22 @@ nav a:hover, nav a.active {
 
 .anime-card.playing-hover-trailer .trailer-overlay {
     opacity: 1;
-    background-color: rgba(0,0,0,0.36);
-    z-index: 2;
+    background-color: rgba(0,0,0,0.22);
+    z-index: 3;
+}
+
+.trailer-overlay .age-rating-badge {
+    opacity: 0.45;
+}
+
+.anime-card.playing-hover-trailer .trailer-overlay .age-rating-badge {
+    opacity: 0.2;
+}
+
+.trailer-overlay i,
+.trailer-overlay p {
+    position: relative;
+    z-index: 4;
 }
 
 .trailer-overlay {
@@ -4243,13 +4257,24 @@ body.dark-mode .age-rating-section {
     right: 14px;
     bottom: 14px;
     z-index: 12000;
-    display: flex;
+    display: none;
     gap: 8px;
     background: rgba(8, 10, 20, 0.86);
     border: 1px solid rgba(255,255,255,0.16);
     border-radius: 12px;
     padding: 8px;
     backdrop-filter: blur(8px);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(12px);
+    transition: all .2s ease;
+}
+
+.admin-inline-bar.visible {
+    display: flex;
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
 }
 
 .admin-editable-card {
@@ -4345,6 +4370,13 @@ body.dark-mode .age-rating-section {
     margin-top: 6px;
 }
 
+.inplace-opening-actions {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
 .inplace-episode input {
     flex: 1 1 180px;
 }
@@ -4358,4 +4390,109 @@ body.dark-mode .age-rating-section {
 @media (max-width: 768px) {
     .admin-inline-bar { left: 10px; right: 10px; bottom: 10px; }
     .inplace-grid { grid-template-columns: 1fr; }
+}
+
+
+
+.inplace-choice-group {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.inplace-pill {
+    border: 1px solid rgba(255,255,255,0.22);
+    background: rgba(0,0,0,0.18);
+    color: var(--text-color);
+    border-radius: 999px;
+    padding: 6px 10px;
+    cursor: pointer;
+}
+
+.inplace-pill.active {
+    background: #ff495e;
+    color: #fff;
+    border-color: #ff495e;
+}
+
+.inplace-tag-block {
+    border: 1px solid rgba(255,255,255,0.14);
+    border-radius: 10px;
+    padding: 10px;
+    background: rgba(0,0,0,0.12);
+}
+
+.inplace-tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.inplace-check {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(0,0,0,0.2);
+    border: 1px solid rgba(255,255,255,0.16);
+    border-radius: 999px;
+    padding: 6px 10px;
+    font-size: 0.78rem;
+}
+
+.inplace-tag-add {
+    margin-top: 8px;
+    display: flex;
+    gap: 8px;
+}
+
+.inplace-tip {
+    font-size: 0.72rem;
+    opacity: .8;
+}
+
+.inplace-media-group {
+    border: 1px solid rgba(255,255,255,0.14);
+    border-radius: 10px;
+    padding: 10px;
+    background: rgba(0,0,0,0.1);
+}
+
+.inplace-media-preview-list {
+    margin-top: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.inplace-duration-view {
+    font-weight: 700;
+    min-width: 88px;
+    text-align: center;
+    background: rgba(0,0,0,.2);
+    border-radius: 8px;
+    padding: 6px;
+}
+
+/* light mode fixes */
+html.theme-light .inplace-grid input,
+html.theme-light .inplace-grid textarea,
+html.theme-light .inplace-season input,
+html.theme-light .inplace-episode input,
+html.theme-light .inplace-tag-add input,
+html.theme-light .inplace-tag-add select,
+html.theme-light .inplace-grid select {
+    background: #ffffff;
+    color: #111;
+    border-color: rgba(0,0,0,0.22);
+}
+
+html.theme-light .inplace-pill,
+html.theme-light .inplace-check,
+html.theme-light .inplace-media-group,
+html.theme-light .inplace-tag-block,
+html.theme-light .inplace-duration-view {
+    background: #f3f5f7;
+    color: #111;
+    border-color: rgba(0,0,0,0.2);
 }

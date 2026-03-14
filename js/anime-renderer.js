@@ -91,7 +91,7 @@
         trailerVideo.style.display = 'block';
         trailerVideo.play().catch(() => {});
         card.classList.add('playing-hover-trailer');
-      }, 10000);
+      }, 5000);
     });
 
     card.addEventListener('mouseleave', () => {
@@ -106,7 +106,10 @@
 
     // Add click handler to open video modal
     card.style.cursor = 'pointer';
-    card.addEventListener('click', () => openAnimeModal(anime));
+    card.addEventListener('click', () => {
+      if (document.body.classList.contains('admin-inline-mode')) return;
+      openAnimeModal(anime);
+    });
 
     return card;
   }
