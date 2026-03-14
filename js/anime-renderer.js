@@ -319,7 +319,7 @@
     if (!grid) return;
     
     grid.innerHTML = '';
-    const animes = window.animeDB.animes.slice(0, 24);
+    const animes = Array.isArray(window.animeDB.animes) ? window.animeDB.animes : [];
     
     animes.forEach(anime => {
       const card = createAnimeCard(anime);
