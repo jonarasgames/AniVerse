@@ -215,7 +215,7 @@
     </div>
 
 
-    <div id="anime-editor-modal" class="modal">
+    <div id="anime-editor-modal" class="modal" style="display:none !important;">
         <div class="modal-content anime-editor-modal-content">
             <span class="close-modal" id="close-anime-editor">&times;</span>
             <div class="news-modal-header">
@@ -227,7 +227,7 @@
 
             <div class="anime-editor-toolbar">
                 <button class="btn btn-secondary" id="anime-editor-load">Carregar atual</button>
-                <button class="btn btn-secondary" id="anime-editor-format">Formatar JSON</button>
+                <button class="btn btn-secondary" id="anime-editor-format">Importar JSON (opcional)</button>
                 <button class="btn btn-primary" id="anime-editor-apply">Aplicar no site</button>
                 <button class="btn btn-secondary" id="anime-editor-copy">Copiar JSON</button>
                 <button class="btn btn-secondary" id="anime-editor-download">Baixar anime-data.json</button>
@@ -245,7 +245,7 @@
                 <div id="anime-editor-collections-visual"></div>
             </div>
 
-            <textarea id="anime-editor-textarea" class="anime-editor-textarea" spellcheck="false"></textarea>
+            <textarea id="anime-editor-textarea" class="anime-editor-textarea" spellcheck="false" style="display:none;"></textarea>
             <p id="anime-editor-status" class="anime-editor-status"></p>
             <p class="news-admin-hint">Dica: salve o arquivo baixado e substitua o <strong>anime-data.json</strong> no seu GitHub.</p>
         </div>
@@ -598,7 +598,7 @@
     <script src="js/profile-multi.js" defer></script>
     <script src="js/profile-modal-new.js" defer></script>
     <script src="js/music-player-new.js" defer></script>
-    <script src="js/anime-editor.js" defer></script>
+    <script src="js/inplace-admin.js" defer></script>
     
     <script>
       if ('serviceWorker' in navigator) {

@@ -46,6 +46,12 @@
     return String(value || '').split('\n').map(v => v.trim()).filter(Boolean);
   }
 
+  function toList(value) {
+    if (Array.isArray(value)) return value.map(v => String(v));
+    if (typeof value === 'string') return value ? [value] : [];
+    return [];
+  }
+
   function syncJsonFromState() {
     const textarea = byId('anime-editor-textarea');
     if (textarea) textarea.value = JSON.stringify(currentData, null, 2);
@@ -266,16 +272,16 @@
             <textarea class="anime-field anime-editor-advanced" data-field="description">${toText(anime.description)}</textarea>
           </label>
           <label class="anime-editor-advanced-label">Gêneros (1 por linha)
-            <textarea class="anime-field anime-editor-advanced" data-field="categories">${toText((anime.categories || []).join('\n'))}</textarea>
+            <textarea class="anime-field anime-editor-advanced" data-field="categories">${toText(toList(anime.categories).join('\n'))}</textarea>
           </label>
           <label class="anime-editor-advanced-label">Openings (1 URL por linha)
-            <textarea class="anime-field anime-editor-advanced" data-field="openings">${toText((anime.openings || []).join('\n'))}</textarea>
+            <textarea class="anime-field anime-editor-advanced" data-field="openings">${toText(toList(anime.openings).join('\n'))}</textarea>
           </label>
           <label class="anime-editor-advanced-label">Endings (1 URL por linha)
-            <textarea class="anime-field anime-editor-advanced" data-field="endings">${toText((anime.endings || []).join('\n'))}</textarea>
+            <textarea class="anime-field anime-editor-advanced" data-field="endings">${toText(toList(anime.endings).join('\n'))}</textarea>
           </label>
           <label class="anime-editor-advanced-label">OSTs (1 URL por linha)
-            <textarea class="anime-field anime-editor-advanced" data-field="osts">${toText((anime.osts || []).join('\n'))}</textarea>
+            <textarea class="anime-field anime-editor-advanced" data-field="osts">${toText(toList(anime.osts).join('\n'))}</textarea>
           </label>
           <video class="anime-editor-video-preview" controls muted playsinline style="display:none"></video>
           <div class="anime-editor-seasons"></div>
@@ -453,10 +459,12 @@
 
   function removePublicEditorButtons() {
     const shouldRemove = (el) => {
-      const text = (el.textContent || '').trim().toLowerCase();
+      const text = (el.textContent || '').replace(/\s+/g, ' ').trim().toLowerCase();
       const id = (el.id || '').toLowerCase();
       const cls = (el.className || '').toString().toLowerCase();
-      return text.includes('editor anime') || text === 'editar anime' || id.includes('anime-editor') || cls.includes('anime-editor-btn');
+      const hasEditorWords = text.includes('editor anime') || (text.includes('editor') && text.includes('anime')) || text === 'editar anime';
+      const knownPublicId = id === 'open-anime-editor-btn' || id === 'editor-anime-btn';
+      return hasEditorWords || knownPublicId || cls.includes('open-anime-editor-btn') || cls.includes('anime-editor-btn');
     };
 
     document.querySelectorAll('#open-anime-editor-btn, .open-anime-editor-btn, button, a').forEach((el) => {
@@ -471,19 +479,6 @@
       }
     });
 
-    const logo = document.querySelector('.logo-container');
-    let tapCount = 0;
-    let lastTap = 0;
-    logo?.addEventListener('click', () => {
-      const now = Date.now();
-      if (now - lastTap > 1500) tapCount = 0;
-      tapCount += 1;
-      lastTap = now;
-      if (tapCount >= 5) {
-        tapCount = 0;
-        requestAccessAndOpen();
-      }
-    });
   }
 
   function bind() {

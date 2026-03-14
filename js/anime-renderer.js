@@ -62,9 +62,12 @@
     const type = escapeHtml(anime.type || 'anime');
     const ageRatingBadge = getAgeRatingBadge(anime.rating_age);
     
+    const trailer = anime.trailer || '';
+
     card.innerHTML = `
       <div class="anime-thumbnail">
         <img src="${escapeHtml(thumbnail)}" alt="${title}">
+        <video class="card-hover-trailer" muted playsinline preload="metadata" loop style="display:none"></video>
         <div class="trailer-overlay">
           <i class="fas fa-play"></i>
           <p>Assistir</p>
@@ -76,11 +79,35 @@
         <p class="anime-meta">${buildAnimeMeta(anime)}</p>
       </div>
     `;
-    
+
+    const trailerVideo = card.querySelector('.card-hover-trailer');
+    let hoverTimer = null;
+
+    card.addEventListener('mouseenter', () => {
+      if (!trailer || !trailerVideo) return;
+      clearTimeout(hoverTimer);
+      hoverTimer = setTimeout(() => {
+        trailerVideo.src = trailer;
+        trailerVideo.style.display = 'block';
+        trailerVideo.play().catch(() => {});
+        card.classList.add('playing-hover-trailer');
+      }, 10000);
+    });
+
+    card.addEventListener('mouseleave', () => {
+      clearTimeout(hoverTimer);
+      if (!trailerVideo) return;
+      trailerVideo.pause();
+      trailerVideo.removeAttribute('src');
+      trailerVideo.load();
+      trailerVideo.style.display = 'none';
+      card.classList.remove('playing-hover-trailer');
+    });
+
     // Add click handler to open video modal
     card.style.cursor = 'pointer';
     card.addEventListener('click', () => openAnimeModal(anime));
-    
+
     return card;
   }
 

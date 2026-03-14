@@ -560,6 +560,33 @@ nav a:hover, nav a.active {
     transform: scale(1.1);
 }
 
+
+.card-hover-trailer {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity .35s ease;
+    background: #000;
+}
+
+.anime-card.playing-hover-trailer .card-hover-trailer {
+    opacity: 1;
+}
+
+.anime-card.playing-hover-trailer .anime-thumbnail img {
+    opacity: 0.05;
+}
+
+.anime-card.playing-hover-trailer .trailer-overlay {
+    opacity: 1;
+    background-color: rgba(0,0,0,0.36);
+    z-index: 2;
+}
+
 .trailer-overlay {
     position: absolute;
     top: 0;
@@ -4208,4 +4235,127 @@ body.dark-mode .age-rating-section {
     .anime-editor-episode-grid {
         grid-template-columns: 1fr;
     }
+}
+
+/* In-place admin editing */
+.admin-inline-bar {
+    position: fixed;
+    right: 14px;
+    bottom: 14px;
+    z-index: 12000;
+    display: flex;
+    gap: 8px;
+    background: rgba(8, 10, 20, 0.86);
+    border: 1px solid rgba(255,255,255,0.16);
+    border-radius: 12px;
+    padding: 8px;
+    backdrop-filter: blur(8px);
+}
+
+.admin-editable-card {
+    outline: 2px dashed rgba(255, 73, 94, 0.6);
+    position: relative;
+}
+
+.admin-edit-chip {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 2;
+    border: none;
+    background: rgba(255, 73, 94, 0.95);
+    color: white;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.admin-new-card {
+    border: 2px dashed rgba(68, 179, 112, 0.7) !important;
+    min-height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.inplace-edit {
+    display: grid;
+    gap: 10px;
+}
+
+.inplace-preview {
+    display: grid;
+    gap: 6px;
+}
+
+.inplace-preview-image,
+.inplace-preview-video {
+    width: 100%;
+    max-height: 180px;
+    object-fit: cover;
+    border-radius: 10px;
+    background: #000;
+}
+
+.inplace-grid {
+    display: grid;
+    gap: 8px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.inplace-grid label,
+.inplace-seasons-wrap label {
+    display: grid;
+    gap: 4px;
+    font-size: 0.82rem;
+}
+
+.inplace-grid input,
+.inplace-grid textarea,
+.inplace-season input,
+.inplace-episode input {
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(0,0,0,0.24);
+    color: var(--text-color);
+    padding: 8px;
+}
+
+.inplace-grid textarea {
+    min-height: 70px;
+}
+
+.inplace-season {
+    border: 1px solid rgba(255,255,255,0.16);
+    border-radius: 10px;
+    padding: 8px;
+    margin-top: 8px;
+}
+
+.inplace-season-head,
+.inplace-episode {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.inplace-episode {
+    margin-top: 6px;
+}
+
+.inplace-episode input {
+    flex: 1 1 180px;
+}
+
+.inplace-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+@media (max-width: 768px) {
+    .admin-inline-bar { left: 10px; right: 10px; bottom: 10px; }
+    .inplace-grid { grid-template-columns: 1fr; }
 }
