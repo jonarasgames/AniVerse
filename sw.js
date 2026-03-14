@@ -23,8 +23,7 @@ self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(STATIC_CACHE)
       .then(cache => cache.addAll(APP_SHELL))
-      .then(() => self.skipWaiting())
-  );
+        );
 });
 
 self.addEventListener('activate', event => {
@@ -37,11 +36,6 @@ self.addEventListener('activate', event => {
   );
 });
 
-self.addEventListener('message', event => {
-  if (event.data && event.data.type === 'SKIP_WAITING') {
-    self.skipWaiting();
-  }
-});
 
 function shouldNetworkFirst(request) {
   const url = new URL(request.url);

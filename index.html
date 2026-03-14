@@ -220,8 +220,8 @@
             <span class="close-modal" id="close-anime-editor">&times;</span>
             <div class="news-modal-header">
                 <div>
-                    <h2>Editor de Anime (JSON)</h2>
-                    <p class="news-modal-subtitle">Edite, copie ou baixe o <strong>anime-data.json</strong> de forma rápida.</p>
+                    <h2>Editor de Anime (Visual)</h2>
+                    <p class="news-modal-subtitle">Edite anime, temporadas e episódios de forma visual e simples.</p>
                 </div>
             </div>
 
@@ -232,17 +232,17 @@
                 <button class="btn btn-secondary" id="anime-editor-copy">Copiar JSON</button>
                 <button class="btn btn-secondary" id="anime-editor-download">Baixar anime-data.json</button>
                 <button class="btn btn-secondary" id="anime-editor-view-visual">Visual</button>
-                <button class="btn btn-secondary" id="anime-editor-view-json">JSON</button>
-            </div>
+                            </div>
 
             <div id="anime-editor-visual" class="anime-editor-visual">
                 <div class="anime-editor-visual-actions">
                     <button class="btn btn-primary" id="anime-editor-add-anime">+ Anime</button>
                 </div>
                 <div id="anime-editor-visual-list" class="anime-editor-visual-list"></div>
-                <label class="anime-editor-collections-label">Coleções (JSON)
+                <label class="anime-editor-collections-label">Coleções (JSON de apoio)
                     <textarea id="anime-editor-collections" class="anime-editor-collections" spellcheck="false"></textarea>
                 </label>
+                <div id="anime-editor-collections-visual"></div>
             </div>
 
             <textarea id="anime-editor-textarea" class="anime-editor-textarea" spellcheck="false"></textarea>
@@ -605,28 +605,18 @@
         window.addEventListener('load', async () => {
           try {
             const registration = await navigator.serviceWorker.register('sw.js');
-
             const tryUpdate = () => registration.update().catch(() => {});
+
             tryUpdate();
-            setInterval(tryUpdate, 5 * 60 * 1000);
+            setInterval(tryUpdate, 30 * 60 * 1000);
             document.addEventListener('visibilitychange', () => {
               if (document.visibilityState === 'visible') tryUpdate();
             });
 
-            registration.addEventListener('updatefound', () => {
-              const worker = registration.installing;
-              if (!worker) return;
-              worker.addEventListener('statechange', () => {
-                if (worker.state === 'installed' && navigator.serviceWorker.controller) {
-                  worker.postMessage({ type: 'SKIP_WAITING' });
-                }
-              });
-            });
-
+            // Evita recarregar automaticamente "do nada" durante uso do site.
             navigator.serviceWorker.addEventListener('controllerchange', () => {
-              if (window.__swRefreshing) return;
-              window.__swRefreshing = true;
-              window.location.reload();
+              window.__swHasUpdate = true;
+              console.info('AniVerse: nova versão em segundo plano. Atualize manualmente quando quiser.');
             });
           } catch (_) {}
         });

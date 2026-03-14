@@ -4133,3 +4133,79 @@ body.dark-mode .age-rating-section {
         padding: 6px 8px;
     }
 }
+
+/* Keep anime editor private/public trigger hidden */
+#open-anime-editor-btn,
+.open-anime-editor-btn {
+    display: none !important;
+}
+
+/* Visual editor improvements */
+.anime-editor-textarea {
+    display: none;
+}
+
+.anime-editor-card {
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 12px;
+    padding: 12px;
+    background: rgba(0,0,0,0.22);
+}
+
+.anime-editor-season {
+    border: 1px dashed rgba(255,255,255,0.20);
+    border-radius: 10px;
+    padding: 10px;
+    margin-top: 10px;
+}
+
+.anime-editor-season-head,
+.anime-editor-episode-head,
+.anime-editor-episode-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+}
+
+.anime-editor-episode-row {
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 10px;
+    padding: 8px;
+    margin-bottom: 8px;
+    background: rgba(0,0,0,0.16);
+}
+
+.anime-editor-episode-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.anime-editor-video-preview {
+    width: 100%;
+    max-height: 260px;
+    border-radius: 10px;
+    background: #000;
+    margin: 8px 0;
+}
+
+#anime-editor-collections-visual h3 {
+    font-size: 0.95rem;
+}
+
+.anime-editor-collection-row {
+    border: 1px solid rgba(255,255,255,0.14);
+    border-radius: 10px;
+    padding: 10px;
+    margin-top: 10px;
+    background: rgba(0,0,0,0.18);
+}
+
+@media (max-width: 768px) {
+    .anime-editor-episode-grid {
+        grid-template-columns: 1fr;
+    }
+}
