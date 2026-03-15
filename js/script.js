@@ -1,6 +1,55 @@
 /* js/script.js - core fixes: avoid videoLoadTimeout ReferenceError, onVideoSetSource, openEpisode, animeDataLoaded binds */
 let videoLoadTimeout = null;
 
+const MAINTENANCE_MODE = true; // true = ativa manutenção | false = site normal
+
+function startMaintenanceAudio() {
+  const audio = document.getElementById('maintenance-audio');
+  if (!audio) return;
+  audio.volume = 0.22;
+  audio.playbackRate = 0.92;
+  try { audio.preservesPitch = false; } catch (_) {}
+  try { audio.mozPreservesPitch = false; } catch (_) {}
+  try { audio.webkitPreservesPitch = false; } catch (_) {}
+
+  const tryPlay = () => audio.play().catch(() => {});
+  tryPlay();
+  const unlock = () => {
+    tryPlay();
+    document.removeEventListener('click', unlock);
+    document.removeEventListener('touchstart', unlock);
+    document.removeEventListener('keydown', unlock);
+  };
+  document.addEventListener('click', unlock, { once: true });
+  document.addEventListener('touchstart', unlock, { once: true });
+  document.addEventListener('keydown', unlock, { once: true });
+}
+
+function applyMaintenanceMode() {
+  if (!MAINTENANCE_MODE) return false;
+  document.body.classList.add('maintenance-active');
+  const overlay = document.getElementById('maintenance-overlay');
+  if (overlay) {
+    overlay.classList.add('active');
+    overlay.setAttribute('aria-hidden', 'false');
+    const title = overlay.querySelector('.maintenance-content h1');
+    const message = overlay.querySelector('.maintenance-content p');
+    if (title) {
+      title.style.color = '#fff';
+      title.style.webkitTextFillColor = '#fff';
+      title.style.opacity = '1';
+    }
+    if (message) {
+      message.style.color = '#fff';
+      message.style.webkitTextFillColor = '#fff';
+      message.style.opacity = '1';
+    }
+  }
+  startMaintenanceAudio();
+  return true;
+}
+
+
 // Dark mode initialization and handling
 (function() {
   // Check for saved preference or system preference
@@ -66,6 +115,9 @@ let videoLoadTimeout = null;
 })();
 
 document.addEventListener('DOMContentLoaded', () => {
+  if (applyMaintenanceMode()) return;
+  setupVideoLoadingIndicator();
+
   // Navigation handling
   const navLinks = document.querySelectorAll('nav a[data-section]');
   const sections = document.querySelectorAll('.content-section');
@@ -349,6 +401,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
+  if (applyMaintenanceMode()) return;
   const NEWS_DATA_URL = 'news-data.json';
   const NEWS_LAST_SEEN_KEY = 'aniVerseNewsLastSeen';
   const NEWS_TOAST_KEY = 'aniVerseNewsToastSeen';
@@ -1089,6 +1142,41 @@ function syncModalAdminEditorVisibility() {
   }
 }
 
+
+
+function setupVideoLoadingIndicator() {
+  const player = document.getElementById('anime-player');
+  const overlay = document.getElementById('video-loading-overlay');
+  if (!player || !overlay) return;
+
+  let forcedVisible = false;
+
+  const show = (text) => {
+    const label = overlay.querySelector('.video-loading-text');
+    if (label && text) label.textContent = text;
+    overlay.classList.add('visible');
+  };
+  const hide = () => {
+    if (forcedVisible) return;
+    overlay.classList.remove('visible');
+  };
+
+  player.addEventListener('loadstart', () => show('Preparando vídeo...'));
+  player.addEventListener('waiting', () => show('Carregando episódio...'));
+  player.addEventListener('stalled', () => show('Conexão oscilando...'));
+  player.addEventListener('seeking', () => show('Buscando trecho...'));
+  player.addEventListener('canplay', hide);
+  player.addEventListener('playing', hide);
+  player.addEventListener('seeked', hide);
+
+  // Expose hook for other modules when forcing spinner is useful
+  window.setVideoLoadingOverlay = (visible, text) => {
+    forcedVisible = !!visible;
+    if (forcedVisible) show(text || 'Carregando episódio...');
+    else hide();
+  };
+}
+
 // openEpisode helper: set src, resume, banner, opening
 function openEpisode(anime, seasonNumber, episodeIndex){
   try {
@@ -1326,6 +1414,7 @@ function preloadNextEpisodeIfNeeded(player){
 
 // Update progress periodically while video is playing
 document.addEventListener('DOMContentLoaded', () => {
+  if (applyMaintenanceMode()) return;
   const player = document.getElementById('anime-player');
   if (player) {
     let progressUpdateInterval = null;

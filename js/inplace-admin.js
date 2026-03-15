@@ -500,11 +500,12 @@
       </div>
     `;
 
-    // block opening player while editing (capture phase)
+    // keep clicks inside editor from bubbling to parent card/modal handlers
     card.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopImmediatePropagation();
-    }, true);
+      if (e.target && e.target.closest('.inplace-edit')) {
+        e.stopPropagation();
+      }
+    });
 
     wireArrayPreview(card);
     wireOpeningTimingActions(card);

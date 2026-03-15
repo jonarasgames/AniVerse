@@ -4555,3 +4555,178 @@ html.theme-light .inplace-duration-view {
 #video-modal .video-info {
     overflow: visible;
 }
+
+
+/* Maintenance mode */
+#maintenance-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 120000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: max(16px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+    background: radial-gradient(circle at top, #2b1438 0%, #0c0f1f 48%, #06070d 100%);
+}
+
+#maintenance-overlay.active {
+    display: flex;
+}
+
+#maintenance-overlay.active .maintenance-content,
+#maintenance-overlay.active .maintenance-content * {
+    opacity: 1 !important;
+}
+
+.maintenance-active header,
+.maintenance-active main,
+.maintenance-active .music-mini-player,
+.maintenance-active .admin-inline-bar {
+    display: none !important;
+}
+
+.maintenance-content {
+    max-width: 880px;
+    width: 100%;
+    text-align: center;
+    color: #fff;
+}
+
+.maintenance-content h1 {
+    font-family: 'Lilita One', cursive;
+    font-size: clamp(38px, 8vw, 82px);
+    line-height: 1;
+    margin: 0 0 12px;
+    letter-spacing: 1.5px;
+    color: #fff !important;
+    -webkit-text-fill-color: #fff;
+    font-weight: 400;
+    text-shadow: 0 6px 28px rgba(0,0,0,.55);
+}
+
+.maintenance-content p {
+    font-size: clamp(13px, 1.8vw, 18px);
+    margin: 0 auto 18px;
+    max-width: 640px;
+    color: #fff !important;
+    -webkit-text-fill-color: #fff;
+    font-weight: 500;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.45);
+}
+
+.maintenance-links {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: nowrap;
+    gap: clamp(6px, 1.8vw, 10px);
+    margin-top: 4px;
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 4px 2px 2px;
+    scrollbar-width: none;
+}
+
+.maintenance-links::-webkit-scrollbar {
+    display: none;
+}
+
+.maintenance-link {
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    border-radius: 0;
+    overflow: visible;
+    transition: transform .2s ease, filter .2s ease;
+    flex: 0 0 auto;
+}
+
+.maintenance-link:hover {
+    transform: translateY(-2px) scale(1.02);
+    filter: brightness(1.07);
+}
+
+.maintenance-link img {
+    display: block;
+    width: clamp(78px, 10vw, 118px);
+    height: auto;
+    max-height: 56px;
+    object-fit: contain;
+    border: 0;
+}
+
+@media (max-width: 768px) {
+  .maintenance-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .maintenance-content h1 {
+    font-size: clamp(34px, 13vw, 48px);
+    margin-bottom: 8px;
+    color: #fff !important;
+    -webkit-text-fill-color: #fff;
+  }
+  .maintenance-content p {
+    color: #fff !important;
+    -webkit-text-fill-color: #fff;
+    font-size: clamp(12px, 3.6vw, 15px);
+    margin-bottom: 12px;
+    line-height: 1.35;
+    text-align: center;
+    max-width: 92%;
+  }
+  .maintenance-links {
+    gap: 6px;
+    justify-content: center;
+    padding-inline: 0;
+  }
+  .maintenance-link img {
+    width: clamp(56px, 18vw, 70px);
+    max-height: 38px;
+  }
+}
+
+/* Custom video loading */
+.video-loading-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1200;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle, rgba(3,6,18,0.38) 0%, rgba(2,4,12,0.72) 60%, rgba(2,3,10,0.84) 100%);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s ease;
+}
+
+.video-loading-overlay.visible {
+    opacity: 1;
+}
+
+.video-loading-orb {
+    width: 62px;
+    height: 62px;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, #ff355e, #ff9f1c, #4cc9f0, #ff355e);
+    -webkit-mask: radial-gradient(circle, transparent 58%, #000 60%);
+    mask: radial-gradient(circle, transparent 58%, #000 60%);
+    animation: aniverseSpin .9s linear infinite;
+    box-shadow: 0 0 24px rgba(255, 99, 132, 0.45);
+}
+
+.video-loading-text {
+    font-weight: 700;
+    font-size: 14px;
+    color: #fff;
+    text-shadow: 0 2px 12px rgba(0,0,0,.45);
+    letter-spacing: .3px;
+}
+
+@keyframes aniverseSpin {
+    to { transform: rotate(360deg); }
+}
