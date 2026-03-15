@@ -1,6 +1,94 @@
 /* js/script.js - core fixes: avoid videoLoadTimeout ReferenceError, onVideoSetSource, openEpisode, animeDataLoaded binds */
 let videoLoadTimeout = null;
 
+const MAINTENANCE_MODE = true; // true = ativa manutenção | false = site normal
+
+
+function ensureMaintenanceOverlay() {
+  let overlay = document.getElementById('maintenance-overlay');
+  if (overlay) return overlay;
+
+  overlay = document.createElement('div');
+  overlay.id = 'maintenance-overlay';
+  overlay.setAttribute('aria-hidden', 'true');
+  overlay.innerHTML = `
+    <div class="maintenance-content">
+      <h1>MANUTENÇÃO</h1>
+      <p>Fique ligado no nosso X para atualizações e recomende algum anime do MyAnimeList no nosso Forms</p>
+      <div class="maintenance-links">
+        <a href="https://myanimelist.net/anime.php" target="_blank" rel="noopener noreferrer" class="maintenance-link" title="MyAnimeList">
+          <img src="https://files.catbox.moe/vrvxy5.webp" alt="MyAnimeList">
+        </a>
+        <a href="https://x.com/AniVerseSite" target="_blank" rel="noopener noreferrer" class="maintenance-link" title="X">
+          <img src="https://files.catbox.moe/l55utf.webp" alt="X">
+        </a>
+        <a href="https://forms.gle/bu4tXPzUSahNKtzg8" target="_blank" rel="noopener noreferrer" class="maintenance-link" title="Forms">
+          <img src="https://files.catbox.moe/rv1soq.webp" alt="Forms">
+        </a>
+      </div>
+      <audio id="maintenance-audio" src="https://files.catbox.moe/z0bun6.mp3" preload="auto" loop></audio>
+    </div>
+  `;
+  document.body.prepend(overlay);
+  return overlay;
+}
+
+function startMaintenanceAudio() {
+  const audio = document.getElementById('maintenance-audio');
+  if (!audio) return;
+  audio.volume = 0.22;
+  audio.playbackRate = 0.92;
+  try { audio.preservesPitch = false; } catch (_) {}
+  try { audio.mozPreservesPitch = false; } catch (_) {}
+  try { audio.webkitPreservesPitch = false; } catch (_) {}
+
+  const tryPlay = () => audio.play().catch(() => {});
+  tryPlay();
+  const unlock = () => {
+    tryPlay();
+    document.removeEventListener('click', unlock);
+    document.removeEventListener('touchstart', unlock);
+    document.removeEventListener('keydown', unlock);
+  };
+  document.addEventListener('click', unlock, { once: true });
+  document.addEventListener('touchstart', unlock, { once: true });
+  document.addEventListener('keydown', unlock, { once: true });
+}
+
+function applyMaintenanceMode() {
+  if (!MAINTENANCE_MODE) {
+    document.body.classList.remove('maintenance-active');
+    const currentOverlay = document.getElementById('maintenance-overlay');
+    if (currentOverlay) {
+      currentOverlay.classList.remove('active');
+      currentOverlay.setAttribute('aria-hidden', 'true');
+    }
+    return false;
+  }
+
+  const overlay = ensureMaintenanceOverlay();
+  document.body.classList.add('maintenance-active');
+  overlay.classList.add('active');
+  overlay.setAttribute('aria-hidden', 'false');
+
+  const title = overlay.querySelector('.maintenance-content h1');
+  const message = overlay.querySelector('.maintenance-content p');
+  if (title) {
+    title.style.color = '#fff';
+    title.style.webkitTextFillColor = '#fff';
+    title.style.opacity = '1';
+  }
+  if (message) {
+    message.style.color = '#fff';
+    message.style.webkitTextFillColor = '#fff';
+    message.style.opacity = '1';
+  }
+
+  startMaintenanceAudio();
+  return true;
+}
+
+
 // Dark mode initialization and handling
 (function() {
   // Check for saved preference or system preference
@@ -66,45 +154,268 @@ let videoLoadTimeout = null;
 })();
 
 document.addEventListener('DOMContentLoaded', () => {
+  if (applyMaintenanceMode()) return;
+  setupVideoLoadingIndicator();
+
   // Navigation handling
   const navLinks = document.querySelectorAll('nav a[data-section]');
   const sections = document.querySelectorAll('.content-section');
-  
+
+  function activateSection(sectionId) {
+    navLinks.forEach(l => l.classList.remove('active'));
+    sections.forEach(s => s.classList.remove('active'));
+
+    const targetNav = document.querySelector(`nav a[data-section="${sectionId}"]`);
+    if (targetNav) targetNav.classList.add('active');
+
+    const targetSection = document.getElementById(sectionId + '-section');
+    if (targetSection) {
+      targetSection.classList.add('active');
+    }
+
+    if (sectionId === 'animes' && typeof loadAnimeSection === 'function') {
+      loadAnimeSection('anime');
+    } else if (sectionId === 'movies' && typeof loadAnimeSection === 'function') {
+      loadAnimeSection('movie');
+    } else if (sectionId === 'ovas' && typeof loadAnimeSection === 'function') {
+      loadAnimeSection('ova');
+    } else if (sectionId === 'collections' && typeof loadCollections === 'function') {
+      loadCollections();
+    } else if (sectionId === 'openings' && typeof renderMusicGrid === 'function') {
+      renderMusicGrid();
+    } else if (sectionId === 'continue' && typeof renderContinueWatchingGrid === 'function' && window.animeDB) {
+      renderContinueWatchingGrid(window.animeDB.getContinueWatching(), 'continue-grid');
+    } else if (sectionId === 'downloads' && typeof window.renderDownloadsSection === 'function') {
+      window.renderDownloadsSection();
+    }
+  }
+
   navLinks.forEach(link => {
     link.addEventListener('click', (e) => {
       e.preventDefault();
-      const sectionId = link.dataset.section;
-      
-      // Remove active class from all links and sections
-      navLinks.forEach(l => l.classList.remove('active'));
-      sections.forEach(s => s.classList.remove('active'));
-      
-      // Add active class to clicked link
-      link.classList.add('active');
-      
-      // Show corresponding section
-      const targetSection = document.getElementById(sectionId + '-section');
-      if (targetSection) {
-        targetSection.classList.add('active');
-        
-        // Load section-specific data
-        if (sectionId === 'animes' && typeof loadAnimeSection === 'function') {
-          loadAnimeSection('anime');
-        } else if (sectionId === 'movies' && typeof loadAnimeSection === 'function') {
-          loadAnimeSection('movie');
-        } else if (sectionId === 'ovas' && typeof loadAnimeSection === 'function') {
-          loadAnimeSection('ova');
-        } else if (sectionId === 'collections' && typeof loadCollections === 'function') {
-          loadCollections();
-        } else if (sectionId === 'openings' && typeof renderMusicLibrary === 'function' && window.animeDB) {
-          renderMusicLibrary(window.animeDB.musicLibrary);
-        } else if (sectionId === 'continue' && typeof renderContinueWatchingGrid === 'function' && window.animeDB) {
-          renderContinueWatchingGrid(window.animeDB.getContinueWatching(), 'continue-grid');
-        }
-      }
+      activateSection(link.dataset.section);
     });
   });
-  
+
+
+  function getAnimeYear(anime) {
+    return anime?.year || anime?.releaseYear || anime?.ano || anime?.launchYear || anime?.release_date?.slice?.(0,4) || null;
+  }
+
+  function getAnimeScore(anime) {
+    const value = anime?.rating ?? anime?.score ?? anime?.nota;
+    if (value === null || value === undefined || value === '') return null;
+    return String(value);
+  }
+
+  function buildAnimeMetaText(anime) {
+    const parts = [String(anime?.type || 'anime').toUpperCase()];
+    const year = getAnimeYear(anime);
+    const score = getAnimeScore(anime);
+    if (year) parts.push(String(year));
+    if (score) parts.push(`⭐ ${score}`);
+    return parts.join(' • ');
+  }
+
+  function buildSearchCard(anime) {
+    const card = document.createElement('div');
+    card.className = 'anime-card search-result-card';
+    card.innerHTML = `
+      <div class="anime-thumbnail">
+        <img src="${anime.thumbnail || anime.cover || 'images/bg-default.jpg'}" alt="${anime.title || anime.name || 'Anime'}">
+        <div class="trailer-overlay">
+          <i class="fas fa-play"></i>
+          <p>Assistir</p>
+        </div>
+      </div>
+      <div class="anime-info">
+        <h3 class="anime-title">${anime.title || anime.name || 'Sem título'}</h3>
+        <p class="anime-meta">${buildAnimeMetaText(anime)}</p>
+      </div>
+    `;
+    card.style.cursor = 'pointer';
+    card.addEventListener('click', () => {
+      if (typeof window.openAnimeModal === 'function') {
+        window.openAnimeModal(anime);
+      }
+    });
+    return card;
+  }
+
+  function getSearchDataset() {
+    if (window.animeDB && Array.isArray(window.animeDB.animes)) return window.animeDB.animes;
+    if (Array.isArray(window.__searchCacheAnimes)) return window.__searchCacheAnimes;
+    return [];
+  }
+
+  async function ensureSearchDatasetLoaded() {
+    const current = getSearchDataset();
+    if (current.length) return current;
+
+    try {
+      const response = await fetch('anime-data.json', { cache: 'no-store' });
+      const data = await response.json();
+      window.__searchCacheAnimes = Array.isArray(data?.animes) ? data.animes : [];
+    } catch (error) {
+      window.__searchCacheAnimes = [];
+    }
+
+    return getSearchDataset();
+  }
+
+  function getSearchMatches(query, limit = 8) {
+    const source = getSearchDataset();
+    if (!source.length) return [];
+    const normalizedQuery = (query || '').trim().toLowerCase();
+    if (!normalizedQuery) return [];
+
+    return source
+      .filter(anime => {
+        const title = (anime.title || anime.name || '').toLowerCase();
+        const description = (anime.description || '').toLowerCase();
+        return title.includes(normalizedQuery) || description.includes(normalizedQuery);
+      })
+      .slice(0, limit);
+  }
+
+  function renderSearchResults(query) {
+    const inlineResults = document.getElementById('search-inline-results');
+    const searchClearBtn = document.getElementById('search-clear-btn');
+    if (!inlineResults) return;
+
+    const normalizedQuery = (query || '').trim();
+    if (!normalizedQuery) {
+      inlineResults.innerHTML = '';
+      inlineResults.classList.remove('active');
+      if (searchClearBtn) searchClearBtn.style.display = 'none';
+      return;
+    }
+
+    const filtered = getSearchMatches(normalizedQuery, 20);
+    inlineResults.innerHTML = '';
+
+    const header = document.createElement('div');
+    header.className = 'search-inline-header';
+    header.textContent = filtered.length
+      ? `Resultados para "${normalizedQuery}" (${filtered.length})`
+      : `Nenhum resultado para "${normalizedQuery}"`;
+    inlineResults.appendChild(header);
+
+    if (filtered.length) {
+      const list = document.createElement('div');
+      list.className = 'search-inline-list';
+
+      filtered.forEach(anime => {
+        const item = document.createElement('button');
+        item.type = 'button';
+        item.className = 'search-inline-item';
+        item.innerHTML = `
+          <img src="${anime.thumbnail || anime.cover || 'images/bg-default.jpg'}" alt="${anime.title || anime.name || 'Anime'}">
+          <span class="meta">
+            <span class="title">${anime.title || anime.name || 'Sem título'}</span>
+            <span class="type">${buildAnimeMetaText(anime)}</span>
+          </span>
+        `;
+        item.addEventListener('click', () => {
+          if (typeof window.openAnimeModal === 'function') {
+            window.openAnimeModal(anime);
+          }
+        });
+        list.appendChild(item);
+      });
+
+      inlineResults.appendChild(list);
+    }
+
+    inlineResults.classList.add('active');
+    if (searchClearBtn) searchClearBtn.style.display = 'inline-flex';
+  }
+
+  async function renderSearchSuggestions(query) {
+    const suggestionBox = document.getElementById('search-suggestions');
+    const searchInput = document.getElementById('search-input');
+    if (!suggestionBox || !searchInput) return;
+
+    await ensureSearchDatasetLoaded();
+    const matches = getSearchMatches(query, 6);
+    suggestionBox.innerHTML = '';
+
+    if (!query || !query.trim() || matches.length === 0) {
+      suggestionBox.classList.remove('active');
+      return;
+    }
+
+    matches.forEach(anime => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'search-suggestion-item';
+      button.innerHTML = `
+        <img src="${anime.thumbnail || anime.cover || 'images/bg-default.jpg'}" alt="${anime.title || anime.name || 'Anime'}">
+        <span class="title">${anime.title || anime.name || 'Sem título'}</span>
+      `;
+      button.addEventListener('click', () => {
+        searchInput.value = anime.title || anime.name || '';
+        suggestionBox.classList.remove('active');
+        renderSearchResults(searchInput.value);
+      });
+      suggestionBox.appendChild(button);
+    });
+
+    suggestionBox.classList.add('active');
+  }
+
+  const searchInput = document.getElementById('search-input');
+  const searchBtn = document.getElementById('search-btn');
+  const searchClearBtn = document.getElementById('search-clear-btn');
+  if (searchInput && searchBtn) {
+    const handleSearch = async () => {
+      await ensureSearchDatasetLoaded();
+      renderSearchResults(searchInput.value);
+      const suggestionBox = document.getElementById('search-suggestions');
+      if (suggestionBox) suggestionBox.classList.remove('active');
+    };
+
+    searchBtn.addEventListener('click', handleSearch);
+    searchInput.addEventListener('input', () => {
+      renderSearchSuggestions(searchInput.value);
+      renderSearchResults(searchInput.value);
+    });
+    searchInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        handleSearch();
+      }
+    });
+
+    document.addEventListener('click', (event) => {
+      const suggestionBox = document.getElementById('search-suggestions');
+      if (!suggestionBox) return;
+      const isInside = suggestionBox.contains(event.target) || searchInput.contains(event.target);
+      if (!isInside) suggestionBox.classList.remove('active');
+    });
+  }
+
+  if (searchClearBtn) {
+    searchClearBtn.addEventListener('click', () => {
+      const searchInput = document.getElementById('search-input');
+      const suggestionBox = document.getElementById('search-suggestions');
+      if (searchInput) searchInput.value = '';
+      if (suggestionBox) {
+        suggestionBox.innerHTML = '';
+        suggestionBox.classList.remove('active');
+      }
+      const inlineResults = document.getElementById('search-inline-results');
+      if (inlineResults) {
+        inlineResults.innerHTML = '';
+        inlineResults.classList.remove('active');
+      }
+
+      searchClearBtn.style.display = 'none';
+    });
+  }
+
+  ensureSearchDatasetLoaded();
+
   // Safe bindings
   const clearBtn = document.getElementById('clear-history');
   if (clearBtn) {
@@ -129,6 +440,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
+  if (applyMaintenanceMode()) return;
   const NEWS_DATA_URL = 'news-data.json';
   const NEWS_LAST_SEEN_KEY = 'aniVerseNewsLastSeen';
   const NEWS_TOAST_KEY = 'aniVerseNewsToastSeen';
@@ -819,6 +1131,111 @@ function onVideoSetSource(player, episode){
   setSource(0, { autoPlay: true, preserveTime: 0 });
 }
 
+function ensureModalAdminEditorUI() {
+  const info = document.querySelector('#video-modal .video-info');
+  if (!info) return null;
+
+  let wrap = document.getElementById('modal-admin-edit-wrap');
+  if (!wrap) {
+    wrap = document.createElement('div');
+    wrap.id = 'modal-admin-edit-wrap';
+    wrap.className = 'modal-admin-edit-wrap';
+    wrap.innerHTML = `
+      <button type="button" id="modal-admin-edit-btn" class="btn btn-secondary" style="display:none; margin-bottom:10px;">✏️ Editar este anime aqui</button>
+      <div id="modal-admin-edit-host" style="display:none;"></div>
+    `;
+    info.appendChild(wrap);
+
+    const btn = wrap.querySelector('#modal-admin-edit-btn');
+    const host = wrap.querySelector('#modal-admin-edit-host');
+    btn?.addEventListener('click', () => {
+      if (!host || !window.currentAnime) return;
+      const opening = host.style.display !== 'block';
+      host.style.display = opening ? 'block' : 'none';
+      if (opening) {
+        const ok = typeof window.openInlineEditorInHost === 'function'
+          ? window.openInlineEditorInHost(window.currentAnime.id, host)
+          : false;
+        if (!ok) {
+          host.innerHTML = '<div class="inplace-tip" style="padding:8px 0;">Ative o Modo Admin para editar aqui.</div>';
+        }
+      } else {
+        host.innerHTML = '';
+      }
+    });
+  }
+
+  return wrap;
+}
+
+function syncModalAdminEditorVisibility() {
+  const wrap = ensureModalAdminEditorUI();
+  if (!wrap) return;
+  const btn = wrap.querySelector('#modal-admin-edit-btn');
+  const host = wrap.querySelector('#modal-admin-edit-host');
+  const canEdit = !!(window.isAdminInlineMode && window.isAdminInlineMode());
+  if (btn) btn.style.display = canEdit ? 'inline-flex' : 'none';
+  if (!canEdit && host) {
+    host.style.display = 'none';
+    host.innerHTML = '';
+  }
+}
+
+
+
+function setupVideoLoadingIndicator() {
+  const player = document.getElementById('anime-player');
+  const overlay = document.getElementById('video-loading-overlay');
+  if (!player || !overlay) return;
+
+  let forcedVisible = false;
+  let phaseTimer = null;
+
+  const setLabel = (text) => {
+    const label = overlay.querySelector('.video-loading-text');
+    if (label && text) label.textContent = text;
+  };
+
+  const clearPhaseTimer = () => {
+    if (phaseTimer) {
+      clearTimeout(phaseTimer);
+      phaseTimer = null;
+    }
+  };
+
+  const show = (text) => {
+    setLabel(text || 'Carregando episódio...');
+    overlay.classList.add('visible');
+    clearPhaseTimer();
+    phaseTimer = setTimeout(() => {
+      if (overlay.classList.contains('visible')) {
+        setLabel('Conexão lenta... tentando estabilizar');
+      }
+    }, 4500);
+  };
+
+  const hide = () => {
+    if (forcedVisible) return;
+    clearPhaseTimer();
+    overlay.classList.remove('visible');
+  };
+
+  player.addEventListener('loadstart', () => show('Preparando vídeo...'));
+  player.addEventListener('waiting', () => show('Carregando episódio...'));
+  player.addEventListener('stalled', () => show('Conexão oscilando...'));
+  player.addEventListener('seeking', () => show('Buscando trecho...'));
+  player.addEventListener('canplay', hide);
+  player.addEventListener('playing', hide);
+  player.addEventListener('seeked', hide);
+
+  // Expose hook for other modules when forcing spinner is useful
+  window.setVideoLoadingOverlay = (visible, text) => {
+    forcedVisible = !!visible;
+    if (forcedVisible) show(text || 'Carregando episódio...');
+    else hide();
+  };
+}
+
 // openEpisode helper: set src, resume, banner, opening
 function openEpisode(anime, seasonNumber, episodeIndex){
   try {
@@ -899,6 +1316,10 @@ function openEpisode(anime, seasonNumber, episodeIndex){
     
     // Determine season name (custom or default)
     const seasonName = season && season.name ? season.name : `Temporada ${seasonNumber}`;
+
+    if (typeof window.syncEpisodeSelectors === 'function') {
+        window.syncEpisodeSelectors(anime, seasonNumber, episodeIndex);
+    }
     
     const sl = document.getElementById('current-season-label'), elb = document.getElementById('current-episode-label');
     if (sl) {
@@ -916,6 +1337,8 @@ function openEpisode(anime, seasonNumber, episodeIndex){
         seasonName: seasonName,
         episode: episodeIndex + 1
     };
+
+    syncModalAdminEditorVisibility();
     
     // Update video info overlay
     if (window.updateVideoOverlay) {
@@ -1050,6 +1473,7 @@ function preloadNextEpisodeIfNeeded(player){
 
 // Update progress periodically while video is playing
 document.addEventListener('DOMContentLoaded', () => {
+  if (applyMaintenanceMode()) return;
   const player = document.getElementById('anime-player');
   if (player) {
     let progressUpdateInterval = null;
@@ -1163,3 +1587,5 @@ window.addEventListener('animeDataLoaded', () => {
   try { if (typeof bindProfileModalControls === 'function') bindProfileModalControls(); } catch(e){}
   try { if (typeof renderMusicLibrary === 'function' && window.animeDB) renderMusicLibrary(window.animeDB.musicLibrary); } catch(e){}
 });
+
+window.addEventListener('adminModeChanged', syncModalAdminEditorVisibility);
