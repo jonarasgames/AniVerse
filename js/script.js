@@ -1,7 +1,7 @@
 /* js/script.js - core fixes: avoid videoLoadTimeout ReferenceError, onVideoSetSource, openEpisode, animeDataLoaded binds */
 let videoLoadTimeout = null;
 
-const MAINTENANCE_MODE = true; // true = ativa manutenção | false = site normal
+let MAINTENANCE_MODE = true; // true = ativa manutenção | false = site normal
 
 
 function ensureMaintenanceOverlay() {
@@ -36,6 +36,12 @@ function ensureMaintenanceOverlay() {
 function startMaintenanceAudio() {
   const audio = document.getElementById('maintenance-audio');
   if (!audio) return;
+  if (audio.dataset.boundMaintenanceAudio === '1') {
+    const tryReplay = () => audio.play().catch(() => {});
+    tryReplay();
+    return;
+  }
+  audio.dataset.boundMaintenanceAudio = '1';
   audio.volume = 0.22;
   audio.playbackRate = 0.92;
   try { audio.preservesPitch = false; } catch (_) {}
@@ -54,6 +60,12 @@ function startMaintenanceAudio() {
   document.addEventListener('touchstart', unlock, { once: true });
   document.addEventListener('keydown', unlock, { once: true });
 }
+
+
+window.setMaintenanceMode = function setMaintenanceMode(enabled) {
+  MAINTENANCE_MODE = !!enabled;
+  return applyMaintenanceMode();
+};
 
 function applyMaintenanceMode() {
   if (!MAINTENANCE_MODE) {
@@ -154,7 +166,7 @@ function applyMaintenanceMode() {
 })();
 
 document.addEventListener('DOMContentLoaded', () => {
-  if (applyMaintenanceMode()) return;
+  applyMaintenanceMode();
   setupVideoLoadingIndicator();
 
   // Navigation handling
@@ -440,7 +452,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-  if (applyMaintenanceMode()) return;
+  applyMaintenanceMode();
   const NEWS_DATA_URL = 'news-data.json';
   const NEWS_LAST_SEEN_KEY = 'aniVerseNewsLastSeen';
   const NEWS_TOAST_KEY = 'aniVerseNewsToastSeen';
@@ -835,7 +847,7 @@ function showVideoError(msg){
   let el = document.getElementById('video-error-container');
   if (!el){
     el = document.createElement('div'); el.id = 'video-error-container';
-    Object.assign(el.style, { position:'absolute', top:'50%', left:'50%', transform:'translate(-50%,-50%)', background:'rgba(0,0,0,0.78)', color:'#fff', padding:'10px 14px', borderRadius:'8px', zIndex:100010, pointerEvents:'none' });
+    Object.assign(el.style, { position:'absolute', left:'50%', bottom:'14%', transform:'translateX(-50%)', background:'rgba(0,0,0,0.78)', color:'#fff', padding:'10px 14px', borderRadius:'10px', zIndex:1001, pointerEvents:'none', maxWidth:'min(88%, 460px)', textAlign:'center' });
     (document.getElementById('video-player-container') || document.body).appendChild(el);
   }
   el.textContent = msg;
@@ -1473,7 +1485,7 @@ function preloadNextEpisodeIfNeeded(player){
 
 // Update progress periodically while video is playing
 document.addEventListener('DOMContentLoaded', () => {
-  if (applyMaintenanceMode()) return;
+  applyMaintenanceMode();
   const player = document.getElementById('anime-player');
   if (player) {
     let progressUpdateInterval = null;

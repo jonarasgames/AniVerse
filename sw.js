@@ -1,5 +1,5 @@
-const STATIC_CACHE = 'aniverse-static-v7';
-const RUNTIME_CACHE = 'aniverse-runtime-v7';
+const STATIC_CACHE = 'aniverse-static-v9';
+const RUNTIME_CACHE = 'aniverse-runtime-v9';
 
 const APP_SHELL = [
   './',
@@ -82,6 +82,11 @@ function shouldBypassForMedia(request) {
 
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
+
+  const url = new URL(event.request.url);
+  // Never intercept cross-origin requests (e.g. Catbox media).
+  if (url.origin !== self.location.origin) return;
+
   if (shouldBypassForMedia(event.request)) return;
 
   if (shouldNetworkFirst(event.request)) {
