@@ -1,7 +1,7 @@
 /* js/script.js - core fixes: avoid videoLoadTimeout ReferenceError, onVideoSetSource, openEpisode, animeDataLoaded binds */
 let videoLoadTimeout = null;
 
-const MAINTENANCE_MODE = false; // true = ativa manutenção | false = site normal
+const MAINTENANCE_MODE = true; // true = ativa manutenção | false = site normal
 
 function startMaintenanceAudio() {
   const audio = document.getElementById('maintenance-audio');
