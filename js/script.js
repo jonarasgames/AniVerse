@@ -3,6 +3,36 @@ let videoLoadTimeout = null;
 
 const MAINTENANCE_MODE = true; // true = ativa manutenção | false = site normal
 
+
+function ensureMaintenanceOverlay() {
+  let overlay = document.getElementById('maintenance-overlay');
+  if (overlay) return overlay;
+
+  overlay = document.createElement('div');
+  overlay.id = 'maintenance-overlay';
+  overlay.setAttribute('aria-hidden', 'true');
+  overlay.innerHTML = `
+    <div class="maintenance-content">
+      <h1>MANUTENÇÃO</h1>
+      <p>Fique ligado no nosso X para atualizações e recomende algum anime do MyAnimeList no nosso Forms</p>
+      <div class="maintenance-links">
+        <a href="https://myanimelist.net/anime.php" target="_blank" rel="noopener noreferrer" class="maintenance-link" title="MyAnimeList">
+          <img src="https://files.catbox.moe/vrvxy5.webp" alt="MyAnimeList">
+        </a>
+        <a href="https://x.com/AniVerseSite" target="_blank" rel="noopener noreferrer" class="maintenance-link" title="X">
+          <img src="https://files.catbox.moe/l55utf.webp" alt="X">
+        </a>
+        <a href="https://forms.gle/bu4tXPzUSahNKtzg8" target="_blank" rel="noopener noreferrer" class="maintenance-link" title="Forms">
+          <img src="https://files.catbox.moe/rv1soq.webp" alt="Forms">
+        </a>
+      </div>
+      <audio id="maintenance-audio" src="https://files.catbox.moe/z0bun6.mp3" preload="auto" loop></audio>
+    </div>
+  `;
+  document.body.prepend(overlay);
+  return overlay;
+}
+
 function startMaintenanceAudio() {
   const audio = document.getElementById('maintenance-audio');
   if (!audio) return;
@@ -26,12 +56,17 @@ function startMaintenanceAudio() {
 }
 
 function applyMaintenanceMode() {
-  if (!MAINTENANCE_MODE) return false;
-  const overlay = document.getElementById('maintenance-overlay');
-  if (!overlay) {
-    console.warn('[AniVerse] Maintenance mode enabled, but #maintenance-overlay was not found. Skipping maintenance mode to avoid blank screen.');
+  if (!MAINTENANCE_MODE) {
+    document.body.classList.remove('maintenance-active');
+    const currentOverlay = document.getElementById('maintenance-overlay');
+    if (currentOverlay) {
+      currentOverlay.classList.remove('active');
+      currentOverlay.setAttribute('aria-hidden', 'true');
+    }
     return false;
   }
+
+  const overlay = ensureMaintenanceOverlay();
   document.body.classList.add('maintenance-active');
   overlay.classList.add('active');
   overlay.setAttribute('aria-hidden', 'false');
