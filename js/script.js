@@ -27,24 +27,28 @@ function startMaintenanceAudio() {
 
 function applyMaintenanceMode() {
   if (!MAINTENANCE_MODE) return false;
-  document.body.classList.add('maintenance-active');
   const overlay = document.getElementById('maintenance-overlay');
-  if (overlay) {
-    overlay.classList.add('active');
-    overlay.setAttribute('aria-hidden', 'false');
-    const title = overlay.querySelector('.maintenance-content h1');
-    const message = overlay.querySelector('.maintenance-content p');
-    if (title) {
-      title.style.color = '#fff';
-      title.style.webkitTextFillColor = '#fff';
-      title.style.opacity = '1';
-    }
-    if (message) {
-      message.style.color = '#fff';
-      message.style.webkitTextFillColor = '#fff';
-      message.style.opacity = '1';
-    }
+  if (!overlay) {
+    console.warn('[AniVerse] Maintenance mode enabled, but #maintenance-overlay was not found. Skipping maintenance mode to avoid blank screen.');
+    return false;
   }
+  document.body.classList.add('maintenance-active');
+  overlay.classList.add('active');
+  overlay.setAttribute('aria-hidden', 'false');
+
+  const title = overlay.querySelector('.maintenance-content h1');
+  const message = overlay.querySelector('.maintenance-content p');
+  if (title) {
+    title.style.color = '#fff';
+    title.style.webkitTextFillColor = '#fff';
+    title.style.opacity = '1';
+  }
+  if (message) {
+    message.style.color = '#fff';
+    message.style.webkitTextFillColor = '#fff';
+    message.style.opacity = '1';
+  }
+
   startMaintenanceAudio();
   return true;
 }
