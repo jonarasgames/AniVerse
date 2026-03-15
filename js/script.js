@@ -1039,6 +1039,56 @@ function onVideoSetSource(player, episode){
   setSource(0, { autoPlay: true, preserveTime: 0 });
 }
 
+function ensureModalAdminEditorUI() {
+  const info = document.querySelector('#video-modal .video-info');
+  if (!info) return null;
+
+  let wrap = document.getElementById('modal-admin-edit-wrap');
+  if (!wrap) {
+    wrap = document.createElement('div');
+    wrap.id = 'modal-admin-edit-wrap';
+    wrap.className = 'modal-admin-edit-wrap';
+    wrap.innerHTML = `
+      <button type="button" id="modal-admin-edit-btn" class="btn btn-secondary" style="display:none; margin-bottom:10px;">✏️ Editar este anime aqui</button>
+      <div id="modal-admin-edit-host" style="display:none;"></div>
+    `;
+    info.appendChild(wrap);
+
+    const btn = wrap.querySelector('#modal-admin-edit-btn');
+    const host = wrap.querySelector('#modal-admin-edit-host');
+    btn?.addEventListener('click', () => {
+      if (!host || !window.currentAnime) return;
+      const opening = host.style.display !== 'block';
+      host.style.display = opening ? 'block' : 'none';
+      if (opening) {
+        const ok = typeof window.openInlineEditorInHost === 'function'
+          ? window.openInlineEditorInHost(window.currentAnime.id, host)
+          : false;
+        if (!ok) {
+          host.innerHTML = '<div class="inplace-tip" style="padding:8px 0;">Ative o Modo Admin para editar aqui.</div>';
+        }
+      } else {
+        host.innerHTML = '';
+      }
+    });
+  }
+
+  return wrap;
+}
+
+function syncModalAdminEditorVisibility() {
+  const wrap = ensureModalAdminEditorUI();
+  if (!wrap) return;
+  const btn = wrap.querySelector('#modal-admin-edit-btn');
+  const host = wrap.querySelector('#modal-admin-edit-host');
+  const canEdit = !!(window.isAdminInlineMode && window.isAdminInlineMode());
+  if (btn) btn.style.display = canEdit ? 'inline-flex' : 'none';
+  if (!canEdit && host) {
+    host.style.display = 'none';
+    host.innerHTML = '';
+  }
+}
+
 // openEpisode helper: set src, resume, banner, opening
 function openEpisode(anime, seasonNumber, episodeIndex){
   try {
@@ -1140,6 +1190,8 @@ function openEpisode(anime, seasonNumber, episodeIndex){
         seasonName: seasonName,
         episode: episodeIndex + 1
     };
+
+    syncModalAdminEditorVisibility();
     
     // Update video info overlay
     if (window.updateVideoOverlay) {
@@ -1387,3 +1439,5 @@ window.addEventListener('animeDataLoaded', () => {
   try { if (typeof bindProfileModalControls === 'function') bindProfileModalControls(); } catch(e){}
   try { if (typeof renderMusicLibrary === 'function' && window.animeDB) renderMusicLibrary(window.animeDB.musicLibrary); } catch(e){}
 });
+
+window.addEventListener('adminModeChanged', syncModalAdminEditorVisibility);

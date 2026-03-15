@@ -4277,6 +4277,15 @@ body.dark-mode .age-rating-section {
     transform: translateY(0);
 }
 
+
+#admin-inline-help {
+    font-size: 12px;
+    color: #dfe6ff;
+    align-items: center;
+    padding: 0 6px;
+    white-space: nowrap;
+}
+
 .admin-editable-card {
     outline: 2px dashed rgba(255, 73, 94, 0.6);
     position: relative;
@@ -4336,6 +4345,19 @@ body.dark-mode .age-rating-section {
     font-size: 0.82rem;
 }
 
+
+.inplace-extra-details {
+    grid-column: 1 / -1;
+    border: 1px dashed rgba(255,255,255,0.22);
+    border-radius: 10px;
+    padding: 8px;
+}
+
+.inplace-extra-details > summary {
+    cursor: pointer;
+    font-size: 0.85rem;
+    margin-bottom: 8px;
+}
 .inplace-grid input,
 .inplace-grid textarea,
 .inplace-season input,
@@ -4368,6 +4390,22 @@ body.dark-mode .age-rating-section {
 
 .inplace-episode {
     margin-top: 6px;
+}
+
+.inplace-season-basics,
+.inplace-extra-fields {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.inplace-extra-fields label,
+.inplace-season-basics label {
+    display: grid;
+    gap: 4px;
+    font-size: 0.78rem;
 }
 
 .inplace-opening-actions {
@@ -4495,4 +4533,25 @@ html.theme-light .inplace-duration-view {
     background: #f3f5f7;
     color: #111;
     border-color: rgba(0,0,0,0.2);
+}
+
+
+/* Video modal admin editing + scroll fix */
+#video-modal .modal-content {
+    max-height: 95vh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+}
+
+#modal-admin-edit-host {
+    margin-top: 8px;
+    border: 1px solid rgba(255,255,255,0.16);
+    border-radius: 10px;
+    padding: 10px;
+    background: rgba(0,0,0,0.16);
+}
+
+#video-modal .video-info {
+    overflow: visible;
 }

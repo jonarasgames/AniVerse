@@ -38,6 +38,19 @@
     return 0;
   }
 
+  function parseLooseValue(raw) {
+    const text = toText(raw).trim();
+    if (!text) return '';
+    if (text === 'true') return true;
+    if (text === 'false') return false;
+    if (text === 'null') return null;
+    if (/^-?\d+(\.\d+)?$/.test(text)) return Number(text);
+    if ((text.startsWith('{') && text.endsWith('}')) || (text.startsWith('[') && text.endsWith(']'))) {
+      try { return JSON.parse(text); } catch (_) { return text; }
+    }
+    return text;
+  }
+
   function parseLines(value) {
     return String(value || '').split('\n').map((v) => v.trim()).filter(Boolean);
   }
@@ -170,6 +183,45 @@
     return out;
   }
 
+  function collectExtraPairs(obj, excludedKeys) {
+    const excluded = new Set(excludedKeys || []);
+    const pairs = [];
+    Object.keys(obj || {}).forEach((k) => {
+      if (excluded.has(k)) return;
+      const value = obj[k];
+      if (value === undefined) return;
+      if (typeof value === 'object' && value !== null) {
+        pairs.push([k, JSON.stringify(value)]);
+      } else {
+        pairs.push([k, toText(value)]);
+      }
+    });
+    return pairs;
+  }
+
+
+  function getCoreFieldValue(anime, key) {
+    if (key === 'scoreUnified') return toText(anime?.rating ?? anime?.score ?? anime?.nota ?? '');
+    if (key === 'yearUnified') return toText(anime?.year ?? anime?.releaseYear ?? anime?.ano ?? anime?.launchYear ?? '');
+    return toText(anime?.[key] ?? '');
+  }
+
+  function renderCoreFields(anime) {
+    const fields = [
+      ['title', 'Título'],
+      ['description', 'Descrição'],
+      ['type', 'Tipo (anime/movie/ova)'],
+      ['yearUnified', 'Ano'],
+      ['scoreUnified', 'Nota'],
+      ['thumbnail', 'Thumbnail'],
+      ['cover', 'Capa'],
+      ['banner', 'Banner'],
+      ['trailer', 'Trailer'],
+      ['dateAdded', 'Data de adição']
+    ];
+    return fields.map(([k, label]) => `<label>${label}<input data-core="${k}" value="${escAttr(getCoreFieldValue(anime, k))}"></label>`).join('');
+  }
+
   function renderTypeChoices(selected) {
     const opts = ['anime', 'movie', 'ova'];
     return `
@@ -221,9 +273,11 @@
     const seasons = Array.isArray(anime.seasons) ? anime.seasons : [];
     return seasons.map((season, sIdx) => {
       const episodes = Array.isArray(season.episodes) ? season.episodes : [];
+      const seasonExtras = collectExtraPairs(season, ['number', 'name', 'episodes']);
       const eps = episodes.map((ep, eIdx) => {
         const opStart = Number(ep?.opening?.start ?? 0);
         const opEnd = Number(ep?.opening?.end ?? 0);
+        const epExtras = collectExtraPairs(ep, ['title', 'duration', 'videoUrl', 'opening']);
         return `
         <div class="inplace-episode" data-s="${sIdx}" data-e="${eIdx}">
           <input data-ep="title" placeholder="Título" value="${escAttr(ep?.title)}">
@@ -241,6 +295,7 @@
           <button type="button" class="btn btn-secondary inplace-read-duration">Ler tempo</button>
           <button type="button" class="btn btn-secondary inplace-preview-episode">Preview Vídeo</button>
           <button type="button" class="btn btn-secondary inplace-remove-episode">Remover EP</button>
+          ${epExtras.length ? `<div class="inplace-extra-fields">${epExtras.map(([k, v]) => `<label>${k}<input data-ep-extra-key="${escAttr(k)}" value="${escAttr(v)}"></label>`).join('')}</div>` : ''}
         </div>`;
       }).join('');
       return `
@@ -250,6 +305,11 @@
             <button type="button" class="btn btn-secondary inplace-add-episode">+ Episódio</button>
             <button type="button" class="btn btn-secondary inplace-remove-season">Remover Temporada</button>
           </div>
+          <div class="inplace-season-basics">
+            <label>Número da temporada<input data-season="number" value="${escAttr(season?.number ?? (sIdx + 1))}"></label>
+            <label>Nome da temporada<input data-season="name" value="${escAttr(season?.name || '')}"></label>
+          </div>
+          ${seasonExtras.length ? `<div class="inplace-extra-fields">${seasonExtras.map(([k, v]) => `<label>${k}<input data-season-extra-key="${escAttr(k)}" value="${escAttr(v)}"></label>`).join('')}</div>` : ''}
           ${eps}
         </div>
       `;
@@ -414,7 +474,8 @@
               ${options.ratingAge.map((r) => `<option value="${escAttr(r)}" ${(anime.rating_age === r) ? 'selected' : ''}>${r}</option>`).join('')}
             </select>
           </label>
-          ${topLevelFields(anime).map(([k, v]) => `<label>${k}<input data-k="${k}" value="${escAttr(v)}"></label>`).join('')}
+          ${renderCoreFields(anime)}
+          <details class="inplace-extra-details"><summary>Campos extras do anime</summary>${topLevelFields(anime).map(([k, v]) => `<label>${k}<input data-k="${k}" value="${escAttr(v)}"></label>`).join('')}</details>
         </div>
 
         ${renderTagChecklist('Categorias', 'categories', categoriesCurrent, options.categories)}
@@ -544,8 +605,25 @@
       const typeBtn = card.querySelector('[data-type-choice].active');
       anime.type = typeBtn?.dataset.typeChoice || anime.type || 'anime';
 
+      card.querySelectorAll('[data-core]').forEach((el) => {
+        const key = el.dataset.core;
+        const value = el.value;
+        if (key === 'scoreUnified') {
+          anime.rating = value;
+          anime.score = value;
+          anime.nota = value;
+        } else if (key === 'yearUnified') {
+          anime.year = value;
+          anime.releaseYear = value;
+          anime.ano = value;
+          anime.launchYear = value;
+        } else {
+          anime[key] = value;
+        }
+      });
+
       card.querySelectorAll('[data-k]').forEach((el) => {
-        anime[el.dataset.k] = el.value;
+        anime[el.dataset.k] = parseLooseValue(el.value);
       });
 
       anime.categories = readChecked(card, 'categories');
@@ -566,6 +644,26 @@
         const opStart = parseTimeToSeconds(row.querySelector('input[data-ep="openingStart"]')?.value || 0);
         const opEnd = parseTimeToSeconds(row.querySelector('input[data-ep="openingEnd"]')?.value || 0);
         target.opening = { start: opStart, end: Math.max(opEnd, opStart) };
+        row.querySelectorAll('input[data-ep-extra-key]').forEach((extra) => {
+          const key = extra.dataset.epExtraKey;
+          if (!key) return;
+          target[key] = parseLooseValue(extra.value);
+        });
+      });
+
+      card.querySelectorAll('.inplace-season').forEach((seasonRow) => {
+        const sIdx = Number(seasonRow.dataset.s);
+        const targetSeason = anime.seasons?.[sIdx];
+        if (!targetSeason) return;
+        const numberValue = seasonRow.querySelector('input[data-season="number"]')?.value;
+        const parsedNumber = Number(numberValue);
+        targetSeason.number = Number.isFinite(parsedNumber) && parsedNumber > 0 ? parsedNumber : (sIdx + 1);
+        targetSeason.name = seasonRow.querySelector('input[data-season="name"]')?.value || '';
+        seasonRow.querySelectorAll('input[data-season-extra-key]').forEach((extra) => {
+          const key = extra.dataset.seasonExtraKey;
+          if (!key) return;
+          targetSeason[key] = parseLooseValue(extra.value);
+        });
       });
 
       const db = getDB();
@@ -683,14 +781,26 @@
     applyDBAndRerender();
   }
 
+  function closeVideoModalIfOpen() {
+    const modal = byId('video-modal');
+    if (!modal || !modal.classList.contains('show')) return;
+    const close = byId('close-video');
+    if (close) close.click();
+  }
+
   function toggleAdmin(force) {
     adminEnabled = force !== undefined ? !!force : !adminEnabled;
     document.body.classList.toggle('admin-inline-mode', adminEnabled);
-    if (adminEnabled) decorateEditableCards();
-    else {
+    if (adminEnabled) {
+      closeVideoModalIfOpen();
+      decorateEditableCards();
+      const catalog = byId('full-catalog');
+      catalog?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
       clearAdminDecorations();
       applyDBAndRerender();
     }
+    window.dispatchEvent(new Event('adminModeChanged'));
   }
 
   function ensureAdminBar() {
@@ -704,6 +814,7 @@
       <button id="admin-inline-add-ova" class="btn btn-secondary" type="button" style="display:none">+ OVA</button>
       <button id="admin-inline-download" class="btn btn-secondary" type="button" style="display:none">Baixar JSON</button>
       <button id="admin-inline-exit" class="btn btn-secondary" type="button" style="display:none">Sair edição</button>
+      <span id="admin-inline-help" style="display:none">Clique no ✏️ dos cards no Catálogo Completo para editar visualmente</span>
     `;
     document.body.appendChild(bar);
 
@@ -713,9 +824,11 @@
     const addAnime = byId('admin-inline-add-anime');
     const addMovie = byId('admin-inline-add-movie');
     const addOva = byId('admin-inline-add-ova');
+    const helpText = byId('admin-inline-help');
 
     function syncButtons() {
       [exitBtn, dlBtn, addAnime, addMovie, addOva].forEach((el) => { if (el) el.style.display = adminEnabled ? 'inline-flex' : 'none'; });
+      if (helpText) helpText.style.display = adminEnabled ? 'inline-flex' : 'none';
       if (toggleBtn) toggleBtn.textContent = adminEnabled ? 'Modo Admin ativo' : 'Admin';
       bar.classList.toggle('visible', adminUnlocked);
     }
@@ -755,6 +868,16 @@
     syncButtons();
   }
 
+
+  function openInlineEditorInHost(animeId, hostElement) {
+    if (!adminEnabled || !hostElement) return false;
+    const anime = getAnimeById(animeId);
+    if (!anime) return false;
+    hostElement.classList.add('admin-modal-edit-host');
+    enterEditMode(hostElement, clone(anime), false);
+    return true;
+  }
+
   function init() {
     ensureAdminBar();
 
@@ -774,6 +897,9 @@
     });
     mo.observe(document.body, { childList: true, subtree: true });
   }
+
+  window.openInlineEditorInHost = openInlineEditorInHost;
+  window.isAdminInlineMode = () => adminEnabled;
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
