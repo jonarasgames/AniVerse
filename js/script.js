@@ -1189,14 +1189,34 @@ function setupVideoLoadingIndicator() {
   if (!player || !overlay) return;
 
   let forcedVisible = false;
+  let phaseTimer = null;
 
-  const show = (text) => {
+  const setLabel = (text) => {
     const label = overlay.querySelector('.video-loading-text');
     if (label && text) label.textContent = text;
-    overlay.classList.add('visible');
   };
+
+  const clearPhaseTimer = () => {
+    if (phaseTimer) {
+      clearTimeout(phaseTimer);
+      phaseTimer = null;
+    }
+  };
+
+  const show = (text) => {
+    setLabel(text || 'Carregando episódio...');
+    overlay.classList.add('visible');
+    clearPhaseTimer();
+    phaseTimer = setTimeout(() => {
+      if (overlay.classList.contains('visible')) {
+        setLabel('Conexão lenta... tentando estabilizar');
+      }
+    }, 4500);
+  };
+
   const hide = () => {
     if (forcedVisible) return;
+    clearPhaseTimer();
     overlay.classList.remove('visible');
   };
 

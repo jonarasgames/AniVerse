@@ -4695,13 +4695,15 @@ html.theme-light .inplace-duration-view {
     z-index: 1200;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 14px;
     align-items: center;
     justify-content: center;
-    background: radial-gradient(circle, rgba(3,6,18,0.38) 0%, rgba(2,4,12,0.72) 60%, rgba(2,3,10,0.84) 100%);
+    background:
+      radial-gradient(circle at 50% 36%, rgba(80, 55, 180, 0.22) 0%, rgba(3, 7, 22, 0.25) 42%, rgba(2, 4, 14, 0.86) 100%),
+      linear-gradient(180deg, rgba(3, 5, 18, 0.52) 0%, rgba(2, 3, 12, 0.88) 100%);
     opacity: 0;
     pointer-events: none;
-    transition: opacity .2s ease;
+    transition: opacity .22s ease;
 }
 
 .video-loading-overlay.visible {
@@ -4709,24 +4711,72 @@ html.theme-light .inplace-duration-view {
 }
 
 .video-loading-orb {
-    width: 62px;
-    height: 62px;
+    width: 76px;
+    height: 76px;
     border-radius: 50%;
-    background: conic-gradient(from 0deg, #ff355e, #ff9f1c, #4cc9f0, #ff355e);
-    -webkit-mask: radial-gradient(circle, transparent 58%, #000 60%);
-    mask: radial-gradient(circle, transparent 58%, #000 60%);
-    animation: aniverseSpin .9s linear infinite;
-    box-shadow: 0 0 24px rgba(255, 99, 132, 0.45);
+    background: conic-gradient(from 0deg, #5b7cff 0deg, #7f51ff 120deg, #1ec9ff 240deg, #5b7cff 360deg);
+    -webkit-mask: radial-gradient(circle, transparent 56%, #000 58%);
+    mask: radial-gradient(circle, transparent 56%, #000 58%);
+    animation: aniverseSpin .95s linear infinite;
+    box-shadow: 0 0 0 1px rgba(164, 182, 255, .25), 0 0 34px rgba(92, 145, 255, 0.55);
+    position: relative;
+}
+
+.video-loading-orb::after {
+    content: '';
+    position: absolute;
+    inset: 10px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,.18);
+    border-top-color: rgba(255,255,255,.85);
+    animation: aniverseSpinReverse 1.4s linear infinite;
 }
 
 .video-loading-text {
-    font-weight: 700;
+    font-weight: 800;
     font-size: 14px;
     color: #fff;
-    text-shadow: 0 2px 12px rgba(0,0,0,.45);
-    letter-spacing: .3px;
+    text-shadow: 0 2px 12px rgba(0,0,0,.55);
+    letter-spacing: .25px;
+    text-align: center;
+}
+
+.video-loading-text::after {
+    content: ' • sem travar';
+    font-weight: 500;
+    opacity: .78;
+}
+
+.video-loading-overlay::after {
+    content: '';
+    width: min(220px, 62vw);
+    height: 4px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.15);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.12);
+}
+
+.video-loading-overlay::before {
+    content: '';
+    position: absolute;
+    width: min(220px, 62vw);
+    height: 4px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, rgba(127,81,255,.05), rgba(89,148,255,.95), rgba(127,81,255,.05));
+    transform: translateY(48px);
+    animation: aniverseProgress 1.2s ease-in-out infinite;
 }
 
 @keyframes aniverseSpin {
     to { transform: rotate(360deg); }
+}
+
+@keyframes aniverseSpinReverse {
+    to { transform: rotate(-360deg); }
+}
+
+@keyframes aniverseProgress {
+    0% { clip-path: inset(0 100% 0 0); }
+    50% { clip-path: inset(0 0 0 0); }
+    100% { clip-path: inset(0 0 0 100%); }
 }

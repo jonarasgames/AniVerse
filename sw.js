@@ -1,5 +1,5 @@
-const STATIC_CACHE = 'aniverse-static-v6';
-const RUNTIME_CACHE = 'aniverse-runtime-v6';
+const STATIC_CACHE = 'aniverse-static-v7';
+const RUNTIME_CACHE = 'aniverse-runtime-v7';
 
 const APP_SHELL = [
   './',
@@ -65,8 +65,25 @@ async function cacheFirst(request) {
   return response;
 }
 
+function shouldBypassForMedia(request) {
+  const url = new URL(request.url);
+
+  if (request.headers.has('range')) return true;
+  if (request.destination === 'video' || request.destination === 'audio') return true;
+
+  const isMediaFile = /\.(mp4|m4v|webm|mov|m3u8|mp3|m4a|aac|wav|ogg)(\?|$)/i.test(url.pathname + url.search);
+  if (isMediaFile) return true;
+
+  // Catbox media can fail in some Chromium contexts when intercepted/cached by SW.
+  if (url.hostname.endsWith('catbox.moe') && isMediaFile) return true;
+
+  return false;
+}
+
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
+  if (shouldBypassForMedia(event.request)) return;
+
   if (shouldNetworkFirst(event.request)) {
     event.respondWith(networkFirst(event.request));
     return;
