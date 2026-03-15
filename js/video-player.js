@@ -1,7 +1,7 @@
 /* js/video-player.js - robust player: click-to-pause, skip-controller, PiP fallback, container fullscreen */
 (function(){
   function safe(id){ return document.getElementById(id); }
-  function showVideoError(msg){ let el=document.getElementById('video-error-container'); if(!el){ el=document.createElement('div'); el.id='video-error-container'; Object.assign(el.style,{position:'absolute',top:'50%',left:'50%',transform:'translate(-50%,-50%)',background:'rgba(0,0,0,0.78)',color:'#fff',padding:'10px 14px',borderRadius:'8px',zIndex:100010,pointerEvents:'none'}); (document.getElementById('video-player-container')||document.body).appendChild(el);} el.textContent=msg; }
+  function showVideoError(msg){ let el=document.getElementById('video-error-container'); if(!el){ el=document.createElement('div'); el.id='video-error-container'; Object.assign(el.style,{position:'absolute',left:'50%',bottom:'14%',transform:'translateX(-50%)',background:'rgba(0,0,0,0.78)',color:'#fff',padding:'10px 14px',borderRadius:'10px',zIndex:1001,pointerEvents:'none',maxWidth:'min(88%, 460px)',textAlign:'center'}); (document.getElementById('video-player-container')||document.body).appendChild(el);} el.textContent=msg; }
   function clearVideoError(){ const el=document.getElementById('video-error-container'); if(el) el.remove(); }
 
   function SkipController(player, skipId){
