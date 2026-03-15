@@ -29,6 +29,26 @@
   // Export for use in other files
   window.AGE_RATING_IMAGES = AGE_RATING_IMAGES;
 
+
+  function getAnimeYear(anime) {
+    return anime?.year || anime?.releaseYear || anime?.ano || anime?.launchYear || anime?.release_date?.slice?.(0,4) || null;
+  }
+
+  function getAnimeScore(anime) {
+    const value = anime?.rating ?? anime?.score ?? anime?.nota;
+    if (value === null || value === undefined || value === '') return null;
+    return String(value);
+  }
+
+  function buildAnimeMeta(anime) {
+    const parts = [String(anime?.type || 'anime').toUpperCase()];
+    const year = getAnimeYear(anime);
+    const score = getAnimeScore(anime);
+    if (year) parts.push(String(year));
+    if (score) parts.push(`⭐ ${score}`);
+    return parts.join(' • ');
+  }
+
   // Create an anime card element
   function createAnimeCard(anime) {
     if (!anime) return null;
@@ -42,9 +62,12 @@
     const type = escapeHtml(anime.type || 'anime');
     const ageRatingBadge = getAgeRatingBadge(anime.rating_age);
     
+    const trailer = anime.trailer || '';
+
     card.innerHTML = `
       <div class="anime-thumbnail">
         <img src="${escapeHtml(thumbnail)}" alt="${title}">
+        <video class="card-hover-trailer" muted playsinline preload="metadata" loop style="display:none"></video>
         <div class="trailer-overlay">
           <i class="fas fa-play"></i>
           <p>Assistir</p>
@@ -53,14 +76,41 @@
       </div>
       <div class="anime-info">
         <h3 class="anime-title">${title}</h3>
-        <p class="anime-meta">${type.toUpperCase()}</p>
+        <p class="anime-meta">${buildAnimeMeta(anime)}</p>
       </div>
     `;
-    
+
+    const trailerVideo = card.querySelector('.card-hover-trailer');
+    let hoverTimer = null;
+
+    card.addEventListener('mouseenter', () => {
+      if (!trailer || !trailerVideo) return;
+      clearTimeout(hoverTimer);
+      hoverTimer = setTimeout(() => {
+        trailerVideo.src = trailer;
+        trailerVideo.style.display = 'block';
+        trailerVideo.play().catch(() => {});
+        card.classList.add('playing-hover-trailer');
+      }, 5000);
+    });
+
+    card.addEventListener('mouseleave', () => {
+      clearTimeout(hoverTimer);
+      if (!trailerVideo) return;
+      trailerVideo.pause();
+      trailerVideo.removeAttribute('src');
+      trailerVideo.load();
+      trailerVideo.style.display = 'none';
+      card.classList.remove('playing-hover-trailer');
+    });
+
     // Add click handler to open video modal
     card.style.cursor = 'pointer';
-    card.addEventListener('click', () => openAnimeModal(anime));
-    
+    card.addEventListener('click', () => {
+      if (document.body.classList.contains('admin-inline-mode')) return;
+      openAnimeModal(anime);
+    });
+
     return card;
   }
 
@@ -96,7 +146,11 @@
     `;
     
     card.style.cursor = 'pointer';
-    card.addEventListener('click', () => {
+    card.addEventListener('click', async () => {
+      if (!navigator.onLine && typeof window.playDownloadedEpisodeFromContinue === 'function') {
+        const playedOffline = await window.playDownloadedEpisodeFromContinue(anime);
+        if (playedOffline) return;
+      }
       openAnimeModal(anime, season, episode - 1);
     });
     
@@ -162,6 +216,26 @@
     modal.style.display = 'flex';
     document.body.style.overflow = 'hidden';
   }
+
+
+  window.syncEpisodeSelectors = function(anime, seasonNumber, episodeIndex) {
+    if (!anime || !anime.seasons) return;
+
+    const seasonSelect = document.getElementById('season-select');
+    if (seasonSelect) {
+      const targetSeason = String(seasonNumber);
+      if (seasonSelect.value !== targetSeason) {
+        seasonSelect.value = targetSeason;
+      }
+    }
+
+    populateEpisodes(anime, seasonNumber, episodeIndex);
+
+    const refreshedEpisodeSelect = document.getElementById('episode-select');
+    if (refreshedEpisodeSelect) {
+      refreshedEpisodeSelect.value = String(episodeIndex);
+    }
+  };
 
   function populateEpisodes(anime, seasonNumber, selectedEpisodeIndex) {
     const episodeSelect = document.getElementById('episode-select');
@@ -275,7 +349,7 @@
     if (!grid) return;
     
     grid.innerHTML = '';
-    const animes = window.animeDB.animes.slice(0, 24);
+    const animes = Array.isArray(window.animeDB.animes) ? window.animeDB.animes : [];
     
     animes.forEach(anime => {
       const card = createAnimeCard(anime);
