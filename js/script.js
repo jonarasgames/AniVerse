@@ -1,7 +1,7 @@
 /* js/script.js - core fixes: avoid videoLoadTimeout ReferenceError, onVideoSetSource, openEpisode, animeDataLoaded binds */
 let videoLoadTimeout = null;
 
-let MAINTENANCE_MODE = true; // true = ativa manutenção | false = site normal
+let MAINTENANCE_MODE = false; // true = ativa manutenção | false = site normal
 
 
 function ensureMaintenanceOverlay() {
