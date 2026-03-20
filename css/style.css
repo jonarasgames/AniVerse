@@ -4780,3 +4780,16 @@ html.theme-light .inplace-duration-view {
     50% { clip-path: inset(0 0 0 0); }
     100% { clip-path: inset(0 0 0 100%); }
 }
+
+/* TV navigation focus ring (Netflix-like) */
+.tv-focus-target {
+    outline: none;
+}
+
+.tv-focus-target:focus-visible,
+.tv-focus-target:focus {
+    transform: scale(1.04);
+    box-shadow: 0 0 0 3px #ffffff, 0 0 0 6px rgba(229, 9, 20, 0.85) !important;
+    border-radius: 12px;
+    transition: transform 120ms ease, box-shadow 120ms ease;
+}
