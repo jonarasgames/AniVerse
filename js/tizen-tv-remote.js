@@ -121,14 +121,27 @@
   }
 
   function closeTopModal() {
-    const closeButton = document.querySelector(
-      '.modal[style*="display: flex"] .close-modal, .modal[style*="display:flex"] .close-modal'
-    );
+    const visibleModalSelectors = [
+      '.modal.active',
+      '.modal[style*="display: flex"]',
+      '.modal[style*="display:flex"]',
+      '.modal[style*="display: block"]',
+      '.modal[style*="display:block"]'
+    ];
+    const visibleModals = Array.from(document.querySelectorAll(visibleModalSelectors.join(','))).filter(isVisible);
+    const modal = visibleModals[visibleModals.length - 1];
+    if (!modal) return false;
+
+    const closeButton = modal.querySelector('.close-modal, .close-modal-btn, .close-profile, [data-close-modal]');
     if (closeButton) {
       closeButton.click();
       return true;
     }
-    return false;
+
+    modal.classList.remove('active');
+    modal.style.display = 'none';
+    document.body.style.overflow = '';
+    return true;
   }
 
   function registerTizenKeys() {
@@ -158,8 +171,62 @@
     });
   }
 
+  function isReturnEvent(event) {
+    const key = (event.key || '').toLowerCase();
+    const code = (event.code || '').toLowerCase();
+    return (
+      event.keyCode === KEY_CODES.RETURN ||
+      key === 'back' ||
+      key === 'goback' ||
+      key === 'xf86back' ||
+      code === 'browserback'
+    );
+  }
+
+  function isChannelUpEvent(event) {
+    const key = (event.key || '').toLowerCase();
+    return (
+      event.keyCode === KEY_CODES.CHANNEL_UP ||
+      key === 'channelup' ||
+      key === 'chup' ||
+      key === 'pageup'
+    );
+  }
+
+  function isChannelDownEvent(event) {
+    const key = (event.key || '').toLowerCase();
+    return (
+      event.keyCode === KEY_CODES.CHANNEL_DOWN ||
+      key === 'channeldown' ||
+      key === 'chdown' ||
+      key === 'pagedown'
+    );
+  }
+
   function onKeyDown(event) {
-    if (isTypingTarget(event.target)) return;
+    const typingTarget = isTypingTarget(event.target);
+
+    if (isReturnEvent(event)) {
+      if (!closeTopModal() && window.history.length > 1) {
+        window.history.back();
+      }
+      event.preventDefault();
+      return;
+    }
+
+    if (isChannelUpEvent(event)) {
+      changeZoom(ZOOM_STEP);
+      event.preventDefault();
+      return;
+    }
+
+    if (isChannelDownEvent(event)) {
+      changeZoom(-ZOOM_STEP);
+      event.preventDefault();
+      return;
+    }
+
+    if (typingTarget) return;
 
     switch (event.keyCode) {
       case KEY_CODES.LEFT:
@@ -176,28 +243,12 @@
         break;
       case KEY_CODES.ENTER: {
         const active = document.activeElement;
-        if (active && typeof active.click === 'function') {
+        if (active && !isTypingTarget(active) && typeof active.click === 'function') {
           active.click();
           event.preventDefault();
         }
         break;
       }
-      case KEY_CODES.RETURN:
-        if (!closeTopModal()) {
-          if (window.history.length > 1) {
-            window.history.back();
-          }
-        }
-        event.preventDefault();
-        break;
-      case KEY_CODES.CHANNEL_UP:
-        changeZoom(ZOOM_STEP);
-        event.preventDefault();
-        break;
-      case KEY_CODES.CHANNEL_DOWN:
-        changeZoom(-ZOOM_STEP);
-        event.preventDefault();
-        break;
       default:
         break;
     }
