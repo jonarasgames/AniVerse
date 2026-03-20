@@ -4,6 +4,7 @@
   const MIN_ZOOM = 0.7;
   const MAX_ZOOM = 1.6;
   const ZOOM_STEP = 0.1;
+  const TV_NAV_QUERY_PARAM = 'tvNav';
 
   const KEY_CODES = {
     LEFT: 37,
@@ -42,6 +43,38 @@
     ];
 
     return Array.from(document.querySelectorAll(selectors.join(','))).filter(isVisible);
+  }
+
+  function markTvFocusable(scope = document) {
+    const targetSelector = [
+      '.anime-card',
+      '.continue-card',
+      '.collection-card',
+      '.character-option',
+      '.frame-option',
+      '.color-option',
+      '.bg-image-option',
+      '.tab-btn',
+      '.pronoun-pill',
+      '.news-card-header',
+      '.btn',
+      '.btn-icon'
+    ].join(',');
+
+    const targets = [];
+    if (scope.matches && scope.matches(targetSelector)) {
+      targets.push(scope);
+    }
+    if (scope.querySelectorAll) {
+      targets.push(...scope.querySelectorAll(targetSelector));
+    }
+
+    targets.forEach((element) => {
+      if (!element.hasAttribute('tabindex')) {
+        element.setAttribute('tabindex', '0');
+      }
+      element.classList.add('tv-focus-target');
+    });
   }
 
   function getElementCenter(element) {
@@ -230,16 +263,20 @@
 
     switch (event.keyCode) {
       case KEY_CODES.LEFT:
-        if (focusInDirection('left')) event.preventDefault();
+        event.preventDefault();
+        focusInDirection('left');
         break;
       case KEY_CODES.RIGHT:
-        if (focusInDirection('right')) event.preventDefault();
+        event.preventDefault();
+        focusInDirection('right');
         break;
       case KEY_CODES.UP:
-        if (focusInDirection('up')) event.preventDefault();
+        event.preventDefault();
+        focusInDirection('up');
         break;
       case KEY_CODES.DOWN:
-        if (focusInDirection('down')) event.preventDefault();
+        event.preventDefault();
+        focusInDirection('down');
         break;
       case KEY_CODES.ENTER: {
         const active = document.activeElement;
@@ -254,9 +291,34 @@
     }
   }
 
+  function isTvNavigationRuntime() {
+    const hasTizen = Boolean(window.tizen && window.tizen.tvinputdevice);
+    const searchParams = new URLSearchParams(window.location.search);
+    const forceTvNav = searchParams.get(TV_NAV_QUERY_PARAM) === '1';
+    return hasTizen || forceTvNav;
+  }
+
+  function initTvMutationObserver() {
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        mutation.addedNodes.forEach((node) => {
+          if (node.nodeType === Node.ELEMENT_NODE) {
+            markTvFocusable(node);
+          }
+        });
+      });
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+  }
+
   function initTvRemoteSupport() {
+    if (!isTvNavigationRuntime()) return;
+
     registerTizenKeys();
     applyZoom(localStorage.getItem(ZOOM_KEY) || DEFAULT_ZOOM);
+    markTvFocusable(document);
+    initTvMutationObserver();
     document.addEventListener('keydown', onKeyDown, { capture: true });
 
     if (!document.activeElement || document.activeElement === document.body) {
