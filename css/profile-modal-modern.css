@@ -352,6 +352,11 @@
     letter-spacing: 0.5px;
 }
 
+.profile-password-hint {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 12px;
+}
+
 .input-modern {
     background: rgba(255, 255, 255, 0.1);
     border: 2px solid rgba(255, 255, 255, 0.2);
@@ -737,6 +742,48 @@
         0 0 30px rgba(0, 255, 255, 0.4),
         inset 0 0 10px rgba(0, 255, 255, 0.3);
     animation: neon-glow 1.5s ease-in-out infinite alternate;
+}
+
+/* Light mode fixes for profile modal readability */
+body.light-mode #profile-modal .profile-modal-modern {
+    background: linear-gradient(135deg, #ffffff 0%, #f3f7ff 100%) !important;
+    color: #1f2937 !important;
+    box-shadow: 0 20px 60px rgba(15, 23, 42, 0.22);
+}
+
+body.light-mode #profile-modal .profile-modal-title,
+body.light-mode #profile-modal .profile-name-preview,
+body.light-mode #profile-modal .form-group-modern label,
+body.light-mode #profile-modal .tab-btn.active,
+body.light-mode #profile-modal .pronoun-pill.active {
+    color: #111827 !important;
+}
+
+body.light-mode #profile-modal .tab-btn,
+body.light-mode #profile-modal .tab-label,
+body.light-mode #profile-modal .preview-hint,
+body.light-mode #profile-modal .frame-option span,
+body.light-mode #profile-modal .profile-password-hint {
+    color: #4b5563 !important;
+}
+
+body.light-mode #profile-modal .profile-preview-card {
+    background: rgba(59, 130, 246, 0.08);
+}
+
+body.light-mode #profile-modal .input-modern {
+    background: #ffffff;
+    color: #111827;
+    border-color: #cbd5e1;
+}
+
+body.light-mode #profile-modal .input-modern::placeholder {
+    color: #6b7280;
+}
+
+body.light-mode #profile-modal .pronoun-pill {
+    color: #1f2937;
+    background: rgba(59, 130, 246, 0.08);
 }
 
 @keyframes neon-glow {
