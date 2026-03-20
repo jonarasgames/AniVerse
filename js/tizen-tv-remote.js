@@ -5,6 +5,11 @@
   const MAX_ZOOM = 1.6;
   const ZOOM_STEP = 0.1;
   const TV_NAV_QUERY_PARAM = 'tvNav';
+  const supportedKeyCodes = {
+    channelUp: new Set([427]),
+    channelDown: new Set([428]),
+    back: new Set([10009, 461])
+  };
 
   const KEY_CODES = {
     LEFT: 37,
@@ -218,6 +223,21 @@
         // Ignora se a tecla não existir no device atual.
       }
     });
+
+    try {
+      const supportedKeys = window.tizen.tvinputdevice.getSupportedKeys() || [];
+      supportedKeys.forEach((keyInfo) => {
+        const name = (keyInfo.name || '').toLowerCase();
+        const code = Number(keyInfo.code);
+        if (!Number.isFinite(code)) return;
+
+        if (name.includes('channelup')) supportedKeyCodes.channelUp.add(code);
+        if (name.includes('channeldown')) supportedKeyCodes.channelDown.add(code);
+        if (name.includes('back') || name.includes('return')) supportedKeyCodes.back.add(code);
+      });
+    } catch (_) {
+      // Alguns devices não expõem lista completa.
+    }
   }
 
   function isReturnEvent(event) {
@@ -228,6 +248,7 @@
       event.keyCode === KEY_CODES.ESCAPE ||
       event.keyCode === KEY_CODES.BACKSPACE ||
       event.keyCode === KEY_CODES.TIZEN_BACK_ALT ||
+      supportedKeyCodes.back.has(event.keyCode) ||
       key === 'back' ||
       key === 'goback' ||
       key === 'xf86back' ||
@@ -251,6 +272,7 @@
     const key = (event.key || '').toLowerCase();
     return (
       event.keyCode === KEY_CODES.CHANNEL_UP ||
+      supportedKeyCodes.channelUp.has(event.keyCode) ||
       key === 'channelup' ||
       key === 'chup' ||
       key === 'pageup'
@@ -261,6 +283,7 @@
     const key = (event.key || '').toLowerCase();
     return (
       event.keyCode === KEY_CODES.CHANNEL_DOWN ||
+      supportedKeyCodes.channelDown.has(event.keyCode) ||
       key === 'channeldown' ||
       key === 'chdown' ||
       key === 'pagedown'
@@ -351,6 +374,15 @@
     markTvFocusable(document);
     initTvMutationObserver();
     document.addEventListener('keydown', onKeyDown, { capture: true });
+    document.addEventListener('tizenhwkey', (event) => {
+      const keyName = (event.keyName || '').toLowerCase();
+      if (keyName === 'back') {
+        if (!closeTopModal() && window.history.length > 1) {
+          window.history.back();
+        }
+        event.preventDefault?.();
+      }
+    });
 
     if (!document.activeElement || document.activeElement === document.body) {
       const firstFocusable = getFocusableElements()[0];
