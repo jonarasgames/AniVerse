@@ -12,7 +12,10 @@
     RIGHT: 39,
     DOWN: 40,
     ENTER: 13,
+    ESCAPE: 27,
+    BACKSPACE: 8,
     RETURN: 10009,
+    TIZEN_BACK_ALT: 461,
     CHANNEL_UP: 427,
     CHANNEL_DOWN: 428
   };
@@ -32,6 +35,7 @@
   }
 
   function getFocusableElements() {
+    const root = getActiveNavigationRoot();
     const selectors = [
       'a[href]',
       'button:not([disabled])',
@@ -42,7 +46,24 @@
       '[role="button"]'
     ];
 
-    return Array.from(document.querySelectorAll(selectors.join(','))).filter(isVisible);
+    return Array.from(root.querySelectorAll(selectors.join(','))).filter(isVisible);
+  }
+
+  function getVisibleModals() {
+    const visibleModalSelectors = [
+      '.modal.active',
+      '.modal[style*="display: flex"]',
+      '.modal[style*="display:flex"]',
+      '.modal[style*="display: block"]',
+      '.modal[style*="display:block"]'
+    ];
+    return Array.from(document.querySelectorAll(visibleModalSelectors.join(','))).filter(isVisible);
+  }
+
+  function getActiveNavigationRoot() {
+    const visibleModals = getVisibleModals();
+    const topModal = visibleModals[visibleModals.length - 1];
+    return topModal || document;
   }
 
   function markTvFocusable(scope = document) {
@@ -58,7 +79,9 @@
       '.pronoun-pill',
       '.news-card-header',
       '.btn',
-      '.btn-icon'
+      '.btn-icon',
+      '.close-modal-btn',
+      '.close-modal'
     ].join(',');
 
     const targets = [];
@@ -154,14 +177,7 @@
   }
 
   function closeTopModal() {
-    const visibleModalSelectors = [
-      '.modal.active',
-      '.modal[style*="display: flex"]',
-      '.modal[style*="display:flex"]',
-      '.modal[style*="display: block"]',
-      '.modal[style*="display:block"]'
-    ];
-    const visibleModals = Array.from(document.querySelectorAll(visibleModalSelectors.join(','))).filter(isVisible);
+    const visibleModals = getVisibleModals();
     const modal = visibleModals[visibleModals.length - 1];
     if (!modal) return false;
 
@@ -209,11 +225,26 @@
     const code = (event.code || '').toLowerCase();
     return (
       event.keyCode === KEY_CODES.RETURN ||
+      event.keyCode === KEY_CODES.ESCAPE ||
+      event.keyCode === KEY_CODES.BACKSPACE ||
+      event.keyCode === KEY_CODES.TIZEN_BACK_ALT ||
       key === 'back' ||
       key === 'goback' ||
       key === 'xf86back' ||
+      key === 'escape' ||
+      key === 'esc' ||
+      code === 'escape' ||
       code === 'browserback'
     );
+  }
+
+  function getArrowDirection(event) {
+    const key = (event.key || '').toLowerCase();
+    if (event.keyCode === KEY_CODES.LEFT || key === 'arrowleft' || key === 'left') return 'left';
+    if (event.keyCode === KEY_CODES.RIGHT || key === 'arrowright' || key === 'right') return 'right';
+    if (event.keyCode === KEY_CODES.UP || key === 'arrowup' || key === 'up') return 'up';
+    if (event.keyCode === KEY_CODES.DOWN || key === 'arrowdown' || key === 'down') return 'down';
+    return null;
   }
 
   function isChannelUpEvent(event) {
@@ -238,6 +269,7 @@
 
   function onKeyDown(event) {
     const typingTarget = isTypingTarget(event.target);
+    const normalizedKey = (event.key || '').toLowerCase();
 
     if (isReturnEvent(event)) {
       if (!closeTopModal() && window.history.length > 1) {
@@ -261,23 +293,14 @@
 
     if (typingTarget) return;
 
+    const arrowDirection = getArrowDirection(event);
+    if (arrowDirection) {
+      event.preventDefault();
+      focusInDirection(arrowDirection);
+      return;
+    }
+
     switch (event.keyCode) {
-      case KEY_CODES.LEFT:
-        event.preventDefault();
-        focusInDirection('left');
-        break;
-      case KEY_CODES.RIGHT:
-        event.preventDefault();
-        focusInDirection('right');
-        break;
-      case KEY_CODES.UP:
-        event.preventDefault();
-        focusInDirection('up');
-        break;
-      case KEY_CODES.DOWN:
-        event.preventDefault();
-        focusInDirection('down');
-        break;
       case KEY_CODES.ENTER: {
         const active = document.activeElement;
         if (active && !isTypingTarget(active) && typeof active.click === 'function') {
@@ -287,6 +310,13 @@
         break;
       }
       default:
+        if (normalizedKey === 'enter') {
+          const active = document.activeElement;
+          if (active && !isTypingTarget(active) && typeof active.click === 'function') {
+            active.click();
+            event.preventDefault();
+          }
+        }
         break;
     }
   }
@@ -315,6 +345,7 @@
   function initTvRemoteSupport() {
     if (!isTvNavigationRuntime()) return;
 
+    document.body.classList.add('tv-mode');
     registerTizenKeys();
     applyZoom(localStorage.getItem(ZOOM_KEY) || DEFAULT_ZOOM);
     markTvFocusable(document);

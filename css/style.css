@@ -4786,6 +4786,36 @@ html.theme-light .inplace-duration-view {
     outline: none;
 }
 
+.tv-mode {
+    --tv-card-radius: 16px;
+}
+
+body.tv-mode {
+    cursor: none;
+}
+
+body.tv-mode header .container,
+body.tv-mode main.container,
+body.tv-mode footer .container {
+    max-width: 1720px;
+}
+
+body.tv-mode .anime-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 22px;
+}
+
+body.tv-mode .anime-card {
+    border-radius: var(--tv-card-radius);
+}
+
+body.tv-mode .btn,
+body.tv-mode .btn-icon,
+body.tv-mode .tab-btn,
+body.tv-mode .pronoun-pill {
+    min-height: 44px;
+}
+
 .tv-focus-target:focus-visible,
 .tv-focus-target:focus {
     transform: scale(1.04);
