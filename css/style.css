@@ -4815,10 +4815,11 @@ body.tv-mode .anime-grid::-webkit-scrollbar {
 }
 
 body.tv-mode .anime-card {
-    flex: 0 0 240px;
+    flex: 0 0 320px;
     border-radius: var(--tv-card-radius);
     scroll-snap-align: start;
-    min-height: 360px;
+    aspect-ratio: 16 / 9;
+    min-height: auto;
 }
 
 body.tv-mode .content-section {

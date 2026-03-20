@@ -293,6 +293,7 @@
   function onKeyDown(event) {
     const typingTarget = isTypingTarget(event.target);
     const normalizedKey = (event.key || '').toLowerCase();
+    const arrowDirection = getArrowDirection(event);
 
     if (isReturnEvent(event)) {
       if (!closeTopModal() && window.history.length > 1) {
@@ -314,9 +315,26 @@
       return;
     }
 
+    if (typingTarget && arrowDirection) {
+      event.preventDefault();
+      if (typeof event.target.blur === 'function') {
+        event.target.blur();
+      }
+      focusInDirection(arrowDirection);
+      return;
+    }
+
+    if (typingTarget && normalizedKey === 'enter') {
+      event.preventDefault();
+      if (typeof event.target.blur === 'function') {
+        event.target.blur();
+      }
+      focusInDirection('down');
+      return;
+    }
+
     if (typingTarget) return;
 
-    const arrowDirection = getArrowDirection(event);
     if (arrowDirection) {
       event.preventDefault();
       focusInDirection(arrowDirection);
