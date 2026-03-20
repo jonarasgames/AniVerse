@@ -4780,3 +4780,96 @@ html.theme-light .inplace-duration-view {
     50% { clip-path: inset(0 0 0 0); }
     100% { clip-path: inset(0 0 0 100%); }
 }
+
+/* TV navigation focus ring (Netflix-like) */
+.tv-focus-target {
+    outline: none;
+}
+
+.tv-mode {
+    --tv-card-radius: 16px;
+}
+
+body.tv-mode {
+    cursor: none;
+}
+
+body.tv-mode header .container,
+body.tv-mode main.container,
+body.tv-mode footer .container {
+    max-width: 1720px;
+}
+
+body.tv-mode .anime-grid {
+    display: flex;
+    gap: 22px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 6px 8px 14px;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+}
+
+body.tv-mode .anime-grid::-webkit-scrollbar {
+    display: none;
+}
+
+body.tv-mode .anime-card {
+    flex: 0 0 240px;
+    border-radius: var(--tv-card-radius);
+    scroll-snap-align: start;
+    min-height: 360px;
+}
+
+body.tv-mode .content-section {
+    padding-top: 18px;
+}
+
+body.tv-mode .section-title {
+    font-size: 2rem;
+    margin-bottom: 14px;
+}
+
+body.tv-mode .hero {
+    min-height: 320px;
+    border-radius: 24px;
+}
+
+body.tv-mode .hero-content h2 {
+    font-size: 2.6rem;
+}
+
+body.tv-mode nav ul {
+    gap: 10px;
+}
+
+body.tv-mode nav a {
+    font-size: 1.05rem;
+    padding: 10px 14px;
+    border-radius: 10px;
+}
+
+body.tv-mode #profile-modal .profile-modal-modern {
+    max-width: 1200px;
+    width: 95%;
+}
+
+body.tv-mode .search-bar input {
+    min-height: 50px;
+    font-size: 1.1rem;
+}
+
+body.tv-mode .btn,
+body.tv-mode .btn-icon,
+body.tv-mode .tab-btn,
+body.tv-mode .pronoun-pill {
+    min-height: 44px;
+}
+
+.tv-focus-target:focus-visible,
+.tv-focus-target:focus {
+    transform: scale(1.04);
+    box-shadow: 0 0 0 3px #ffffff, 0 0 0 6px rgba(229, 9, 20, 0.85) !important;
+    border-radius: 12px;
+    transition: transform 120ms ease, box-shadow 120ms ease;
+}
