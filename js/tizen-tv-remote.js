@@ -71,6 +71,49 @@
     return topModal || document;
   }
 
+<<<<<<< codex/implementar-controle-de-zoom-para-aniverse-9rknv4
+  function getProfileModalFocusableInOrder() {
+    const modal = document.getElementById('profile-modal');
+    if (!modal || !isVisible(modal)) return null;
+
+    const orderedSelectors = [
+      '#close-profile-modal',
+      '#profile-name',
+      '.pronoun-pill',
+      '.tab-btn',
+      '#profile-password',
+      '.color-option',
+      '.bg-image-option',
+      '.character-option',
+      '.frame-option',
+      '#save-profile-btn'
+    ];
+
+    const ordered = [];
+    orderedSelectors.forEach((selector) => {
+      modal.querySelectorAll(selector).forEach((el) => {
+        if (isVisible(el)) ordered.push(el);
+      });
+    });
+
+    return ordered.length ? ordered : null;
+  }
+
+  function moveFocusInList(list, direction) {
+    if (!list || !list.length) return false;
+    const active = document.activeElement;
+    const currentIndex = Math.max(0, list.indexOf(active));
+    const delta = direction === 'up' || direction === 'left' ? -1 : 1;
+    const nextIndex = (currentIndex + delta + list.length) % list.length;
+    const next = list[nextIndex];
+    if (!next) return false;
+    next.focus();
+    next.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+    return true;
+  }
+
+=======
+>>>>>>> main
   function markTvFocusable(scope = document) {
     const targetSelector = [
       '.anime-card',
@@ -320,7 +363,14 @@
       if (typeof event.target.blur === 'function') {
         event.target.blur();
       }
+<<<<<<< codex/implementar-controle-de-zoom-para-aniverse-9rknv4
+      const profileOrderedTargets = getProfileModalFocusableInOrder();
+      if (!moveFocusInList(profileOrderedTargets, arrowDirection)) {
+        focusInDirection(arrowDirection);
+      }
+=======
       focusInDirection(arrowDirection);
+>>>>>>> main
       return;
     }
 
@@ -337,7 +387,14 @@
 
     if (arrowDirection) {
       event.preventDefault();
+<<<<<<< codex/implementar-controle-de-zoom-para-aniverse-9rknv4
+      const profileOrderedTargets = getProfileModalFocusableInOrder();
+      if (!moveFocusInList(profileOrderedTargets, arrowDirection)) {
+        focusInDirection(arrowDirection);
+      }
+=======
       focusInDirection(arrowDirection);
+>>>>>>> main
       return;
     }
 
@@ -386,6 +443,18 @@
   }
 
   function initTvMutationObserver() {
+<<<<<<< codex/implementar-controle-de-zoom-para-aniverse-9rknv4
+    let scheduled = false;
+    const observer = new MutationObserver((mutations) => {
+      if (scheduled) return;
+      const hasElementMutation = mutations.some((mutation) => mutation.addedNodes.length > 0);
+      if (!hasElementMutation) return;
+
+      scheduled = true;
+      window.requestAnimationFrame(() => {
+        markTvFocusable(document);
+        scheduled = false;
+=======
     const observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
         mutation.addedNodes.forEach((node) => {
@@ -393,6 +462,7 @@
             markTvFocusable(node);
           }
         });
+>>>>>>> main
       });
     });
 
@@ -421,8 +491,18 @@
     });
 
     if (!document.activeElement || document.activeElement === document.body) {
+<<<<<<< codex/implementar-controle-de-zoom-para-aniverse-9rknv4
+      const firstNavItem = document.querySelector('nav a[data-section]');
+      if (firstNavItem) {
+        firstNavItem.focus();
+      } else {
+        const firstFocusable = getFocusableElements()[0];
+        if (firstFocusable) firstFocusable.focus();
+      }
+=======
       const firstFocusable = getFocusableElements()[0];
       if (firstFocusable) firstFocusable.focus();
+>>>>>>> main
     }
   }
 

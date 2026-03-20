@@ -4800,6 +4800,50 @@ body.tv-mode footer .container {
     max-width: 1720px;
 }
 
+<<<<<<< codex/implementar-controle-de-zoom-para-aniverse-9rknv4
+body.tv-mode header {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 270px;
+    z-index: 1000;
+    border-right: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+body.tv-mode header .container {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    height: 100%;
+    padding: 24px 14px;
+    gap: 18px;
+}
+
+body.tv-mode .logo-container h1 {
+    display: none;
+}
+
+body.tv-mode nav ul {
+    flex-direction: column;
+    align-items: stretch;
+}
+
+body.tv-mode .user-controls {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+}
+
+body.tv-mode main.container,
+body.tv-mode footer .container {
+    margin-left: 290px;
+}
+
+=======
+>>>>>>> main
 body.tv-mode .anime-grid {
     display: flex;
     gap: 22px;
