@@ -4780,3 +4780,46 @@ html.theme-light .inplace-duration-view {
     50% { clip-path: inset(0 0 0 0); }
     100% { clip-path: inset(0 0 0 100%); }
 }
+
+/* TV navigation focus ring (Netflix-like) */
+.tv-focus-target {
+    outline: none;
+}
+
+.tv-mode {
+    --tv-card-radius: 16px;
+}
+
+body.tv-mode {
+    cursor: none;
+}
+
+body.tv-mode header .container,
+body.tv-mode main.container,
+body.tv-mode footer .container {
+    max-width: 1720px;
+}
+
+body.tv-mode .anime-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 22px;
+}
+
+body.tv-mode .anime-card {
+    border-radius: var(--tv-card-radius);
+}
+
+body.tv-mode .btn,
+body.tv-mode .btn-icon,
+body.tv-mode .tab-btn,
+body.tv-mode .pronoun-pill {
+    min-height: 44px;
+}
+
+.tv-focus-target:focus-visible,
+.tv-focus-target:focus {
+    transform: scale(1.04);
+    box-shadow: 0 0 0 3px #ffffff, 0 0 0 6px rgba(229, 9, 20, 0.85) !important;
+    border-radius: 12px;
+    transition: transform 120ms ease, box-shadow 120ms ease;
+}
