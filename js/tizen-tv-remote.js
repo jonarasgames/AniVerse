@@ -345,10 +345,26 @@
   }
 
   function isTvNavigationRuntime() {
+    const userAgent = navigator.userAgent || '';
+    const hasTvUserAgent = /(tizen|smart-tv|smarttv|hbbtv|web0s|netcast|googletv|appletv|tv)/i.test(userAgent);
     const hasTizen = Boolean(window.tizen && window.tizen.tvinputdevice);
     const searchParams = new URLSearchParams(window.location.search);
     const forceTvNav = searchParams.get(TV_NAV_QUERY_PARAM) === '1';
-    return hasTizen || forceTvNav;
+    const persistedTvMode = localStorage.getItem('aniverse_tv_mode') === '1';
+
+    if (forceTvNav) {
+      localStorage.setItem('aniverse_tv_mode', '1');
+    }
+
+    return hasTizen || forceTvNav || hasTvUserAgent || persistedTvMode;
+  }
+
+  function forceDarkThemeForTvMode() {
+    document.documentElement.classList.remove('theme-light');
+    document.documentElement.classList.add('theme-dark');
+    document.body.classList.remove('light-mode');
+    document.body.classList.add('dark-mode');
+    localStorage.setItem('aniverse_theme', 'theme-dark');
   }
 
   function initTvMutationObserver() {
@@ -368,7 +384,9 @@
   function initTvRemoteSupport() {
     if (!isTvNavigationRuntime()) return;
 
+    localStorage.setItem('aniverse_tv_mode', '1');
     document.body.classList.add('tv-mode');
+    forceDarkThemeForTvMode();
     registerTizenKeys();
     applyZoom(localStorage.getItem(ZOOM_KEY) || DEFAULT_ZOOM);
     markTvFocusable(document);
