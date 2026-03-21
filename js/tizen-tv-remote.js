@@ -163,6 +163,7 @@
     return true;
   }
 
+
   function markTvFocusable(scope = document) {
     const targetSelector = [
       '.anime-card',
@@ -416,6 +417,7 @@
       if (!moveFocusInList(profileOrderedTargets, arrowDirection)) {
         focusInDirection(arrowDirection);
       }
+
       return;
     }
 
@@ -449,6 +451,7 @@
       if (!moveFocusInList(profileOrderedTargets, arrowDirection)) {
         focusInDirection(arrowDirection);
       }
+
       return;
     }
 
@@ -507,6 +510,7 @@
       window.requestAnimationFrame(() => {
         markTvFocusable(document);
         scheduled = false;
+
       });
     });
 
@@ -542,6 +546,7 @@
         const firstFocusable = getFocusableElements()[0];
         if (firstFocusable) firstFocusable.focus();
       }
+
     }
   }
 
