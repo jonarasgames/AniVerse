@@ -596,42 +596,9 @@
             currentPlayingCard.classList.remove('playing');
         }
         
-        // Cleanup adaptive listeners from previous track
-        if (audio.__musicAdaptiveCleanup) {
-            try { audio.__musicAdaptiveCleanup(); } catch (_) {}
-            audio.__musicAdaptiveCleanup = null;
-        }
-
-        const adaptive = {
-            retries: 0,
-            maxRetries: 3,
-            waitingHits: 0,
-            waitingWindowStart: 0,
-            lastRetryAt: 0
-        };
-        const isTvMode = document.body.classList.contains('tv-mode');
-        if (isTvMode) {
-            adaptive.maxRetries = 2;
-        }
-
-        const addCacheBust = (url) => {
-            const sep = url.includes('?') ? '&' : '?';
-            return `${url}${sep}_music_retry=${Date.now()}`;
-        };
-
-        const setMusicSource = (url, preserveTime = 0, cacheBust = false) => {
-            const nextUrl = cacheBust ? addCacheBust(url) : url;
-            audio.src = nextUrl;
-            audio.load();
-            if (preserveTime > 0) {
-                audio.addEventListener('loadedmetadata', () => {
-                    try { audio.currentTime = preserveTime; } catch (_) {}
-                }, { once: true });
-            }
-        };
-
         // Set new track
-        setMusicSource(src);
+        audio.src = src;
+        audio.load();
         
         // Timeout for loading
         const loadTimeout = setTimeout(() => {
@@ -654,56 +621,6 @@
             console.error('Play failed:', err);
             showMusicError('Erro ao reproduzir. Clique para tentar novamente.');
         });
-
-        const recoverMusic = (reason) => {
-            if (adaptive.retries >= adaptive.maxRetries) {
-                showMusicError('Falha ao carregar música. Tente outra faixa.');
-                return;
-            }
-            const now = Date.now();
-            if (now - adaptive.lastRetryAt < 12000) return;
-            adaptive.retries += 1;
-            adaptive.lastRetryAt = now;
-            const resumeFrom = audio.currentTime || 0;
-            if (!isTvMode) {
-                showMusicError(`Reconectando áudio (${adaptive.retries}/${adaptive.maxRetries})...`);
-            }
-            setTimeout(() => {
-                setMusicSource(src, resumeFrom, true);
-                audio.play().catch(() => {});
-            }, isTvMode ? 1200 : (reason === 'waiting' ? 350 : 700));
-        };
-
-        const onWaiting = () => {
-            const now = Date.now();
-            if (!adaptive.waitingWindowStart || now - adaptive.waitingWindowStart > 12000) {
-                adaptive.waitingWindowStart = now;
-                adaptive.waitingHits = 0;
-            }
-            adaptive.waitingHits += 1;
-            if (adaptive.waitingHits >= (isTvMode ? 12 : 4)) {
-                adaptive.waitingHits = 0;
-                recoverMusic('waiting');
-            }
-        };
-
-        const onError = () => recoverMusic('error');
-        const onPlaying = () => {
-            adaptive.retries = 0;
-            adaptive.waitingHits = 0;
-        };
-
-        audio.addEventListener('waiting', onWaiting);
-        audio.addEventListener('stalled', onWaiting);
-        audio.addEventListener('error', onError);
-        audio.addEventListener('playing', onPlaying);
-
-        audio.__musicAdaptiveCleanup = () => {
-            audio.removeEventListener('waiting', onWaiting);
-            audio.removeEventListener('stalled', onWaiting);
-            audio.removeEventListener('error', onError);
-            audio.removeEventListener('playing', onPlaying);
-        };
         
         // Update mini-player/fullscreen/system UI
         refreshMusicPlayerUI();

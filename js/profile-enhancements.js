@@ -303,7 +303,8 @@
 
     function init() {
         injectCSS();
-        // Sugerir anime removido no modo atual de UX para TV.
+        createSuggestionModal();
+        createSuggestionButton();
         replaceAvatarPreviewIfNeeded();
         // small delay to ensure modal existing markup is present
         setTimeout(() => {
