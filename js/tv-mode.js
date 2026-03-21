@@ -231,6 +231,78 @@
     return { el, rect, x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
   }
 
+  function groupElementsByTop(elements, tolerance = 26) {
+    const rows = [];
+    elements.forEach((element) => {
+      const top = element.getBoundingClientRect().top;
+      const row = rows.find((entry) => Math.abs(entry.top - top) <= tolerance);
+      if (row) {
+        row.items.push(element);
+      } else {
+        rows.push({ top, items: [element] });
+      }
+    });
+
+    return rows
+      .sort((a, b) => a.top - b.top)
+      .map((row) => row.items.sort((a, b) => a.getBoundingClientRect().left - b.getBoundingClientRect().left));
+  }
+
+  function getProfileModalRows() {
+    const modal = document.getElementById('profile-modal');
+    if (!modal || !modal.classList.contains('active')) return null;
+
+    const rows = [];
+    const pushRow = (elements) => {
+      const filtered = (elements || []).filter(isVisible);
+      if (filtered.length) rows.push(filtered);
+    };
+
+    pushRow([modal.querySelector('#close-profile-modal')]);
+    pushRow(Array.from(modal.querySelectorAll('.tv-input-shell')).filter((shell) => shell.querySelector('#profile-name')));
+    pushRow(Array.from(modal.querySelectorAll('.pronoun-pill')));
+    pushRow(Array.from(modal.querySelectorAll('.tv-input-shell')).filter((shell) => shell.querySelector('#profile-password')));
+    pushRow(Array.from(modal.querySelectorAll('.customization-tabs .tab-btn')));
+
+    const activeTab = modal.querySelector('.tab-content.active');
+    if (activeTab) {
+      const contentItems = Array.from(activeTab.querySelectorAll('.color-option, .bg-image-option, .character-option, .frame-option')).filter(isVisible);
+      groupElementsByTop(contentItems).forEach((row) => pushRow(row));
+    }
+
+    pushRow([modal.querySelector('#save-profile-btn')]);
+    return rows;
+  }
+
+  function navigateProfileModal(direction) {
+    const rows = getProfileModalRows();
+    if (!rows || !rows.length) return false;
+
+    let currentRowIndex = rows.findIndex((row) => row.includes(currentFocus));
+    if (currentRowIndex === -1) {
+      focusElement(rows[0][0]);
+      return true;
+    }
+
+    const currentRow = rows[currentRowIndex];
+    const currentColIndex = Math.max(0, currentRow.indexOf(currentFocus));
+
+    if (direction === KEY.LEFT || direction === KEY.RIGHT) {
+      const nextCol = direction === KEY.RIGHT
+        ? (currentColIndex + 1) % currentRow.length
+        : (currentColIndex - 1 + currentRow.length) % currentRow.length;
+      focusElement(currentRow[nextCol]);
+      return true;
+    }
+
+    const nextRowIndex = (currentRowIndex + (direction === KEY.DOWN ? 1 : -1) + rows.length) % rows.length;
+    const nextRow = rows[nextRowIndex];
+    const ratio = currentRow.length > 1 ? currentColIndex / (currentRow.length - 1) : 0;
+    const nextColIndex = nextRow.length > 1 ? Math.round(ratio * (nextRow.length - 1)) : 0;
+    focusElement(nextRow[nextColIndex]);
+    return true;
+  }
+
   function navigate(direction) {
     if (!currentFocus) {
       focusFirstInScope();
@@ -238,6 +310,9 @@
     }
 
     const active = getActiveScope();
+    if (active.id === 'profile-modal' && navigateProfileModal(direction)) {
+      return;
+    }
     if (active.id === 'video-modal') {
       const player = document.getElementById('anime-player');
       if (player && (direction === KEY.LEFT || direction === KEY.RIGHT)) {
