@@ -47,10 +47,30 @@
 
   function detectTvMode() {
     const params = new URLSearchParams(window.location.search);
+    if (params.get('tv') === '0') return false;
     if (params.get('tv') === '1') return true;
     if (localStorage.getItem('aniverseTvMode') === 'enabled') return true;
+    if (window.__ANIVERSE_FORCE_TV_MODE__ === true) return true;
+    if (typeof window.tizen !== 'undefined' || typeof window.webapis !== 'undefined') return true;
+
     const ua = navigator.userAgent || '';
-    return /tizen|smart-tv|smarttv|hbbtv|web0s|googletv|appletv/i.test(ua);
+    if (/tizen|smart-tv|smarttv|hbbtv|web0s|googletv|appletv|viera|aquos/i.test(ua)) return true;
+
+    const protocolLooksLikeTvApp = /^(file|app|widget):$/i.test(window.location.protocol || '');
+    if (protocolLooksLikeTvApp) return true;
+
+    const hasTouchlessLargeScreen = (() => {
+      try {
+        const noHover = window.matchMedia('(hover: none)').matches;
+        const coarsePointer = window.matchMedia('(pointer: coarse)').matches;
+        const largeDisplay = Math.max(window.screen?.width || 0, window.screen?.height || 0) >= 1200;
+        return noHover && coarsePointer && largeDisplay;
+      } catch (_) {
+        return false;
+      }
+    })();
+
+    return hasTouchlessLargeScreen;
   }
 
   function registerTizenKeys() {
@@ -688,7 +708,17 @@
   }
 
   function init() {
-    if (!detectTvMode()) return;
+    const detected = detectTvMode();
+    window.__tvModeReason = {
+      forced: window.__ANIVERSE_FORCE_TV_MODE__ === true,
+      query: window.location.search,
+      persisted: localStorage.getItem('aniverseTvMode'),
+      hasTizen: typeof window.tizen !== 'undefined',
+      hasWebapis: typeof window.webapis !== 'undefined',
+      userAgent: navigator.userAgent || '',
+      active: detected
+    };
+    if (!detected) return;
     tvEnabled = true;
     localStorage.setItem('aniverseTvMode', 'enabled');
     document.body.classList.add('tv-mode');
