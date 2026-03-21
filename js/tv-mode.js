@@ -18,10 +18,11 @@
     movies: 'fa-film',
     ovas: 'fa-clapperboard',
     openings: 'fa-music',
+    continue: 'fa-clock-rotate-left',
     profile: 'fa-user-circle',
     theme: 'fa-circle-half-stroke'
   };
-  const TV_MENU_ORDER = ['home', 'animes', 'movies', 'ovas', 'openings'];
+  const TV_MENU_ORDER = ['home', 'animes', 'movies', 'ovas', 'openings', 'continue'];
 
   let tvEnabled = false;
   let currentFocus = null;
@@ -132,7 +133,13 @@
       '#profile-modal.active .tv-focusable',
       '#profile-selection-overlay .tv-focusable'
     ];
-    return Array.from(scope.querySelectorAll(selectors.join(','))).filter(isVisible);
+    return Array.from(scope.querySelectorAll(selectors.join(','))).filter((element) => {
+      if (!isVisible(element)) return false;
+      if (scope === document.body && element.classList.contains('tv-sidebar-link') && !document.body.classList.contains('tv-sidebar-open')) {
+        return false;
+      }
+      return true;
+    });
   }
 
   function getActiveScope() {
@@ -176,7 +183,7 @@
       updateSidebarState(false);
     }
     if (!options.silent) {
-      el.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' });
+      el.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'auto' });
     }
     updateHelpBar(el);
     scheduleHoverPanel(el);
@@ -500,7 +507,20 @@
   function focusSidebar() {
     const sidebarLinks = Array.from(document.querySelectorAll('.tv-sidebar-link')).filter(isVisible);
     if (!sidebarLinks.length) return;
+    updateSidebarState(true);
     focusElement(sidebarLinks[0]);
+  }
+
+  function focusSectionContent(sectionId) {
+    const section = document.getElementById(`${sectionId}-section`);
+    if (!section) return;
+    const target = Array.from(section.querySelectorAll('.tv-focusable')).find((element) => {
+      return isVisible(element) && !element.classList.contains('tv-sidebar-link');
+    });
+    if (target) {
+      updateSidebarState(false);
+      focusElement(target);
+    }
   }
 
   function focusFirstInScope() {
@@ -588,7 +608,10 @@
       const label = link.textContent.trim();
       link.innerHTML = `<span class="tv-nav-icon"><i class="fas ${ICONS[section] || 'fa-circle'}"></i></span><span class="tv-nav-label">${label}</span>`;
       addTvClass(link, 'tv-sidebar-link');
-      link.addEventListener('click', () => updateSidebarState(false));
+      link.addEventListener('click', () => {
+        updateSidebarState(false);
+        setTimeout(() => focusSectionContent(section), 120);
+      });
     });
 
     const userControls = document.querySelector('.user-controls');
