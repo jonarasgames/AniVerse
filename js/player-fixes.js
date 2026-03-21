@@ -50,6 +50,7 @@
         document.addEventListener('keydown', function(e) {
             const modal = document.getElementById('video-modal');
             if (!modal || (!modal.classList.contains('show') && modal.style.display !== 'flex')) return;
+            if (document.body.classList.contains('tv-mode')) return;
 
             switch(e.key) {
                 case ' ':

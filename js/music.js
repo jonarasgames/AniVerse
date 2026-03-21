@@ -608,6 +608,10 @@
             waitingHits: 0,
             waitingWindowStart: 0
         };
+        const isTvMode = document.body.classList.contains('tv-mode');
+        if (isTvMode) {
+            adaptive.maxRetries = 1;
+        }
 
         const addCacheBust = (url) => {
             const sep = url.includes('?') ? '&' : '?';
@@ -657,11 +661,13 @@
             }
             adaptive.retries += 1;
             const resumeFrom = audio.currentTime || 0;
-            showMusicError(`Reconectando áudio (${adaptive.retries}/${adaptive.maxRetries})...`);
+            if (!isTvMode) {
+                showMusicError(`Reconectando áudio (${adaptive.retries}/${adaptive.maxRetries})...`);
+            }
             setTimeout(() => {
                 setMusicSource(src, resumeFrom, true);
                 audio.play().catch(() => {});
-            }, reason === 'waiting' ? 350 : 700);
+            }, isTvMode ? 1200 : (reason === 'waiting' ? 350 : 700));
         };
 
         const onWaiting = () => {
@@ -671,7 +677,7 @@
                 adaptive.waitingHits = 0;
             }
             adaptive.waitingHits += 1;
-            if (adaptive.waitingHits >= 4) {
+            if (adaptive.waitingHits >= (isTvMode ? 7 : 4)) {
                 adaptive.waitingHits = 0;
                 recoverMusic('waiting');
             }

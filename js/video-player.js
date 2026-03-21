@@ -811,6 +811,21 @@ window.addEventListener('keydown', (e) => {
     const isVideoActive = (videoModal && videoModal.style.display === 'flex') || isFullscreen;
 
     if (player && isVideoActive) {
+        const isTvMode = document.body.classList.contains('tv-mode');
+        const activeElement = document.activeElement;
+        const activeInPlayerArea = Boolean(
+            activeElement &&
+            activeElement.closest &&
+            activeElement.closest('#video-player-container, #custom-video-controls')
+        );
+        const arrowKeys = ['arrowleft', 'arrowright', 'arrowup', 'arrowdown'];
+
+        // Em TV mode, as setas devem priorizar navegação de foco (episódios/temporadas/listas),
+        // sem "mexer" no player quando o foco está fora da área de controles do vídeo.
+        if (isTvMode && arrowKeys.includes((e.key || '').toLowerCase()) && !activeInPlayerArea) {
+            return;
+        }
+
         // Don't trigger if user is typing in an input
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
         const key = e.key.toLowerCase();
@@ -845,10 +860,12 @@ window.addEventListener('keydown', (e) => {
                 }
                 break;
             case 'arrowleft':
+                if (isTvMode && !activeInPlayerArea) break;
                 player.currentTime = Math.max(0, player.currentTime - 5);
                 break;
                 
             case 'arrowright':
+                if (isTvMode && !activeInPlayerArea) break;
                 player.currentTime = Math.min(player.duration || 0, player.currentTime + 5);
                 break;
                 

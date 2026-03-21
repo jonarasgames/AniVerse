@@ -940,11 +940,73 @@ function onVideoSetSource(player, episode){
     const downlink = Number(connection && connection.downlink);
     let preferredIndex = 0;
     if (Number.isFinite(downlink) && downlink <= 2.5) {
-      preferredIndex = Math.min(sources.length - 1, 1);
+      // Em rede fraca de TV, começa em qualidade mais leve para evitar travas recorrentes.
+      preferredIndex = Math.max(0, sources.length - 1);
     }
 
-    const chosen = sources[preferredIndex] || sources[0];
+    let reconnectTimer = null;
+    let retryCount = 0;
+    const maxRetries = 2;
+    let lastProgressAt = Date.now();
+
+    const clearReconnectTimer = () => {
+      if (reconnectTimer) {
+        clearTimeout(reconnectTimer);
+        reconnectTimer = null;
+      }
+    };
+
+    const chosen = sources[preferredIndex] || sources[sources.length - 1] || sources[0];
     if (!chosen || !chosen.url) return;
+
+    const tryReconnect = () => {
+      if (retryCount >= maxRetries) return;
+      retryCount += 1;
+      const resumeAt = Number(player.currentTime || 0);
+      player.src = addCacheBust(chosen.url);
+      player.load();
+      if (resumeAt > 0) {
+        player.addEventListener('loadedmetadata', () => {
+          try { player.currentTime = resumeAt; } catch (_) {}
+        }, { once: true });
+      }
+      player.play().catch(() => {});
+    };
+
+    const scheduleReconnectGuard = () => {
+      clearReconnectTimer();
+      reconnectTimer = setTimeout(() => {
+        const stalledFor = Date.now() - lastProgressAt;
+        if (stalledFor > 8000 && !player.paused) {
+          tryReconnect();
+        }
+      }, 8500);
+    };
+
+    const handleTimeUpdate = () => {
+      lastProgressAt = Date.now();
+      clearReconnectTimer();
+    };
+    const handlePlaying = () => {
+      lastProgressAt = Date.now();
+      clearReconnectTimer();
+      clearVideoError();
+    };
+
+    player.addEventListener('timeupdate', handleTimeUpdate);
+    player.addEventListener('playing', handlePlaying);
+    player.addEventListener('waiting', scheduleReconnectGuard);
+    player.addEventListener('stalled', scheduleReconnectGuard);
+    player.addEventListener('error', tryReconnect);
+
+    player.__adaptiveCleanup = () => {
+      clearReconnectTimer();
+      player.removeEventListener('timeupdate', handleTimeUpdate);
+      player.removeEventListener('playing', handlePlaying);
+      player.removeEventListener('waiting', scheduleReconnectGuard);
+      player.removeEventListener('stalled', scheduleReconnectGuard);
+      player.removeEventListener('error', tryReconnect);
+    };
 
     player.src = chosen.url;
     player.preload = 'auto';
@@ -1279,14 +1341,15 @@ function setupVideoLoadingIndicator() {
   };
 
   const show = (text) => {
+    const isTvMode = document.body.classList.contains('tv-mode');
     setLabel(text || 'Carregando episódio...');
     overlay.classList.add('visible');
     clearPhaseTimer();
     phaseTimer = setTimeout(() => {
       if (overlay.classList.contains('visible')) {
-        setLabel('Conexão lenta... tentando estabilizar');
+        setLabel(isTvMode ? 'Carregando vídeo...' : 'Conexão lenta... tentando estabilizar');
       }
-    }, 4500);
+    }, isTvMode ? 7000 : 4500);
   };
 
   const hide = () => {
@@ -1297,7 +1360,7 @@ function setupVideoLoadingIndicator() {
 
   player.addEventListener('loadstart', () => show('Preparando vídeo...'));
   player.addEventListener('waiting', () => show('Carregando episódio...'));
-  player.addEventListener('stalled', () => show('Conexão oscilando...'));
+  player.addEventListener('stalled', () => show(document.body.classList.contains('tv-mode') ? 'Carregando vídeo...' : 'Conexão oscilando...'));
   player.addEventListener('seeking', () => show('Buscando trecho...'));
   player.addEventListener('canplay', hide);
   player.addEventListener('playing', hide);

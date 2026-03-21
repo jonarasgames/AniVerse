@@ -283,17 +283,42 @@
     const active = document.activeElement;
     if (!active) return null;
 
-    const listContainer = active.closest('#full-catalog-grid, #new-releases-grid');
+    const listContainer = active.closest('#full-catalog-grid, #new-releases-grid, #animes-grid, #movies-grid, #ovas-grid, #openings-section .music-tracks');
     if (!listContainer) return null;
 
-    const cards = Array.from(listContainer.querySelectorAll('.anime-card')).filter(isVisible);
+    const cards = Array.from(listContainer.querySelectorAll('.anime-card, .music-card, .music-track-card')).filter(isVisible);
     return cards.length ? cards : null;
   }
 
   function getGridContainerForFocus() {
     const active = document.activeElement;
     if (!active || !active.closest) return null;
-    return active.closest('#full-catalog-grid, #new-releases-grid, #openings-section .music-tracks');
+    return active.closest('#full-catalog-grid, #new-releases-grid, #animes-grid, #movies-grid, #ovas-grid, #openings-section .music-tracks');
+  }
+
+  function getVideoModalTvNavigationList() {
+    const modal = document.getElementById('video-modal');
+    if (!modal || !isVisible(modal)) return null;
+    const orderedSelectors = [
+      '#play-pause-btn',
+      '.timeline-container',
+      '#skip-opening-btn',
+      '#next-episode-btn',
+      '#fullscreen-btn',
+      '#season-select',
+      '#episode-select',
+      '#video-collections-row .video-collection-chip',
+      '#close-video'
+    ];
+
+    const ordered = [];
+    orderedSelectors.forEach((selector) => {
+      modal.querySelectorAll(selector).forEach((el) => {
+        if (isVisible(el)) ordered.push(el);
+      });
+    });
+
+    return ordered.length ? ordered : null;
   }
 
   function moveGridFocus(direction) {
@@ -625,6 +650,10 @@
 
       const topModal = getTopVisibleModal();
       if (topModal) {
+        if (topModal.id === 'video-modal') {
+          const videoModalOrderedTargets = getVideoModalTvNavigationList();
+          if (moveFocusInList(videoModalOrderedTargets, arrowDirection)) return;
+        }
         const profileOrderedTargets = getProfileModalFocusableInOrder();
         if (!moveFocusInList(profileOrderedTargets, arrowDirection)) {
           focusInDirection(arrowDirection);

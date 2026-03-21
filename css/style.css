@@ -4959,6 +4959,10 @@ body.tv-mode .anime-card.tv-hover-preview .age-rating-badge {
     opacity: 1 !important;
 }
 
+body.tv-mode .anime-card.tv-hover-preview .anime-info {
+    transform: translateY(0);
+}
+
 body.tv-mode #full-catalog-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
