@@ -146,9 +146,8 @@
   }
 
   function focusFirstContentItem() {
-    const activeSection = document.querySelector('.content-section.active');
-    if (!activeSection) return false;
-    const candidate = activeSection.querySelector('.anime-card, .collection-card, .news-card, .btn, [tabindex]');
+    const ordered = getContentFocusableInOrder();
+    const candidate = ordered && ordered[0];
     if (!candidate || !isVisible(candidate)) return false;
     candidate.focus();
     candidate.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
@@ -163,6 +162,50 @@
     return true;
   }
 
+  function getContentFocusableInOrder() {
+    const activeSection = document.querySelector('.content-section.active');
+    if (!activeSection) return null;
+    const sectionId = activeSection.id || '';
+
+    const selectorsBySection = {
+      'home-section': [
+        '#continue-watching-grid .anime-card',
+        '#new-releases-grid .anime-card',
+        '#full-catalog-grid .anime-card',
+        '.btn'
+      ],
+      'animes-section': ['.anime-card', '.btn'],
+      'movies-section': ['.anime-card', '.btn'],
+      'ovas-section': ['.anime-card', '.btn'],
+      'collections-section': ['.collection-card', '.anime-card', '.btn'],
+      'openings-section': ['.music-card', '.btn'],
+      'continue-section': ['.anime-card', '.btn'],
+      'downloads-section': ['.download-card', '.btn']
+    };
+
+    const fallbackSelectors = [
+      '.anime-card',
+      '.collection-card',
+      '.download-card',
+      '.music-card',
+      'button:not([disabled])',
+      'a[href]',
+      'input:not([disabled])',
+      '[tabindex]:not([tabindex="-1"])'
+    ];
+
+    const selectors = selectorsBySection[sectionId] || fallbackSelectors;
+
+    const ordered = Array.from(activeSection.querySelectorAll(selectors.join(','))).filter((el) => {
+      return isVisible(el) && !el.closest('.modal');
+    });
+
+    return ordered.length ? ordered : null;
+  }
+
+  function setSidebarExpanded(expanded) {
+    document.body.classList.toggle('tv-sidebar-expanded', Boolean(expanded));
+  }
 
   function markTvFocusable(scope = document) {
     const targetSelector = [
@@ -417,7 +460,6 @@
       if (!moveFocusInList(profileOrderedTargets, arrowDirection)) {
         focusInDirection(arrowDirection);
       }
-
       return;
     }
 
@@ -443,6 +485,20 @@
       if (active && isInSidebar(active) && arrowDirection === 'right') {
         if (focusFirstContentItem()) return;
       }
+      if (active && !isInSidebar(active)) {
+        const contentOrderedTargets = getContentFocusableInOrder();
+        if (arrowDirection === 'left') {
+          if (moveFocusInList(contentOrderedTargets, 'left')) return;
+          if (focusActiveNavItem()) return;
+        }
+        if (arrowDirection === 'right') {
+          if (moveFocusInList(contentOrderedTargets, 'right')) return;
+        }
+        if (arrowDirection === 'up' || arrowDirection === 'down') {
+          if (moveFocusInList(contentOrderedTargets, arrowDirection)) return;
+        }
+      }
+
       if (active && !isInSidebar(active) && arrowDirection === 'left') {
         if (focusActiveNavItem()) return;
       }
@@ -451,7 +507,6 @@
       if (!moveFocusInList(profileOrderedTargets, arrowDirection)) {
         focusInDirection(arrowDirection);
       }
-
       return;
     }
 
@@ -510,7 +565,6 @@
       window.requestAnimationFrame(() => {
         markTvFocusable(document);
         scheduled = false;
-
       });
     });
 
@@ -528,6 +582,9 @@
     markTvFocusable(document);
     initTvMutationObserver();
     document.addEventListener('keydown', onKeyDown, { capture: true });
+    document.addEventListener('focusin', () => {
+      setSidebarExpanded(isInSidebar(document.activeElement));
+    });
     document.addEventListener('tizenhwkey', (event) => {
       const keyName = (event.keyName || '').toLowerCase();
       if (keyName === 'back') {
@@ -542,11 +599,11 @@
       const firstNavItem = document.querySelector('nav a[data-section]');
       if (firstNavItem) {
         firstNavItem.focus();
+        setSidebarExpanded(true);
       } else {
         const firstFocusable = getFocusableElements()[0];
         if (firstFocusable) firstFocusable.focus();
       }
-
     }
   }
 
