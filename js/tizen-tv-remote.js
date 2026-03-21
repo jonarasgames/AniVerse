@@ -146,11 +146,8 @@
   }
 
   function focusFirstContentItem() {
-    const activeSection = document.querySelector('.content-section.active');
-    if (!activeSection) return false;
-    const candidate = activeSection.querySelector(
-      '.anime-card, .collection-card, .news-card, .btn, .search-suggestion-item, .search-result-card, [tabindex]'
-    );
+    const ordered = getContentFocusableInOrder();
+    const candidate = ordered && ordered[0];
     if (!candidate || !isVisible(candidate)) return false;
     candidate.focus();
     candidate.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
@@ -168,18 +165,36 @@
   function getContentFocusableInOrder() {
     const activeSection = document.querySelector('.content-section.active');
     if (!activeSection) return null;
+    const sectionId = activeSection.id || '';
 
-    const selectors = [
+    const selectorsBySection = {
+      'home-section': [
+        '#continue-watching-grid .anime-card',
+        '#new-releases-grid .anime-card',
+        '#full-catalog-grid .anime-card',
+        '.btn'
+      ],
+      'animes-section': ['.anime-card', '.btn'],
+      'movies-section': ['.anime-card', '.btn'],
+      'ovas-section': ['.anime-card', '.btn'],
+      'collections-section': ['.collection-card', '.anime-card', '.btn'],
+      'openings-section': ['.music-card', '.btn'],
+      'continue-section': ['.anime-card', '.btn'],
+      'downloads-section': ['.download-card', '.btn']
+    };
+
+    const fallbackSelectors = [
+      '.anime-card',
+      '.collection-card',
+      '.download-card',
+      '.music-card',
       'button:not([disabled])',
       'a[href]',
       'input:not([disabled])',
-      '.anime-card',
-      '.collection-card',
-      '.news-card',
-      '.search-result-card',
-      '.search-suggestion-item',
       '[tabindex]:not([tabindex="-1"])'
     ];
+
+    const selectors = selectorsBySection[sectionId] || fallbackSelectors;
 
     const ordered = Array.from(activeSection.querySelectorAll(selectors.join(','))).filter((el) => {
       return isVisible(el) && !el.closest('.modal');
