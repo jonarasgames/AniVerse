@@ -229,6 +229,8 @@
 
     function createProfileCard(profile, onClick) {
         const card = document.createElement('div');
+        card.dataset.tvProfileCard = 'select';
+        card.tabIndex = -1;
         card.style.cssText = `
             cursor: pointer;
             transition: transform 0.3s;
@@ -411,6 +413,8 @@
 
     function createAddProfileCard() {
         const card = document.createElement('div');
+        card.dataset.tvProfileCard = 'add';
+        card.tabIndex = -1;
         card.style.cssText = `
             cursor: pointer;
             transition: transform 0.3s;
@@ -664,6 +668,8 @@
 
     function createManageProfileCard(profile) {
         const card = document.createElement('div');
+        card.dataset.tvProfileCard = 'manage';
+        card.tabIndex = -1;
         card.style.cssText = `
             position: relative;
             text-align: center;
