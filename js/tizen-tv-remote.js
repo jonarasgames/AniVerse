@@ -211,6 +211,21 @@
     document.body.classList.toggle('tv-sidebar-expanded', Boolean(expanded));
   }
 
+  function ensureTvControlsHint() {
+    if (document.getElementById('tv-controls-hint')) return;
+    const hint = document.createElement('div');
+    hint.id = 'tv-controls-hint';
+    hint.innerHTML = `
+      <div class="tv-hint-title">Controles</div>
+      <div>↑ ↓ : navegar</div>
+      <div>← : voltar menu</div>
+      <div>→ : entrar seção</div>
+      <div>OK : selecionar</div>
+      <div>Return : voltar/fechar</div>
+    `;
+    document.body.appendChild(hint);
+  }
+
   function getFocusedLoopList(direction) {
     if (direction !== 'up' && direction !== 'down') return null;
     const active = document.activeElement;
@@ -601,6 +616,7 @@
 
     localStorage.setItem('aniverse_tv_mode', '1');
     document.body.classList.add('tv-mode');
+    ensureTvControlsHint();
     forceDarkThemeForTvMode();
     registerTizenKeys();
     applyZoom(localStorage.getItem(ZOOM_KEY) || DEFAULT_ZOOM);

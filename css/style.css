@@ -5020,6 +5020,28 @@ body.tv-mode .user-controls .btn-icon {
     width: 100%;
 }
 
+body.tv-mode #tv-controls-hint {
+    position: fixed;
+    right: 14px;
+    bottom: 14px;
+    z-index: 1200;
+    background: rgba(8, 10, 18, 0.82);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 12px;
+    padding: 10px 12px;
+    font-size: 0.82rem;
+    line-height: 1.45;
+    color: #f3f4f6;
+    backdrop-filter: blur(4px);
+    max-width: 220px;
+    pointer-events: none;
+}
+
+body.tv-mode #tv-controls-hint .tv-hint-title {
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
 .tv-focus-target:focus-visible,
 .tv-focus-target:focus {
     transform: scale(1.04);
