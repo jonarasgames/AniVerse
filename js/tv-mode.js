@@ -34,6 +34,7 @@
   let zoomLevel = Number(localStorage.getItem('aniverseTvZoom') || '1');
   let refreshTimer = null;
   let mutationObserver = null;
+  let modalStateObservers = [];
 
   function isTvMode() {
     return tvEnabled && document.body.classList.contains('tv-mode');
@@ -145,6 +146,13 @@
     const videoModal = document.getElementById('video-modal');
     if (videoModal && window.getComputedStyle(videoModal).display !== 'none') return videoModal;
     return document.body;
+  }
+
+  function isOverlayOpen(element, options = {}) {
+    if (!element) return false;
+    if (options.activeClass && element.classList.contains(options.activeClass)) return true;
+    const style = window.getComputedStyle(element);
+    return style.display !== 'none' && style.visibility !== 'hidden';
   }
 
   function updateSidebarState(forceOpen) {
@@ -526,8 +534,65 @@
   }
 
   function forceDarkMode() {
+    document.documentElement.classList.remove('theme-light');
+    document.documentElement.classList.add('theme-dark');
     document.body.classList.add('dark-mode');
+    document.body.classList.remove('light-mode');
+    localStorage.setItem('aniverse_theme', 'theme-dark');
     localStorage.setItem('darkMode', 'enabled');
+  }
+
+  function syncModalIsolation() {
+    if (!isTvMode()) return;
+
+    const profileModal = document.getElementById('profile-modal');
+    const profileOverlay = document.getElementById('profile-selection-overlay');
+    const detailsModal = document.getElementById('tv-details-modal');
+    const videoModal = document.getElementById('video-modal');
+
+    const activeOverlay =
+      (detailsModal && detailsModal.classList.contains('active') && detailsModal) ||
+      (profileModal && isOverlayOpen(profileModal, { activeClass: 'active' }) && profileModal) ||
+      (profileOverlay && isOverlayOpen(profileOverlay) && profileOverlay) ||
+      (videoModal && isOverlayOpen(videoModal) && videoModal) ||
+      null;
+
+    const backgroundNodes = [
+      document.querySelector('header'),
+      document.querySelector('main'),
+      document.querySelector('footer'),
+      document.getElementById('news-fab')
+    ].filter(Boolean);
+
+    document.body.classList.toggle('tv-modal-open', !!activeOverlay);
+
+    backgroundNodes.forEach((node) => {
+      if (activeOverlay) {
+        node.setAttribute('aria-hidden', 'true');
+        try { node.inert = true; } catch (_) {}
+      } else {
+        node.removeAttribute('aria-hidden');
+        try { node.inert = false; } catch (_) {}
+      }
+    });
+
+    if (!activeOverlay) return;
+
+    const activeElement = document.activeElement;
+    if (activeElement && activeElement !== document.body && !activeOverlay.contains(activeElement)) {
+      activeElement.blur?.();
+    }
+
+    if (currentInputShell && !activeOverlay.contains(currentInputShell)) {
+      currentInputShell = null;
+    }
+
+    if (!currentFocus || !activeOverlay.contains(currentFocus)) {
+      const nextFocus = Array.from(activeOverlay.querySelectorAll('.tv-focusable, .tv-sidebar-link')).find(isVisible);
+      if (nextFocus) {
+        setTimeout(() => focusElement(nextFocus), 30);
+      }
+    }
   }
 
   function disableHeavyHoverTrailers() {
@@ -545,6 +610,7 @@
       decorateInputs();
       tuneMediaForTv();
       disableHeavyHoverTrailers();
+      syncModalIsolation();
       if (!currentFocus || !isVisible(currentFocus)) {
         focusFirstInScope();
       }
@@ -723,6 +789,19 @@
       }
     });
     mutationObserver.observe(document.body, { childList: true, subtree: true });
+
+    modalStateObservers.forEach((observer) => observer.disconnect());
+    modalStateObservers = [];
+    ['profile-modal', 'profile-selection-overlay', 'tv-details-modal', 'video-modal'].forEach((id) => {
+      const element = document.getElementById(id);
+      if (!element) return;
+      const observer = new MutationObserver(() => {
+        syncModalIsolation();
+        scheduleRefresh(`modal:${id}`);
+      });
+      observer.observe(element, { attributes: true, attributeFilter: ['class', 'style'] });
+      modalStateObservers.push(observer);
+    });
   }
 
   function exposeHelpers() {
@@ -757,6 +836,7 @@
       registerTizenKeys();
       addObservers();
       exposeHelpers();
+      syncModalIsolation();
 
       document.addEventListener('keydown', (event) => {
         if (!isTvMode()) return;

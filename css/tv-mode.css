@@ -439,6 +439,13 @@ body.tv-mode .tv-toast {
   box-shadow: 0 12px 28px rgba(0,0,0,0.34);
 }
 
+body.tv-mode.tv-modal-open > header,
+body.tv-mode.tv-modal-open > main,
+body.tv-mode.tv-modal-open > footer,
+body.tv-mode.tv-modal-open > #news-fab {
+  pointer-events: none;
+}
+
 body.tv-mode .tv-card-hover-panel {
   position: fixed;
   width: min(440px, 40vw);
