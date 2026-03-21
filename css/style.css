@@ -4857,6 +4857,11 @@ body.tv-mode nav li a.active {
     border: 1px solid rgba(229, 9, 20, 0.5);
 }
 
+body.tv-mode nav a[data-section="downloads"],
+body.tv-mode #downloads-section {
+    display: none !important;
+}
+
 body.tv-mode .user-controls {
     margin-top: auto;
     display: flex;
@@ -4864,6 +4869,27 @@ body.tv-mode .user-controls {
     align-items: stretch;
     gap: 12px;
 }
+
+body.tv-mode:not(.tv-sidebar-expanded) nav a {
+    font-size: 0;
+    min-height: 52px;
+    position: relative;
+}
+
+body.tv-mode:not(.tv-sidebar-expanded) nav a::before {
+    font-size: 22px;
+    display: block;
+    text-align: center;
+    line-height: 1;
+}
+
+body.tv-mode:not(.tv-sidebar-expanded) nav a[data-section="home"]::before { content: "🏠"; }
+body.tv-mode:not(.tv-sidebar-expanded) nav a[data-section="animes"]::before { content: "📺"; }
+body.tv-mode:not(.tv-sidebar-expanded) nav a[data-section="movies"]::before { content: "🎬"; }
+body.tv-mode:not(.tv-sidebar-expanded) nav a[data-section="ovas"]::before { content: "⭐"; }
+body.tv-mode:not(.tv-sidebar-expanded) nav a[data-section="collections"]::before { content: "🗂️"; }
+body.tv-mode:not(.tv-sidebar-expanded) nav a[data-section="openings"]::before { content: "🎵"; }
+body.tv-mode:not(.tv-sidebar-expanded) nav a[data-section="continue"]::before { content: "⏯️"; }
 
 body.tv-mode main.container,
 body.tv-mode footer .container {
@@ -4896,6 +4922,52 @@ body.tv-mode .anime-card {
     scroll-snap-align: start;
     aspect-ratio: 16 / 9;
     min-height: auto;
+}
+
+body.tv-mode .anime-card.tv-hover-preview .anime-thumbnail img {
+    opacity: 0.2;
+    transform: scale(1.08);
+}
+
+body.tv-mode .anime-card.tv-hover-preview .trailer-overlay,
+body.tv-mode .anime-card.tv-hover-preview .anime-info,
+body.tv-mode .anime-card.tv-hover-preview .age-rating-badge {
+    opacity: 1 !important;
+}
+
+body.tv-mode #full-catalog-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    max-height: 72vh;
+    padding-right: 6px;
+}
+
+body.tv-mode #full-catalog-grid .anime-card {
+    width: 100%;
+    max-width: 100%;
+    flex: none;
+}
+
+body.tv-mode #video-modal .modal-content {
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: 100vw !important;
+    max-height: 100vh !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+}
+
+body.tv-mode #video-modal {
+    background: #000 !important;
+}
+
+body.tv-mode #video-modal #anime-player {
+    width: 100vw;
+    height: 100vh;
+    object-fit: contain;
 }
 
 body.tv-mode .content-section {
@@ -4946,6 +5018,28 @@ body.tv-mode .pronoun-pill {
 body.tv-mode .user-controls .btn,
 body.tv-mode .user-controls .btn-icon {
     width: 100%;
+}
+
+body.tv-mode #tv-controls-hint {
+    position: fixed;
+    right: 14px;
+    bottom: 14px;
+    z-index: 1200;
+    background: rgba(8, 10, 18, 0.82);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 12px;
+    padding: 10px 12px;
+    font-size: 0.82rem;
+    line-height: 1.45;
+    color: #f3f4f6;
+    backdrop-filter: blur(4px);
+    max-width: 220px;
+    pointer-events: none;
+}
+
+body.tv-mode #tv-controls-hint .tv-hint-title {
+    font-weight: 700;
+    margin-bottom: 6px;
 }
 
 .tv-focus-target:focus-visible,

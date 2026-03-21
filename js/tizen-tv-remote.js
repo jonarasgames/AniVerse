@@ -71,6 +71,11 @@
     return topModal || document;
   }
 
+  function getTopVisibleModal() {
+    const visibleModals = getVisibleModals();
+    return visibleModals[visibleModals.length - 1] || null;
+  }
+
   function getProfileModalFocusableInOrder() {
     const modal = document.getElementById('profile-modal');
     if (!modal || !isVisible(modal)) return null;
@@ -124,7 +129,6 @@
       'nav a[data-section="collections"]',
       'nav a[data-section="openings"]',
       'nav a[data-section="continue"]',
-      'nav a[data-section="downloads"]',
       '#dark-mode-toggle',
       '#open-anime-editor-btn',
       '#login-btn'
@@ -205,6 +209,33 @@
 
   function setSidebarExpanded(expanded) {
     document.body.classList.toggle('tv-sidebar-expanded', Boolean(expanded));
+  }
+
+  function ensureTvControlsHint() {
+    if (document.getElementById('tv-controls-hint')) return;
+    const hint = document.createElement('div');
+    hint.id = 'tv-controls-hint';
+    hint.innerHTML = `
+      <div class="tv-hint-title">Controles</div>
+      <div>↑ ↓ : navegar</div>
+      <div>← : voltar menu</div>
+      <div>→ : entrar seção</div>
+      <div>OK : selecionar</div>
+      <div>Return : voltar/fechar</div>
+    `;
+    document.body.appendChild(hint);
+  }
+
+  function getFocusedLoopList(direction) {
+    if (direction !== 'up' && direction !== 'down') return null;
+    const active = document.activeElement;
+    if (!active) return null;
+
+    const listContainer = active.closest('#full-catalog-grid, #new-releases-grid');
+    if (!listContainer) return null;
+
+    const cards = Array.from(listContainer.querySelectorAll('.anime-card')).filter(isVisible);
+    return cards.length ? cards : null;
   }
 
   function markTvFocusable(scope = document) {
@@ -477,6 +508,15 @@
     if (arrowDirection) {
       event.preventDefault();
 
+      const topModal = getTopVisibleModal();
+      if (topModal) {
+        const profileOrderedTargets = getProfileModalFocusableInOrder();
+        if (!moveFocusInList(profileOrderedTargets, arrowDirection)) {
+          focusInDirection(arrowDirection);
+        }
+        return;
+      }
+
       const sidebarOrderedTargets = getSidebarFocusableInOrder();
       const active = document.activeElement;
       if (active && isInSidebar(active) && (arrowDirection === 'up' || arrowDirection === 'down')) {
@@ -486,6 +526,9 @@
         if (focusFirstContentItem()) return;
       }
       if (active && !isInSidebar(active)) {
+        const localLoopList = getFocusedLoopList(arrowDirection);
+        if (localLoopList && moveFocusInList(localLoopList, arrowDirection)) return;
+
         const contentOrderedTargets = getContentFocusableInOrder();
         if (arrowDirection === 'left') {
           if (moveFocusInList(contentOrderedTargets, 'left')) return;
@@ -503,10 +546,7 @@
         if (focusActiveNavItem()) return;
       }
 
-      const profileOrderedTargets = getProfileModalFocusableInOrder();
-      if (!moveFocusInList(profileOrderedTargets, arrowDirection)) {
-        focusInDirection(arrowDirection);
-      }
+      focusInDirection(arrowDirection);
       return;
     }
 
@@ -576,6 +616,7 @@
 
     localStorage.setItem('aniverse_tv_mode', '1');
     document.body.classList.add('tv-mode');
+    ensureTvControlsHint();
     forceDarkThemeForTvMode();
     registerTizenKeys();
     applyZoom(localStorage.getItem(ZOOM_KEY) || DEFAULT_ZOOM);
@@ -584,6 +625,31 @@
     document.addEventListener('keydown', onKeyDown, { capture: true });
     document.addEventListener('focusin', () => {
       setSidebarExpanded(isInSidebar(document.activeElement));
+    });
+
+    let cardPreviewTimer = null;
+    let cardPreviewTarget = null;
+    const clearCardPreview = () => {
+      if (cardPreviewTimer) clearTimeout(cardPreviewTimer);
+      cardPreviewTimer = null;
+      if (cardPreviewTarget) cardPreviewTarget.classList.remove('tv-hover-preview');
+      cardPreviewTarget = null;
+    };
+
+    document.addEventListener('focusin', (event) => {
+      const card = event.target.closest && event.target.closest('.anime-card');
+      clearCardPreview();
+      if (!card) return;
+      cardPreviewTarget = card;
+      cardPreviewTimer = setTimeout(() => {
+        if (document.activeElement && card.contains(document.activeElement)) {
+          card.classList.add('tv-hover-preview');
+        }
+      }, 5000);
+    });
+
+    document.addEventListener('focusout', () => {
+      clearCardPreview();
     });
     document.addEventListener('tizenhwkey', (event) => {
       const keyName = (event.keyName || '').toLowerCase();
