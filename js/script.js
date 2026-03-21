@@ -934,6 +934,26 @@ function onVideoSetSource(player, episode){
   const sources = normalizeEpisodeSources(episode);
   if (!sources.length) return;
 
+  // Modo TV: prioriza estabilidade (sem troca agressiva de fonte durante a reprodução)
+  if (document.body.classList.contains('tv-mode')) {
+    const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    const downlink = Number(connection && connection.downlink);
+    let preferredIndex = 0;
+    if (Number.isFinite(downlink) && downlink <= 2.5) {
+      preferredIndex = Math.min(sources.length - 1, 1);
+    }
+
+    const chosen = sources[preferredIndex] || sources[0];
+    if (!chosen || !chosen.url) return;
+
+    player.src = chosen.url;
+    player.preload = 'auto';
+    player.load();
+    player.play().catch(() => {});
+    clearVideoError();
+    return;
+  }
+
   const pickInitialSourceIndex = () => {
     try {
       const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
