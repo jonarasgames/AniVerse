@@ -511,15 +511,20 @@
     focusElement(sidebarLinks[0]);
   }
 
-  function focusSectionContent(sectionId) {
+  function focusSectionContent(sectionId, attempt = 0) {
     const section = document.getElementById(`${sectionId}-section`);
     if (!section) return;
-    const target = Array.from(section.querySelectorAll('.tv-focusable')).find((element) => {
+    scheduleRefresh(`section:${sectionId}`);
+    const target = Array.from(section.querySelectorAll('.tv-focusable, .anime-card, .music-card, .collection-card, .btn')).find((element) => {
       return isVisible(element) && !element.classList.contains('tv-sidebar-link');
     });
     if (target) {
       updateSidebarState(false);
       focusElement(target);
+      return;
+    }
+    if (attempt < 12) {
+      setTimeout(() => focusSectionContent(sectionId, attempt + 1), 120);
     }
   }
 
@@ -626,7 +631,7 @@
       `;
       const button = document.createElement('button');
       button.type = 'button';
-      button.className = 'user-profile-trigger tv-focusable';
+      button.className = 'user-profile-trigger tv-focusable tv-sidebar-link';
       button.innerHTML = `<span class="tv-nav-icon">${avatarMarkup}</span><span class="tv-nav-label">Perfis</span>`;
       button.addEventListener('click', () => {
         if (typeof window.showProfileSelectionScreen === 'function') {
@@ -635,13 +640,14 @@
           window.openProfileModal();
         }
       });
+      addTvClass(button, 'tv-sidebar-link');
       userControls.appendChild(button);
     }
 
     const themeBtn = document.getElementById('dark-mode-toggle');
     if (themeBtn && !themeBtn.querySelector('.tv-nav-label')) {
       themeBtn.innerHTML = `<span class="tv-nav-icon"><i class="fas ${ICONS.theme}"></i></span><span class="tv-nav-label">Tema</span>`;
-      addTvClass(themeBtn);
+      addTvClass(themeBtn, 'tv-sidebar-link');
     }
   }
 
