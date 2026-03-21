@@ -17,12 +17,11 @@
     animes: 'fa-tv',
     movies: 'fa-film',
     ovas: 'fa-clapperboard',
-    collections: 'fa-layer-group',
     openings: 'fa-music',
-    continue: 'fa-clock-rotate-left',
     profile: 'fa-user-circle',
     theme: 'fa-circle-half-stroke'
   };
+  const TV_MENU_ORDER = ['home', 'animes', 'movies', 'ovas', 'openings'];
 
   let tvEnabled = false;
   let currentFocus = null;
@@ -140,7 +139,7 @@
     const tvDetails = document.getElementById('tv-details-modal');
     if (tvDetails && tvDetails.classList.contains('active')) return tvDetails;
     const profileModal = document.getElementById('profile-modal');
-    if (profileModal && profileModal.classList.contains('active') && isVisible(profileModal)) return profileModal;
+    if (profileModal && isOverlayOpen(profileModal, { activeClass: 'active' }) && isVisible(profileModal)) return profileModal;
     const profileOverlay = document.getElementById('profile-selection-overlay');
     if (profileOverlay && isVisible(profileOverlay)) return profileOverlay;
     const videoModal = document.getElementById('video-modal');
@@ -231,6 +230,79 @@
     return { el, rect, x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
   }
 
+  function getContainerOrientation(container) {
+    if (!container) return null;
+    if (container.matches('#full-catalog-grid, #animes-grid, #movies-grid, #ovas-grid, #continue-grid')) return 'vertical';
+    if (container.matches('#new-releases-grid, #continue-watching-grid, #collections-grid, .collection-animes, .music-tracks, .tv-season-strip, .tv-episode-strip, .tv-similar-strip, .pronoun-pills, .customization-tabs')) return 'horizontal';
+    if (container.matches('.color-grid, .background-images-grid, .character-grid, .frame-grid')) return 'grid';
+    return null;
+  }
+
+  function getNavigationContainer(element) {
+    return element?.closest?.(
+      '#new-releases-grid, #continue-watching-grid, #full-catalog-grid, #animes-grid, #movies-grid, #ovas-grid, #continue-grid, #collections-grid, .collection-animes, .music-tracks, .tv-season-strip, .tv-episode-strip, .tv-similar-strip, .pronoun-pills, .customization-tabs, .color-grid, .background-images-grid, .character-grid, .frame-grid'
+    ) || null;
+  }
+
+  function navigateWithinContainer(direction) {
+    const container = getNavigationContainer(currentFocus);
+    if (!container) return false;
+
+    const orientation = getContainerOrientation(container);
+    if (!orientation) return false;
+
+    const items = Array.from(container.querySelectorAll('.tv-focusable')).filter(isVisible);
+    if (!items.length) return false;
+
+    const currentIndex = items.indexOf(currentFocus);
+    if (currentIndex === -1) return false;
+
+    if (orientation === 'horizontal') {
+      if (direction !== KEY.LEFT && direction !== KEY.RIGHT) return false;
+      const nextIndex = direction === KEY.RIGHT
+        ? (currentIndex + 1) % items.length
+        : (currentIndex - 1 + items.length) % items.length;
+      focusElement(items[nextIndex]);
+      return true;
+    }
+
+    if (orientation === 'vertical') {
+      if (direction !== KEY.UP && direction !== KEY.DOWN) return false;
+      const nextIndex = direction === KEY.DOWN
+        ? (currentIndex + 1) % items.length
+        : (currentIndex - 1 + items.length) % items.length;
+      focusElement(items[nextIndex]);
+      return true;
+    }
+
+    if (orientation === 'grid') {
+      const rows = groupElementsByTop(items);
+      const rowIndex = rows.findIndex((row) => row.includes(currentFocus));
+      if (rowIndex === -1) return false;
+      const row = rows[rowIndex];
+      const colIndex = row.indexOf(currentFocus);
+
+      if (direction === KEY.LEFT || direction === KEY.RIGHT) {
+        const nextCol = direction === KEY.RIGHT
+          ? (colIndex + 1) % row.length
+          : (colIndex - 1 + row.length) % row.length;
+        focusElement(row[nextCol]);
+        return true;
+      }
+
+      if (direction === KEY.UP || direction === KEY.DOWN) {
+        const nextRowIndex = (rowIndex + (direction === KEY.DOWN ? 1 : -1) + rows.length) % rows.length;
+        const nextRow = rows[nextRowIndex];
+        const ratio = row.length > 1 ? colIndex / (row.length - 1) : 0;
+        const nextColIndex = nextRow.length > 1 ? Math.round(ratio * (nextRow.length - 1)) : 0;
+        focusElement(nextRow[nextColIndex]);
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   function groupElementsByTop(elements, tolerance = 26) {
     const rows = [];
     elements.forEach((element) => {
@@ -250,7 +322,7 @@
 
   function getProfileModalRows() {
     const modal = document.getElementById('profile-modal');
-    if (!modal || !modal.classList.contains('active')) return null;
+    if (!modal || !isOverlayOpen(modal, { activeClass: 'active' })) return null;
 
     const rows = [];
     const pushRow = (elements) => {
@@ -311,6 +383,9 @@
 
     const active = getActiveScope();
     if (active.id === 'profile-modal' && navigateProfileModal(direction)) {
+      return;
+    }
+    if (active === document.body && navigateWithinContainer(direction)) {
       return;
     }
     if (active.id === 'video-modal') {
@@ -397,7 +472,7 @@
     }
 
     const profileModal = document.getElementById('profile-modal');
-    if (profileModal && profileModal.classList.contains('active')) {
+    if (profileModal && isOverlayOpen(profileModal, { activeClass: 'active' })) {
       const closeBtn = document.getElementById('close-profile-modal');
       if (currentInputShell) {
         toggleInputEdit(currentInputShell, false);
@@ -493,8 +568,22 @@
   }
 
   function decorateSidebar() {
-    document.querySelectorAll('nav a[data-section]').forEach((link) => {
+    const navList = document.querySelector('nav ul');
+    const navLinks = Array.from(document.querySelectorAll('nav a[data-section]'));
+    if (navList) {
+      const orderedItems = TV_MENU_ORDER
+        .map((section) => navLinks.find((link) => link.dataset.section === section))
+        .filter(Boolean)
+        .map((link) => link.parentElement)
+        .filter(Boolean);
+      orderedItems.forEach((item) => navList.appendChild(item));
+    }
+
+    navLinks.forEach((link) => {
       const section = link.dataset.section;
+      const shouldShow = TV_MENU_ORDER.includes(section);
+      link.parentElement && (link.parentElement.style.display = shouldShow ? '' : 'none');
+      if (!shouldShow) return;
       link.classList.add('tv-sidebar-link');
       const label = link.textContent.trim();
       link.innerHTML = `<span class="tv-nav-icon"><i class="fas ${ICONS[section] || 'fa-circle'}"></i></span><span class="tv-nav-label">${label}</span>`;

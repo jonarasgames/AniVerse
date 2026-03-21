@@ -219,7 +219,7 @@ body.tv-mode .collection-animes,
 body.tv-mode .music-tracks {
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: minmax(300px, 22vw);
+  grid-auto-columns: minmax(260px, 300px);
   gap: 20px;
   overflow-x: auto;
   overflow-y: hidden;
