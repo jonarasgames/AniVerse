@@ -389,11 +389,6 @@
   }
 
   function handleBack() {
-    if (currentInputShell) {
-      toggleInputEdit(currentInputShell, false);
-      return;
-    }
-
     const tvDetails = document.getElementById('tv-details-modal');
     if (tvDetails && tvDetails.classList.contains('active')) {
       closeTvDetails();
@@ -404,6 +399,9 @@
     const profileModal = document.getElementById('profile-modal');
     if (profileModal && profileModal.classList.contains('active')) {
       const closeBtn = document.getElementById('close-profile-modal');
+      if (currentInputShell) {
+        toggleInputEdit(currentInputShell, false);
+      }
       closeBtn?.click();
       focusSidebar();
       return;
@@ -413,6 +411,11 @@
     if (videoModal && window.getComputedStyle(videoModal).display !== 'none') {
       document.getElementById('close-video')?.click();
       focusSidebar();
+      return;
+    }
+
+    if (currentInputShell) {
+      toggleInputEdit(currentInputShell, false);
       return;
     }
 
@@ -677,6 +680,15 @@
     });
   }
 
+  function ensureRailStartPositions() {
+    ['new-releases-grid', 'continue-watching-grid'].forEach((id) => {
+      const rail = document.getElementById(id);
+      if (!rail || !rail.children.length || rail.dataset.tvRailInitialized === '1') return;
+      rail.scrollLeft = 0;
+      rail.dataset.tvRailInitialized = '1';
+    });
+  }
+
   function scheduleRefresh(reason) {
     if (!isTvMode()) return;
     clearTimeout(refreshTimer);
@@ -685,6 +697,7 @@
       decorateInputs();
       tuneMediaForTv();
       disableHeavyHoverTrailers();
+      ensureRailStartPositions();
       syncModalIsolation();
       if (!currentFocus || !isVisible(currentFocus)) {
         focusFirstInScope();

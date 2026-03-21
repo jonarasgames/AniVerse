@@ -223,8 +223,10 @@ body.tv-mode .music-tracks {
   gap: 20px;
   overflow-x: auto;
   overflow-y: hidden;
-  padding: 12px 18px 20px 6px;
+  padding: 12px 0 20px 0;
+  justify-content: start;
   scroll-snap-type: x mandatory;
+  scroll-padding-left: 0;
   scrollbar-width: none;
 }
 
