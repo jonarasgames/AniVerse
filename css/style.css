@@ -4792,6 +4792,7 @@ html.theme-light .inplace-duration-view {
 
 body.tv-mode {
     cursor: none;
+    scroll-behavior: auto;
 }
 
 body.tv-mode header .container,
@@ -4911,7 +4912,8 @@ body.tv-mode .anime-grid {
     gap: 22px;
     overflow-x: auto;
     overflow-y: hidden;
-    padding: 6px 8px 14px;
+    padding: 10px 24px 14px;
+    scroll-padding-left: 24px;
     scroll-snap-type: x proximity;
     scrollbar-width: none;
 }
@@ -4950,8 +4952,44 @@ body.tv-mode #full-catalog-grid {
 }
 
 body.tv-mode #new-releases-grid {
-    scroll-padding-left: 20px;
-    padding-left: 20px;
+    scroll-padding-left: 24px;
+    padding-left: 24px;
+}
+
+body.tv-mode #new-releases-grid .anime-card,
+body.tv-mode #full-catalog-grid .anime-card {
+    scroll-margin-left: 24px;
+}
+
+/* Mantém Animes/Filmes/OVAs no formato padrão em grade */
+body.tv-mode #animes-grid,
+body.tv-mode #movies-grid,
+body.tv-mode #ovas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    overflow: visible;
+    padding: 0;
+}
+
+/* Música em fileiras horizontais por série */
+body.tv-mode #openings-section .music-grid {
+    display: block;
+}
+
+body.tv-mode #openings-section .music-anime-section .music-tracks {
+    display: flex;
+    gap: 14px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 8px 4px 10px;
+    scroll-snap-type: x proximity;
+}
+
+body.tv-mode #openings-section .music-track-card,
+body.tv-mode #openings-section .music-card {
+    flex: 0 0 260px;
+    scroll-snap-align: start;
 }
 
 body.tv-mode #video-modal .modal-content {
@@ -5084,8 +5122,8 @@ body.light-mode.tv-mode nav li a {
 
 .tv-focus-target:focus-visible,
 .tv-focus-target:focus {
-    transform: scale(1.04);
-    box-shadow: 0 0 0 3px #ffffff, 0 0 0 6px rgba(229, 9, 20, 0.85) !important;
+    transform: scale(1.02);
+    box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px rgba(229, 9, 20, 0.8) !important;
     border-radius: 12px;
-    transition: transform 120ms ease, box-shadow 120ms ease;
+    transition: transform 80ms ease, box-shadow 80ms ease;
 }

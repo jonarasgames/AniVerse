@@ -10,6 +10,11 @@
     channelDown: new Set([428]),
     back: new Set([10009, 461])
   };
+  let focusCache = {
+    root: null,
+    stamp: 0,
+    items: []
+  };
 
   const KEY_CODES = {
     LEFT: 37,
@@ -41,6 +46,10 @@
 
   function getFocusableElements() {
     const root = getActiveNavigationRoot();
+    const stamp = Number(root.dataset.tvFocusStamp || 0);
+    if (focusCache.root === root && focusCache.stamp === stamp && Array.isArray(focusCache.items) && focusCache.items.length) {
+      return focusCache.items;
+    }
     const selectors = [
       'a[href]',
       'button:not([disabled])',
@@ -51,7 +60,9 @@
       '[role="button"]'
     ];
 
-    return Array.from(root.querySelectorAll(selectors.join(','))).filter(isVisible);
+    const items = Array.from(root.querySelectorAll(selectors.join(','))).filter(isVisible);
+    focusCache = { root, stamp, items };
+    return items;
   }
 
   function getVisibleModals() {
@@ -100,6 +111,12 @@
       });
     });
 
+    // Fallback: inclui qualquer controle visível que não entrou na ordem fixa
+    modal.querySelectorAll('button, input, select, [tabindex]:not([tabindex="-1"])').forEach((el) => {
+      if (!isVisible(el)) return;
+      if (!ordered.includes(el)) ordered.push(el);
+    });
+
     return ordered.length ? ordered : null;
   }
 
@@ -112,7 +129,7 @@
     const next = list[nextIndex];
     if (!next) return false;
     next.focus();
-    next.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+    next.scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'nearest' });
     return true;
   }
 
@@ -154,7 +171,7 @@
     const candidate = ordered && ordered[0];
     if (!candidate || !isVisible(candidate)) return false;
     candidate.focus();
-    candidate.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+    candidate.scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'nearest' });
     return true;
   }
 
@@ -162,7 +179,7 @@
     const activeNav = document.querySelector('nav a.active, nav a[data-section="home"]');
     if (!activeNav || !isVisible(activeNav)) return false;
     activeNav.focus();
-    activeNav.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+    activeNav.scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'nearest' });
     return true;
   }
 
@@ -182,7 +199,7 @@
       'movies-section': ['.anime-card', '.btn'],
       'ovas-section': ['.anime-card', '.btn'],
       'collections-section': ['.collection-card', '.anime-card', '.btn'],
-      'openings-section': ['.music-card', '.btn'],
+      'openings-section': ['.music-track-card', '.music-card', '.btn'],
       'continue-section': ['.anime-card', '.btn'],
       'downloads-section': ['.download-card', '.btn']
     };
@@ -285,10 +302,15 @@
       '.tab-btn',
       '.pronoun-pill',
       '.news-card-header',
+      '.music-card',
+      '.music-track-card',
       '.btn',
       '.btn-icon',
       '.close-modal-btn',
-      '.close-modal'
+      '.close-modal',
+      'nav a',
+      '#season-select',
+      '#episode-select'
     ].join(',');
 
     const targets = [];
@@ -357,7 +379,7 @@
     const nextElement = findNextFocusable(direction);
     if (nextElement && typeof nextElement.focus === 'function') {
       nextElement.focus({ preventScroll: false });
-      nextElement.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+      nextElement.scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'nearest' });
       return true;
     }
     return false;
@@ -565,6 +587,24 @@
       if (active && isInSidebar(active) && arrowDirection === 'right') {
         if (focusFirstContentItem()) return;
       }
+      if (active && active.closest && active.closest('#new-releases-grid') && arrowDirection === 'down') {
+        const firstCatalog = document.querySelector('#full-catalog-grid .anime-card');
+        if (firstCatalog) {
+          firstCatalog.focus();
+          firstCatalog.scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'nearest' });
+          return;
+        }
+      }
+      if (active && active.closest && active.closest('#full-catalog-grid') && arrowDirection === 'up') {
+        const releases = Array.from(document.querySelectorAll('#new-releases-grid .anime-card')).filter(isVisible);
+        const firstCatalog = document.querySelector('#full-catalog-grid .anime-card');
+        if (releases.length && firstCatalog && active === firstCatalog) {
+          const lastRelease = releases[releases.length - 1];
+          lastRelease.focus();
+          lastRelease.scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'nearest' });
+          return;
+        }
+      }
       if (active && !isInSidebar(active)) {
         const localLoopList = getFocusedLoopList(arrowDirection);
         if (localLoopList && moveFocusInList(localLoopList, arrowDirection)) return;
@@ -594,13 +634,34 @@
       case KEY_CODES.ENTER: {
         const active = document.activeElement;
         if (active && active.matches && active.matches('#profile-name, #profile-password')) {
-          active.readOnly = false;
+          const currentValue = active.value || '';
+          const label = active.id === 'profile-password' ? 'Digite a senha do perfil' : 'Digite o nome do perfil';
+          const typed = window.prompt(label, currentValue);
+          if (typed !== null) {
+            active.value = typed;
+            active.dispatchEvent(new Event('input', { bubbles: true }));
+            active.dispatchEvent(new Event('change', { bubbles: true }));
+          }
+          active.readOnly = true;
+          return;
+        }
+        if (active && active.tagName === 'SELECT') {
           active.focus();
+          active.click();
+          event.preventDefault();
           return;
         }
         if (active && !isTypingTarget(active) && typeof active.click === 'function') {
           active.click();
           event.preventDefault();
+          return;
+        }
+        if (active && active.querySelector) {
+          const nestedButton = active.querySelector('button, .btn, [role="button"]');
+          if (nestedButton && typeof nestedButton.click === 'function') {
+            nestedButton.click();
+            event.preventDefault();
+          }
         }
         break;
       }
@@ -648,6 +709,10 @@
 
       scheduled = true;
       window.requestAnimationFrame(() => {
+        const root = getActiveNavigationRoot();
+        if (root && root.dataset) {
+          root.dataset.tvFocusStamp = String(Date.now());
+        }
         markTvFocusable(document);
         syncVideoModalState();
         scheduled = false;
@@ -673,6 +738,21 @@
     document.addEventListener('focusin', () => {
       setSidebarExpanded(isInSidebar(document.activeElement));
       updateTvControlsHintContext(document.activeElement);
+      if (document.activeElement && document.activeElement.matches && document.activeElement.matches('nav a[data-section]')) {
+        document.querySelectorAll('nav a[data-section].active').forEach((el) => el.classList.remove('active'));
+        document.activeElement.classList.add('active');
+      }
+    });
+
+    document.querySelectorAll('nav a[data-section]').forEach((link) => {
+      link.addEventListener('click', () => {
+        setTimeout(() => {
+          setSidebarExpanded(false);
+          focusFirstContentItem();
+          const root = getActiveNavigationRoot();
+          if (root && root.dataset) root.dataset.tvFocusStamp = String(Date.now());
+        }, 120);
+      });
     });
 
     let cardPreviewTimer = null;
