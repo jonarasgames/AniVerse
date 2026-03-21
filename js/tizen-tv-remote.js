@@ -290,6 +290,58 @@
     return cards.length ? cards : null;
   }
 
+  function getGridContainerForFocus() {
+    const active = document.activeElement;
+    if (!active || !active.closest) return null;
+    return active.closest('#full-catalog-grid, #new-releases-grid, #openings-section .music-tracks');
+  }
+
+  function moveGridFocus(direction) {
+    const container = getGridContainerForFocus();
+    const active = document.activeElement;
+    if (!container || !active) return false;
+
+    const items = Array.from(container.querySelectorAll('.anime-card, .music-track-card, .music-card')).filter(isVisible);
+    if (!items.length) return false;
+
+    const positions = items.map((el) => {
+      const rect = el.getBoundingClientRect();
+      return {
+        el,
+        x: rect.left + rect.width / 2,
+        y: rect.top + rect.height / 2
+      };
+    });
+
+    const current = positions.find((p) => p.el === active);
+    if (!current) return false;
+
+    if (direction === 'left' || direction === 'right') {
+      const sameRow = positions
+        .filter((p) => Math.abs(p.y - current.y) < 28)
+        .sort((a, b) => a.x - b.x);
+      const idx = sameRow.findIndex((p) => p.el === active);
+      if (idx === -1) return false;
+      const next = direction === 'right'
+        ? sameRow[(idx + 1) % sameRow.length]
+        : sameRow[(idx - 1 + sameRow.length) % sameRow.length];
+      if (!next) return false;
+      next.el.focus();
+      next.el.scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'nearest' });
+      return true;
+    }
+
+    const candidates = positions
+      .filter((p) => direction === 'down' ? p.y > current.y + 10 : p.y < current.y - 10)
+      .sort((a, b) => Math.abs(a.y - current.y) * 100 + Math.abs(a.x - current.x) - (Math.abs(b.y - current.y) * 100 + Math.abs(b.x - current.x)));
+
+    const target = candidates[0] || (direction === 'down' ? positions[0] : positions[positions.length - 1]);
+    if (!target) return false;
+    target.el.focus();
+    target.el.scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'nearest' });
+    return true;
+  }
+
   function markTvFocusable(scope = document) {
     const targetSelector = [
       '.anime-card',
@@ -310,7 +362,8 @@
       '.close-modal',
       'nav a',
       '#season-select',
-      '#episode-select'
+      '#episode-select',
+      '.video-collection-chip'
     ].join(',');
 
     const targets = [];
@@ -606,6 +659,8 @@
         }
       }
       if (active && !isInSidebar(active)) {
+        if (moveGridFocus(arrowDirection)) return;
+
         const localLoopList = getFocusedLoopList(arrowDirection);
         if (localLoopList && moveFocusInList(localLoopList, arrowDirection)) return;
 

@@ -994,6 +994,24 @@ nav a:hover, nav a.active {
     cursor: pointer;
 }
 
+.video-collections-row {
+    margin-top: 10px;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+}
+
+.video-collection-chip {
+    border: 1px solid rgba(255,255,255,0.35);
+    background: rgba(0,0,0,0.35);
+    color: #fff;
+    border-radius: 999px;
+    padding: 6px 10px;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
 option.watched {
     color: #1dd1a1;
     font-weight: bold;
@@ -4954,6 +4972,8 @@ body.tv-mode #full-catalog-grid {
 body.tv-mode #new-releases-grid {
     scroll-padding-left: 24px;
     padding-left: 24px;
+    overflow-x: auto;
+    overflow-y: visible;
 }
 
 body.tv-mode #new-releases-grid .anime-card,
@@ -5009,6 +5029,12 @@ body.tv-mode #video-modal #anime-player {
     width: 100vw;
     height: 100vh;
     object-fit: contain;
+}
+
+body.tv-mode #video-modal #volume-btn,
+body.tv-mode #video-modal .volume-control,
+body.tv-mode #video-modal #volume-progress {
+    display: none !important;
 }
 
 body.tv-mode #video-modal .modal-content,
