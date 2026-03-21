@@ -934,6 +934,102 @@ function onVideoSetSource(player, episode){
   const sources = normalizeEpisodeSources(episode);
   if (!sources.length) return;
 
+  // Modo TV: prioriza estabilidade (sem troca agressiva de fonte durante a reprodução)
+  if (document.body.classList.contains('tv-mode')) {
+    const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    const downlink = Number(connection && connection.downlink);
+    let preferredIndex = 0;
+    if (Number.isFinite(downlink) && downlink <= 2.5) {
+      // Em rede fraca de TV, começa em qualidade mais leve para evitar travas recorrentes.
+      preferredIndex = Math.max(0, sources.length - 1);
+    }
+
+    let reconnectTimer = null;
+    let retryCount = 0;
+    const maxRetries = 2;
+    let lastProgressAt = Date.now();
+
+    const clearReconnectTimer = () => {
+      if (reconnectTimer) {
+        clearTimeout(reconnectTimer);
+        reconnectTimer = null;
+      }
+    };
+
+    const chosen = sources[preferredIndex] || sources[sources.length - 1] || sources[0];
+    if (!chosen || !chosen.url) return;
+
+    const tryReconnect = () => {
+      if (retryCount >= maxRetries) return;
+      retryCount += 1;
+      const resumeAt = Number(player.currentTime || 0);
+      player.src = addCacheBust(chosen.url);
+      player.load();
+      if (resumeAt > 0) {
+        player.addEventListener('loadedmetadata', () => {
+          try { player.currentTime = resumeAt; } catch (_) {}
+        }, { once: true });
+      }
+      player.play().catch(() => {});
+    };
+
+    const scheduleReconnectGuard = () => {
+      clearReconnectTimer();
+      reconnectTimer = setTimeout(() => {
+        const stalledFor = Date.now() - lastProgressAt;
+        if (stalledFor > 8000 && !player.paused) {
+          tryReconnect();
+        }
+      }, 8500);
+    };
+
+    const handleTimeUpdate = () => {
+      lastProgressAt = Date.now();
+      clearReconnectTimer();
+    };
+    const handlePlaying = () => {
+      lastProgressAt = Date.now();
+      clearReconnectTimer();
+      clearVideoError();
+    };
+
+    player.addEventListener('timeupdate', handleTimeUpdate);
+    player.addEventListener('playing', handlePlaying);
+    player.addEventListener('waiting', scheduleReconnectGuard);
+    player.addEventListener('stalled', scheduleReconnectGuard);
+    player.addEventListener('error', tryReconnect);
+
+    player.__adaptiveCleanup = () => {
+      clearReconnectTimer();
+      player.removeEventListener('timeupdate', handleTimeUpdate);
+      player.removeEventListener('playing', handlePlaying);
+      player.removeEventListener('waiting', scheduleReconnectGuard);
+      player.removeEventListener('stalled', scheduleReconnectGuard);
+      player.removeEventListener('error', tryReconnect);
+    };
+
+    player.src = chosen.url;
+    player.preload = 'auto';
+    player.load();
+    player.play().catch(() => {});
+    clearVideoError();
+    return;
+  }
+
+  const pickInitialSourceIndex = () => {
+    try {
+      const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+      const downlink = Number(connection && connection.downlink);
+      if (!Number.isFinite(downlink)) return 0;
+
+      if (downlink <= 1.8) return Math.max(0, sources.length - 1);
+      if (downlink <= 3.5) return Math.min(Math.max(0, sources.length - 1), 1);
+      return 0;
+    } catch (_) {
+      return 0;
+    }
+  };
+
   const state = {
     token: Date.now() + Math.random(),
     sources,
@@ -945,8 +1041,13 @@ function onVideoSetSource(player, episode){
     retryTimeoutId: null,
     upgradeIntervalId: null,
     recoverInFlight: false,
-    fallbackInUse: false
+    fallbackInUse: false,
+    waitingHits: 0,
+    waitingWindowStart: 0,
+    lastProgressTime: 0,
+    lastProgressAt: 0
   };
+  state.currentIndex = pickInitialSourceIndex();
   player.__adaptivePlayback = state;
 
   const clearTimers = () => {
@@ -1100,7 +1201,15 @@ function onVideoSetSource(player, episode){
     clearVideoError();
     state.recoverInFlight = false;
     state.retriesInSource = 0;
+    state.lastProgressTime = player.currentTime || 0;
+    state.lastProgressAt = Date.now();
     if (state.fallbackInUse) tryBackgroundUpgrade();
+  };
+
+  const handleTimeUpdate = () => {
+    if (player.__adaptivePlayback?.token !== state.token) return;
+    state.lastProgressTime = player.currentTime || 0;
+    state.lastProgressAt = Date.now();
   };
 
   const handleCanPlay = () => {
@@ -1113,7 +1222,21 @@ function onVideoSetSource(player, episode){
 
   const handleWaiting = () => {
     if (player.__adaptivePlayback?.token !== state.token) return;
-    if (!state.fallbackInUse) return;
+    const now = Date.now();
+    if (!state.waitingWindowStart || now - state.waitingWindowStart > 12000) {
+      state.waitingWindowStart = now;
+      state.waitingHits = 0;
+    }
+    state.waitingHits += 1;
+
+    if (!state.fallbackInUse) {
+      const recentlyProgressed = Date.now() - state.lastProgressAt < 2500;
+      if (!recentlyProgressed && state.waitingHits >= 6 && state.currentIndex < state.sources.length - 1) {
+        recoverPlayback('waiting-spike');
+      }
+      return;
+    }
+
     showVideoError('Carregando... Ajustando qualidade automaticamente');
   };
 
@@ -1122,6 +1245,7 @@ function onVideoSetSource(player, episode){
   };
 
   player.addEventListener('playing', handlePlaying);
+  player.addEventListener('timeupdate', handleTimeUpdate);
   player.addEventListener('canplay', handleCanPlay);
   player.addEventListener('waiting', handleWaiting);
   player.addEventListener('stalled', handleWaiting);
@@ -1134,13 +1258,14 @@ function onVideoSetSource(player, episode){
       state.upgradeIntervalId = null;
     }
     player.removeEventListener('playing', handlePlaying);
+    player.removeEventListener('timeupdate', handleTimeUpdate);
     player.removeEventListener('canplay', handleCanPlay);
     player.removeEventListener('waiting', handleWaiting);
     player.removeEventListener('stalled', handleWaiting);
     player.removeEventListener('error', handleError);
   };
 
-  setSource(0, { autoPlay: true, preserveTime: 0 });
+  setSource(state.currentIndex, { autoPlay: true, preserveTime: 0 });
 }
 
 function ensureModalAdminEditorUI() {
@@ -1216,14 +1341,15 @@ function setupVideoLoadingIndicator() {
   };
 
   const show = (text) => {
+    const isTvMode = document.body.classList.contains('tv-mode');
     setLabel(text || 'Carregando episódio...');
     overlay.classList.add('visible');
     clearPhaseTimer();
     phaseTimer = setTimeout(() => {
       if (overlay.classList.contains('visible')) {
-        setLabel('Conexão lenta... tentando estabilizar');
+        setLabel(isTvMode ? 'Carregando vídeo...' : 'Conexão lenta... tentando estabilizar');
       }
-    }, 4500);
+    }, isTvMode ? 7000 : 4500);
   };
 
   const hide = () => {
@@ -1234,7 +1360,7 @@ function setupVideoLoadingIndicator() {
 
   player.addEventListener('loadstart', () => show('Preparando vídeo...'));
   player.addEventListener('waiting', () => show('Carregando episódio...'));
-  player.addEventListener('stalled', () => show('Conexão oscilando...'));
+  player.addEventListener('stalled', () => show(document.body.classList.contains('tv-mode') ? 'Carregando vídeo...' : 'Conexão oscilando...'));
   player.addEventListener('seeking', () => show('Buscando trecho...'));
   player.addEventListener('canplay', hide);
   player.addEventListener('playing', hide);
@@ -1332,6 +1458,7 @@ function openEpisode(anime, seasonNumber, episodeIndex){
     if (typeof window.syncEpisodeSelectors === 'function') {
         window.syncEpisodeSelectors(anime, seasonNumber, episodeIndex);
     }
+    renderVideoCollectionsRow(anime);
     
     const sl = document.getElementById('current-season-label'), elb = document.getElementById('current-episode-label');
     if (sl) {
@@ -1403,6 +1530,20 @@ function openEpisode(anime, seasonNumber, episodeIndex){
   } catch(e){ console.error('openEpisode error', e); }
 }
 window.openEpisode = openEpisode;
+
+function renderVideoCollectionsRow(anime) {
+  const row = document.getElementById('video-collections-row');
+  if (!row) return;
+  const collections = Array.isArray(anime?.collections) ? anime.collections : [];
+  if (!collections.length) {
+    row.innerHTML = '';
+    return;
+  }
+
+  row.innerHTML = collections
+    .map((name) => `<span class="video-collection-chip">${String(name)}</span>`)
+    .join('');
+}
 
 function getNextEpisodeTarget(){
   if (!window.currentAnime || !window.currentWatchingAnime) return null;
