@@ -216,14 +216,49 @@
     const hint = document.createElement('div');
     hint.id = 'tv-controls-hint';
     hint.innerHTML = `
-      <div class="tv-hint-title">Controles</div>
-      <div>↑ ↓ : navegar</div>
-      <div>← : voltar menu</div>
-      <div>→ : entrar seção</div>
-      <div>OK : selecionar</div>
-      <div>Return : voltar/fechar</div>
+      <div class="tv-hint-title">Controles • <span id="tv-hint-context">Menu</span></div>
+      <div class="tv-hint-row">
+        <span><i class="fas fa-arrows-up-down-left-right"></i> Navegar</span>
+        <span><i class="fas fa-arrow-left"></i> Menu</span>
+        <span><i class="fas fa-arrow-right"></i> Entrar</span>
+        <span><i class="fas fa-circle-check"></i> OK</span>
+        <span><i class="fas fa-reply"></i> Voltar</span>
+      </div>
     `;
     document.body.appendChild(hint);
+  }
+
+  function updateTvControlsHintContext(target) {
+    const context = document.getElementById('tv-hint-context');
+    if (!context) return;
+    if (!target) {
+      context.textContent = 'Menu';
+      return;
+    }
+
+    if (target.closest('#video-modal')) {
+      context.textContent = 'Player';
+      return;
+    }
+    if (target.closest('#profile-modal')) {
+      context.textContent = 'Perfil';
+      return;
+    }
+    if (target.closest('#full-catalog-grid')) {
+      context.textContent = 'Catálogo';
+      return;
+    }
+    if (isInSidebar(target)) {
+      context.textContent = 'Menu';
+      return;
+    }
+    context.textContent = 'Seção';
+  }
+
+  function syncVideoModalState() {
+    const videoModal = document.getElementById('video-modal');
+    const isOpen = Boolean(videoModal && isVisible(videoModal));
+    document.body.classList.toggle('tv-video-active', isOpen);
   }
 
   function getFocusedLoopList(direction) {
@@ -463,8 +498,12 @@
     const arrowDirection = getArrowDirection(event);
 
     if (isReturnEvent(event)) {
-      if (!closeTopModal() && window.history.length > 1) {
-        window.history.back();
+      if (!closeTopModal()) {
+        if (!focusActiveNavItem() && window.history.length > 1) {
+          window.history.back();
+        } else {
+          setSidebarExpanded(true);
+        }
       }
       event.preventDefault();
       return;
@@ -487,6 +526,7 @@
       if (typeof event.target.blur === 'function') {
         event.target.blur();
       }
+      event.target.readOnly = true;
       const profileOrderedTargets = getProfileModalFocusableInOrder();
       if (!moveFocusInList(profileOrderedTargets, arrowDirection)) {
         focusInDirection(arrowDirection);
@@ -553,6 +593,11 @@
     switch (event.keyCode) {
       case KEY_CODES.ENTER: {
         const active = document.activeElement;
+        if (active && active.matches && active.matches('#profile-name, #profile-password')) {
+          active.readOnly = false;
+          active.focus();
+          return;
+        }
         if (active && !isTypingTarget(active) && typeof active.click === 'function') {
           active.click();
           event.preventDefault();
@@ -604,6 +649,7 @@
       scheduled = true;
       window.requestAnimationFrame(() => {
         markTvFocusable(document);
+        syncVideoModalState();
         scheduled = false;
       });
     });
@@ -618,6 +664,7 @@
     document.body.classList.add('tv-mode');
     ensureTvControlsHint();
     forceDarkThemeForTvMode();
+    syncVideoModalState();
     registerTizenKeys();
     applyZoom(localStorage.getItem(ZOOM_KEY) || DEFAULT_ZOOM);
     markTvFocusable(document);
@@ -625,6 +672,7 @@
     document.addEventListener('keydown', onKeyDown, { capture: true });
     document.addEventListener('focusin', () => {
       setSidebarExpanded(isInSidebar(document.activeElement));
+      updateTvControlsHintContext(document.activeElement);
     });
 
     let cardPreviewTimer = null;
@@ -650,6 +698,15 @@
 
     document.addEventListener('focusout', () => {
       clearCardPreview();
+    });
+
+    ['profile-name', 'profile-password'].forEach((id) => {
+      const input = document.getElementById(id);
+      if (!input) return;
+      input.readOnly = true;
+      input.addEventListener('blur', () => {
+        input.readOnly = true;
+      });
     });
     document.addEventListener('tizenhwkey', (event) => {
       const keyName = (event.keyName || '').toLowerCase();

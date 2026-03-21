@@ -4847,6 +4847,7 @@ body.tv-mode nav li a {
     display: block;
     border-radius: 12px;
     background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.12);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: clip;
@@ -4877,19 +4878,22 @@ body.tv-mode:not(.tv-sidebar-expanded) nav a {
 }
 
 body.tv-mode:not(.tv-sidebar-expanded) nav a::before {
-    font-size: 22px;
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    font-size: 20px;
     display: block;
     text-align: center;
     line-height: 1;
+    color: #fff;
 }
 
-body.tv-mode:not(.tv-sidebar-expanded) nav a[data-section="home"]::before { content: "🏠"; }
-body.tv-mode:not(.tv-sidebar-expanded) nav a[data-section="animes"]::before { content: "📺"; }
-body.tv-mode:not(.tv-sidebar-expanded) nav a[data-section="movies"]::before { content: "🎬"; }
-body.tv-mode:not(.tv-sidebar-expanded) nav a[data-section="ovas"]::before { content: "⭐"; }
-body.tv-mode:not(.tv-sidebar-expanded) nav a[data-section="collections"]::before { content: "🗂️"; }
-body.tv-mode:not(.tv-sidebar-expanded) nav a[data-section="openings"]::before { content: "🎵"; }
-body.tv-mode:not(.tv-sidebar-expanded) nav a[data-section="continue"]::before { content: "⏯️"; }
+body.tv-mode:not(.tv-sidebar-expanded) nav a[data-section="home"]::before { content: "\f015"; }
+body.tv-mode:not(.tv-sidebar-expanded) nav a[data-section="animes"]::before { content: "\f008"; }
+body.tv-mode:not(.tv-sidebar-expanded) nav a[data-section="movies"]::before { content: "\f03d"; }
+body.tv-mode:not(.tv-sidebar-expanded) nav a[data-section="ovas"]::before { content: "\f005"; }
+body.tv-mode:not(.tv-sidebar-expanded) nav a[data-section="collections"]::before { content: "\f07b"; }
+body.tv-mode:not(.tv-sidebar-expanded) nav a[data-section="openings"]::before { content: "\f001"; }
+body.tv-mode:not(.tv-sidebar-expanded) nav a[data-section="continue"]::before { content: "\f144"; }
 
 body.tv-mode main.container,
 body.tv-mode footer .container {
@@ -4936,19 +4940,18 @@ body.tv-mode .anime-card.tv-hover-preview .age-rating-badge {
 }
 
 body.tv-mode #full-catalog-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 18px;
     overflow-x: hidden;
     overflow-y: auto;
     max-height: 72vh;
     padding-right: 6px;
 }
 
-body.tv-mode #full-catalog-grid .anime-card {
-    width: 100%;
-    max-width: 100%;
-    flex: none;
+body.tv-mode #new-releases-grid {
+    scroll-padding-left: 20px;
+    padding-left: 20px;
 }
 
 body.tv-mode #video-modal .modal-content {
@@ -4968,6 +4971,17 @@ body.tv-mode #video-modal #anime-player {
     width: 100vw;
     height: 100vh;
     object-fit: contain;
+}
+
+body.tv-mode #video-modal .modal-content,
+body.tv-mode #video-modal .video-container {
+    background: #000 !important;
+}
+
+body.tv-mode.tv-video-active main.container,
+body.tv-mode.tv-video-active footer .container,
+body.tv-mode.tv-video-active .hero {
+    visibility: hidden;
 }
 
 body.tv-mode .content-section {
@@ -5026,20 +5040,46 @@ body.tv-mode #tv-controls-hint {
     bottom: 14px;
     z-index: 1200;
     background: rgba(8, 10, 18, 0.82);
-    border: 1px solid rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.18);
     border-radius: 12px;
     padding: 10px 12px;
-    font-size: 0.82rem;
+    font-size: 0.78rem;
     line-height: 1.45;
     color: #f3f4f6;
     backdrop-filter: blur(4px);
-    max-width: 220px;
+    max-width: 520px;
     pointer-events: none;
 }
 
 body.tv-mode #tv-controls-hint .tv-hint-title {
     font-weight: 700;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
+}
+
+body.tv-mode #tv-controls-hint .tv-hint-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 14px;
+}
+
+body.tv-mode #tv-controls-hint .tv-hint-row span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+body.light-mode #tv-controls-hint {
+    border-color: rgba(0, 0, 0, 0.28);
+    color: #111;
+    background: rgba(255, 255, 255, 0.9);
+}
+
+body.light-mode.tv-mode header {
+    border-right-color: rgba(0, 0, 0, 0.26);
+}
+
+body.light-mode.tv-mode nav li a {
+    border-color: rgba(0, 0, 0, 0.2);
 }
 
 .tv-focus-target:focus-visible,
