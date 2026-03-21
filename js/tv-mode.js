@@ -32,6 +32,8 @@
   let hoverPanel = null;
   let lastFocusedAnime = null;
   let zoomLevel = Number(localStorage.getItem('aniverseTvZoom') || '1');
+  let refreshTimer = null;
+  let mutationObserver = null;
 
   function isTvMode() {
     return tvEnabled && document.body.classList.contains('tv-mode');
@@ -535,6 +537,24 @@
     });
   }
 
+  function scheduleRefresh(reason) {
+    if (!isTvMode()) return;
+    clearTimeout(refreshTimer);
+    refreshTimer = setTimeout(() => {
+      decorateDynamicElements(document);
+      decorateInputs();
+      tuneMediaForTv();
+      disableHeavyHoverTrailers();
+      if (!currentFocus || !isVisible(currentFocus)) {
+        focusFirstInScope();
+      }
+      window.__tvModeReason = {
+        ...(window.__tvModeReason || {}),
+        lastRefreshReason: reason || 'scheduled'
+      };
+    }, 60);
+  }
+
   function ensureTvDetailsModal() {
     let modal = document.getElementById('tv-details-modal');
     if (modal) return modal;
@@ -690,15 +710,19 @@
   }
 
   function addObservers() {
-    const observer = new MutationObserver(() => {
+    if (mutationObserver) return;
+    mutationObserver = new MutationObserver((mutations) => {
       if (!isTvMode()) return;
-      decorateDynamicElements(document);
-      decorateInputs();
-      tuneMediaForTv();
-      disableHeavyHoverTrailers();
-      if (!currentFocus || !isVisible(currentFocus)) focusFirstInScope();
+      const hasRelevantNodes = mutations.some((mutation) => {
+        return Array.from(mutation.addedNodes || []).some((node) => {
+          return node.nodeType === 1;
+        });
+      });
+      if (hasRelevantNodes) {
+        scheduleRefresh('mutation');
+      }
     });
-    observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class', 'style'] });
+    mutationObserver.observe(document.body, { childList: true, subtree: true });
   }
 
   function exposeHelpers() {
@@ -708,54 +732,70 @@
   }
 
   function init() {
-    const detected = detectTvMode();
-    window.__tvModeReason = {
-      forced: window.__ANIVERSE_FORCE_TV_MODE__ === true,
-      query: window.location.search,
-      persisted: localStorage.getItem('aniverseTvMode'),
-      hasTizen: typeof window.tizen !== 'undefined',
-      hasWebapis: typeof window.webapis !== 'undefined',
-      userAgent: navigator.userAgent || '',
-      active: detected
-    };
-    if (!detected) return;
-    tvEnabled = true;
-    localStorage.setItem('aniverseTvMode', 'enabled');
-    document.body.classList.add('tv-mode');
-    forceDarkMode();
-    decorateSidebar();
-    decorateDynamicElements(document);
-    decorateInputs();
-    ensureHelpBar();
-    tuneMediaForTv();
-    disableHeavyHoverTrailers();
-    registerTizenKeys();
-    addObservers();
-    exposeHelpers();
-
-    document.addEventListener('keydown', (event) => {
-      if (!isTvMode()) return;
-      const command = toCommand(event);
-      if (!command) return;
-      event.preventDefault();
-      event.stopImmediatePropagation();
-      handleCommand(command);
-    }, true);
-
-    document.addEventListener('click', () => {
-      if (!isTvMode()) return;
+    try {
+      const detected = detectTvMode();
+      window.__tvModeReason = {
+        forced: window.__ANIVERSE_FORCE_TV_MODE__ === true,
+        query: window.location.search,
+        persisted: localStorage.getItem('aniverseTvMode'),
+        hasTizen: typeof window.tizen !== 'undefined',
+        hasWebapis: typeof window.webapis !== 'undefined',
+        userAgent: navigator.userAgent || '',
+        active: detected
+      };
+      if (!detected) return;
+      tvEnabled = true;
+      localStorage.setItem('aniverseTvMode', 'enabled');
+      document.body.classList.add('tv-mode');
+      forceDarkMode();
+      decorateSidebar();
       decorateDynamicElements(document);
-    });
+      decorateInputs();
+      ensureHelpBar();
+      tuneMediaForTv();
+      disableHeavyHoverTrailers();
+      registerTizenKeys();
+      addObservers();
+      exposeHelpers();
 
-    let attempts = 0;
-    const timer = setInterval(() => {
-      hijackAnimeOpen();
-      attempts += 1;
-      if (window.__baseOpenAnimeModal || attempts > 20) {
-        clearInterval(timer);
-        focusFirstInScope();
+      document.addEventListener('keydown', (event) => {
+        if (!isTvMode()) return;
+        const command = toCommand(event);
+        if (!command) return;
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        handleCommand(command);
+      }, true);
+
+      document.addEventListener('click', () => {
+        if (!isTvMode()) return;
+        scheduleRefresh('click');
+      });
+
+      let attempts = 0;
+      const timer = setInterval(() => {
+        hijackAnimeOpen();
+        attempts += 1;
+        if (window.__baseOpenAnimeModal || attempts > 20) {
+          clearInterval(timer);
+          focusFirstInScope();
+        }
+      }, 200);
+    } catch (error) {
+      tvEnabled = false;
+      document.body.classList.remove('tv-mode', 'tv-sidebar-open');
+      if (mutationObserver) {
+        mutationObserver.disconnect();
+        mutationObserver = null;
       }
-    }, 200);
+      window.__tvModeReason = {
+        ...(window.__tvModeReason || {}),
+        active: false,
+        failed: true,
+        error: String(error && error.message ? error.message : error)
+      };
+      console.error('AniVerse TV mode disabled due to initialization error:', error);
+    }
   }
 
   if (document.readyState === 'loading') {
