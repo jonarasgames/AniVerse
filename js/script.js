@@ -428,6 +428,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   ensureSearchDatasetLoaded();
 
+  const suggestAnimeBtn = document.getElementById('suggest-anime-btn');
+  if (suggestAnimeBtn) {
+    suggestAnimeBtn.addEventListener('click', () => {
+      window.open('https://forms.gle/bu4tXPzUSahNKtzg8', '_blank', 'noopener,noreferrer');
+    });
+  }
+
   // Safe bindings
   const clearBtn = document.getElementById('clear-history');
   if (clearBtn) {
@@ -944,15 +951,17 @@ function onVideoSetSource(player, episode){
       preferredIndex = Math.max(0, sources.length - 1);
     }
 
-    let reconnectTimer = null;
+    let healthTimer = null;
     let retryCount = 0;
-    const maxRetries = 2;
+    let lastReconnectAt = 0;
+    const maxRetries = 3;
     let lastProgressAt = Date.now();
+    let lastObservedTime = 0;
 
-    const clearReconnectTimer = () => {
-      if (reconnectTimer) {
-        clearTimeout(reconnectTimer);
-        reconnectTimer = null;
+    const clearHealthTimer = () => {
+      if (healthTimer) {
+        clearInterval(healthTimer);
+        healthTimer = null;
       }
     };
 
@@ -961,7 +970,10 @@ function onVideoSetSource(player, episode){
 
     const tryReconnect = () => {
       if (retryCount >= maxRetries) return;
+      const now = Date.now();
+      if (now - lastReconnectAt < 12000) return;
       retryCount += 1;
+      lastReconnectAt = now;
       const resumeAt = Number(player.currentTime || 0);
       player.src = addCacheBust(chosen.url);
       player.load();
@@ -973,38 +985,40 @@ function onVideoSetSource(player, episode){
       player.play().catch(() => {});
     };
 
-    const scheduleReconnectGuard = () => {
-      clearReconnectTimer();
-      reconnectTimer = setTimeout(() => {
-        const stalledFor = Date.now() - lastProgressAt;
-        if (stalledFor > 8000 && !player.paused) {
-          tryReconnect();
-        }
-      }, 8500);
+    const runHealthCheck = () => {
+      if (player.paused || player.ended) return;
+      const stalledFor = Date.now() - lastProgressAt;
+      const frozenOnSameTime = Math.abs((player.currentTime || 0) - lastObservedTime) < 0.01;
+      const lowBufferState = player.readyState < 3;
+      if (stalledFor > 20000 && frozenOnSameTime && lowBufferState) {
+        tryReconnect();
+      }
+      lastObservedTime = player.currentTime || 0;
     };
 
     const handleTimeUpdate = () => {
       lastProgressAt = Date.now();
-      clearReconnectTimer();
+      lastObservedTime = player.currentTime || 0;
     };
     const handlePlaying = () => {
       lastProgressAt = Date.now();
-      clearReconnectTimer();
+      lastObservedTime = player.currentTime || 0;
       clearVideoError();
     };
 
     player.addEventListener('timeupdate', handleTimeUpdate);
     player.addEventListener('playing', handlePlaying);
-    player.addEventListener('waiting', scheduleReconnectGuard);
-    player.addEventListener('stalled', scheduleReconnectGuard);
+    player.addEventListener('waiting', runHealthCheck);
+    player.addEventListener('stalled', runHealthCheck);
     player.addEventListener('error', tryReconnect);
+    healthTimer = setInterval(runHealthCheck, 4000);
 
     player.__adaptiveCleanup = () => {
-      clearReconnectTimer();
+      clearHealthTimer();
       player.removeEventListener('timeupdate', handleTimeUpdate);
       player.removeEventListener('playing', handlePlaying);
-      player.removeEventListener('waiting', scheduleReconnectGuard);
-      player.removeEventListener('stalled', scheduleReconnectGuard);
+      player.removeEventListener('waiting', runHealthCheck);
+      player.removeEventListener('stalled', runHealthCheck);
       player.removeEventListener('error', tryReconnect);
     };
 
