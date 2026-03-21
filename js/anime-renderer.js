@@ -108,7 +108,11 @@
     card.style.cursor = 'pointer';
     card.addEventListener('click', () => {
       if (document.body.classList.contains('admin-inline-mode')) return;
-      openAnimeModal(anime);
+      if (typeof window.openAnimeModal === 'function') {
+        window.openAnimeModal(anime);
+      } else {
+        openAnimeModal(anime);
+      }
     });
 
     return card;
@@ -151,7 +155,11 @@
         const playedOffline = await window.playDownloadedEpisodeFromContinue(anime);
         if (playedOffline) return;
       }
-      openAnimeModal(anime, season, episode - 1);
+      if (typeof window.openAnimeModal === 'function') {
+        window.openAnimeModal(anime, season, episode - 1);
+      } else {
+        openAnimeModal(anime, season, episode - 1);
+      }
     });
     
     return card;
@@ -503,7 +511,11 @@
       item.addEventListener('click', (e) => {
         e.stopPropagation();
         if (anime.id !== Number(animeId)) {
-          openAnimeModal(anime);
+          if (typeof window.openAnimeModal === 'function') {
+            window.openAnimeModal(anime);
+          } else {
+            openAnimeModal(anime);
+          }
         }
       });
       itemsEl.appendChild(item);
