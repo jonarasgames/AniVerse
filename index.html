@@ -4,11 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>AniVerse - Seu Universo de Animes</title>
+    <script>
+        (function() {
+            try {
+                var params = new URLSearchParams(window.location.search || '');
+                if (params.get('tv') === '1') {
+                    window.__ANIVERSE_FORCE_TV_MODE__ = true;
+                    return;
+                }
+                if (params.get('tv') === '0') {
+                    window.__ANIVERSE_FORCE_TV_MODE__ = false;
+                    return;
+                }
+                if (localStorage.getItem('aniverseTvMode') === 'enabled') {
+                    window.__ANIVERSE_FORCE_TV_MODE__ = true;
+                    return;
+                }
+                if (typeof window.tizen !== 'undefined' || typeof window.webapis !== 'undefined') {
+                    window.__ANIVERSE_FORCE_TV_MODE__ = true;
+                }
+            } catch (_) {}
+        })();
+    </script>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/profile-enhancements.css">
     <link rel="stylesheet" href="css/profile-modal-modern.css">
     <link rel="stylesheet" href="css/hero-video-rotator.css">
     <link rel="stylesheet" href="css/dark-mode.css" id="dark-mode-style">
+    <link rel="stylesheet" href="css/tv-mode.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="icon" href="images/logo.png" type="image/png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -379,7 +402,7 @@
 
     <div id="profile-modal" class="modal">
         <div class="modal-content profile-modal-modern">
-            <button class="close-modal-btn" id="close-profile-modal">
+            <button type="button" class="close-modal-btn" id="close-profile-modal">
                 <i class="fas fa-times"></i>
             </button>
             
@@ -411,12 +434,12 @@
                     <div class="form-group-modern">
                         <label>Pronome</label>
                         <div class="pronoun-pills">
-                            <button class="pronoun-pill active" data-pronoun="-san">-san</button>
-                            <button class="pronoun-pill" data-pronoun="-kun">-kun</button>
-                            <button class="pronoun-pill" data-pronoun="-chan">-chan</button>
-                            <button class="pronoun-pill" data-pronoun="-sama">-sama</button>
-                            <button class="pronoun-pill" data-pronoun="-senpai">-senpai</button>
-                            <button class="pronoun-pill" data-pronoun="">Nenhum</button>
+                            <button type="button" class="pronoun-pill active" data-pronoun="-san">-san</button>
+                            <button type="button" class="pronoun-pill" data-pronoun="-kun">-kun</button>
+                            <button type="button" class="pronoun-pill" data-pronoun="-chan">-chan</button>
+                            <button type="button" class="pronoun-pill" data-pronoun="-sama">-sama</button>
+                            <button type="button" class="pronoun-pill" data-pronoun="-senpai">-senpai</button>
+                            <button type="button" class="pronoun-pill" data-pronoun="">Nenhum</button>
                         </div>
                         <input type="hidden" id="selected-pronoun" value="-san">
                     </div>
@@ -430,10 +453,10 @@
                     
                     <!-- Tabs: Cores / Fundos / Personagens / Molduras -->
                     <div class="customization-tabs">
-                        <button class="tab-btn active" data-tab="colors">Cores</button>
-                        <button class="tab-btn" data-tab="backgrounds">Fundos</button>
-                        <button class="tab-btn" data-tab="characters">Personagens</button>
-                        <button class="tab-btn" data-tab="frames">Molduras</button>
+                        <button type="button" class="tab-btn active" data-tab="colors">Cores</button>
+                        <button type="button" class="tab-btn" data-tab="backgrounds">Fundos</button>
+                        <button type="button" class="tab-btn" data-tab="characters">Personagens</button>
+                        <button type="button" class="tab-btn" data-tab="frames">Molduras</button>
                     </div>
                     
                     <!-- Tab Content: Cores -->
@@ -507,7 +530,7 @@
                     </div>
                     
                     <!-- Botão Salvar -->
-                    <button class="btn-save-profile" id="save-profile-btn">
+                    <button type="button" class="btn-save-profile" id="save-profile-btn">
                         <i class="fas fa-check"></i> Salvar Perfil
                     </button>
                 </div>
@@ -626,6 +649,7 @@
     <script src="js/profile-modal-new.js" defer></script>
     <script src="js/music-player-new.js" defer></script>
     <script src="js/inplace-admin.js" defer></script>
+    <script src="js/tv-mode.js" defer></script>
     
     <script>
       if ('serviceWorker' in navigator) {

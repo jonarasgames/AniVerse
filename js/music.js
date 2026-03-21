@@ -4,6 +4,87 @@
     
     let musicPlayerInstance = null;
     let currentPlayingCard = null;
+    let tvAudioRecoveryTimer = null;
+    let tvAudioRecoveryAttempts = 0;
+
+    function isTvMusicEnvironment() {
+        try {
+            if (window.__ANIVERSE_FORCE_TV_MODE__ === true) return true;
+            if (document.body.classList.contains('tv-mode')) return true;
+            if (typeof window.tizen !== 'undefined' || typeof window.webapis !== 'undefined') return true;
+            return /tizen|smart-tv|smarttv|hbbtv|web0s|googletv|appletv|viera|aquos/i.test(navigator.userAgent || '');
+        } catch (_) {
+            return false;
+        }
+    }
+
+    function inferAudioMimeType(url) {
+        const raw = String(url || '').split('?')[0].toLowerCase();
+        if (raw.endsWith('.mp3')) return 'audio/mpeg';
+        if (raw.endsWith('.m4a')) return 'audio/mp4';
+        if (raw.endsWith('.aac')) return 'audio/aac';
+        if (raw.endsWith('.ogg')) return 'audio/ogg';
+        if (raw.endsWith('.wav')) return 'audio/wav';
+        return '';
+    }
+
+    function addMediaCacheBust(url) {
+        try {
+            const parsed = new URL(url, window.location.href);
+            parsed.searchParams.set('_tv_retry', String(Date.now()));
+            return parsed.toString();
+        } catch (_) {
+            const sep = String(url || '').includes('?') ? '&' : '?';
+            return `${url}${sep}_tv_retry=${Date.now()}`;
+        }
+    }
+
+    function setAudioSource(audio, url, options = {}) {
+        if (!audio || !url) return;
+        const preserveTime = Number.isFinite(options.preserveTime) ? options.preserveTime : 0;
+        const nextUrl = options.cacheBust ? addMediaCacheBust(url) : url;
+
+        audio.pause();
+        audio.removeAttribute('src');
+        while (audio.firstChild) audio.removeChild(audio.firstChild);
+
+        const source = document.createElement('source');
+        source.src = nextUrl;
+        const sourceType = inferAudioMimeType(nextUrl);
+        if (sourceType) source.type = sourceType;
+        audio.appendChild(source);
+        audio.src = nextUrl;
+        audio.load();
+
+        if (preserveTime > 0) {
+            audio.addEventListener('loadedmetadata', () => {
+                try { audio.currentTime = preserveTime; } catch (_) {}
+            }, { once: true });
+        }
+    }
+
+    function scheduleTvAudioRecovery(audio) {
+        if (!isTvMusicEnvironment() || !audio || !currentMusicData?.src) return;
+        if (tvAudioRecoveryTimer) return;
+        if (audio.paused || audio.ended) return;
+
+        tvAudioRecoveryTimer = setTimeout(() => {
+            tvAudioRecoveryTimer = null;
+            if (audio.paused || audio.ended || !currentMusicData?.src) return;
+            if (tvAudioRecoveryAttempts >= 2) return;
+            tvAudioRecoveryAttempts += 1;
+            const resumeTime = audio.currentTime || 0;
+            setAudioSource(audio, currentMusicData.src, { preserveTime: resumeTime, cacheBust: true });
+            audio.play().catch(() => {});
+        }, 2500);
+    }
+
+    function clearTvAudioRecovery() {
+        if (tvAudioRecoveryTimer) {
+            clearTimeout(tvAudioRecoveryTimer);
+            tvAudioRecoveryTimer = null;
+        }
+    }
     
     // Get or create singleton audio element
     function getMusicAudio() {
@@ -23,7 +104,7 @@
         if (!audio) {
             audio = document.createElement('audio');
             audio.id = 'music-playing-audio';
-            audio.preload = 'metadata';
+            audio.preload = isTvMusicEnvironment() ? 'auto' : 'metadata';
             audio.style.display = 'none';
             document.body.appendChild(audio);
             
@@ -58,6 +139,9 @@
             audio.muted = savedMuted === 'true';
         }
         
+        audio.preload = isTvMusicEnvironment() ? 'auto' : 'metadata';
+        audio.setAttribute('preload', audio.preload);
+
         musicPlayerInstance = audio;
         return audio;
     }
@@ -167,13 +251,26 @@
         });
         
         // Update play/pause icon based on audio state
-        audio.addEventListener('play', updatePlayPauseIcon);
-        audio.addEventListener('pause', updatePlayPauseIcon);
+        audio.addEventListener('play', () => {
+            clearTvAudioRecovery();
+            tvAudioRecoveryAttempts = 0;
+            updatePlayPauseIcon();
+        });
+        audio.addEventListener('pause', () => {
+            clearTvAudioRecovery();
+            updatePlayPauseIcon();
+        });
         audio.addEventListener('timeupdate', updateProgress);
         audio.addEventListener('loadedmetadata', updateDuration);
         audio.addEventListener('volumechange', updateMusicVolume);
+        audio.addEventListener('canplay', clearTvAudioRecovery);
+        audio.addEventListener('playing', clearTvAudioRecovery);
+        audio.addEventListener('waiting', () => scheduleTvAudioRecovery(audio));
+        audio.addEventListener('stalled', () => scheduleTvAudioRecovery(audio));
+        audio.addEventListener('error', () => scheduleTvAudioRecovery(audio));
         audio.addEventListener('ended', () => {
             // Auto-advance to next track
+            clearTvAudioRecovery();
             playNextTrack();
         });
         
@@ -555,6 +652,8 @@
     
     function closeMiniPlayer() {
         const audio = getMusicAudio();
+        clearTvAudioRecovery();
+        tvAudioRecoveryAttempts = 0;
         audio.pause();
         audio.src = '';
         currentMusicData = null;
@@ -567,6 +666,11 @@
         if (currentPlayingCard) {
             currentPlayingCard.classList.remove('playing');
             currentPlayingCard = null;
+        }
+
+        const fullscreenModal = document.getElementById('music-fullscreen-modal');
+        if (fullscreenModal) {
+            fullscreenModal.classList.remove('visible');
         }
     }
     
@@ -597,15 +701,16 @@
         }
         
         // Set new track
-        audio.src = src;
-        audio.load();
+        clearTvAudioRecovery();
+        tvAudioRecoveryAttempts = 0;
+        setAudioSource(audio, src);
         
         // Timeout for loading
         const loadTimeout = setTimeout(() => {
             if (audio.readyState < 2 && audio.paused) {
                 showMusicError('Tempo de carregamento excedido. Tente novamente.');
             }
-        }, 15000);
+        }, isTvMusicEnvironment() ? 25000 : 15000);
         
         // Clear timeout on various success events
         const clearLoadTimeout = () => {
@@ -634,6 +739,15 @@
         }
 
         updateTrackNavigationButtons();
+
+        if (isTvMusicEnvironment()) {
+            setTimeout(() => {
+                const tvPlayButton = document.getElementById('mini-play-pause');
+                if (tvPlayButton && typeof window.__focusTvElement === 'function') {
+                    window.__focusTvElement(tvPlayButton);
+                }
+            }, 120);
+        }
     }
     
     function showMusicError(msg) {
@@ -689,6 +803,18 @@
                 grouped[animeName] = [];
             }
             grouped[animeName].push(theme);
+        });
+
+        Object.values(grouped).forEach((tracks) => {
+            tracks.sort((a, b) => {
+                const weight = (track) => {
+                    const type = String(track?.type || '').toLowerCase();
+                    if (type === 'opening') return 0;
+                    if (type === 'ending') return 1;
+                    return 2;
+                };
+                return weight(a) - weight(b);
+            });
         });
         
         // Render each anime section
