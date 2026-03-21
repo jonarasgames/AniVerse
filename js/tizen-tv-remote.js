@@ -211,6 +211,18 @@
     document.body.classList.toggle('tv-sidebar-expanded', Boolean(expanded));
   }
 
+  function getFocusedLoopList(direction) {
+    if (direction !== 'up' && direction !== 'down') return null;
+    const active = document.activeElement;
+    if (!active) return null;
+
+    const listContainer = active.closest('#full-catalog-grid, #new-releases-grid');
+    if (!listContainer) return null;
+
+    const cards = Array.from(listContainer.querySelectorAll('.anime-card')).filter(isVisible);
+    return cards.length ? cards : null;
+  }
+
   function markTvFocusable(scope = document) {
     const targetSelector = [
       '.anime-card',
@@ -499,6 +511,9 @@
         if (focusFirstContentItem()) return;
       }
       if (active && !isInSidebar(active)) {
+        const localLoopList = getFocusedLoopList(arrowDirection);
+        if (localLoopList && moveFocusInList(localLoopList, arrowDirection)) return;
+
         const contentOrderedTargets = getContentFocusableInOrder();
         if (arrowDirection === 'left') {
           if (moveFocusInList(contentOrderedTargets, 'left')) return;

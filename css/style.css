@@ -4935,6 +4935,22 @@ body.tv-mode .anime-card.tv-hover-preview .age-rating-badge {
     opacity: 1 !important;
 }
 
+body.tv-mode #full-catalog-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    max-height: 72vh;
+    padding-right: 6px;
+}
+
+body.tv-mode #full-catalog-grid .anime-card {
+    width: 100%;
+    max-width: 100%;
+    flex: none;
+}
+
 body.tv-mode #video-modal .modal-content {
     width: 100vw !important;
     height: 100vh !important;
@@ -4942,6 +4958,16 @@ body.tv-mode #video-modal .modal-content {
     max-height: 100vh !important;
     border-radius: 0 !important;
     padding: 0 !important;
+}
+
+body.tv-mode #video-modal {
+    background: #000 !important;
+}
+
+body.tv-mode #video-modal #anime-player {
+    width: 100vw;
+    height: 100vh;
+    object-fit: contain;
 }
 
 body.tv-mode .content-section {
