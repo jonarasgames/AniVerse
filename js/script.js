@@ -934,6 +934,20 @@ function onVideoSetSource(player, episode){
   const sources = normalizeEpisodeSources(episode);
   if (!sources.length) return;
 
+  const pickInitialSourceIndex = () => {
+    try {
+      const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+      const downlink = Number(connection && connection.downlink);
+      if (!Number.isFinite(downlink)) return 0;
+
+      if (downlink <= 1.8) return Math.max(0, sources.length - 1);
+      if (downlink <= 3.5) return Math.min(Math.max(0, sources.length - 1), 1);
+      return 0;
+    } catch (_) {
+      return 0;
+    }
+  };
+
   const state = {
     token: Date.now() + Math.random(),
     sources,
@@ -945,8 +959,11 @@ function onVideoSetSource(player, episode){
     retryTimeoutId: null,
     upgradeIntervalId: null,
     recoverInFlight: false,
-    fallbackInUse: false
+    fallbackInUse: false,
+    waitingHits: 0,
+    waitingWindowStart: 0
   };
+  state.currentIndex = pickInitialSourceIndex();
   player.__adaptivePlayback = state;
 
   const clearTimers = () => {
@@ -1113,7 +1130,20 @@ function onVideoSetSource(player, episode){
 
   const handleWaiting = () => {
     if (player.__adaptivePlayback?.token !== state.token) return;
-    if (!state.fallbackInUse) return;
+    const now = Date.now();
+    if (!state.waitingWindowStart || now - state.waitingWindowStart > 12000) {
+      state.waitingWindowStart = now;
+      state.waitingHits = 0;
+    }
+    state.waitingHits += 1;
+
+    if (!state.fallbackInUse) {
+      if (state.waitingHits >= 3 && state.currentIndex < state.sources.length - 1) {
+        recoverPlayback('waiting-spike');
+      }
+      return;
+    }
+
     showVideoError('Carregando... Ajustando qualidade automaticamente');
   };
 
@@ -1140,7 +1170,7 @@ function onVideoSetSource(player, episode){
     player.removeEventListener('error', handleError);
   };
 
-  setSource(0, { autoPlay: true, preserveTime: 0 });
+  setSource(state.currentIndex, { autoPlay: true, preserveTime: 0 });
 }
 
 function ensureModalAdminEditorUI() {
