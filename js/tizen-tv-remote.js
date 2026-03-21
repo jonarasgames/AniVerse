@@ -71,7 +71,6 @@
     return topModal || document;
   }
 
-<<<<<<< codex/implementar-controle-de-zoom-para-aniverse-9rknv4
   function getProfileModalFocusableInOrder() {
     const modal = document.getElementById('profile-modal');
     if (!modal || !isVisible(modal)) return null;
@@ -112,8 +111,59 @@
     return true;
   }
 
-=======
->>>>>>> main
+  function getSidebarFocusableInOrder() {
+    const sidebar = document.querySelector('header .container');
+    if (!sidebar) return null;
+
+    const orderedSelectors = [
+      '.logo-container a, .logo-container button',
+      'nav a[data-section="home"]',
+      'nav a[data-section="animes"]',
+      'nav a[data-section="movies"]',
+      'nav a[data-section="ovas"]',
+      'nav a[data-section="collections"]',
+      'nav a[data-section="openings"]',
+      'nav a[data-section="continue"]',
+      'nav a[data-section="downloads"]',
+      '#dark-mode-toggle',
+      '#open-anime-editor-btn',
+      '#login-btn'
+    ];
+
+    const ordered = [];
+    orderedSelectors.forEach((selector) => {
+      sidebar.querySelectorAll(selector).forEach((el) => {
+        if (isVisible(el)) ordered.push(el);
+      });
+    });
+
+    return ordered.length ? ordered : null;
+  }
+
+  function isInSidebar(element) {
+    const sidebar = document.querySelector('header .container');
+    return Boolean(sidebar && element && sidebar.contains(element));
+  }
+
+  function focusFirstContentItem() {
+    const activeSection = document.querySelector('.content-section.active');
+    if (!activeSection) return false;
+    const candidate = activeSection.querySelector('.anime-card, .collection-card, .news-card, .btn, [tabindex]');
+    if (!candidate || !isVisible(candidate)) return false;
+    candidate.focus();
+    candidate.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+    return true;
+  }
+
+  function focusActiveNavItem() {
+    const activeNav = document.querySelector('nav a.active, nav a[data-section="home"]');
+    if (!activeNav || !isVisible(activeNav)) return false;
+    activeNav.focus();
+    activeNav.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+    return true;
+  }
+
+
   function markTvFocusable(scope = document) {
     const targetSelector = [
       '.anime-card',
@@ -363,14 +413,11 @@
       if (typeof event.target.blur === 'function') {
         event.target.blur();
       }
-<<<<<<< codex/implementar-controle-de-zoom-para-aniverse-9rknv4
       const profileOrderedTargets = getProfileModalFocusableInOrder();
       if (!moveFocusInList(profileOrderedTargets, arrowDirection)) {
         focusInDirection(arrowDirection);
       }
-=======
-      focusInDirection(arrowDirection);
->>>>>>> main
+
       return;
     }
 
@@ -387,14 +434,24 @@
 
     if (arrowDirection) {
       event.preventDefault();
-<<<<<<< codex/implementar-controle-de-zoom-para-aniverse-9rknv4
+
+      const sidebarOrderedTargets = getSidebarFocusableInOrder();
+      const active = document.activeElement;
+      if (active && isInSidebar(active) && (arrowDirection === 'up' || arrowDirection === 'down')) {
+        if (moveFocusInList(sidebarOrderedTargets, arrowDirection)) return;
+      }
+      if (active && isInSidebar(active) && arrowDirection === 'right') {
+        if (focusFirstContentItem()) return;
+      }
+      if (active && !isInSidebar(active) && arrowDirection === 'left') {
+        if (focusActiveNavItem()) return;
+      }
+
       const profileOrderedTargets = getProfileModalFocusableInOrder();
       if (!moveFocusInList(profileOrderedTargets, arrowDirection)) {
         focusInDirection(arrowDirection);
       }
-=======
-      focusInDirection(arrowDirection);
->>>>>>> main
+
       return;
     }
 
@@ -443,7 +500,6 @@
   }
 
   function initTvMutationObserver() {
-<<<<<<< codex/implementar-controle-de-zoom-para-aniverse-9rknv4
     let scheduled = false;
     const observer = new MutationObserver((mutations) => {
       if (scheduled) return;
@@ -454,15 +510,7 @@
       window.requestAnimationFrame(() => {
         markTvFocusable(document);
         scheduled = false;
-=======
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        mutation.addedNodes.forEach((node) => {
-          if (node.nodeType === Node.ELEMENT_NODE) {
-            markTvFocusable(node);
-          }
-        });
->>>>>>> main
+
       });
     });
 
@@ -491,7 +539,6 @@
     });
 
     if (!document.activeElement || document.activeElement === document.body) {
-<<<<<<< codex/implementar-controle-de-zoom-para-aniverse-9rknv4
       const firstNavItem = document.querySelector('nav a[data-section]');
       if (firstNavItem) {
         firstNavItem.focus();
@@ -499,10 +546,7 @@
         const firstFocusable = getFocusableElements()[0];
         if (firstFocusable) firstFocusable.focus();
       }
-=======
-      const firstFocusable = getFocusableElements()[0];
-      if (firstFocusable) firstFocusable.focus();
->>>>>>> main
+
     }
   }
 

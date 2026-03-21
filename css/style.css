@@ -4800,13 +4800,12 @@ body.tv-mode footer .container {
     max-width: 1720px;
 }
 
-<<<<<<< codex/implementar-controle-de-zoom-para-aniverse-9rknv4
 body.tv-mode header {
     position: fixed;
     left: 0;
     top: 0;
     bottom: 0;
-    width: 270px;
+    width: 300px;
     z-index: 1000;
     border-right: 1px solid rgba(255, 255, 255, 0.12);
 }
@@ -4816,7 +4815,7 @@ body.tv-mode header .container {
     flex-direction: column;
     align-items: stretch;
     height: 100%;
-    padding: 24px 14px;
+    padding: 26px 16px;
     gap: 18px;
 }
 
@@ -4827,6 +4826,18 @@ body.tv-mode .logo-container h1 {
 body.tv-mode nav ul {
     flex-direction: column;
     align-items: stretch;
+    gap: 8px;
+}
+
+body.tv-mode nav li a {
+    display: block;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.04);
+}
+
+body.tv-mode nav li a.active {
+    background: rgba(229, 9, 20, 0.25);
+    border: 1px solid rgba(229, 9, 20, 0.5);
 }
 
 body.tv-mode .user-controls {
@@ -4839,11 +4850,9 @@ body.tv-mode .user-controls {
 
 body.tv-mode main.container,
 body.tv-mode footer .container {
-    margin-left: 290px;
+    margin-left: 320px;
 }
 
-=======
->>>>>>> main
 body.tv-mode .anime-grid {
     display: flex;
     gap: 22px;
@@ -4909,6 +4918,11 @@ body.tv-mode .btn-icon,
 body.tv-mode .tab-btn,
 body.tv-mode .pronoun-pill {
     min-height: 44px;
+}
+
+body.tv-mode .user-controls .btn,
+body.tv-mode .user-controls .btn-icon {
+    width: 100%;
 }
 
 .tv-focus-target:focus-visible,
