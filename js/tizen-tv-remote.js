@@ -293,7 +293,7 @@
   function getGridContainerForFocus() {
     const active = document.activeElement;
     if (!active || !active.closest) return null;
-    return active.closest('#full-catalog-grid, #new-releases-grid, #animes-grid, #movies-grid, #ovas-grid, #openings-section .music-tracks');
+    return active.closest('#continue-watching-grid, #continue-grid, #full-catalog-grid, #new-releases-grid, #animes-grid, #movies-grid, #ovas-grid, #openings-section .music-tracks');
   }
 
   function getVideoModalTvNavigationList() {
@@ -343,7 +343,7 @@
 
     if (direction === 'left' || direction === 'right') {
       const sameRow = positions
-        .filter((p) => Math.abs(p.y - current.y) < 28)
+        .filter((p) => Math.abs(p.y - current.y) < 34)
         .sort((a, b) => a.x - b.x);
       const idx = sameRow.findIndex((p) => p.el === active);
       if (idx === -1) return false;
@@ -352,18 +352,51 @@
         : sameRow[(idx - 1 + sameRow.length) % sameRow.length];
       if (!next) return false;
       next.el.focus();
-      next.el.scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'nearest' });
+      next.el.scrollIntoView({ behavior: 'auto', block: 'nearest', inline: direction === 'right' ? 'end' : 'start' });
       return true;
     }
 
-    const candidates = positions
-      .filter((p) => direction === 'down' ? p.y > current.y + 10 : p.y < current.y - 10)
-      .sort((a, b) => Math.abs(a.y - current.y) * 100 + Math.abs(a.x - current.x) - (Math.abs(b.y - current.y) * 100 + Math.abs(b.x - current.x)));
+    const isMusicTrackRow = container.matches && container.matches('#openings-section .music-tracks');
+    if (isMusicTrackRow && (direction === 'up' || direction === 'down')) {
+      const rows = Array.from(document.querySelectorAll('#openings-section .music-anime-section .music-tracks')).filter(isVisible);
+      const rowIndex = rows.indexOf(container);
+      if (rowIndex !== -1) {
+        const targetRow = direction === 'down' ? rows[rowIndex + 1] : rows[rowIndex - 1];
+        if (targetRow) {
+          const targetCards = Array.from(targetRow.querySelectorAll('.music-track-card, .music-card')).filter(isVisible);
+          if (targetCards.length) {
+            const currentRect = active.getBoundingClientRect();
+            const currentCenterX = currentRect.left + currentRect.width / 2;
+            targetCards.sort((a, b) => {
+              const ax = a.getBoundingClientRect().left + a.getBoundingClientRect().width / 2;
+              const bx = b.getBoundingClientRect().left + b.getBoundingClientRect().width / 2;
+              return Math.abs(ax - currentCenterX) - Math.abs(bx - currentCenterX);
+            });
+            const next = targetCards[0];
+            if (next) {
+              next.focus();
+              next.scrollIntoView({ behavior: 'auto', block: 'center', inline: 'nearest' });
+              return true;
+            }
+          }
+        }
+      }
+    }
 
-    const target = candidates[0] || (direction === 'down' ? positions[0] : positions[positions.length - 1]);
+    const candidates = positions
+      .filter((p) => direction === 'down' ? p.y > current.y + 12 : p.y < current.y - 12)
+      .sort((a, b) => {
+        const aPrimary = Math.abs(a.y - current.y);
+        const bPrimary = Math.abs(b.y - current.y);
+        const aSecondary = Math.abs(a.x - current.x);
+        const bSecondary = Math.abs(b.x - current.x);
+        return (aPrimary * 100 + aSecondary) - (bPrimary * 100 + bSecondary);
+      });
+
+    const target = candidates[0] || null;
     if (!target) return false;
     target.el.focus();
-    target.el.scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'nearest' });
+    target.el.scrollIntoView({ behavior: 'auto', block: 'center', inline: 'nearest' });
     return true;
   }
 

@@ -606,11 +606,12 @@
             retries: 0,
             maxRetries: 3,
             waitingHits: 0,
-            waitingWindowStart: 0
+            waitingWindowStart: 0,
+            lastRetryAt: 0
         };
         const isTvMode = document.body.classList.contains('tv-mode');
         if (isTvMode) {
-            adaptive.maxRetries = 1;
+            adaptive.maxRetries = 2;
         }
 
         const addCacheBust = (url) => {
@@ -659,7 +660,10 @@
                 showMusicError('Falha ao carregar música. Tente outra faixa.');
                 return;
             }
+            const now = Date.now();
+            if (now - adaptive.lastRetryAt < 12000) return;
             adaptive.retries += 1;
+            adaptive.lastRetryAt = now;
             const resumeFrom = audio.currentTime || 0;
             if (!isTvMode) {
                 showMusicError(`Reconectando áudio (${adaptive.retries}/${adaptive.maxRetries})...`);
@@ -677,7 +681,7 @@
                 adaptive.waitingHits = 0;
             }
             adaptive.waitingHits += 1;
-            if (adaptive.waitingHits >= (isTvMode ? 7 : 4)) {
+            if (adaptive.waitingHits >= (isTvMode ? 12 : 4)) {
                 adaptive.waitingHits = 0;
                 recoverMusic('waiting');
             }

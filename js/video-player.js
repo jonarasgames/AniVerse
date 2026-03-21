@@ -860,12 +860,12 @@ window.addEventListener('keydown', (e) => {
                 }
                 break;
             case 'arrowleft':
-                if (isTvMode && !activeInPlayerArea) break;
+                if (isTvMode) break;
                 player.currentTime = Math.max(0, player.currentTime - 5);
                 break;
                 
             case 'arrowright':
-                if (isTvMode && !activeInPlayerArea) break;
+                if (isTvMode) break;
                 player.currentTime = Math.min(player.duration || 0, player.currentTime + 5);
                 break;
                 
