@@ -994,6 +994,24 @@ nav a:hover, nav a.active {
     cursor: pointer;
 }
 
+.video-collections-row {
+    margin-top: 10px;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+}
+
+.video-collection-chip {
+    border: 1px solid rgba(255,255,255,0.35);
+    background: rgba(0,0,0,0.35);
+    color: #fff;
+    border-radius: 999px;
+    padding: 6px 10px;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
 option.watched {
     color: #1dd1a1;
     font-weight: bold;
@@ -4779,4 +4797,359 @@ html.theme-light .inplace-duration-view {
     0% { clip-path: inset(0 100% 0 0); }
     50% { clip-path: inset(0 0 0 0); }
     100% { clip-path: inset(0 0 0 100%); }
+}
+
+/* TV navigation focus ring (Netflix-like) */
+.tv-focus-target {
+    outline: none;
+}
+
+.tv-mode {
+    --tv-card-radius: 16px;
+}
+
+body.tv-mode {
+    cursor: none;
+    scroll-behavior: auto;
+}
+
+body.tv-mode header .container,
+body.tv-mode main.container,
+body.tv-mode footer .container {
+    max-width: 1720px;
+}
+
+body.tv-mode header {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 96px;
+    z-index: 1000;
+    border-right: 1px solid rgba(255, 255, 255, 0.12);
+    transition: width 180ms ease;
+}
+
+body.tv-mode header .container {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    height: 100%;
+    padding: 26px 16px;
+    gap: 18px;
+    transition: padding 180ms ease;
+}
+
+body.tv-mode .logo-container h1 {
+    display: none;
+}
+
+body.tv-mode.tv-sidebar-expanded header {
+    width: 300px;
+}
+
+body.tv-mode.tv-sidebar-expanded header .container {
+    padding: 26px 16px;
+}
+
+body.tv-mode:not(.tv-sidebar-expanded) header .container {
+    padding: 20px 10px;
+}
+
+body.tv-mode nav ul {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+}
+
+body.tv-mode nav li a {
+    display: block;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: clip;
+}
+
+body.tv-mode nav li a.active {
+    background: rgba(229, 9, 20, 0.25);
+    border: 1px solid rgba(229, 9, 20, 0.5);
+}
+
+body.tv-mode nav a[data-section="downloads"],
+body.tv-mode #downloads-section {
+    display: none !important;
+}
+
+body.tv-mode .user-controls {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+}
+
+body.tv-mode:not(.tv-sidebar-expanded) nav a {
+    font-size: 0;
+    min-height: 52px;
+    position: relative;
+}
+
+body.tv-mode:not(.tv-sidebar-expanded) nav a::before {
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    font-size: 20px;
+    display: block;
+    text-align: center;
+    line-height: 1;
+    color: #fff;
+}
+
+body.tv-mode:not(.tv-sidebar-expanded) nav a[data-section="home"]::before { content: "\f015"; }
+body.tv-mode:not(.tv-sidebar-expanded) nav a[data-section="animes"]::before { content: "\f008"; }
+body.tv-mode:not(.tv-sidebar-expanded) nav a[data-section="movies"]::before { content: "\f03d"; }
+body.tv-mode:not(.tv-sidebar-expanded) nav a[data-section="ovas"]::before { content: "\f005"; }
+body.tv-mode:not(.tv-sidebar-expanded) nav a[data-section="collections"]::before { content: "\f07b"; }
+body.tv-mode:not(.tv-sidebar-expanded) nav a[data-section="openings"]::before { content: "\f001"; }
+body.tv-mode:not(.tv-sidebar-expanded) nav a[data-section="continue"]::before { content: "\f144"; }
+
+body.tv-mode main.container,
+body.tv-mode footer .container {
+    margin-left: 116px;
+    transition: margin-left 180ms ease;
+}
+
+body.tv-mode.tv-sidebar-expanded main.container,
+body.tv-mode.tv-sidebar-expanded footer .container {
+    margin-left: 320px;
+}
+
+body.tv-mode .anime-grid {
+    display: flex;
+    gap: 22px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 10px 24px 14px;
+    scroll-padding-left: 24px;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+}
+
+body.tv-mode .anime-grid::-webkit-scrollbar {
+    display: none;
+}
+
+body.tv-mode .anime-card {
+    flex: 0 0 320px;
+    border-radius: var(--tv-card-radius);
+    scroll-snap-align: start;
+    aspect-ratio: 16 / 9;
+    min-height: auto;
+}
+
+body.tv-mode .anime-card.tv-hover-preview .anime-thumbnail img {
+    opacity: 0.2;
+    transform: scale(1.08);
+}
+
+body.tv-mode .anime-card.tv-hover-preview .trailer-overlay,
+body.tv-mode .anime-card.tv-hover-preview .anime-info,
+body.tv-mode .anime-card.tv-hover-preview .age-rating-badge {
+    opacity: 1 !important;
+}
+
+body.tv-mode #full-catalog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 18px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    max-height: 72vh;
+    padding-right: 6px;
+}
+
+body.tv-mode #new-releases-grid {
+    scroll-padding-left: 24px;
+    padding-left: 24px;
+    overflow-x: auto;
+    overflow-y: visible;
+}
+
+body.tv-mode #new-releases-grid .anime-card,
+body.tv-mode #full-catalog-grid .anime-card {
+    scroll-margin-left: 24px;
+}
+
+/* Mantém Animes/Filmes/OVAs no formato padrão em grade */
+body.tv-mode #animes-grid,
+body.tv-mode #movies-grid,
+body.tv-mode #ovas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    overflow: visible;
+    padding: 0;
+}
+
+/* Música em fileiras horizontais por série */
+body.tv-mode #openings-section .music-grid {
+    display: block;
+}
+
+body.tv-mode #openings-section .music-anime-section .music-tracks {
+    display: flex;
+    gap: 14px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 8px 4px 10px;
+    scroll-snap-type: x proximity;
+}
+
+body.tv-mode #openings-section .music-track-card,
+body.tv-mode #openings-section .music-card {
+    flex: 0 0 260px;
+    scroll-snap-align: start;
+}
+
+body.tv-mode #video-modal .modal-content {
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: 100vw !important;
+    max-height: 100vh !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+}
+
+body.tv-mode #video-modal {
+    background: #000 !important;
+}
+
+body.tv-mode #video-modal #anime-player {
+    width: 100vw;
+    height: 100vh;
+    object-fit: contain;
+}
+
+body.tv-mode #video-modal #volume-btn,
+body.tv-mode #video-modal .volume-control,
+body.tv-mode #video-modal #volume-progress {
+    display: none !important;
+}
+
+body.tv-mode #video-modal .modal-content,
+body.tv-mode #video-modal .video-container {
+    background: #000 !important;
+}
+
+body.tv-mode.tv-video-active main.container,
+body.tv-mode.tv-video-active footer .container,
+body.tv-mode.tv-video-active .hero {
+    visibility: hidden;
+}
+
+body.tv-mode .content-section {
+    padding-top: 18px;
+}
+
+body.tv-mode .section-title {
+    font-size: 2rem;
+    margin-bottom: 14px;
+}
+
+body.tv-mode .hero {
+    min-height: 320px;
+    border-radius: 24px;
+}
+
+body.tv-mode .hero-content h2 {
+    font-size: 2.6rem;
+}
+
+body.tv-mode nav ul {
+    gap: 10px;
+}
+
+body.tv-mode nav a {
+    font-size: 1.05rem;
+    padding: 10px 14px;
+    border-radius: 10px;
+}
+
+body.tv-mode #profile-modal .profile-modal-modern {
+    max-width: 1200px;
+    width: 95%;
+}
+
+body.tv-mode .search-bar input {
+    min-height: 50px;
+    font-size: 1.1rem;
+}
+
+body.tv-mode .btn,
+body.tv-mode .btn-icon,
+body.tv-mode .tab-btn,
+body.tv-mode .pronoun-pill {
+    min-height: 44px;
+}
+
+body.tv-mode .user-controls .btn,
+body.tv-mode .user-controls .btn-icon {
+    width: 100%;
+}
+
+body.tv-mode #tv-controls-hint {
+    position: fixed;
+    right: 14px;
+    bottom: 14px;
+    z-index: 1200;
+    background: rgba(8, 10, 18, 0.82);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 12px;
+    padding: 10px 12px;
+    font-size: 0.78rem;
+    line-height: 1.45;
+    color: #f3f4f6;
+    backdrop-filter: blur(4px);
+    max-width: 520px;
+    pointer-events: none;
+}
+
+body.tv-mode #tv-controls-hint .tv-hint-title {
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+body.tv-mode #tv-controls-hint .tv-hint-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 14px;
+}
+
+body.tv-mode #tv-controls-hint .tv-hint-row span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+body.light-mode #tv-controls-hint {
+    border-color: rgba(0, 0, 0, 0.28);
+    color: #111;
+    background: rgba(255, 255, 255, 0.9);
+}
+
+body.light-mode.tv-mode header {
+    border-right-color: rgba(0, 0, 0, 0.26);
+}
+
+body.light-mode.tv-mode nav li a {
+    border-color: rgba(0, 0, 0, 0.2);
+}
+
+.tv-focus-target:focus-visible,
+.tv-focus-target:focus {
+    transform: scale(1.02);
+    box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px rgba(229, 9, 20, 0.8) !important;
+    border-radius: 12px;
+    transition: transform 80ms ease, box-shadow 80ms ease;
 }

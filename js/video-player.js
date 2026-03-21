@@ -853,6 +853,7 @@ window.addEventListener('keydown', (e) => {
                 break;
                 
             case 'arrowup':
+                if (document.body.classList.contains('tv-mode')) break;
                 player.volume = Math.min(1, player.volume + 0.1);
                 player.muted = false;
                 updateVideoVolumeIcon();
@@ -861,6 +862,7 @@ window.addEventListener('keydown', (e) => {
                 break;
                 
             case 'arrowdown':
+                if (document.body.classList.contains('tv-mode')) break;
                 player.volume = Math.max(0, player.volume - 0.1);
                 updateVideoVolumeIcon();
                 // Save video volume preference
@@ -868,6 +870,7 @@ window.addEventListener('keydown', (e) => {
                 break;
                 
             case 'm':
+                if (document.body.classList.contains('tv-mode')) break;
                 player.muted = !player.muted;
                 // Atualizar ícone de volume
                 updateVideoVolumeIcon();

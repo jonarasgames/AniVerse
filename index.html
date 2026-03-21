@@ -373,6 +373,7 @@
                         <option>Episódio 1</option>
                     </select>
                 </div>
+                <div id="video-collections-row" class="video-collections-row"></div>
             </div>
         </div>
     </div>
@@ -425,7 +426,7 @@
                     <div class="form-group-modern">
                         <label>Senha (opcional) 🔒</label>
                         <input type="password" id="profile-password" class="input-modern" placeholder="Deixe vazio para sem senha">
-                        <small style="color: rgba(255,255,255,0.6); font-size: 12px;">Se definir senha, será solicitada ao selecionar o perfil.</small>
+                        <small class="profile-password-hint">Se definir senha, será solicitada ao selecionar o perfil.</small>
                     </div>
                     
                     <!-- Tabs: Cores / Fundos / Personagens / Molduras -->
@@ -603,6 +604,7 @@
 
     <!-- Theme must load first, without defer -->
     <script src="js/theme.js"></script>
+    <script src="js/tizen-tv-remote.js" defer></script>
     
     <!-- Image retry system - loads early to catch all images -->
     <script src="js/image-retry.js"></script>
