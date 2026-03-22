@@ -1,5 +1,13 @@
 /* js/script.js - core fixes: avoid videoLoadTimeout ReferenceError, onVideoSetSource, openEpisode, animeDataLoaded binds */
 let videoLoadTimeout = null;
+let tvNativeControlsHideTimer = null;
+let tvNativeVideoState = {
+  active: false,
+  url: '',
+  currentTimeMs: 0,
+  durationMs: 0,
+  resumeTimeMs: 0
+};
 
 let MAINTENANCE_MODE = false; // true = ativa manutenção | false = site normal
 
@@ -174,11 +182,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const sections = document.querySelectorAll('.content-section');
 
   function activateSection(sectionId) {
-    navLinks.forEach(l => l.classList.remove('active'));
+    navLinks.forEach(l => {
+      l.classList.remove('active');
+      l.removeAttribute('aria-current');
+    });
     sections.forEach(s => s.classList.remove('active'));
 
     const targetNav = document.querySelector(`nav a[data-section="${sectionId}"]`);
-    if (targetNav) targetNav.classList.add('active');
+    if (targetNav) {
+      targetNav.classList.add('active');
+      targetNav.setAttribute('aria-current', 'page');
+    }
 
     const targetSection = document.getElementById(sectionId + '-section');
     if (targetSection) {
@@ -923,8 +937,267 @@ function addCacheBust(url){
   }
 }
 
-function onVideoSetSource(player, episode){
+function isTvPlaybackEnvironment(){
+  try {
+    if (window.__ANIVERSE_FORCE_TV_MODE__ === true) return true;
+    if (typeof window.tizen !== 'undefined' || typeof window.webapis !== 'undefined') return true;
+    const ua = navigator.userAgent || '';
+    return /tizen|smart-tv|smarttv|hbbtv|web0s|googletv|appletv|viera|aquos/i.test(ua);
+  } catch (_) {
+    return false;
+  }
+}
+
+function inferVideoMimeType(url){
+  const raw = String(url || '').split('?')[0].toLowerCase();
+  if (raw.endsWith('.m3u8')) return 'application/vnd.apple.mpegurl';
+  if (raw.endsWith('.mpd')) return 'application/dash+xml';
+  if (raw.endsWith('.webm')) return 'video/webm';
+  if (raw.endsWith('.mov')) return 'video/quicktime';
+  if (raw.endsWith('.m4v')) return 'video/mp4';
+  if (raw.endsWith('.mp4')) return 'video/mp4';
+  return '';
+}
+
+function isNativeTvVideoSupported(){
+  try {
+    return isTvPlaybackEnvironment() && !!(window.webapis && window.webapis.avplay);
+  } catch (_) {
+    return false;
+  }
+}
+
+function updateVideoTimeDisplay(currentMs, durationMs){
+  const timeDisplay = document.getElementById('time-display');
+  const timelineProgress = document.getElementById('timeline-progress');
+  const currentSeconds = Math.max(0, Number(currentMs || 0) / 1000);
+  const durationSeconds = Math.max(0, Number(durationMs || 0) / 1000);
+
+  if (timeDisplay) {
+    const mins = Math.floor(currentSeconds / 60);
+    const secs = Math.floor(currentSeconds % 60).toString().padStart(2, '0');
+    const durMins = Math.floor(durationSeconds / 60);
+    const durSecs = Math.floor(durationSeconds % 60).toString().padStart(2, '0');
+    timeDisplay.textContent = `${mins}:${secs} / ${durMins}:${durSecs}`;
+  }
+
+  if (timelineProgress && durationSeconds > 0) {
+    timelineProgress.style.width = `${Math.max(0, Math.min(100, (currentSeconds / durationSeconds) * 100))}%`;
+  }
+}
+
+function updatePlayPauseButtonState(isPaused){
+  const playPauseBtn = document.getElementById('play-pause-btn');
+  const icon = playPauseBtn?.querySelector('i');
+  if (icon) {
+    icon.className = isPaused ? 'fas fa-play' : 'fas fa-pause';
+  }
+}
+
+function showNativeTvControls() {
+  const container = document.getElementById('video-player-container');
+  if (!container) return;
+  container.classList.remove('controls-hidden');
+  container.classList.add('controls-visible');
+  clearTimeout(tvNativeControlsHideTimer);
+  if (tvNativeVideoState.active) {
+    tvNativeControlsHideTimer = setTimeout(() => {
+      container.classList.add('controls-hidden');
+      container.classList.remove('controls-visible');
+    }, 3500);
+  }
+}
+
+function getNativeTvVideoControls(){
+  return {
+    isActive: () => !!tvNativeVideoState.active,
+    play: () => {
+      if (!isNativeTvVideoSupported() || !tvNativeVideoState.active) return false;
+      try {
+        window.webapis.avplay.play();
+        updatePlayPauseButtonState(false);
+        showNativeTvControls();
+        return true;
+      } catch (_) {
+        return false;
+      }
+    },
+    pause: () => {
+      if (!isNativeTvVideoSupported() || !tvNativeVideoState.active) return false;
+      try {
+        window.webapis.avplay.pause();
+        updatePlayPauseButtonState(true);
+        showNativeTvControls();
+        return true;
+      } catch (_) {
+        return false;
+      }
+    },
+    toggle: () => {
+      if (!isNativeTvVideoSupported() || !tvNativeVideoState.active) return false;
+      try {
+        const state = window.webapis.avplay.getState();
+        if (state === 'PLAYING') return getNativeTvVideoControls().pause();
+        return getNativeTvVideoControls().play();
+      } catch (_) {
+        return false;
+      }
+    },
+    seekBy: (deltaSeconds) => {
+      if (!isNativeTvVideoSupported() || !tvNativeVideoState.active) return false;
+      try {
+        const nextMs = Math.max(0, tvNativeVideoState.currentTimeMs + (deltaSeconds * 1000));
+        window.webapis.avplay.seekTo(nextMs, () => {
+          tvNativeVideoState.currentTimeMs = nextMs;
+          updateVideoTimeDisplay(tvNativeVideoState.currentTimeMs, tvNativeVideoState.durationMs);
+          showNativeTvControls();
+        }, () => {});
+        return true;
+      } catch (_) {
+        return false;
+      }
+    },
+    stop: () => {
+      if (!isNativeTvVideoSupported() || !tvNativeVideoState.active) return false;
+      try {
+        window.webapis.avplay.stop();
+      } catch (_) {}
+      try {
+        window.webapis.avplay.close();
+      } catch (_) {}
+      tvNativeVideoState.active = false;
+      tvNativeVideoState.url = '';
+      tvNativeVideoState.currentTimeMs = 0;
+      tvNativeVideoState.durationMs = 0;
+      tvNativeVideoState.resumeTimeMs = 0;
+      updatePlayPauseButtonState(true);
+      updateVideoTimeDisplay(0, 0);
+      const htmlPlayer = document.getElementById('anime-player');
+      if (htmlPlayer) {
+        htmlPlayer.style.visibility = '';
+      }
+      clearTimeout(tvNativeControlsHideTimer);
+      return true;
+    }
+  };
+}
+
+function openNativeTvVideo(url, resumeTimeSeconds = 0, onFailure = null){
+  if (!isNativeTvVideoSupported() || !url) return false;
+
+  const avplay = window.webapis.avplay;
+  const htmlPlayer = document.getElementById('anime-player');
+  const container = document.getElementById('video-player-container');
+  const width = Math.max(1, Math.round(window.innerWidth));
+  const height = Math.max(1, Math.round(window.innerHeight));
+
+  try { avplay.stop(); } catch (_) {}
+  try { avplay.close(); } catch (_) {}
+
+  tvNativeVideoState.active = true;
+  tvNativeVideoState.url = url;
+  tvNativeVideoState.currentTimeMs = Math.max(0, Math.round((resumeTimeSeconds || 0) * 1000));
+  tvNativeVideoState.resumeTimeMs = tvNativeVideoState.currentTimeMs;
+  tvNativeVideoState.durationMs = 0;
+
+  if (htmlPlayer) {
+    htmlPlayer.pause();
+    htmlPlayer.style.visibility = 'hidden';
+  }
+  if (container) {
+    container.classList.add('is-fullscreen');
+  }
+  window.setVideoLoadingOverlay?.(true, 'Preparando player da TV...');
+
+  avplay.open(url);
+  try { avplay.setDisplayRect(0, 0, width, height); } catch (_) {}
+  try { avplay.setDisplayMethod('PLAYER_DISPLAY_MODE_FULL_SCREEN'); } catch (_) {}
+  try { avplay.setBufferingParam?.('PLAYER_BUFFER_FOR_PLAY', 'PLAYER_BUFFER_SIZE_IN_SECOND', 4); } catch (_) {}
+  try { avplay.setBufferingParam?.('PLAYER_BUFFER_FOR_RESUME', 'PLAYER_BUFFER_SIZE_IN_SECOND', 6); } catch (_) {}
+  try { avplay.setStreamingProperty?.('ADAPTIVE_INFO', 'FIXED_MAX_RESOLUTION=1920X1080'); } catch (_) {}
+
+  avplay.setListener({
+    onbufferingstart() {
+      showNativeTvControls();
+      window.setVideoLoadingOverlay?.(true, 'Carregando episódio...');
+    },
+    onbufferingprogress(percent) {
+      window.setVideoLoadingOverlay?.(true, `Carregando episódio... ${percent}%`);
+    },
+    onbufferingcomplete() {
+      window.setVideoLoadingOverlay?.(false);
+    },
+    oncurrentplaytime(currentTimeMs) {
+      tvNativeVideoState.currentTimeMs = currentTimeMs;
+      if (!tvNativeVideoState.durationMs) {
+        try { tvNativeVideoState.durationMs = avplay.getDuration() || 0; } catch (_) {}
+      }
+      updateVideoTimeDisplay(tvNativeVideoState.currentTimeMs, tvNativeVideoState.durationMs);
+    },
+    onstreamcompleted() {
+      const nextBtn = document.getElementById('next-episode-btn');
+      if (nextBtn) nextBtn.click();
+    },
+    onerror(error) {
+      console.warn('AVPlay error:', error);
+      window.setVideoLoadingOverlay?.(true, 'Falha no player da TV. Tentando outro modo...');
+      tvNativeVideoState.active = false;
+      if (htmlPlayer) {
+        htmlPlayer.style.visibility = '';
+      }
+      try { avplay.close(); } catch (_) {}
+      window.setVideoLoadingOverlay?.(false);
+      if (typeof onFailure === 'function') onFailure();
+    }
+  });
+
+  avplay.prepareAsync(() => {
+    try {
+      tvNativeVideoState.durationMs = avplay.getDuration() || 0;
+    } catch (_) {}
+    if (tvNativeVideoState.resumeTimeMs > 0) {
+      try { avplay.seekTo(tvNativeVideoState.resumeTimeMs, () => avplay.play(), () => avplay.play()); }
+      catch (_) { avplay.play(); }
+    } else {
+      avplay.play();
+    }
+    updatePlayPauseButtonState(false);
+    updateVideoTimeDisplay(tvNativeVideoState.currentTimeMs, tvNativeVideoState.durationMs);
+    showNativeTvControls();
+    window.setVideoLoadingOverlay?.(false);
+  }, (error) => {
+    console.warn('AVPlay prepareAsync error:', error);
+    tvNativeVideoState.active = false;
+    if (htmlPlayer) {
+      htmlPlayer.style.visibility = '';
+    }
+    try { avplay.close(); } catch (_) {}
+    window.setVideoLoadingOverlay?.(false);
+    if (typeof onFailure === 'function') onFailure();
+  });
+
+  return true;
+}
+
+function getBufferedAheadSeconds(media){
+  try {
+    if (!media || !media.buffered || media.buffered.length === 0) return 0;
+    const currentTime = Number(media.currentTime) || 0;
+    for (let index = 0; index < media.buffered.length; index += 1) {
+      const start = media.buffered.start(index);
+      const end = media.buffered.end(index);
+      if (currentTime >= start && currentTime <= end) {
+        return Math.max(0, end - currentTime);
+      }
+    }
+  } catch (_) {}
+  return 0;
+}
+
+function onVideoSetSource(player, episode, options = {}){
   if (!player || !episode) return;
+
+  if (isNativeTvVideoSupported() && !options.forceHtmlFallback) return;
 
   if (player.__adaptiveCleanup) {
     try { player.__adaptiveCleanup(); } catch (_) {}
@@ -939,15 +1212,24 @@ function onVideoSetSource(player, episode){
     sources,
     currentIndex: 0,
     retriesInSource: 0,
-    maxRetriesPerSource: 3,
-    loadTimeoutMs: 15000,
+    maxRetriesPerSource: isTvPlaybackEnvironment() ? 3 : 3,
+    loadTimeoutMs: isTvPlaybackEnvironment() ? 30000 : 15000,
     loadTimeoutId: null,
     retryTimeoutId: null,
+    waitingRecoveryId: null,
     upgradeIntervalId: null,
     recoverInFlight: false,
-    fallbackInUse: false
+    fallbackInUse: false,
+    isTvEnvironment: isTvPlaybackEnvironment(),
+    playWhenReady: false,
+    playStartAt: 0
   };
   player.__adaptivePlayback = state;
+
+  player.preload = state.isTvEnvironment ? 'auto' : 'metadata';
+  player.setAttribute('preload', player.preload);
+  player.playsInline = true;
+  player.setAttribute('playsinline', '');
 
   const clearTimers = () => {
     if (state.loadTimeoutId) {
@@ -957,6 +1239,10 @@ function onVideoSetSource(player, episode){
     if (state.retryTimeoutId) {
       clearTimeout(state.retryTimeoutId);
       state.retryTimeoutId = null;
+    }
+    if (state.waitingRecoveryId) {
+      clearTimeout(state.waitingRecoveryId);
+      state.waitingRecoveryId = null;
     }
   };
 
@@ -988,6 +1274,15 @@ function onVideoSetSource(player, episode){
     if (videoLoadTimeout){ clearTimeout(videoLoadTimeout); videoLoadTimeout = null; }
     clearVideoError();
 
+    player.pause();
+    player.removeAttribute('src');
+    while (player.firstChild) player.removeChild(player.firstChild);
+
+    const sourceEl = document.createElement('source');
+    sourceEl.src = nextUrl;
+    const sourceType = inferVideoMimeType(nextUrl);
+    if (sourceType) sourceEl.type = sourceType;
+    player.appendChild(sourceEl);
     player.src = nextUrl;
     player.load();
 
@@ -1000,12 +1295,15 @@ function onVideoSetSource(player, episode){
 
     setLoadTimeout();
 
-    if (shouldAutoPlay) {
+    state.playWhenReady = !!shouldAutoPlay;
+    state.playStartAt = Date.now();
+    if (shouldAutoPlay && !state.isTvEnvironment) {
       player.play().catch(() => {});
     }
   };
 
   const tryBackgroundUpgrade = () => {
+    if (state.isTvEnvironment) return;
     if (state.currentIndex <= 0) return;
     if (state.upgradeIntervalId) return;
 
@@ -1109,12 +1407,27 @@ function onVideoSetSource(player, episode){
       clearTimeout(state.loadTimeoutId);
       state.loadTimeoutId = null;
     }
+    const waitedLongEnough = Date.now() - state.playStartAt >= 2200;
+    const hasEnoughBuffer = getBufferedAheadSeconds(player) >= 3;
+    if (state.playWhenReady && player.paused && (!state.isTvEnvironment || hasEnoughBuffer || waitedLongEnough)) {
+      player.play().catch(() => {});
+    }
   };
 
   const handleWaiting = () => {
     if (player.__adaptivePlayback?.token !== state.token) return;
-    if (!state.fallbackInUse) return;
-    showVideoError('Carregando... Ajustando qualidade automaticamente');
+    if (!state.fallbackInUse) {
+      showVideoError('Carregando... ajustando o vídeo para a TV');
+    } else {
+      showVideoError('Carregando... Ajustando qualidade automaticamente');
+    }
+    if (state.isTvEnvironment && !state.waitingRecoveryId) {
+      try { player.pause(); } catch (_) {}
+      state.waitingRecoveryId = setTimeout(() => {
+        state.waitingRecoveryId = null;
+        recoverPlayback('waiting');
+      }, 1800);
+    }
   };
 
   const handleError = () => {
@@ -1122,9 +1435,12 @@ function onVideoSetSource(player, episode){
   };
 
   player.addEventListener('playing', handlePlaying);
+  player.addEventListener('progress', handleCanPlay);
   player.addEventListener('canplay', handleCanPlay);
+  player.addEventListener('canplaythrough', handleCanPlay);
   player.addEventListener('waiting', handleWaiting);
   player.addEventListener('stalled', handleWaiting);
+  player.addEventListener('suspend', handleWaiting);
   player.addEventListener('error', handleError);
 
   player.__adaptiveCleanup = () => {
@@ -1134,13 +1450,17 @@ function onVideoSetSource(player, episode){
       state.upgradeIntervalId = null;
     }
     player.removeEventListener('playing', handlePlaying);
+    player.removeEventListener('progress', handleCanPlay);
     player.removeEventListener('canplay', handleCanPlay);
+    player.removeEventListener('canplaythrough', handleCanPlay);
     player.removeEventListener('waiting', handleWaiting);
     player.removeEventListener('stalled', handleWaiting);
+    player.removeEventListener('suspend', handleWaiting);
     player.removeEventListener('error', handleError);
   };
 
-  setSource(0, { autoPlay: true, preserveTime: 0 });
+  const initialIndex = state.isTvEnvironment ? (state.sources.length - 1) : 0;
+  setSource(initialIndex, { autoPlay: true, preserveTime: 0 });
 }
 
 function ensureModalAdminEditorUI() {
@@ -1265,10 +1585,18 @@ function openEpisode(anime, seasonNumber, episodeIndex){
         videoModal.style.display = 'flex';
         document.body.style.overflow = 'hidden';
     }
+    document.body.classList.add('tv-video-open');
+    const miniMusicPlayer = document.getElementById('music-mini-player');
+    if (miniMusicPlayer) {
+        miniMusicPlayer.classList.add('hidden-during-video');
+    }
     const videoContainer = document.getElementById('video-player-container');
     if (videoContainer) {
         if (!videoContainer.hasAttribute('tabindex')) {
             videoContainer.setAttribute('tabindex', '-1');
+        }
+        if (isTvPlaybackEnvironment()) {
+            videoContainer.classList.add('is-fullscreen');
         }
         videoContainer.focus({ preventScroll: true });
     }
@@ -1276,7 +1604,14 @@ function openEpisode(anime, seasonNumber, episodeIndex){
     const season = (anime.seasons || []).find(s => s.number === seasonNumber);
     const episode = season && Array.isArray(season.episodes) ? season.episodes[episodeIndex] : null;
     const player = document.getElementById('anime-player'); if (!player) return;
-    if (episode){ onVideoSetSource(player, episode); }
+    const nativeSources = episode ? normalizeEpisodeSources(episode) : [];
+    const nativeSource = nativeSources.length ? nativeSources[nativeSources.length - 1] : null;
+    if (episode){
+      const usingNativeTvPlayer = nativeSource && openNativeTvVideo(nativeSource.url, 0, () => onVideoSetSource(player, episode, { forceHtmlFallback: true }));
+      if (!usingNativeTvPlayer) {
+        onVideoSetSource(player, episode, { forceHtmlFallback: true });
+      }
+    }
     const bannerEl = document.querySelector('.video-banner'); const bannerUrl = anime.banner || anime.cover || 'images/bg-default.jpg';
     if (bannerEl) bannerEl.style.backgroundImage = `url('${bannerUrl}')`;
     if (episode && episode.opening && typeof episode.opening.start === 'number' && typeof episode.opening.end === 'number') window.updateOpeningData && window.updateOpeningData({ start: episode.opening.start, end: episode.opening.end }); else window.updateOpeningData && window.updateOpeningData(null);
@@ -1398,11 +1733,29 @@ function openEpisode(anime, seasonNumber, episodeIndex){
             player.addEventListener('loadedmetadata', setResumeTime, { once: true });
         }
     }
-    
-    player.play().catch(()=>{});
+
+    if (tvNativeVideoState.active && resumeTime > 0) {
+      tvNativeVideoState.resumeTimeMs = Math.round(resumeTime * 1000);
+      openNativeTvVideo(nativeSource?.url, resumeTime, () => onVideoSetSource(player, episode, { forceHtmlFallback: true }));
+    } else if (!isTvPlaybackEnvironment()) {
+      player.play().catch(()=>{});
+    }
   } catch(e){ console.error('openEpisode error', e); }
 }
 window.openEpisode = openEpisode;
+window.getNativeTvVideoControls = getNativeTvVideoControls;
+
+document.addEventListener('DOMContentLoaded', () => {
+  const playPauseBtn = document.getElementById('play-pause-btn');
+
+  if (playPauseBtn) {
+    playPauseBtn.addEventListener('click', () => {
+      if (getNativeTvVideoControls().isActive()) {
+        getNativeTvVideoControls().toggle();
+      }
+    });
+  }
+});
 
 function getNextEpisodeTarget(){
   if (!window.currentAnime || !window.currentWatchingAnime) return null;
