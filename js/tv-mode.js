@@ -33,6 +33,7 @@
   let currentFocus = null;
   let currentInputShell = null;
   let lastNonSidebarFocus = null;
+  const lastSectionFocus = new Map();
   let hoverTimer = null;
   let hoverPanel = null;
   let lastFocusedAnime = null;
@@ -207,6 +208,10 @@
       updateSidebarState(true);
     } else {
       lastNonSidebarFocus = el;
+      const section = el.closest('.content-section');
+      if (section?.id) {
+        lastSectionFocus.set(section.id, el);
+      }
       updateSidebarState(false);
     }
     if (!options.silent) {
@@ -279,6 +284,50 @@
     ) || null;
   }
 
+  function getContainerItems(container) {
+    if (!container) return [];
+    const items = Array.from(container.querySelectorAll('.tv-focusable, .anime-card, .music-card, .collection-card, .tv-episode-button, .tv-similar-card, .tab-btn, .pronoun-pill, .color-option, .frame-option, .bg-image-option, .character-option, #save-profile-btn, #close-profile-modal, #play-pause-btn, #next-episode-btn, #fullscreen-btn, #skip-opening-btn, #music-mini-player .mini-control-btn, #music-fullscreen-modal .music-fs-control-btn, #music-fullscreen-modal #music-fs-close-btn'))
+      .filter((element) => isVisible(element) && !element.classList.contains('tv-sidebar-link'));
+
+    items.forEach((item) => {
+      if (!item.classList.contains('tv-focusable') && !item.classList.contains('tv-sidebar-link')) {
+        addTvClass(item);
+      }
+    });
+
+    return items;
+  }
+
+  function getDirectionalCandidates(items, current, direction) {
+    return items
+      .filter((item) => item !== current)
+      .map(getRectCenter)
+      .filter((candidate) => {
+        if (direction === KEY.LEFT) return candidate.x < current.x - 8;
+        if (direction === KEY.RIGHT) return candidate.x > current.x + 8;
+        if (direction === KEY.UP) return candidate.y < current.y - 8;
+        return candidate.y > current.y + 8;
+      });
+  }
+
+  function sortDirectionalCandidates(candidates, current, direction) {
+    return candidates.sort((a, b) => weightedDistance(a, current, direction) - weightedDistance(b, current, direction));
+  }
+
+  function getWrappedContainerCandidates(items, direction) {
+    const centers = items.map(getRectCenter);
+    if (direction === KEY.RIGHT) {
+      return centers.sort((a, b) => a.x - b.x || a.y - b.y);
+    }
+    if (direction === KEY.LEFT) {
+      return centers.sort((a, b) => b.x - a.x || a.y - b.y);
+    }
+    if (direction === KEY.DOWN) {
+      return centers.sort((a, b) => a.y - b.y || a.x - b.x);
+    }
+    return centers.sort((a, b) => b.y - a.y || a.x - b.x);
+  }
+
   function navigateWithinContainer(direction) {
     const container = getNavigationContainer(currentFocus);
     if (!container) return false;
@@ -302,7 +351,7 @@
     const orientation = getContainerOrientation(container);
     if (!orientation) return false;
 
-    const items = Array.from(container.querySelectorAll('.tv-focusable')).filter(isVisible);
+    const items = getContainerItems(container);
     if (!items.length) return false;
 
     const currentIndex = items.indexOf(currentFocus);
@@ -327,26 +376,40 @@
     }
 
     if (orientation === 'grid') {
-      const rows = groupElementsByTop(items);
-      const rowIndex = rows.findIndex((row) => row.includes(currentFocus));
-      if (rowIndex === -1) return false;
-      const row = rows[rowIndex];
-      const colIndex = row.indexOf(currentFocus);
+      const current = getRectCenter(currentFocus);
+      let candidates = getDirectionalCandidates(items, current, direction);
+      if (!candidates.length) {
+        const rows = groupElementsByTop(items);
+        const rowIndex = rows.findIndex((row) => row.includes(currentFocus));
+        if (rowIndex !== -1) {
+          const row = rows[rowIndex];
+          const colIndex = row.indexOf(currentFocus);
 
-      if (direction === KEY.LEFT || direction === KEY.RIGHT) {
-        const nextCol = direction === KEY.RIGHT
-          ? (colIndex + 1) % row.length
-          : (colIndex - 1 + row.length) % row.length;
-        focusElement(row[nextCol]);
-        return true;
+          if ((direction === KEY.LEFT || direction === KEY.RIGHT) && row.length > 1) {
+            const nextCol = direction === KEY.RIGHT
+              ? (colIndex + 1) % row.length
+              : (colIndex - 1 + row.length) % row.length;
+            focusElement(row[nextCol]);
+            return true;
+          }
+
+          if ((direction === KEY.UP || direction === KEY.DOWN) && rows.length > 1) {
+            const nextRowIndex = (rowIndex + (direction === KEY.DOWN ? 1 : -1) + rows.length) % rows.length;
+            const nextRow = rows[nextRowIndex];
+            const ratio = row.length > 1 ? colIndex / (row.length - 1) : 0;
+            const nextColIndex = nextRow.length > 1 ? Math.round(ratio * (nextRow.length - 1)) : 0;
+            focusElement(nextRow[nextColIndex]);
+            return true;
+          }
+        }
+
+        candidates = getWrappedContainerCandidates(items, direction);
+      } else {
+        candidates = sortDirectionalCandidates(candidates, current, direction);
       }
 
-      if (direction === KEY.UP || direction === KEY.DOWN) {
-        const nextRowIndex = (rowIndex + (direction === KEY.DOWN ? 1 : -1) + rows.length) % rows.length;
-        const nextRow = rows[nextRowIndex];
-        const ratio = row.length > 1 ? colIndex / (row.length - 1) : 0;
-        const nextColIndex = nextRow.length > 1 ? Math.round(ratio * (nextRow.length - 1)) : 0;
-        focusElement(nextRow[nextColIndex]);
+      if (candidates.length) {
+        focusElement(candidates[0].el);
         return true;
       }
     }
@@ -587,6 +650,12 @@
     if (!section) return;
     scheduleRefresh(`section:${sectionId}`);
     decorateDynamicElements(section);
+    const remembered = lastSectionFocus.get(section.id);
+    if (remembered && isVisible(remembered) && section.contains(remembered)) {
+      updateSidebarState(false);
+      focusElement(remembered);
+      return;
+    }
     const preferredSelectors = {
       home: '#continue-watching-grid .anime-card, #new-releases-grid .anime-card',
       animes: '#animes-grid .anime-card',
@@ -1169,6 +1238,9 @@
       addObservers();
       exposeHelpers();
       syncModalIsolation();
+      if (typeof window.preloadTvModeContent === 'function') {
+        setTimeout(() => window.preloadTvModeContent(), 0);
+      }
       window.addEventListener('animeDataLoaded', () => scheduleRefresh('animeDataLoaded'));
       window.addEventListener('hashchange', () => scheduleRefresh('hashchange'));
 

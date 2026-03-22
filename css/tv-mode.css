@@ -252,8 +252,8 @@ body.tv-mode #movies-grid,
 body.tv-mode #ovas-grid,
 body.tv-mode #continue-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(235px, 1fr));
-  gap: 18px;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 22px;
   align-items: start;
 }
 
@@ -302,7 +302,7 @@ body.tv-mode #animes-grid .anime-card,
 body.tv-mode #movies-grid .anime-card,
 body.tv-mode #ovas-grid .anime-card,
 body.tv-mode #continue-grid .anime-card {
-  border-radius: 20px;
+  border-radius: 24px;
   min-height: 100%;
 }
 
@@ -310,14 +310,29 @@ body.tv-mode #animes-grid .anime-info,
 body.tv-mode #movies-grid .anime-info,
 body.tv-mode #ovas-grid .anime-info,
 body.tv-mode #continue-grid .anime-info {
-  padding: 16px 18px 20px;
+  padding: 20px 22px 24px;
 }
 
 body.tv-mode #animes-grid .anime-title,
 body.tv-mode #movies-grid .anime-title,
 body.tv-mode #ovas-grid .anime-title,
 body.tv-mode #continue-grid .anime-title {
-  font-size: 1.16rem;
+  font-size: 1.3rem;
+}
+
+body.tv-mode #animes-grid .anime-meta,
+body.tv-mode #movies-grid .anime-meta,
+body.tv-mode #ovas-grid .anime-meta,
+body.tv-mode #continue-grid .anime-meta {
+  font-size: 1rem;
+  line-height: 1.45;
+}
+
+body.tv-mode #animes-grid .anime-thumbnail,
+body.tv-mode #movies-grid .anime-thumbnail,
+body.tv-mode #ovas-grid .anime-thumbnail,
+body.tv-mode #continue-grid .anime-thumbnail {
+  aspect-ratio: 16 / 10;
 }
 
 body.tv-mode .music-tracks {
@@ -619,6 +634,13 @@ body.tv-mode .pronoun-pill {
   border-radius: 999px;
   background: rgba(255,255,255,0.08);
   color: #fff;
+}
+
+body.tv-mode .tab-btn {
+  min-height: 60px;
+  padding: 14px 24px;
+  font-size: 1rem;
+  font-weight: 700;
 }
 
 body.tv-mode .tv-action-btn.is-primary {

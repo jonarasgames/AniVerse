@@ -1179,6 +1179,15 @@ function openNativeTvVideo(url, resumeTimeSeconds = 0, onFailure = null){
   return true;
 }
 
+function pickNativeTvSource(sources) {
+  if (!Array.isArray(sources) || !sources.length) return null;
+  const preferred = sources.find((source) => {
+    const mime = inferVideoMimeType(source?.url || '');
+    return mime === 'video/mp4' || mime === 'application/vnd.apple.mpegurl';
+  });
+  return preferred || sources[0] || null;
+}
+
 function getBufferedAheadSeconds(media){
   try {
     if (!media || !media.buffered || media.buffered.length === 0) return 0;
@@ -1604,14 +1613,6 @@ function openEpisode(anime, seasonNumber, episodeIndex){
     const season = (anime.seasons || []).find(s => s.number === seasonNumber);
     const episode = season && Array.isArray(season.episodes) ? season.episodes[episodeIndex] : null;
     const player = document.getElementById('anime-player'); if (!player) return;
-    const nativeSources = episode ? normalizeEpisodeSources(episode) : [];
-    const nativeSource = nativeSources.length ? nativeSources[nativeSources.length - 1] : null;
-    if (episode){
-      const usingNativeTvPlayer = nativeSource && openNativeTvVideo(nativeSource.url, 0, () => onVideoSetSource(player, episode, { forceHtmlFallback: true }));
-      if (!usingNativeTvPlayer) {
-        onVideoSetSource(player, episode, { forceHtmlFallback: true });
-      }
-    }
     const bannerEl = document.querySelector('.video-banner'); const bannerUrl = anime.banner || anime.cover || 'images/bg-default.jpg';
     if (bannerEl) bannerEl.style.backgroundImage = `url('${bannerUrl}')`;
     if (episode && episode.opening && typeof episode.opening.start === 'number' && typeof episode.opening.end === 'number') window.updateOpeningData && window.updateOpeningData({ start: episode.opening.start, end: episode.opening.end }); else window.updateOpeningData && window.updateOpeningData(null);
@@ -1653,6 +1654,15 @@ function openEpisode(anime, seasonNumber, episodeIndex){
                 resumeTime = savedAnime.currentTime;
             }
         }
+    }
+
+    const nativeSources = episode ? normalizeEpisodeSources(episode) : [];
+    const nativeSource = pickNativeTvSource(nativeSources);
+    if (episode){
+      const usingNativeTvPlayer = nativeSource && openNativeTvVideo(nativeSource.url, resumeTime, () => onVideoSetSource(player, episode, { forceHtmlFallback: true }));
+      if (!usingNativeTvPlayer) {
+        onVideoSetSource(player, episode, { forceHtmlFallback: true });
+      }
     }
     
     // Update video title and description
@@ -1734,10 +1744,7 @@ function openEpisode(anime, seasonNumber, episodeIndex){
         }
     }
 
-    if (tvNativeVideoState.active && resumeTime > 0) {
-      tvNativeVideoState.resumeTimeMs = Math.round(resumeTime * 1000);
-      openNativeTvVideo(nativeSource?.url, resumeTime, () => onVideoSetSource(player, episode, { forceHtmlFallback: true }));
-    } else if (!isTvPlaybackEnvironment()) {
+    if (!tvNativeVideoState.active && !isTvPlaybackEnvironment()) {
       player.play().catch(()=>{});
     }
   } catch(e){ console.error('openEpisode error', e); }
@@ -1946,11 +1953,47 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
+function preloadTvModeContent() {
+  try {
+    const isTvEnvironment = (window.__isTvMode && window.__isTvMode()) || window.__ANIVERSE_FORCE_TV_MODE__ === true;
+    if (!isTvEnvironment || !window.animeDB || !Array.isArray(window.animeDB.animes) || window.animeDB.animes.length === 0) {
+      return;
+    }
+
+    if (typeof loadAnimeSection === 'function') {
+      loadAnimeSection('anime');
+      loadAnimeSection('movie');
+      loadAnimeSection('ova');
+    }
+
+    if (typeof renderContinueWatchingGrid === 'function') {
+      const continueWatching = window.animeDB.getContinueWatching();
+      renderContinueWatchingGrid(continueWatching, 'continue-grid');
+      renderContinueWatchingGrid(continueWatching, 'continue-watching-grid');
+    }
+
+    if (typeof renderMusicGrid === 'function') {
+      renderMusicGrid();
+    }
+  } catch (error) {
+    console.warn('TV mode preload failed:', error);
+  }
+}
+
+window.preloadTvModeContent = preloadTvModeContent;
+
 window.addEventListener('animeDataLoaded', () => {
   try { if (typeof loadAnimeSection === 'function') loadAnimeSection('anime'); } catch(e){}
+  preloadTvModeContent();
   try { if (window.animeDB && typeof renderContinueWatchingGrid === 'function') renderContinueWatchingGrid(animeDB.getContinueWatching(),'continue-watching-grid'); } catch(e){}
   try { if (typeof bindProfileModalControls === 'function') bindProfileModalControls(); } catch(e){}
   try { if (typeof renderMusicLibrary === 'function' && window.animeDB) renderMusicLibrary(window.animeDB.musicLibrary); } catch(e){}
 });
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => setTimeout(preloadTvModeContent, 0), { once: true });
+} else {
+  setTimeout(preloadTvModeContent, 0);
+}
 
 window.addEventListener('adminModeChanged', syncModalAdminEditorVisibility);
