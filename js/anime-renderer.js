@@ -535,6 +535,10 @@
         if (miniMusicPlayer) {
           miniMusicPlayer.classList.remove('hidden-during-video');
         }
+        const videoContainer = document.getElementById('video-player-container');
+        if (videoContainer) {
+          videoContainer.classList.remove('is-fullscreen', 'controls-hidden', 'controls-visible');
+        }
         
         // Pause video
         const player = document.getElementById('anime-player');
@@ -557,6 +561,9 @@
           } catch (e) {
             console.warn('Error saving progress:', e);
           }
+        }
+        if (window.getNativeTvVideoControls) {
+          try { window.getNativeTvVideoControls().stop(); } catch (_) {}
         }
       }
     });

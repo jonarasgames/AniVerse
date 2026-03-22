@@ -7,6 +7,7 @@
     let tvAudioRecoveryTimer = null;
     let tvAudioRecoveryAttempts = 0;
     let tvAudioResumeTimer = null;
+    let currentPrefetchedAudioUrl = null;
 
     function isTvMusicEnvironment() {
         try {
@@ -37,6 +38,23 @@
         } catch (_) {
             const sep = String(url || '').includes('?') ? '&' : '?';
             return `${url}${sep}_tv_retry=${Date.now()}`;
+        }
+    }
+
+    async function resolveTvAudioSource(url) {
+        if (!isTvMusicEnvironment() || !url) return url;
+        try {
+            const response = await fetch(url, { mode: 'cors', cache: 'force-cache' });
+            if (!response.ok) return url;
+            const blob = await response.blob();
+            if (!blob || !blob.size) return url;
+            if (currentPrefetchedAudioUrl) {
+                try { URL.revokeObjectURL(currentPrefetchedAudioUrl); } catch (_) {}
+            }
+            currentPrefetchedAudioUrl = URL.createObjectURL(blob);
+            return currentPrefetchedAudioUrl;
+        } catch (_) {
+            return url;
         }
     }
 
@@ -124,7 +142,8 @@
             if (tvAudioRecoveryAttempts >= 4) return;
             tvAudioRecoveryAttempts += 1;
             const resumeTime = Math.max(0, (audio.currentTime || 0) - 0.35);
-            setAudioSource(audio, currentMusicData.src, { preserveTime: resumeTime, cacheBust: true });
+            const recoverySource = currentMusicData.resolvedSrc || currentMusicData.src;
+            setAudioSource(audio, recoverySource, { preserveTime: resumeTime, cacheBust: !String(recoverySource).startsWith('blob:') });
             const waitForPlayable = () => waitForBufferedAudio(audio, { minimumAhead: 5, maxWaitMs: 1800 });
             tvAudioResumeTimer = setTimeout(waitForPlayable, 250);
         }, 1400);
@@ -735,6 +754,10 @@
         tvAudioRecoveryAttempts = 0;
         audio.pause();
         audio.src = '';
+        if (currentPrefetchedAudioUrl) {
+            try { URL.revokeObjectURL(currentPrefetchedAudioUrl); } catch (_) {}
+            currentPrefetchedAudioUrl = null;
+        }
         currentMusicData = null;
         
         const miniPlayer = document.getElementById('music-mini-player');
@@ -753,7 +776,7 @@
         }
     }
     
-    function playMusic(src, title, artist, thumb, card) {
+    async function playMusic(src, title, artist, thumb, card) {
         createMiniPlayer();
         
         const miniPlayer = document.getElementById('music-mini-player');
@@ -762,6 +785,7 @@
         // Store current music data for fullscreen
         currentMusicData = {
             src: src,
+            resolvedSrc: null,
             title: title,
             artist: artist,
             thumbnail: thumb,
@@ -782,7 +806,9 @@
         // Set new track
         clearTvAudioRecovery();
         tvAudioRecoveryAttempts = 0;
-        setAudioSource(audio, src);
+        const resolvedSrc = await resolveTvAudioSource(src);
+        currentMusicData.resolvedSrc = resolvedSrc;
+        setAudioSource(audio, resolvedSrc);
         
         // Timeout for loading
         const loadTimeout = setTimeout(() => {
@@ -1027,6 +1053,18 @@
         const musicVisible = miniPlayer && !miniPlayer.classList.contains('hidden') && !miniPlayer.classList.contains('hidden-during-video');
 
         if (videoOpen) {
+            const nativeVideoControls = window.getNativeTvVideoControls && window.getNativeTvVideoControls();
+            if (nativeVideoControls?.isActive?.()) {
+                if (command === 'media_play_pause') return nativeVideoControls.toggle();
+                if (command === 'media_play') return nativeVideoControls.play();
+                if (command === 'media_pause') return nativeVideoControls.pause();
+                if (command === 'media_next') {
+                    document.getElementById('next-episode-btn')?.click();
+                    return true;
+                }
+                return false;
+            }
+
             const video = document.getElementById('anime-player');
             if (!video) return false;
             if (command === 'media_play_pause') {

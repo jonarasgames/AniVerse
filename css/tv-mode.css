@@ -227,7 +227,7 @@ body.tv-mode .collection-animes,
 body.tv-mode .music-tracks {
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: minmax(220px, 240px);
+  grid-auto-columns: minmax(210px, 230px);
   gap: 20px;
   overflow-x: auto;
   overflow-y: hidden;
@@ -252,7 +252,7 @@ body.tv-mode #movies-grid,
 body.tv-mode #ovas-grid,
 body.tv-mode #continue-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(205px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(235px, 1fr));
   gap: 18px;
   align-items: start;
 }
@@ -317,7 +317,12 @@ body.tv-mode #animes-grid .anime-title,
 body.tv-mode #movies-grid .anime-title,
 body.tv-mode #ovas-grid .anime-title,
 body.tv-mode #continue-grid .anime-title {
-  font-size: 1.08rem;
+  font-size: 1.16rem;
+}
+
+body.tv-mode .music-tracks {
+  grid-auto-columns: minmax(170px, 190px);
+  gap: 16px;
 }
 
 body.tv-mode .anime-thumbnail,

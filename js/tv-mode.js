@@ -445,6 +445,11 @@
       return;
     }
     if (active.id === 'video-modal') {
+      const nativeControls = window.getNativeTvVideoControls && window.getNativeTvVideoControls();
+      if (nativeControls?.isActive?.() && (direction === KEY.LEFT || direction === KEY.RIGHT)) {
+        nativeControls.seekBy(direction === KEY.RIGHT ? 10 : -10);
+        return;
+      }
       const player = document.getElementById('anime-player');
       if (player && (direction === KEY.LEFT || direction === KEY.RIGHT)) {
         player.currentTime = Math.max(0, Math.min(player.duration || 0, player.currentTime + (direction === KEY.RIGHT ? 10 : -10)));
@@ -581,6 +586,7 @@
     const section = document.getElementById(`${sectionId}-section`);
     if (!section) return;
     scheduleRefresh(`section:${sectionId}`);
+    decorateDynamicElements(section);
     const preferredSelectors = {
       home: '#continue-watching-grid .anime-card, #new-releases-grid .anime-card',
       animes: '#animes-grid .anime-card',
