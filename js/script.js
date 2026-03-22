@@ -174,11 +174,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const sections = document.querySelectorAll('.content-section');
 
   function activateSection(sectionId) {
-    navLinks.forEach(l => l.classList.remove('active'));
+    navLinks.forEach(l => {
+      l.classList.remove('active');
+      l.removeAttribute('aria-current');
+    });
     sections.forEach(s => s.classList.remove('active'));
 
     const targetNav = document.querySelector(`nav a[data-section="${sectionId}"]`);
-    if (targetNav) targetNav.classList.add('active');
+    if (targetNav) {
+      targetNav.classList.add('active');
+      targetNav.setAttribute('aria-current', 'page');
+    }
 
     const targetSection = document.getElementById(sectionId + '-section');
     if (targetSection) {
@@ -923,6 +929,43 @@ function addCacheBust(url){
   }
 }
 
+function isTvPlaybackEnvironment(){
+  try {
+    if (window.__ANIVERSE_FORCE_TV_MODE__ === true) return true;
+    if (typeof window.tizen !== 'undefined' || typeof window.webapis !== 'undefined') return true;
+    const ua = navigator.userAgent || '';
+    return /tizen|smart-tv|smarttv|hbbtv|web0s|googletv|appletv|viera|aquos/i.test(ua);
+  } catch (_) {
+    return false;
+  }
+}
+
+function inferVideoMimeType(url){
+  const raw = String(url || '').split('?')[0].toLowerCase();
+  if (raw.endsWith('.m3u8')) return 'application/vnd.apple.mpegurl';
+  if (raw.endsWith('.mpd')) return 'application/dash+xml';
+  if (raw.endsWith('.webm')) return 'video/webm';
+  if (raw.endsWith('.mov')) return 'video/quicktime';
+  if (raw.endsWith('.m4v')) return 'video/mp4';
+  if (raw.endsWith('.mp4')) return 'video/mp4';
+  return '';
+}
+
+function getBufferedAheadSeconds(media){
+  try {
+    if (!media || !media.buffered || media.buffered.length === 0) return 0;
+    const currentTime = Number(media.currentTime) || 0;
+    for (let index = 0; index < media.buffered.length; index += 1) {
+      const start = media.buffered.start(index);
+      const end = media.buffered.end(index);
+      if (currentTime >= start && currentTime <= end) {
+        return Math.max(0, end - currentTime);
+      }
+    }
+  } catch (_) {}
+  return 0;
+}
+
 function onVideoSetSource(player, episode){
   if (!player || !episode) return;
 
@@ -939,15 +982,24 @@ function onVideoSetSource(player, episode){
     sources,
     currentIndex: 0,
     retriesInSource: 0,
-    maxRetriesPerSource: 3,
-    loadTimeoutMs: 15000,
+    maxRetriesPerSource: isTvPlaybackEnvironment() ? 3 : 3,
+    loadTimeoutMs: isTvPlaybackEnvironment() ? 30000 : 15000,
     loadTimeoutId: null,
     retryTimeoutId: null,
+    waitingRecoveryId: null,
     upgradeIntervalId: null,
     recoverInFlight: false,
-    fallbackInUse: false
+    fallbackInUse: false,
+    isTvEnvironment: isTvPlaybackEnvironment(),
+    playWhenReady: false,
+    playStartAt: 0
   };
   player.__adaptivePlayback = state;
+
+  player.preload = state.isTvEnvironment ? 'auto' : 'metadata';
+  player.setAttribute('preload', player.preload);
+  player.playsInline = true;
+  player.setAttribute('playsinline', '');
 
   const clearTimers = () => {
     if (state.loadTimeoutId) {
@@ -957,6 +1009,10 @@ function onVideoSetSource(player, episode){
     if (state.retryTimeoutId) {
       clearTimeout(state.retryTimeoutId);
       state.retryTimeoutId = null;
+    }
+    if (state.waitingRecoveryId) {
+      clearTimeout(state.waitingRecoveryId);
+      state.waitingRecoveryId = null;
     }
   };
 
@@ -988,6 +1044,15 @@ function onVideoSetSource(player, episode){
     if (videoLoadTimeout){ clearTimeout(videoLoadTimeout); videoLoadTimeout = null; }
     clearVideoError();
 
+    player.pause();
+    player.removeAttribute('src');
+    while (player.firstChild) player.removeChild(player.firstChild);
+
+    const sourceEl = document.createElement('source');
+    sourceEl.src = nextUrl;
+    const sourceType = inferVideoMimeType(nextUrl);
+    if (sourceType) sourceEl.type = sourceType;
+    player.appendChild(sourceEl);
     player.src = nextUrl;
     player.load();
 
@@ -1000,12 +1065,15 @@ function onVideoSetSource(player, episode){
 
     setLoadTimeout();
 
-    if (shouldAutoPlay) {
+    state.playWhenReady = !!shouldAutoPlay;
+    state.playStartAt = Date.now();
+    if (shouldAutoPlay && !state.isTvEnvironment) {
       player.play().catch(() => {});
     }
   };
 
   const tryBackgroundUpgrade = () => {
+    if (state.isTvEnvironment) return;
     if (state.currentIndex <= 0) return;
     if (state.upgradeIntervalId) return;
 
@@ -1109,12 +1177,27 @@ function onVideoSetSource(player, episode){
       clearTimeout(state.loadTimeoutId);
       state.loadTimeoutId = null;
     }
+    const waitedLongEnough = Date.now() - state.playStartAt >= 2200;
+    const hasEnoughBuffer = getBufferedAheadSeconds(player) >= 3;
+    if (state.playWhenReady && player.paused && (!state.isTvEnvironment || hasEnoughBuffer || waitedLongEnough)) {
+      player.play().catch(() => {});
+    }
   };
 
   const handleWaiting = () => {
     if (player.__adaptivePlayback?.token !== state.token) return;
-    if (!state.fallbackInUse) return;
-    showVideoError('Carregando... Ajustando qualidade automaticamente');
+    if (!state.fallbackInUse) {
+      showVideoError('Carregando... ajustando o vídeo para a TV');
+    } else {
+      showVideoError('Carregando... Ajustando qualidade automaticamente');
+    }
+    if (state.isTvEnvironment && !state.waitingRecoveryId) {
+      try { player.pause(); } catch (_) {}
+      state.waitingRecoveryId = setTimeout(() => {
+        state.waitingRecoveryId = null;
+        recoverPlayback('waiting');
+      }, 1800);
+    }
   };
 
   const handleError = () => {
@@ -1122,9 +1205,12 @@ function onVideoSetSource(player, episode){
   };
 
   player.addEventListener('playing', handlePlaying);
+  player.addEventListener('progress', handleCanPlay);
   player.addEventListener('canplay', handleCanPlay);
+  player.addEventListener('canplaythrough', handleCanPlay);
   player.addEventListener('waiting', handleWaiting);
   player.addEventListener('stalled', handleWaiting);
+  player.addEventListener('suspend', handleWaiting);
   player.addEventListener('error', handleError);
 
   player.__adaptiveCleanup = () => {
@@ -1134,13 +1220,17 @@ function onVideoSetSource(player, episode){
       state.upgradeIntervalId = null;
     }
     player.removeEventListener('playing', handlePlaying);
+    player.removeEventListener('progress', handleCanPlay);
     player.removeEventListener('canplay', handleCanPlay);
+    player.removeEventListener('canplaythrough', handleCanPlay);
     player.removeEventListener('waiting', handleWaiting);
     player.removeEventListener('stalled', handleWaiting);
+    player.removeEventListener('suspend', handleWaiting);
     player.removeEventListener('error', handleError);
   };
 
-  setSource(0, { autoPlay: true, preserveTime: 0 });
+  const initialIndex = state.isTvEnvironment ? (state.sources.length - 1) : 0;
+  setSource(initialIndex, { autoPlay: true, preserveTime: 0 });
 }
 
 function ensureModalAdminEditorUI() {
@@ -1264,6 +1354,11 @@ function openEpisode(anime, seasonNumber, episodeIndex){
     if (videoModal) {
         videoModal.style.display = 'flex';
         document.body.style.overflow = 'hidden';
+    }
+    document.body.classList.add('tv-video-open');
+    const miniMusicPlayer = document.getElementById('music-mini-player');
+    if (miniMusicPlayer) {
+        miniMusicPlayer.classList.add('hidden-during-video');
     }
     const videoContainer = document.getElementById('video-player-container');
     if (videoContainer) {
@@ -1399,7 +1494,9 @@ function openEpisode(anime, seasonNumber, episodeIndex){
         }
     }
     
-    player.play().catch(()=>{});
+    if (!isTvPlaybackEnvironment()) {
+      player.play().catch(()=>{});
+    }
   } catch(e){ console.error('openEpisode error', e); }
 }
 window.openEpisode = openEpisode;
