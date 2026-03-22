@@ -586,6 +586,7 @@
     const section = document.getElementById(`${sectionId}-section`);
     if (!section) return;
     scheduleRefresh(`section:${sectionId}`);
+    decorateDynamicElements(section);
     const preferredSelectors = {
       home: '#continue-watching-grid .anime-card, #new-releases-grid .anime-card',
       animes: '#animes-grid .anime-card',
