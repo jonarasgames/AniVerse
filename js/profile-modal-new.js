@@ -14,7 +14,15 @@
 
     // Character images list
     const characterImages = [
-                'images/IMG_20250628_194234.png',
+        'https://files.catbox.moe/go0kd1.png',
+        'https://files.catbox.moe/bnp79l.png',
+        'https://files.catbox.moe/l2gl5f.png',
+        'https://files.catbox.moe/1y3x8l.png',
+        'https://files.catbox.moe/gma919.png',
+        'https://files.catbox.moe/xeajgk.png',
+        'https://files.catbox.moe/gq6inw.png',
+        'https://files.catbox.moe/n4rr3i.png',
+        'images/IMG_20250628_194234.png',
         'images/IMG_20250628_194245.png',
         'images/IMG_20250628_194305.png',
         'images/IMG_20250628_194357.png',
