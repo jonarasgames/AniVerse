@@ -130,6 +130,8 @@
       '#tv-details-modal.active .tv-episode-button',
       '#tv-details-modal.active .tv-similar-card',
       '#video-modal[style*="flex"] .tv-focusable',
+      '#music-fullscreen-modal.visible .tv-focusable',
+      '#music-mini-player:not(.hidden) .tv-focusable',
       '#profile-modal.active .tv-focusable',
       '#profile-selection-overlay .tv-focusable'
     ];
@@ -145,6 +147,8 @@
   function getActiveScope() {
     const tvDetails = document.getElementById('tv-details-modal');
     if (tvDetails && tvDetails.classList.contains('active')) return tvDetails;
+    const musicFullscreen = document.getElementById('music-fullscreen-modal');
+    if (musicFullscreen && musicFullscreen.classList.contains('visible')) return musicFullscreen;
     const profileModal = document.getElementById('profile-modal');
     if (profileModal && isOverlayOpen(profileModal, { activeClass: 'active' }) && isVisible(profileModal)) return profileModal;
     const profileOverlay = document.getElementById('profile-selection-overlay');
@@ -239,15 +243,15 @@
 
   function getContainerOrientation(container) {
     if (!container) return null;
-    if (container.matches('#full-catalog-grid, #animes-grid, #movies-grid, #ovas-grid, #continue-grid')) return 'vertical';
-    if (container.matches('#new-releases-grid, #continue-watching-grid, #collections-grid, .collection-animes, .music-tracks, .tv-season-strip, .tv-episode-strip, .tv-similar-strip, .pronoun-pills, .customization-tabs')) return 'horizontal';
+    if (container.matches('#full-catalog-grid, #animes-grid, #movies-grid, #ovas-grid, #continue-grid')) return 'grid';
+    if (container.matches('#new-releases-grid, #continue-watching-grid, #collections-grid, .collection-animes, .music-tracks, .tv-season-strip, .tv-episode-strip, .tv-similar-strip, .pronoun-pills, .customization-tabs, #music-mini-player .mini-player-controls')) return 'horizontal';
     if (container.matches('.color-grid, .background-images-grid, .character-grid, .frame-grid')) return 'grid';
     return null;
   }
 
   function getNavigationContainer(element) {
     return element?.closest?.(
-      '#new-releases-grid, #continue-watching-grid, #full-catalog-grid, #animes-grid, #movies-grid, #ovas-grid, #continue-grid, #collections-grid, .collection-animes, .music-tracks, .tv-season-strip, .tv-episode-strip, .tv-similar-strip, .pronoun-pills, .customization-tabs, .color-grid, .background-images-grid, .character-grid, .frame-grid'
+      '#new-releases-grid, #continue-watching-grid, #full-catalog-grid, #animes-grid, #movies-grid, #ovas-grid, #continue-grid, #collections-grid, .collection-animes, .music-tracks, .tv-season-strip, .tv-episode-strip, .tv-similar-strip, .pronoun-pills, .customization-tabs, .color-grid, .background-images-grid, .character-grid, .frame-grid, #music-mini-player .mini-player-controls'
     ) || null;
   }
 
@@ -392,7 +396,16 @@
     if (active.id === 'profile-modal' && navigateProfileModal(direction)) {
       return;
     }
+    if (currentFocus.classList.contains('tv-sidebar-link') && direction === KEY.RIGHT) {
+      const activeSection = document.querySelector('nav a[data-section].active')?.dataset?.section || 'home';
+      focusSectionContent(activeSection);
+      return;
+    }
     if (active === document.body && navigateWithinContainer(direction)) {
+      return;
+    }
+    if (active === document.body && !currentFocus.classList.contains('tv-sidebar-link') && direction === KEY.LEFT) {
+      focusSidebar();
       return;
     }
     if (active.id === 'video-modal') {
@@ -478,6 +491,14 @@
       return;
     }
 
+    const musicFullscreen = document.getElementById('music-fullscreen-modal');
+    if (musicFullscreen && musicFullscreen.classList.contains('visible')) {
+      document.getElementById('music-fs-close-btn')?.click();
+      const miniPlayPause = document.getElementById('mini-play-pause');
+      if (miniPlayPause) focusElement(miniPlayPause);
+      return;
+    }
+
     const profileModal = document.getElementById('profile-modal');
     if (profileModal && isOverlayOpen(profileModal, { activeClass: 'active' })) {
       const closeBtn = document.getElementById('close-profile-modal');
@@ -515,7 +536,19 @@
     const section = document.getElementById(`${sectionId}-section`);
     if (!section) return;
     scheduleRefresh(`section:${sectionId}`);
-    const target = Array.from(section.querySelectorAll('.tv-focusable, .anime-card, .music-card, .collection-card, .btn')).find((element) => {
+    const preferredSelectors = {
+      home: '#continue-watching-grid .anime-card, #new-releases-grid .anime-card',
+      animes: '#animes-grid .anime-card',
+      movies: '#movies-grid .anime-card',
+      ovas: '#ovas-grid .anime-card',
+      openings: '#music-grid .music-card',
+      continue: '#continue-grid .anime-card',
+      collections: '#collections-grid .collection-card, .collection-animes .anime-card'
+    };
+    const preferredTarget = preferredSelectors[sectionId]
+      ? Array.from(section.querySelectorAll(preferredSelectors[sectionId])).find(isVisible)
+      : null;
+    const target = preferredTarget || Array.from(section.querySelectorAll('.tv-focusable, .anime-card, .music-card, .collection-card, .btn')).find((element) => {
       return isVisible(element) && !element.classList.contains('tv-sidebar-link');
     });
     if (target) {
@@ -679,6 +712,7 @@
 
   function decorateDynamicElements(root = document) {
     root.querySelectorAll('.anime-card, .collection-card, .music-card, .tab-btn, .pronoun-pill, .color-option, .frame-option, .bg-image-option, .character-option, #save-profile-btn, #close-profile-modal, #close-video, #play-pause-btn, #next-episode-btn, #fullscreen-btn, #skip-opening-btn, .btn, button, #profile-selection-overlay [data-tv-profile-card]').forEach(addTvClass);
+    root.querySelectorAll('#music-mini-player #mini-play-pause, #music-mini-player #mini-prev-track, #music-mini-player #mini-next-track, #music-mini-player #mini-close, #music-fullscreen-modal #music-fs-close-btn, #music-fullscreen-modal #music-fs-prev, #music-fullscreen-modal #music-fs-play-pause, #music-fullscreen-modal #music-fs-next').forEach(addTvClass);
     root.querySelectorAll('.anime-card, .tv-similar-card').forEach((card) => {
       const animeId = Number(card.dataset.animeId);
       if (!Number.isNaN(animeId)) card.dataset.animeId = String(animeId);
@@ -1043,6 +1077,7 @@
       addObservers();
       exposeHelpers();
       syncModalIsolation();
+      window.addEventListener('animeDataLoaded', () => scheduleRefresh('animeDataLoaded'));
 
       document.addEventListener('keydown', (event) => {
         if (!isTvMode()) return;

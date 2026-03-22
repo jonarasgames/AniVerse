@@ -923,6 +923,28 @@ function addCacheBust(url){
   }
 }
 
+function isTvPlaybackEnvironment(){
+  try {
+    if (window.__ANIVERSE_FORCE_TV_MODE__ === true) return true;
+    if (typeof window.tizen !== 'undefined' || typeof window.webapis !== 'undefined') return true;
+    const ua = navigator.userAgent || '';
+    return /tizen|smart-tv|smarttv|hbbtv|web0s|googletv|appletv|viera|aquos/i.test(ua);
+  } catch (_) {
+    return false;
+  }
+}
+
+function inferVideoMimeType(url){
+  const raw = String(url || '').split('?')[0].toLowerCase();
+  if (raw.endsWith('.m3u8')) return 'application/vnd.apple.mpegurl';
+  if (raw.endsWith('.mpd')) return 'application/dash+xml';
+  if (raw.endsWith('.webm')) return 'video/webm';
+  if (raw.endsWith('.mov')) return 'video/quicktime';
+  if (raw.endsWith('.m4v')) return 'video/mp4';
+  if (raw.endsWith('.mp4')) return 'video/mp4';
+  return '';
+}
+
 function onVideoSetSource(player, episode){
   if (!player || !episode) return;
 
@@ -939,15 +961,21 @@ function onVideoSetSource(player, episode){
     sources,
     currentIndex: 0,
     retriesInSource: 0,
-    maxRetriesPerSource: 3,
-    loadTimeoutMs: 15000,
+    maxRetriesPerSource: isTvPlaybackEnvironment() ? 2 : 3,
+    loadTimeoutMs: isTvPlaybackEnvironment() ? 30000 : 15000,
     loadTimeoutId: null,
     retryTimeoutId: null,
     upgradeIntervalId: null,
     recoverInFlight: false,
-    fallbackInUse: false
+    fallbackInUse: false,
+    isTvEnvironment: isTvPlaybackEnvironment()
   };
   player.__adaptivePlayback = state;
+
+  player.preload = state.isTvEnvironment ? 'auto' : 'metadata';
+  player.setAttribute('preload', player.preload);
+  player.playsInline = true;
+  player.setAttribute('playsinline', '');
 
   const clearTimers = () => {
     if (state.loadTimeoutId) {
@@ -988,6 +1016,15 @@ function onVideoSetSource(player, episode){
     if (videoLoadTimeout){ clearTimeout(videoLoadTimeout); videoLoadTimeout = null; }
     clearVideoError();
 
+    player.pause();
+    player.removeAttribute('src');
+    while (player.firstChild) player.removeChild(player.firstChild);
+
+    const sourceEl = document.createElement('source');
+    sourceEl.src = nextUrl;
+    const sourceType = inferVideoMimeType(nextUrl);
+    if (sourceType) sourceEl.type = sourceType;
+    player.appendChild(sourceEl);
     player.src = nextUrl;
     player.load();
 
@@ -1006,6 +1043,7 @@ function onVideoSetSource(player, episode){
   };
 
   const tryBackgroundUpgrade = () => {
+    if (state.isTvEnvironment) return;
     if (state.currentIndex <= 0) return;
     if (state.upgradeIntervalId) return;
 
@@ -1140,7 +1178,8 @@ function onVideoSetSource(player, episode){
     player.removeEventListener('error', handleError);
   };
 
-  setSource(0, { autoPlay: true, preserveTime: 0 });
+  const initialIndex = state.isTvEnvironment ? (state.sources.length - 1) : 0;
+  setSource(initialIndex, { autoPlay: true, preserveTime: 0 });
 }
 
 function ensureModalAdminEditorUI() {

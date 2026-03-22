@@ -200,6 +200,8 @@
         container.appendChild(profilesGrid);
 
         const manageButton = document.createElement('button');
+        manageButton.type = 'button';
+        manageButton.classList.add('tv-focusable');
         manageButton.textContent = 'Gerenciar Perfis';
         manageButton.style.cssText = `
             background: transparent;
@@ -225,12 +227,20 @@
 
         overlay.appendChild(container);
         overlay.style.display = 'flex';
+
+        setTimeout(() => {
+            const firstFocusable = overlay.querySelector('[data-tv-profile-card], .tv-focusable');
+            if (firstFocusable && typeof window.__focusTvElement === 'function') {
+                window.__focusTvElement(firstFocusable);
+            }
+        }, 50);
     }
 
     function createProfileCard(profile, onClick) {
         const card = document.createElement('div');
         card.dataset.tvProfileCard = 'select';
         card.tabIndex = -1;
+        card.classList.add('tv-focusable');
         card.style.cssText = `
             cursor: pointer;
             transition: transform 0.3s;
@@ -415,6 +425,7 @@
         const card = document.createElement('div');
         card.dataset.tvProfileCard = 'add';
         card.tabIndex = -1;
+        card.classList.add('tv-focusable');
         card.style.cssText = `
             cursor: pointer;
             transition: transform 0.3s;
@@ -479,6 +490,7 @@
         const modal = document.getElementById('profile-modal');
         if (modal) {
             modal.style.display = 'flex';
+            modal.classList.add('active');
             document.body.style.overflow = 'hidden';
             
             // Clear editing mode
@@ -648,6 +660,8 @@
         container.appendChild(profilesGrid);
 
         const doneButton = document.createElement('button');
+        doneButton.type = 'button';
+        doneButton.classList.add('tv-focusable');
         doneButton.textContent = 'Concluído';
         doneButton.style.cssText = `
             background: white;
@@ -664,12 +678,20 @@
         container.appendChild(doneButton);
 
         overlay.appendChild(container);
+
+        setTimeout(() => {
+            const firstFocusable = overlay.querySelector('[data-tv-profile-card], .tv-focusable');
+            if (firstFocusable && typeof window.__focusTvElement === 'function') {
+                window.__focusTvElement(firstFocusable);
+            }
+        }, 50);
     }
 
     function createManageProfileCard(profile) {
         const card = document.createElement('div');
         card.dataset.tvProfileCard = 'manage';
         card.tabIndex = -1;
+        card.classList.add('tv-focusable');
         card.style.cssText = `
             position: relative;
             text-align: center;

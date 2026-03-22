@@ -245,8 +245,9 @@ body.tv-mode #movies-grid,
 body.tv-mode #ovas-grid,
 body.tv-mode #continue-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 18px;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px;
+  align-items: start;
 }
 
 body.tv-mode .anime-card,
@@ -281,7 +282,11 @@ body.tv-mode .anime-card {
 body.tv-mode .new-releases .anime-card,
 body.tv-mode .continue-watching .anime-card,
 body.tv-mode .collection-animes .anime-card,
-body.tv-mode #collections-grid .collection-card {
+body.tv-mode #collections-grid .collection-card,
+body.tv-mode #animes-grid .anime-card,
+body.tv-mode #movies-grid .anime-card,
+body.tv-mode #ovas-grid .anime-card,
+body.tv-mode #continue-grid .anime-card {
   grid-template-columns: 1fr;
   min-height: auto;
 }
@@ -689,12 +694,15 @@ body.tv-mode #video-player-container {
   min-height: 100vh;
   border-radius: 0;
   background: #000;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
 }
 
 body.tv-mode #anime-player {
   width: 100%;
   height: 100vh;
-  object-fit: contain;
+  object-fit: cover;
   background: #000;
 }
 
@@ -718,13 +726,52 @@ body.tv-mode #close-video {
 }
 
 body.tv-mode #video-modal .video-info {
-  position: absolute;
-  left: 40px;
-  bottom: 148px;
-  z-index: 3;
-  max-width: min(580px, 50vw);
-  padding: 0;
-  background: transparent;
+  display: none !important;
+}
+
+body.tv-mode #age-rating-section,
+body.tv-mode #video-info-overlay,
+body.tv-mode #video-modal::after {
+  display: none !important;
+}
+
+body.tv-mode #music-mini-player {
+  right: 24px !important;
+  left: auto !important;
+  bottom: 24px !important;
+  width: min(720px, calc(100vw - var(--tv-sidebar-width) - 72px)) !important;
+  z-index: 5300 !important;
+  border-radius: 26px !important;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: linear-gradient(180deg, rgba(12,15,24,0.98), rgba(7,9,16,0.98)) !important;
+  box-shadow: 0 24px 44px rgba(0,0,0,0.35);
+}
+
+body.tv-mode.tv-sidebar-open #music-mini-player {
+  width: min(720px, calc(100vw - var(--tv-sidebar-expanded) - 72px)) !important;
+}
+
+body.tv-mode #music-mini-player .mini-volume-container,
+body.tv-mode #music-mini-player #mini-music-fullscreen,
+body.tv-mode #music-mini-player #mini-download-track,
+body.tv-mode #music-fullscreen-modal #music-fs-download {
+  display: none !important;
+}
+
+body.tv-mode #music-mini-player .mini-player-controls {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+body.tv-mode #music-mini-player .mini-control-btn {
+  width: 54px;
+  height: 54px;
+  border-radius: 18px;
+}
+
+body.tv-mode #music-mini-player .mini-player-progress-container {
+  margin-top: 10px;
 }
 
 body.tv-mode #video-modal .video-info h2 {
