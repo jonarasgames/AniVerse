@@ -197,6 +197,9 @@
 
   function focusElement(el, options = {}) {
     if (!el || !isVisible(el)) return;
+    if (!el.classList.contains('tv-focusable') && !el.classList.contains('tv-sidebar-link')) {
+      addTvClass(el);
+    }
     clearFocus();
     currentFocus = el;
     el.classList.add('tv-focus');
@@ -500,6 +503,11 @@
       toggleInputEdit(currentFocus);
       return;
     }
+    if (currentFocus.classList.contains('tv-sidebar-link') && currentFocus.dataset.section) {
+      currentFocus.click();
+      focusSectionContent(currentFocus.dataset.section);
+      return;
+    }
     currentFocus.click();
   }
 
@@ -589,6 +597,9 @@
       return isVisible(element) && !element.classList.contains('tv-sidebar-link');
     });
     if (target) {
+      if (!target.classList.contains('tv-focusable')) {
+        addTvClass(target);
+      }
       updateSidebarState(false);
       focusElement(target);
       return;
