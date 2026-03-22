@@ -135,8 +135,15 @@ body.tv-mode .user-controls .tv-nav-icon {
 
 body.tv-mode nav a.active,
 body.tv-mode nav a:hover,
+body.tv-mode nav a.tv-current-section,
 body.tv-mode .user-controls > * {
   background: transparent;
+}
+
+body.tv-mode nav a.tv-current-section {
+  background: rgba(255,255,255,0.14);
+  border-color: rgba(255,255,255,0.3);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.18);
 }
 
 body.tv-mode .user-controls {
@@ -220,7 +227,7 @@ body.tv-mode .collection-animes,
 body.tv-mode .music-tracks {
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: minmax(260px, 300px);
+  grid-auto-columns: minmax(220px, 240px);
   gap: 20px;
   overflow-x: auto;
   overflow-y: hidden;
@@ -245,8 +252,8 @@ body.tv-mode #movies-grid,
 body.tv-mode #ovas-grid,
 body.tv-mode #continue-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 18px;
   align-items: start;
 }
 
@@ -289,6 +296,27 @@ body.tv-mode #ovas-grid .anime-card,
 body.tv-mode #continue-grid .anime-card {
   grid-template-columns: 1fr;
   min-height: auto;
+}
+
+body.tv-mode #animes-grid .anime-card,
+body.tv-mode #movies-grid .anime-card,
+body.tv-mode #ovas-grid .anime-card,
+body.tv-mode #continue-grid .anime-card {
+  border-radius: 20px;
+}
+
+body.tv-mode #animes-grid .anime-info,
+body.tv-mode #movies-grid .anime-info,
+body.tv-mode #ovas-grid .anime-info,
+body.tv-mode #continue-grid .anime-info {
+  padding: 14px 16px 18px;
+}
+
+body.tv-mode #animes-grid .anime-title,
+body.tv-mode #movies-grid .anime-title,
+body.tv-mode #ovas-grid .anime-title,
+body.tv-mode #continue-grid .anime-title {
+  font-size: 1rem;
 }
 
 body.tv-mode .anime-thumbnail,
@@ -346,6 +374,11 @@ body.tv-mode .music-section {
   display: grid;
   gap: 16px;
   margin-bottom: 28px;
+}
+
+body.tv-mode #music-grid {
+  display: grid;
+  gap: 24px;
 }
 
 body.tv-mode .music-anime-title {
@@ -702,7 +735,7 @@ body.tv-mode #video-player-container {
 body.tv-mode #anime-player {
   width: 100%;
   height: 100vh;
-  object-fit: cover;
+  object-fit: contain;
   background: #000;
 }
 
@@ -755,6 +788,11 @@ body.tv-mode #music-mini-player .mini-volume-container,
 body.tv-mode #music-mini-player #mini-music-fullscreen,
 body.tv-mode #music-mini-player #mini-download-track,
 body.tv-mode #music-fullscreen-modal #music-fs-download {
+  display: none !important;
+}
+
+body.tv-mode.tv-video-open #music-mini-player,
+body.tv-mode #music-mini-player.hidden-during-video {
   display: none !important;
 }
 

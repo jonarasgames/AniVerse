@@ -174,11 +174,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const sections = document.querySelectorAll('.content-section');
 
   function activateSection(sectionId) {
-    navLinks.forEach(l => l.classList.remove('active'));
+    navLinks.forEach(l => {
+      l.classList.remove('active');
+      l.removeAttribute('aria-current');
+    });
     sections.forEach(s => s.classList.remove('active'));
 
     const targetNav = document.querySelector(`nav a[data-section="${sectionId}"]`);
-    if (targetNav) targetNav.classList.add('active');
+    if (targetNav) {
+      targetNav.classList.add('active');
+      targetNav.setAttribute('aria-current', 'page');
+    }
 
     const targetSection = document.getElementById(sectionId + '-section');
     if (targetSection) {
@@ -961,14 +967,16 @@ function onVideoSetSource(player, episode){
     sources,
     currentIndex: 0,
     retriesInSource: 0,
-    maxRetriesPerSource: isTvPlaybackEnvironment() ? 2 : 3,
+    maxRetriesPerSource: isTvPlaybackEnvironment() ? 3 : 3,
     loadTimeoutMs: isTvPlaybackEnvironment() ? 30000 : 15000,
     loadTimeoutId: null,
     retryTimeoutId: null,
+    waitingRecoveryId: null,
     upgradeIntervalId: null,
     recoverInFlight: false,
     fallbackInUse: false,
-    isTvEnvironment: isTvPlaybackEnvironment()
+    isTvEnvironment: isTvPlaybackEnvironment(),
+    playWhenReady: false
   };
   player.__adaptivePlayback = state;
 
@@ -985,6 +993,10 @@ function onVideoSetSource(player, episode){
     if (state.retryTimeoutId) {
       clearTimeout(state.retryTimeoutId);
       state.retryTimeoutId = null;
+    }
+    if (state.waitingRecoveryId) {
+      clearTimeout(state.waitingRecoveryId);
+      state.waitingRecoveryId = null;
     }
   };
 
@@ -1037,7 +1049,8 @@ function onVideoSetSource(player, episode){
 
     setLoadTimeout();
 
-    if (shouldAutoPlay) {
+    state.playWhenReady = !!shouldAutoPlay;
+    if (shouldAutoPlay && !state.isTvEnvironment) {
       player.play().catch(() => {});
     }
   };
@@ -1147,12 +1160,24 @@ function onVideoSetSource(player, episode){
       clearTimeout(state.loadTimeoutId);
       state.loadTimeoutId = null;
     }
+    if (state.playWhenReady && player.paused) {
+      player.play().catch(() => {});
+    }
   };
 
   const handleWaiting = () => {
     if (player.__adaptivePlayback?.token !== state.token) return;
-    if (!state.fallbackInUse) return;
-    showVideoError('Carregando... Ajustando qualidade automaticamente');
+    if (!state.fallbackInUse) {
+      showVideoError('Carregando... ajustando o vídeo para a TV');
+    } else {
+      showVideoError('Carregando... Ajustando qualidade automaticamente');
+    }
+    if (state.isTvEnvironment && !state.waitingRecoveryId) {
+      state.waitingRecoveryId = setTimeout(() => {
+        state.waitingRecoveryId = null;
+        recoverPlayback('waiting');
+      }, 1800);
+    }
   };
 
   const handleError = () => {
@@ -1161,8 +1186,10 @@ function onVideoSetSource(player, episode){
 
   player.addEventListener('playing', handlePlaying);
   player.addEventListener('canplay', handleCanPlay);
+  player.addEventListener('canplaythrough', handleCanPlay);
   player.addEventListener('waiting', handleWaiting);
   player.addEventListener('stalled', handleWaiting);
+  player.addEventListener('suspend', handleWaiting);
   player.addEventListener('error', handleError);
 
   player.__adaptiveCleanup = () => {
@@ -1173,8 +1200,10 @@ function onVideoSetSource(player, episode){
     }
     player.removeEventListener('playing', handlePlaying);
     player.removeEventListener('canplay', handleCanPlay);
+    player.removeEventListener('canplaythrough', handleCanPlay);
     player.removeEventListener('waiting', handleWaiting);
     player.removeEventListener('stalled', handleWaiting);
+    player.removeEventListener('suspend', handleWaiting);
     player.removeEventListener('error', handleError);
   };
 
@@ -1303,6 +1332,11 @@ function openEpisode(anime, seasonNumber, episodeIndex){
     if (videoModal) {
         videoModal.style.display = 'flex';
         document.body.style.overflow = 'hidden';
+    }
+    document.body.classList.add('tv-video-open');
+    const miniMusicPlayer = document.getElementById('music-mini-player');
+    if (miniMusicPlayer) {
+        miniMusicPlayer.classList.add('hidden-during-video');
     }
     const videoContainer = document.getElementById('video-player-container');
     if (videoContainer) {
@@ -1438,7 +1472,9 @@ function openEpisode(anime, seasonNumber, episodeIndex){
         }
     }
     
-    player.play().catch(()=>{});
+    if (!isTvPlaybackEnvironment()) {
+      player.play().catch(()=>{});
+    }
   } catch(e){ console.error('openEpisode error', e); }
 }
 window.openEpisode = openEpisode;

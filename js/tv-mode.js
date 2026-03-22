@@ -9,7 +9,12 @@
     ENTER: 'enter',
     BACK: 'back',
     CHANNEL_UP: 'channel_up',
-    CHANNEL_DOWN: 'channel_down'
+    CHANNEL_DOWN: 'channel_down',
+    MEDIA_PLAY_PAUSE: 'media_play_pause',
+    MEDIA_PLAY: 'media_play',
+    MEDIA_PAUSE: 'media_pause',
+    MEDIA_NEXT: 'media_next',
+    MEDIA_PREVIOUS: 'media_previous'
   };
 
   const ICONS = {
@@ -80,7 +85,7 @@
     try {
       const tvinputdevice = window.tizen && window.tizen.tvinputdevice;
       if (!tvinputdevice || typeof tvinputdevice.registerKey !== 'function') return;
-      ['ChannelUp', 'ChannelDown', 'ColorF0Red', 'ColorF1Green', 'ColorF2Yellow', 'ColorF3Blue', 'MediaPlayPause', 'MediaPlay', 'MediaPause'].forEach((key) => {
+      ['ChannelUp', 'ChannelDown', 'ColorF0Red', 'ColorF1Green', 'ColorF2Yellow', 'ColorF3Blue', 'MediaPlayPause', 'MediaPlay', 'MediaPause', 'MediaTrackNext', 'MediaTrackPrevious'].forEach((key) => {
         try { tvinputdevice.registerKey(key); } catch (_) {}
       });
     } catch (_) {}
@@ -108,6 +113,11 @@
       case 'Backspace': return KEY.BACK;
       case 'ChannelUp': return KEY.CHANNEL_UP;
       case 'ChannelDown': return KEY.CHANNEL_DOWN;
+      case 'MediaPlayPause': return KEY.MEDIA_PLAY_PAUSE;
+      case 'MediaPlay': return KEY.MEDIA_PLAY;
+      case 'MediaPause': return KEY.MEDIA_PAUSE;
+      case 'MediaTrackNext': return KEY.MEDIA_NEXT;
+      case 'MediaTrackPrevious': return KEY.MEDIA_PREVIOUS;
       default: break;
     }
     if (code === 37) return KEY.LEFT;
@@ -118,6 +128,11 @@
     if (code === 10009 || code === 461 || code === 27 || code === 8) return KEY.BACK;
     if (code === 427) return KEY.CHANNEL_UP;
     if (code === 428) return KEY.CHANNEL_DOWN;
+    if (code === 10252) return KEY.MEDIA_PLAY_PAUSE;
+    if (code === 415) return KEY.MEDIA_PLAY;
+    if (code === 19) return KEY.MEDIA_PAUSE;
+    if (code === 417) return KEY.MEDIA_NEXT;
+    if (code === 412) return KEY.MEDIA_PREVIOUS;
     return null;
   }
 
@@ -244,6 +259,7 @@
   function getContainerOrientation(container) {
     if (!container) return null;
     if (container.matches('#full-catalog-grid, #animes-grid, #movies-grid, #ovas-grid, #continue-grid')) return 'grid';
+    if (container.matches('#music-grid')) return 'vertical';
     if (container.matches('#new-releases-grid, #continue-watching-grid, #collections-grid, .collection-animes, .music-tracks, .tv-season-strip, .tv-episode-strip, .tv-similar-strip, .pronoun-pills, .customization-tabs, #music-mini-player .mini-player-controls')) return 'horizontal';
     if (container.matches('.color-grid, .background-images-grid, .character-grid, .frame-grid')) return 'grid';
     return null;
@@ -251,13 +267,29 @@
 
   function getNavigationContainer(element) {
     return element?.closest?.(
-      '#new-releases-grid, #continue-watching-grid, #full-catalog-grid, #animes-grid, #movies-grid, #ovas-grid, #continue-grid, #collections-grid, .collection-animes, .music-tracks, .tv-season-strip, .tv-episode-strip, .tv-similar-strip, .pronoun-pills, .customization-tabs, .color-grid, .background-images-grid, .character-grid, .frame-grid, #music-mini-player .mini-player-controls'
+      '#new-releases-grid, #continue-watching-grid, #full-catalog-grid, #animes-grid, #movies-grid, #ovas-grid, #continue-grid, #collections-grid, .collection-animes, #music-grid, .music-tracks, .tv-season-strip, .tv-episode-strip, .tv-similar-strip, .pronoun-pills, .customization-tabs, .color-grid, .background-images-grid, .character-grid, .frame-grid, #music-mini-player .mini-player-controls'
     ) || null;
   }
 
   function navigateWithinContainer(direction) {
     const container = getNavigationContainer(currentFocus);
     if (!container) return false;
+
+    if (container.matches('.music-tracks') && (direction === KEY.UP || direction === KEY.DOWN)) {
+      const sections = Array.from(document.querySelectorAll('#music-grid .music-section')).filter(isVisible);
+      const currentSection = currentFocus.closest('.music-section');
+      const sectionIndex = sections.indexOf(currentSection);
+      if (sectionIndex !== -1) {
+        const nextSectionIndex = (sectionIndex + (direction === KEY.DOWN ? 1 : -1) + sections.length) % sections.length;
+        const currentItems = Array.from(currentSection.querySelectorAll('.music-card.tv-focusable')).filter(isVisible);
+        const nextItems = Array.from(sections[nextSectionIndex].querySelectorAll('.music-card.tv-focusable')).filter(isVisible);
+        const currentIndex = Math.max(0, currentItems.indexOf(currentFocus));
+        if (nextItems.length) {
+          focusElement(nextItems[Math.min(currentIndex, nextItems.length - 1)]);
+          return true;
+        }
+      }
+    }
 
     const orientation = getContainerOrientation(container);
     if (!orientation) return false;
@@ -404,10 +436,6 @@
     if (active === document.body && navigateWithinContainer(direction)) {
       return;
     }
-    if (active === document.body && !currentFocus.classList.contains('tv-sidebar-link') && direction === KEY.LEFT) {
-      focusSidebar();
-      return;
-    }
     if (active.id === 'video-modal') {
       const player = document.getElementById('anime-player');
       if (player && (direction === KEY.LEFT || direction === KEY.RIGHT)) {
@@ -430,7 +458,12 @@
     if (!candidates.length) {
       candidates = getWrappedCandidates(direction, current, focusables);
     }
-    if (!candidates.length) return;
+    if (!candidates.length) {
+      if (active === document.body && !currentFocus.classList.contains('tv-sidebar-link') && direction === KEY.LEFT) {
+        focusSidebar();
+      }
+      return;
+    }
 
     candidates.sort((a, b) => weightedDistance(a, current, direction) - weightedDistance(b, current, direction));
     focusElement(candidates[0].el);
@@ -484,6 +517,11 @@
   }
 
   function handleBack() {
+    if (currentInputShell) {
+      toggleInputEdit(currentInputShell, false);
+      return;
+    }
+
     const tvDetails = document.getElementById('tv-details-modal');
     if (tvDetails && tvDetails.classList.contains('active')) {
       closeTvDetails();
@@ -502,9 +540,6 @@
     const profileModal = document.getElementById('profile-modal');
     if (profileModal && isOverlayOpen(profileModal, { activeClass: 'active' })) {
       const closeBtn = document.getElementById('close-profile-modal');
-      if (currentInputShell) {
-        toggleInputEdit(currentInputShell, false);
-      }
       closeBtn?.click();
       focusSidebar();
       return;
@@ -517,10 +552,6 @@
       return;
     }
 
-    if (currentInputShell) {
-      toggleInputEdit(currentInputShell, false);
-      return;
-    }
 
     focusSidebar();
   }
@@ -529,7 +560,8 @@
     const sidebarLinks = Array.from(document.querySelectorAll('.tv-sidebar-link')).filter(isVisible);
     if (!sidebarLinks.length) return;
     updateSidebarState(true);
-    focusElement(sidebarLinks[0]);
+    const activeLink = document.querySelector('nav a.tv-sidebar-link.active') || sidebarLinks[0];
+    focusElement(activeLink);
   }
 
   function focusSectionContent(sectionId, attempt = 0) {
@@ -602,6 +634,12 @@
       navigate(command);
       return;
     }
+    if (command === KEY.MEDIA_PLAY_PAUSE || command === KEY.MEDIA_PLAY || command === KEY.MEDIA_PAUSE || command === KEY.MEDIA_NEXT || command === KEY.MEDIA_PREVIOUS) {
+      if (typeof window.__handleTvMediaCommand === 'function') {
+        const handled = window.__handleTvMediaCommand(command);
+        if (handled) return;
+      }
+    }
     if (command === KEY.ENTER) {
       clickCurrent();
       return;
@@ -623,6 +661,20 @@
     if (!el) return;
     el.classList.add(className);
     if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '-1');
+  }
+
+  function syncSidebarSelection() {
+    const links = Array.from(document.querySelectorAll('nav a.tv-sidebar-link[data-section]'));
+    let activeSection = document.querySelector('nav a[data-section].active')?.dataset?.section;
+    if (!activeSection) {
+      activeSection = Array.from(document.querySelectorAll('.content-section.active')).map((section) => section.id.replace(/-section$/, ''))[0] || 'home';
+    }
+    links.forEach((link) => {
+      const isActive = link.dataset.section === activeSection;
+      link.classList.toggle('tv-current-section', isActive);
+      if (isActive) link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
   }
 
   function decorateSidebar() {
@@ -647,6 +699,7 @@
       link.innerHTML = `<span class="tv-nav-icon"><i class="fas ${ICONS[section] || 'fa-circle'}"></i></span><span class="tv-nav-label">${label}</span>`;
       addTvClass(link, 'tv-sidebar-link');
       link.addEventListener('click', () => {
+        setTimeout(() => syncSidebarSelection(), 0);
         updateSidebarState(false);
         setTimeout(() => focusSectionContent(section), 120);
       });
@@ -672,6 +725,7 @@
         } else if (typeof window.openProfileModal === 'function') {
           window.openProfileModal();
         }
+        setTimeout(() => syncSidebarSelection(), 0);
       });
       addTvClass(button, 'tv-sidebar-link');
       userControls.appendChild(button);
@@ -763,6 +817,15 @@
     content.innerHTML = items.map(([icon, label]) => `<span class="tv-help-item"><i class="fas ${icon}"></i><span>${label}</span></span>`).join('');
   }
 
+  function focusMusicPlayerPrimaryControl() {
+    const target = document.querySelector('#music-mini-player:not(.hidden) #mini-play-pause, #music-mini-player:not(.hidden) #mini-prev-track, #music-mini-player:not(.hidden) #mini-next-track');
+    if (target) {
+      focusElement(target);
+      return true;
+    }
+    return false;
+  }
+
   function forceDarkMode() {
     document.documentElement.classList.remove('theme-light');
     document.documentElement.classList.add('theme-dark');
@@ -851,6 +914,7 @@
       disableHeavyHoverTrailers();
       ensureRailStartPositions();
       syncModalIsolation();
+      syncSidebarSelection();
       if (!currentFocus || !isVisible(currentFocus)) {
         focusFirstInScope();
       }
@@ -1048,6 +1112,7 @@
     window.showProfileSelectionScreen = window.showProfileSelectionScreen || null;
     window.__isTvMode = () => isTvMode();
     window.__focusTvElement = focusElement;
+    window.__focusTvMusicPlayer = focusMusicPlayerPrimaryControl;
   }
 
   function init() {
@@ -1078,6 +1143,7 @@
       exposeHelpers();
       syncModalIsolation();
       window.addEventListener('animeDataLoaded', () => scheduleRefresh('animeDataLoaded'));
+      window.addEventListener('hashchange', () => scheduleRefresh('hashchange'));
 
       document.addEventListener('keydown', (event) => {
         if (!isTvMode()) return;
@@ -1099,6 +1165,7 @@
         attempts += 1;
         if (window.__baseOpenAnimeModal || attempts > 20) {
           clearInterval(timer);
+          syncSidebarSelection();
           focusFirstInScope();
         }
       }, 200);

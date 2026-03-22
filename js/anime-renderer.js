@@ -530,6 +530,11 @@
       if (modal) {
         modal.style.display = 'none';
         document.body.style.overflow = '';
+        document.body.classList.remove('tv-video-open');
+        const miniMusicPlayer = document.getElementById('music-mini-player');
+        if (miniMusicPlayer) {
+          miniMusicPlayer.classList.remove('hidden-during-video');
+        }
         
         // Pause video
         const player = document.getElementById('anime-player');
