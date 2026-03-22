@@ -40,6 +40,55 @@
         }
     }
 
+    function getBufferedAhead(media) {
+        try {
+            if (!media || !media.buffered || media.buffered.length === 0) return 0;
+            const currentTime = Number(media.currentTime) || 0;
+            for (let index = 0; index < media.buffered.length; index += 1) {
+                const start = media.buffered.start(index);
+                const end = media.buffered.end(index);
+                if (currentTime >= start && currentTime <= end) {
+                    return Math.max(0, end - currentTime);
+                }
+            }
+        } catch (_) {}
+        return 0;
+    }
+
+    function waitForBufferedAudio(audio, options = {}) {
+        if (!audio) return;
+
+        const minimumAhead = Number.isFinite(options.minimumAhead) ? options.minimumAhead : 4;
+        const maxWaitMs = Number.isFinite(options.maxWaitMs) ? options.maxWaitMs : 4000;
+        const startedAt = Date.now();
+        let settled = false;
+
+        const maybeResume = () => {
+            if (settled) return;
+            const waitedLongEnough = Date.now() - startedAt >= maxWaitMs;
+            const hasEnoughBuffer = getBufferedAhead(audio) >= minimumAhead;
+            if (!waitedLongEnough && !hasEnoughBuffer && audio.readyState < 3) return;
+            settled = true;
+            cleanup();
+            audio.play().catch(() => {});
+        };
+
+        const cleanup = () => {
+            audio.removeEventListener('canplay', maybeResume);
+            audio.removeEventListener('canplaythrough', maybeResume);
+            audio.removeEventListener('progress', maybeResume);
+            audio.removeEventListener('loadeddata', maybeResume);
+            clearTimeout(fallbackTimer);
+        };
+
+        const fallbackTimer = setTimeout(maybeResume, maxWaitMs);
+        audio.addEventListener('canplay', maybeResume);
+        audio.addEventListener('canplaythrough', maybeResume);
+        audio.addEventListener('progress', maybeResume);
+        audio.addEventListener('loadeddata', maybeResume);
+        maybeResume();
+    }
+
     function setAudioSource(audio, url, options = {}) {
         if (!audio || !url) return;
         const preserveTime = Number.isFinite(options.preserveTime) ? options.preserveTime : 0;
@@ -76,14 +125,8 @@
             tvAudioRecoveryAttempts += 1;
             const resumeTime = Math.max(0, (audio.currentTime || 0) - 0.35);
             setAudioSource(audio, currentMusicData.src, { preserveTime: resumeTime, cacheBust: true });
-            let resumed = false;
-            const waitForPlayable = () => {
-                if (resumed) return;
-                resumed = true;
-                audio.play().catch(() => {});
-            };
-            audio.addEventListener('canplay', waitForPlayable, { once: true });
-            tvAudioResumeTimer = setTimeout(waitForPlayable, 1200);
+            const waitForPlayable = () => waitForBufferedAudio(audio, { minimumAhead: 5, maxWaitMs: 1800 });
+            tvAudioResumeTimer = setTimeout(waitForPlayable, 250);
         }, 1400);
     }
 
@@ -281,6 +324,7 @@
         audio.addEventListener('loadedmetadata', updateDuration);
         audio.addEventListener('volumechange', updateMusicVolume);
         audio.addEventListener('canplay', clearTvAudioRecovery);
+        audio.addEventListener('canplaythrough', clearTvAudioRecovery);
         audio.addEventListener('playing', clearTvAudioRecovery);
         audio.addEventListener('waiting', () => scheduleTvAudioRecovery(audio));
         audio.addEventListener('stalled', () => scheduleTvAudioRecovery(audio));
@@ -313,10 +357,14 @@
     function togglePlayPause() {
         const audio = getMusicAudio();
         if (audio.paused) {
-            audio.play().catch(err => {
-                console.error('Play failed:', err);
-                showMusicError('Erro ao reproduzir.');
-            });
+            if (isTvMusicEnvironment()) {
+                waitForBufferedAudio(audio, { minimumAhead: 3, maxWaitMs: 1800 });
+            } else {
+                audio.play().catch(err => {
+                    console.error('Play failed:', err);
+                    showMusicError('Erro ao reproduzir.');
+                });
+            }
         } else {
             audio.pause();
         }
@@ -764,8 +812,9 @@
         };
 
         if (isTvMusicEnvironment()) {
+            waitForBufferedAudio(audio, { minimumAhead: 4, maxWaitMs: 2000 });
             audio.addEventListener('canplay', startPlayback, { once: true });
-            setTimeout(startPlayback, 900);
+            setTimeout(startPlayback, 2000);
         } else {
             startPlayback();
         }

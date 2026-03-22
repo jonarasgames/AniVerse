@@ -118,6 +118,11 @@
       case 'MediaPause': return KEY.MEDIA_PAUSE;
       case 'MediaTrackNext': return KEY.MEDIA_NEXT;
       case 'MediaTrackPrevious': return KEY.MEDIA_PREVIOUS;
+      case 'XF86AudioPlay': return KEY.MEDIA_PLAY;
+      case 'XF86AudioPause': return KEY.MEDIA_PAUSE;
+      case 'XF86AudioPlayPause': return KEY.MEDIA_PLAY_PAUSE;
+      case 'XF86AudioNext': return KEY.MEDIA_NEXT;
+      case 'XF86AudioPrev': return KEY.MEDIA_PREVIOUS;
       default: break;
     }
     if (code === 37) return KEY.LEFT;
@@ -898,9 +903,14 @@
   function ensureRailStartPositions() {
     ['new-releases-grid', 'continue-watching-grid'].forEach((id) => {
       const rail = document.getElementById(id);
-      if (!rail || !rail.children.length || rail.dataset.tvRailInitialized === '1') return;
+      if (!rail || !rail.children.length || rail.dataset.tvRailInitialized) return;
       rail.scrollLeft = 0;
-      rail.dataset.tvRailInitialized = '1';
+      rail.dataset.tvRailInitialized = 'true';
+    });
+    document.querySelectorAll('.music-tracks').forEach((rail, index) => {
+      if (!rail.children.length || rail.dataset.tvRailInitialized) return;
+      rail.scrollLeft = 0;
+      rail.dataset.tvRailInitialized = `music-${index}`;
     });
   }
 

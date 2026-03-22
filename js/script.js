@@ -951,6 +951,21 @@ function inferVideoMimeType(url){
   return '';
 }
 
+function getBufferedAheadSeconds(media){
+  try {
+    if (!media || !media.buffered || media.buffered.length === 0) return 0;
+    const currentTime = Number(media.currentTime) || 0;
+    for (let index = 0; index < media.buffered.length; index += 1) {
+      const start = media.buffered.start(index);
+      const end = media.buffered.end(index);
+      if (currentTime >= start && currentTime <= end) {
+        return Math.max(0, end - currentTime);
+      }
+    }
+  } catch (_) {}
+  return 0;
+}
+
 function onVideoSetSource(player, episode){
   if (!player || !episode) return;
 
@@ -976,7 +991,8 @@ function onVideoSetSource(player, episode){
     recoverInFlight: false,
     fallbackInUse: false,
     isTvEnvironment: isTvPlaybackEnvironment(),
-    playWhenReady: false
+    playWhenReady: false,
+    playStartAt: 0
   };
   player.__adaptivePlayback = state;
 
@@ -1050,6 +1066,7 @@ function onVideoSetSource(player, episode){
     setLoadTimeout();
 
     state.playWhenReady = !!shouldAutoPlay;
+    state.playStartAt = Date.now();
     if (shouldAutoPlay && !state.isTvEnvironment) {
       player.play().catch(() => {});
     }
@@ -1160,7 +1177,9 @@ function onVideoSetSource(player, episode){
       clearTimeout(state.loadTimeoutId);
       state.loadTimeoutId = null;
     }
-    if (state.playWhenReady && player.paused) {
+    const waitedLongEnough = Date.now() - state.playStartAt >= 2200;
+    const hasEnoughBuffer = getBufferedAheadSeconds(player) >= 3;
+    if (state.playWhenReady && player.paused && (!state.isTvEnvironment || hasEnoughBuffer || waitedLongEnough)) {
       player.play().catch(() => {});
     }
   };
@@ -1173,6 +1192,7 @@ function onVideoSetSource(player, episode){
       showVideoError('Carregando... Ajustando qualidade automaticamente');
     }
     if (state.isTvEnvironment && !state.waitingRecoveryId) {
+      try { player.pause(); } catch (_) {}
       state.waitingRecoveryId = setTimeout(() => {
         state.waitingRecoveryId = null;
         recoverPlayback('waiting');
@@ -1185,6 +1205,7 @@ function onVideoSetSource(player, episode){
   };
 
   player.addEventListener('playing', handlePlaying);
+  player.addEventListener('progress', handleCanPlay);
   player.addEventListener('canplay', handleCanPlay);
   player.addEventListener('canplaythrough', handleCanPlay);
   player.addEventListener('waiting', handleWaiting);
@@ -1199,6 +1220,7 @@ function onVideoSetSource(player, episode){
       state.upgradeIntervalId = null;
     }
     player.removeEventListener('playing', handlePlaying);
+    player.removeEventListener('progress', handleCanPlay);
     player.removeEventListener('canplay', handleCanPlay);
     player.removeEventListener('canplaythrough', handleCanPlay);
     player.removeEventListener('waiting', handleWaiting);

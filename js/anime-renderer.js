@@ -551,6 +551,9 @@
                 currentTime
               );
             }
+            player.removeAttribute('src');
+            while (player.firstChild) player.removeChild(player.firstChild);
+            player.load();
           } catch (e) {
             console.warn('Error saving progress:', e);
           }
