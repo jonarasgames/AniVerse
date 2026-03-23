@@ -8,21 +8,30 @@
         (function() {
             try {
                 var params = new URLSearchParams(window.location.search || '');
+                var looksLikeRealTv = typeof window.tizen !== 'undefined' ||
+                    typeof window.webapis !== 'undefined' ||
+                    /tizen|smart-tv|smarttv|hbbtv|web0s|googletv|appletv|viera|aquos/i.test(navigator.userAgent || '');
                 if (params.get('tv') === '1') {
                     window.__ANIVERSE_FORCE_TV_MODE__ = true;
+                    try { sessionStorage.setItem('aniverseTvMode', 'enabled'); } catch (_) {}
                     return;
                 }
                 if (params.get('tv') === '0') {
                     window.__ANIVERSE_FORCE_TV_MODE__ = false;
+                    try {
+                        localStorage.removeItem('aniverseTvMode');
+                        sessionStorage.removeItem('aniverseTvMode');
+                    } catch (_) {}
                     return;
                 }
-                if (localStorage.getItem('aniverseTvMode') === 'enabled') {
+                if (looksLikeRealTv) {
                     window.__ANIVERSE_FORCE_TV_MODE__ = true;
                     return;
                 }
-                if (typeof window.tizen !== 'undefined' || typeof window.webapis !== 'undefined') {
-                    window.__ANIVERSE_FORCE_TV_MODE__ = true;
-                }
+                try {
+                    localStorage.removeItem('aniverseTvMode');
+                    sessionStorage.removeItem('aniverseTvMode');
+                } catch (_) {}
             } catch (_) {}
         })();
     </script>

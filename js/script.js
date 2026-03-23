@@ -1418,6 +1418,9 @@ function onVideoSetSource(player, episode, options = {}){
     }
     const waitedLongEnough = Date.now() - state.playStartAt >= 2200;
     const hasEnoughBuffer = getBufferedAheadSeconds(player) >= 3;
+    if (player.readyState >= 3 || hasEnoughBuffer) {
+      clearVideoError();
+    }
     if (state.playWhenReady && player.paused && (!state.isTvEnvironment || hasEnoughBuffer || waitedLongEnough)) {
       player.play().catch(() => {});
     }
@@ -1425,10 +1428,12 @@ function onVideoSetSource(player, episode, options = {}){
 
   const handleWaiting = () => {
     if (player.__adaptivePlayback?.token !== state.token) return;
-    if (!state.fallbackInUse) {
+    if (state.isTvEnvironment && !state.fallbackInUse) {
       showVideoError('Carregando... ajustando o vídeo para a TV');
-    } else {
+    } else if (state.fallbackInUse) {
       showVideoError('Carregando... Ajustando qualidade automaticamente');
+    } else {
+      showVideoError('Carregando... estabilizando a reprodução');
     }
     if (state.isTvEnvironment && !state.waitingRecoveryId) {
       try { player.pause(); } catch (_) {}

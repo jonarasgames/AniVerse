@@ -58,7 +58,6 @@
     const params = new URLSearchParams(window.location.search);
     if (params.get('tv') === '0') return false;
     if (params.get('tv') === '1') return true;
-    if (localStorage.getItem('aniverseTvMode') === 'enabled') return true;
     if (window.__ANIVERSE_FORCE_TV_MODE__ === true) return true;
     if (typeof window.tizen !== 'undefined' || typeof window.webapis !== 'undefined') return true;
 
@@ -1225,7 +1224,6 @@
       };
       if (!detected) return;
       tvEnabled = true;
-      localStorage.setItem('aniverseTvMode', 'enabled');
       document.body.classList.add('tv-mode');
       forceDarkMode();
       decorateSidebar();
