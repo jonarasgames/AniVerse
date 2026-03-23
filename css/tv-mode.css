@@ -393,18 +393,45 @@ body.tv-mode .trailer-overlay {
 
 body.tv-mode .music-section {
   display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
   gap: 16px;
-  margin-bottom: 28px;
+  width: min(320px, 72vw);
+  min-width: 280px;
+  margin-bottom: 0;
+  align-self: start;
 }
 
 body.tv-mode #music-grid {
   display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(280px, 320px);
   gap: 24px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 12px 0 28px;
+  align-items: start;
+  scrollbar-width: none;
+}
+
+body.tv-mode #music-grid::-webkit-scrollbar {
+  display: none;
+}
+
+body.tv-mode .music-tracks {
+  display: grid;
+  grid-auto-flow: row;
+  grid-auto-rows: minmax(0, auto);
+  grid-template-columns: 1fr;
+  gap: 16px;
+  overflow-x: hidden;
+  overflow-y: visible;
+  padding: 0;
 }
 
 body.tv-mode .music-anime-title {
   font-size: 1.3rem;
   color: #fff !important;
+  min-height: 3.2rem;
 }
 
 body.tv-mode .music-card {

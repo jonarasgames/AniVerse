@@ -1112,9 +1112,9 @@ function openNativeTvVideo(url, resumeTimeSeconds = 0, onFailure = null){
   avplay.open(url);
   try { avplay.setDisplayRect(0, 0, width, height); } catch (_) {}
   try { avplay.setDisplayMethod('PLAYER_DISPLAY_MODE_FULL_SCREEN'); } catch (_) {}
-  try { avplay.setBufferingParam?.('PLAYER_BUFFER_FOR_PLAY', 'PLAYER_BUFFER_SIZE_IN_SECOND', 4); } catch (_) {}
-  try { avplay.setBufferingParam?.('PLAYER_BUFFER_FOR_RESUME', 'PLAYER_BUFFER_SIZE_IN_SECOND', 6); } catch (_) {}
-  try { avplay.setStreamingProperty?.('ADAPTIVE_INFO', 'FIXED_MAX_RESOLUTION=1920X1080'); } catch (_) {}
+  try { avplay.setBufferingParam?.('PLAYER_BUFFER_FOR_PLAY', 'PLAYER_BUFFER_SIZE_IN_SECOND', 6); } catch (_) {}
+  try { avplay.setBufferingParam?.('PLAYER_BUFFER_FOR_RESUME', 'PLAYER_BUFFER_SIZE_IN_SECOND', 8); } catch (_) {}
+  try { avplay.setStreamingProperty?.('ADAPTIVE_INFO', 'FIXED_MAX_RESOLUTION=1280X720'); } catch (_) {}
 
   avplay.setListener({
     onbufferingstart() {
@@ -1186,6 +1186,28 @@ function pickNativeTvSource(sources) {
     return mime === 'video/mp4' || mime === 'application/vnd.apple.mpegurl';
   });
   return preferred || sources[0] || null;
+}
+
+function pickTvPreferredSourceIndex(sources) {
+  if (!Array.isArray(sources) || !sources.length) return 0;
+
+  const preferredIndex = sources.findIndex((source) => {
+    const mime = inferVideoMimeType(source?.url || '');
+    const rank = Number(source?.rank || 0);
+    return (mime === 'video/mp4' || mime === 'application/vnd.apple.mpegurl') && rank > 0 && rank <= 720;
+  });
+  if (preferredIndex !== -1) return preferredIndex;
+
+  const hdIndex = sources.findIndex((source) => Number(source?.rank || 0) > 0 && Number(source.rank) <= 720);
+  if (hdIndex !== -1) return hdIndex;
+
+  const streamableIndex = sources.findIndex((source) => {
+    const mime = inferVideoMimeType(source?.url || '');
+    return mime === 'video/mp4' || mime === 'application/vnd.apple.mpegurl';
+  });
+  if (streamableIndex !== -1) return streamableIndex;
+
+  return Math.max(0, sources.length - 1);
 }
 
 function getBufferedAheadSeconds(media){
@@ -1473,7 +1495,7 @@ function onVideoSetSource(player, episode, options = {}){
     player.removeEventListener('error', handleError);
   };
 
-  const initialIndex = state.isTvEnvironment ? (state.sources.length - 1) : 0;
+  const initialIndex = state.isTvEnvironment ? pickTvPreferredSourceIndex(state.sources) : 0;
   setSource(initialIndex, { autoPlay: true, preserveTime: 0 });
 }
 
