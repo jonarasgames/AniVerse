@@ -5,16 +5,64 @@
     const STORAGE_KEY = 'aniverse_profiles';
     const ACTIVE_PROFILE_KEY = 'aniverse_active_profile';
 
+    function canUseLocalStorage() {
+        try {
+            const key = '__aniverse_profile_storage_test__';
+            localStorage.setItem(key, '1');
+            localStorage.removeItem(key);
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
+
+    function getCookieValue(key) {
+        const escapedKey = String(key).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const match = document.cookie.match(new RegExp(`(?:^|; )${escapedKey}=([^;]*)`));
+        return match ? decodeURIComponent(match[1]) : null;
+    }
+
+    function setCookieValue(key, value) {
+        document.cookie = `${key}=${encodeURIComponent(value)}; path=/; max-age=${60 * 60 * 24 * 365}`;
+    }
+
+    function removeCookieValue(key) {
+        document.cookie = `${key}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+    }
+
+    function storageGet(key) {
+        if (canUseLocalStorage()) {
+            return localStorage.getItem(key);
+        }
+        return getCookieValue(key);
+    }
+
+    function storageSet(key, value) {
+        if (canUseLocalStorage()) {
+            localStorage.setItem(key, value);
+            return;
+        }
+        setCookieValue(key, value);
+    }
+
+    function storageRemove(key) {
+        if (canUseLocalStorage()) {
+            localStorage.removeItem(key);
+            return;
+        }
+        removeCookieValue(key);
+    }
+
     // Profile Manager Class
     class ProfileManager {
         constructor() {
             this.profiles = this.loadProfiles();
-            this.activeProfileId = localStorage.getItem(ACTIVE_PROFILE_KEY);
+            this.activeProfileId = storageGet(ACTIVE_PROFILE_KEY);
         }
 
         loadProfiles() {
             try {
-                const data = localStorage.getItem(STORAGE_KEY);
+                const data = storageGet(STORAGE_KEY);
                 return data ? JSON.parse(data) : [];
             } catch (e) {
                 console.error('Error loading profiles:', e);
@@ -24,7 +72,7 @@
 
         saveProfiles() {
             try {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(this.profiles));
+                storageSet(STORAGE_KEY, JSON.stringify(this.profiles));
             } catch (e) {
                 console.error('Error saving profiles:', e);
             }
@@ -62,7 +110,7 @@
                 this.saveProfiles();
                 if (this.activeProfileId === profileId) {
                     this.activeProfileId = null;
-                    localStorage.removeItem(ACTIVE_PROFILE_KEY);
+                    storageRemove(ACTIVE_PROFILE_KEY);
                 }
                 return true;
             }
@@ -81,7 +129,7 @@
             const profile = this.getProfile(profileId);
             if (profile) {
                 this.activeProfileId = profileId;
-                localStorage.setItem(ACTIVE_PROFILE_KEY, profileId);
+                storageSet(ACTIVE_PROFILE_KEY, profileId);
                 return profile;
             }
             return null;

@@ -271,8 +271,9 @@
   function getContainerOrientation(container) {
     if (!container) return null;
     if (container.matches('#full-catalog-grid, #animes-grid, #movies-grid, #ovas-grid, #continue-grid')) return 'grid';
-    if (container.matches('#music-grid')) return 'vertical';
-    if (container.matches('#new-releases-grid, #continue-watching-grid, #collections-grid, .collection-animes, .music-tracks, .tv-season-strip, .tv-episode-strip, .tv-similar-strip, .pronoun-pills, .customization-tabs, #music-mini-player .mini-player-controls')) return 'horizontal';
+    if (container.matches('#music-grid')) return 'horizontal';
+    if (container.matches('.music-tracks')) return 'vertical';
+    if (container.matches('#new-releases-grid, #continue-watching-grid, #collections-grid, .collection-animes, .tv-season-strip, .tv-episode-strip, .tv-similar-strip, .pronoun-pills, .customization-tabs, #music-mini-player .mini-player-controls')) return 'horizontal';
     if (container.matches('.color-grid, .background-images-grid, .character-grid, .frame-grid')) return 'grid';
     return null;
   }
@@ -327,23 +328,66 @@
     return centers.sort((a, b) => b.y - a.y || a.x - b.x);
   }
 
+  function getHomeNavigationRows() {
+    const selectors = [
+      '#continue-watching-grid',
+      '#new-releases-grid',
+      '#full-catalog-grid'
+    ];
+    return selectors
+      .map((selector) => document.querySelector(`#home-section ${selector}`))
+      .filter((container) => container && isVisible(container) && getContainerItems(container).length);
+  }
+
+  function moveAcrossHomeRows(direction, container) {
+    if (direction !== KEY.UP && direction !== KEY.DOWN) return false;
+    const rows = getHomeNavigationRows();
+    if (!rows.length) return false;
+    const rowIndex = rows.indexOf(container);
+    if (rowIndex === -1) return false;
+
+    const nextIndex = rowIndex + (direction === KEY.DOWN ? 1 : -1);
+    if (nextIndex < 0 || nextIndex >= rows.length) return false;
+
+    const currentItems = getContainerItems(container);
+    const nextItems = getContainerItems(rows[nextIndex]);
+    if (!nextItems.length) return false;
+
+    const currentIndex = Math.max(0, currentItems.indexOf(currentFocus));
+    focusElement(nextItems[Math.min(currentIndex, nextItems.length - 1)]);
+    return true;
+  }
+
+  function moveAcrossMusicColumns(direction, currentSection) {
+    if (direction !== KEY.LEFT && direction !== KEY.RIGHT) return false;
+    const sections = Array.from(document.querySelectorAll('#music-grid .music-section')).filter(isVisible);
+    const sectionIndex = sections.indexOf(currentSection);
+    if (sectionIndex === -1) return false;
+
+    const nextSectionIndex = sectionIndex + (direction === KEY.RIGHT ? 1 : -1);
+    if (nextSectionIndex < 0 || nextSectionIndex >= sections.length) return false;
+
+    const currentItems = Array.from(currentSection.querySelectorAll('.music-card.tv-focusable')).filter(isVisible);
+    const nextItems = Array.from(sections[nextSectionIndex].querySelectorAll('.music-card.tv-focusable')).filter(isVisible);
+    if (!nextItems.length) return false;
+
+    const currentIndex = Math.max(0, currentItems.indexOf(currentFocus));
+    focusElement(nextItems[Math.min(currentIndex, nextItems.length - 1)]);
+    return true;
+  }
+
   function navigateWithinContainer(direction) {
     const container = getNavigationContainer(currentFocus);
     if (!container) return false;
 
-    if (container.matches('.music-tracks') && (direction === KEY.UP || direction === KEY.DOWN)) {
-      const sections = Array.from(document.querySelectorAll('#music-grid .music-section')).filter(isVisible);
+    if (moveAcrossHomeRows(direction, container)) {
+      return true;
+    }
+
+    if (container.matches('.music-tracks')) {
       const currentSection = currentFocus.closest('.music-section');
-      const sectionIndex = sections.indexOf(currentSection);
-      if (sectionIndex !== -1) {
-        const nextSectionIndex = (sectionIndex + (direction === KEY.DOWN ? 1 : -1) + sections.length) % sections.length;
-        const currentItems = Array.from(currentSection.querySelectorAll('.music-card.tv-focusable')).filter(isVisible);
-        const nextItems = Array.from(sections[nextSectionIndex].querySelectorAll('.music-card.tv-focusable')).filter(isVisible);
-        const currentIndex = Math.max(0, currentItems.indexOf(currentFocus));
-        if (nextItems.length) {
-          focusElement(nextItems[Math.min(currentIndex, nextItems.length - 1)]);
-          return true;
-        }
+      if (currentSection && moveAcrossMusicColumns(direction, currentSection)) {
+        return true;
       }
     }
 
