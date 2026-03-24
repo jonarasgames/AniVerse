@@ -54,7 +54,9 @@
             inRecovery: false,
             lastAt: 0,
             timer: null,
-            lastSrc: ''
+            lastSrc: '',
+            forceStreamWithoutAcceptRanges: false,
+            blobFallbackTried: false
         };
 
         const clearRecoveryTimer = () => {
@@ -70,11 +72,57 @@
             clearRecoveryTimer();
         };
 
+
+
+        const maybeTryBlobFallback = async () => {
+            if (stallState.blobFallbackTried) return;
+            if (!stallState.forceStreamWithoutAcceptRanges) return;
+
+            const src = player.currentSrc || player.src || '';
+            if (!src || src.startsWith('blob:')) return;
+
+            stallState.blobFallbackTried = true;
+            showVideoError('Tentando modo alternativo de buffer (Blob)...');
+
+            try {
+                const head = await fetch(src, { method: 'HEAD', mode: 'cors', cache: 'no-store' });
+                const lenRaw = head.headers.get('content-length') || '0';
+                const contentLength = Number(lenRaw);
+                const maxBlobBytes = 120 * 1024 * 1024;
+                if (contentLength > maxBlobBytes) {
+                    showVideoError('Arquivo muito grande para fallback Blob nesta TV.');
+                    return;
+                }
+            } catch (_) {
+                // ignore HEAD errors and still try GET once
+            }
+
+            try {
+                const resumeAt = Number(player.currentTime) || 0;
+                const response = await fetch(src, { mode: 'cors', cache: 'no-store' });
+                if (!response.ok) throw new Error(`status ${response.status}`);
+                const mediaBlob = await response.blob();
+                const blobUrl = URL.createObjectURL(mediaBlob);
+                player.src = blobUrl;
+                player.load();
+                player.addEventListener('loadedmetadata', () => {
+                    try { player.currentTime = Math.max(0, resumeAt - 0.2); } catch (_) {}
+                    player.play().catch(() => {});
+                }, { once: true });
+                window.__lastTvBlobFallback = { ok: true, src, at: Date.now(), size: mediaBlob.size };
+            } catch (error) {
+                window.__lastTvBlobFallback = { ok: false, src, at: Date.now(), error: String(error) };
+                showVideoError('Fallback Blob falhou. Host pode bloquear CORS/stream.');
+            }
+        };
+
         const recoverFromStall = (reason) => {
             const now = Date.now();
             if (stallState.inRecovery) return;
             if (now - stallState.lastAt < 700) return;
-            if (stallState.attempts >= stallState.maxAttempts) {
+            const effectiveMaxAttempts = stallState.forceStreamWithoutAcceptRanges ? (stallState.maxAttempts + 4) : stallState.maxAttempts;
+            if (stallState.attempts >= effectiveMaxAttempts) {
+                maybeTryBlobFallback();
                 showVideoError('Internet/servidor instável. Tentando manter a reprodução...');
                 return;
             }
@@ -117,11 +165,17 @@
             const src = player.currentSrc || player.src || '';
             if (src && stallState.lastSrc !== src) {
                 stallState.lastSrc = src;
+                stallState.blobFallbackTried = false;
                 resetStallState();
                 probeRangeSupport(src).then((result) => {
                     window.__lastTvRangeProbe = { src, ...result, at: Date.now() };
                     if (result.supported === false) {
                         console.warn('Range request não suportado (status != 206). O streaming pode travar neste host.', result);
+                    }
+                    // Samsung TV fallback: if status 206 exists, keep streaming even without explicit Accept-Ranges header.
+                    stallState.forceStreamWithoutAcceptRanges = result.supported === true;
+                    if (result.supported === true && !result.acceptRanges) {
+                        console.warn('206 sem Accept-Ranges explícito: mantendo modo forçado de stream para evitar stalled.');
                     }
                 }).catch(() => {});
             }

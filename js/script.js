@@ -930,10 +930,11 @@ function addCacheBust(url){
   try {
     const parsed = new URL(url, window.location.href);
     parsed.searchParams.set('_retry', String(Date.now()));
+    parsed.searchParams.set('anv_sw_bypass', '1');
     return parsed.toString();
   } catch (_) {
     const sep = url.includes('?') ? '&' : '?';
-    return `${url}${sep}_retry=${Date.now()}`;
+    return `${url}${sep}_retry=${Date.now()}&anv_sw_bypass=1`;
   }
 }
 
