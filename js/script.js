@@ -930,10 +930,11 @@ function addCacheBust(url){
   try {
     const parsed = new URL(url, window.location.href);
     parsed.searchParams.set('_retry', String(Date.now()));
+    parsed.searchParams.set('anv_sw_bypass', '1');
     return parsed.toString();
   } catch (_) {
     const sep = url.includes('?') ? '&' : '?';
-    return `${url}${sep}_retry=${Date.now()}`;
+    return `${url}${sep}_retry=${Date.now()}&anv_sw_bypass=1`;
   }
 }
 
@@ -1112,9 +1113,10 @@ function openNativeTvVideo(url, resumeTimeSeconds = 0, onFailure = null){
   avplay.open(url);
   try { avplay.setDisplayRect(0, 0, width, height); } catch (_) {}
   try { avplay.setDisplayMethod('PLAYER_DISPLAY_MODE_FULL_SCREEN'); } catch (_) {}
-  try { avplay.setBufferingParam?.('PLAYER_BUFFER_FOR_PLAY', 'PLAYER_BUFFER_SIZE_IN_SECOND', 6); } catch (_) {}
-  try { avplay.setBufferingParam?.('PLAYER_BUFFER_FOR_RESUME', 'PLAYER_BUFFER_SIZE_IN_SECOND', 8); } catch (_) {}
-  try { avplay.setStreamingProperty?.('ADAPTIVE_INFO', 'FIXED_MAX_RESOLUTION=1280X720'); } catch (_) {}
+  try { avplay.setBufferingParam?.('PLAYER_BUFFER_FOR_PLAY', 'PLAYER_BUFFER_SIZE_IN_SECOND', 10); } catch (_) {}
+  try { avplay.setBufferingParam?.('PLAYER_BUFFER_FOR_RESUME', 'PLAYER_BUFFER_SIZE_IN_SECOND', 12); } catch (_) {}
+  try { avplay.setBufferingParam?.('PLAYER_BUFFER_FOR_PLAY_READY', 'PLAYER_BUFFER_SIZE_IN_SECOND', 14); } catch (_) {}
+  try { avplay.setStreamingProperty?.('ADAPTIVE_INFO', 'FIXED_MAX_RESOLUTION=960X540'); } catch (_) {}
 
   avplay.setListener({
     onbufferingstart() {
@@ -1244,7 +1246,7 @@ function onVideoSetSource(player, episode, options = {}){
     currentIndex: 0,
     retriesInSource: 0,
     maxRetriesPerSource: isTvPlaybackEnvironment() ? 3 : 3,
-    loadTimeoutMs: isTvPlaybackEnvironment() ? 30000 : 15000,
+    loadTimeoutMs: isTvPlaybackEnvironment() ? 40000 : 15000,
     loadTimeoutId: null,
     retryTimeoutId: null,
     waitingRecoveryId: null,
@@ -1437,7 +1439,8 @@ function onVideoSetSource(player, episode, options = {}){
       state.loadTimeoutId = null;
     }
     const waitedLongEnough = Date.now() - state.playStartAt >= 2200;
-    const hasEnoughBuffer = getBufferedAheadSeconds(player) >= 3;
+    const minBufferSeconds = state.isTvEnvironment ? 6 : 3;
+    const hasEnoughBuffer = getBufferedAheadSeconds(player) >= minBufferSeconds;
     if (player.readyState >= 3 || hasEnoughBuffer) {
       clearVideoError();
       window.setVideoLoadingOverlay?.(false);
@@ -1454,7 +1457,7 @@ function onVideoSetSource(player, episode, options = {}){
       state.waitingRecoveryId = setTimeout(() => {
         state.waitingRecoveryId = null;
         recoverPlayback('waiting');
-      }, 1800);
+      }, 2600);
     }
   };
 

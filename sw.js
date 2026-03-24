@@ -1,5 +1,5 @@
-const STATIC_CACHE = 'aniverse-static-v10';
-const RUNTIME_CACHE = 'aniverse-runtime-v10';
+const STATIC_CACHE = 'aniverse-static-v11';
+const RUNTIME_CACHE = 'aniverse-runtime-v11';
 
 const APP_SHELL = [
   './',
@@ -71,12 +71,15 @@ function shouldBypassForMedia(request) {
 
   if (request.headers.has('range')) return true;
   if (request.destination === 'video' || request.destination === 'audio') return true;
+  if (url.searchParams.get('anv_sw_bypass') === '1') return true;
 
-  const isMediaFile = /\.(mp4|m4v|webm|mov|m3u8|mp3|m4a|aac|wav|ogg)(\?|$)/i.test(url.pathname + url.search);
+  const mediaPattern = /\.(mp4|m4v|webm|mov|m3u8|mpd|mp3|m4a|aac|wav|ogg)(\?|$)/i;
+  const isMediaFile = mediaPattern.test(url.pathname + url.search);
   if (isMediaFile) return true;
 
-  // Catbox media can fail in some Chromium contexts when intercepted/cached by SW.
-  if (url.hostname.endsWith('catbox.moe') && isMediaFile) return true;
+  // Some apps proxy catbox/bitchute URLs as query params in same-origin endpoints.
+  const full = (url.pathname + url.search).toLowerCase();
+  if (full.includes('catbox.moe') || full.includes('bitchute.com')) return true;
 
   return false;
 }
