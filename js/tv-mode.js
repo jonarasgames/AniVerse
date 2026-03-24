@@ -347,16 +347,33 @@
     const rowIndex = rows.indexOf(container);
     if (rowIndex === -1) return false;
 
-    const nextIndex = rowIndex + (direction === KEY.DOWN ? 1 : -1);
-    if (nextIndex < 0 || nextIndex >= rows.length) return false;
-
     const currentItems = getContainerItems(container);
-    const nextItems = getContainerItems(rows[nextIndex]);
-    if (!nextItems.length) return false;
-
     const currentIndex = Math.max(0, currentItems.indexOf(currentFocus));
-    focusElement(nextItems[Math.min(currentIndex, nextItems.length - 1)]);
-    return true;
+
+    const pickFromRow = (row) => {
+      const items = getContainerItems(row);
+      if (!items.length) return false;
+      focusElement(items[Math.min(currentIndex, items.length - 1)]);
+      return true;
+    };
+
+    const nextIndex = rowIndex + (direction === KEY.DOWN ? 1 : -1);
+    if (nextIndex >= 0 && nextIndex < rows.length && pickFromRow(rows[nextIndex])) {
+      return true;
+    }
+
+    // Home-specific fallback: force jump between Continue Watching and New Releases when possible.
+    if (direction === KEY.UP && container.matches('#new-releases-grid')) {
+      const continueRow = document.querySelector('#home-section #continue-watching-grid');
+      if (continueRow && pickFromRow(continueRow)) return true;
+    }
+
+    if (direction === KEY.DOWN && container.matches('#continue-watching-grid')) {
+      const releasesRow = document.querySelector('#home-section #new-releases-grid');
+      if (releasesRow && pickFromRow(releasesRow)) return true;
+    }
+
+    return false;
   }
 
   function moveAcrossMusicColumns(direction, currentSection) {
