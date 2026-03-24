@@ -938,10 +938,8 @@
             });
         });
         
-        // Render each anime section
-        Object.entries(grouped)
-            .sort((a, b) => a[0].localeCompare(b[0], 'pt-BR', { sensitivity: 'base' }))
-            .forEach(([animeTitle, tracks]) => {
+        // Render each anime section preserving insertion order
+        Object.entries(grouped).forEach(([animeTitle, tracks]) => {
             const section = document.createElement('div');
             section.className = 'music-section';
             
