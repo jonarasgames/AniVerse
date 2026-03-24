@@ -917,18 +917,25 @@
 })();
 
 // Keyboard shortcuts for video player
-window.addEventListener('keydown', (e) => {
+document.addEventListener('keydown', (e) => {
     // PRIORIDADE 1: Se modal de vídeo está aberto, responder APENAS vídeo
     const videoModal = document.getElementById('video-modal');
     const player = document.getElementById('anime-player');
 
     const isFullscreen = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement;
-    const modalVisible = !!(videoModal && getComputedStyle(videoModal).display !== 'none');
+    const modalVisible = !!(videoModal && (
+        getComputedStyle(videoModal).display !== 'none' ||
+        videoModal.style.display === 'flex' ||
+        videoModal.classList.contains('active')
+    ));
     const isVideoActive = modalVisible || isFullscreen;
 
     if (player && isVideoActive) {
         // Don't trigger if user is typing in an input
-        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+        const target = e.target;
+        const tagName = target?.tagName || '';
+        const isTypingTarget = target?.isContentEditable || tagName === 'INPUT' || tagName === 'TEXTAREA';
+        if (isTypingTarget) return;
         const key = e.key.toLowerCase();
         const code = e.code || '';
         const isSpace = code === 'Space' || e.key === ' ' || e.key === 'Spacebar';

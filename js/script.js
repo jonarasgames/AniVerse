@@ -1552,6 +1552,7 @@ function setupVideoLoadingIndicator() {
   let forcedVisible = false;
   let phaseTimer = null;
   let showDelayTimer = null;
+  let forcedReleaseTimer = null;
   let lastShownAt = 0;
   const SHOW_DELAY_MS = 450;
   const MIN_VISIBLE_MS = 280;
@@ -1572,6 +1573,13 @@ function setupVideoLoadingIndicator() {
     if (showDelayTimer) {
       clearTimeout(showDelayTimer);
       showDelayTimer = null;
+    }
+  };
+
+  const clearForcedRelease = () => {
+    if (forcedReleaseTimer) {
+      clearTimeout(forcedReleaseTimer);
+      forcedReleaseTimer = null;
     }
   };
 
@@ -1623,10 +1631,25 @@ function setupVideoLoadingIndicator() {
 
   // Expose hook for other modules when forcing spinner is useful
   window.setVideoLoadingOverlay = (visible, text) => {
+    clearForcedRelease();
     forcedVisible = !!visible;
-    if (forcedVisible) show(true);
-    else hide();
+    if (forcedVisible) {
+      show(true);
+      forcedReleaseTimer = setTimeout(() => {
+        forcedVisible = false;
+        forcedReleaseTimer = null;
+        hide();
+      }, 5000);
+    } else {
+      hide();
+    }
   };
+
+  player.addEventListener('pause', () => {
+    forcedVisible = false;
+    clearForcedRelease();
+    hide();
+  });
 }
 
 // openEpisode helper: set src, resume, banner, opening
