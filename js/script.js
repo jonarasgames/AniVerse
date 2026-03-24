@@ -1112,9 +1112,9 @@ function openNativeTvVideo(url, resumeTimeSeconds = 0, onFailure = null){
   avplay.open(url);
   try { avplay.setDisplayRect(0, 0, width, height); } catch (_) {}
   try { avplay.setDisplayMethod('PLAYER_DISPLAY_MODE_FULL_SCREEN'); } catch (_) {}
-  try { avplay.setBufferingParam?.('PLAYER_BUFFER_FOR_PLAY', 'PLAYER_BUFFER_SIZE_IN_SECOND', 4); } catch (_) {}
-  try { avplay.setBufferingParam?.('PLAYER_BUFFER_FOR_RESUME', 'PLAYER_BUFFER_SIZE_IN_SECOND', 6); } catch (_) {}
-  try { avplay.setStreamingProperty?.('ADAPTIVE_INFO', 'FIXED_MAX_RESOLUTION=1920X1080'); } catch (_) {}
+  try { avplay.setBufferingParam?.('PLAYER_BUFFER_FOR_PLAY', 'PLAYER_BUFFER_SIZE_IN_SECOND', 6); } catch (_) {}
+  try { avplay.setBufferingParam?.('PLAYER_BUFFER_FOR_RESUME', 'PLAYER_BUFFER_SIZE_IN_SECOND', 8); } catch (_) {}
+  try { avplay.setStreamingProperty?.('ADAPTIVE_INFO', 'FIXED_MAX_RESOLUTION=1280X720'); } catch (_) {}
 
   avplay.setListener({
     onbufferingstart() {
@@ -1186,6 +1186,28 @@ function pickNativeTvSource(sources) {
     return mime === 'video/mp4' || mime === 'application/vnd.apple.mpegurl';
   });
   return preferred || sources[0] || null;
+}
+
+function pickTvPreferredSourceIndex(sources) {
+  if (!Array.isArray(sources) || !sources.length) return 0;
+
+  const preferredIndex = sources.findIndex((source) => {
+    const mime = inferVideoMimeType(source?.url || '');
+    const rank = Number(source?.rank || 0);
+    return (mime === 'video/mp4' || mime === 'application/vnd.apple.mpegurl') && rank > 0 && rank <= 720;
+  });
+  if (preferredIndex !== -1) return preferredIndex;
+
+  const hdIndex = sources.findIndex((source) => Number(source?.rank || 0) > 0 && Number(source.rank) <= 720);
+  if (hdIndex !== -1) return hdIndex;
+
+  const streamableIndex = sources.findIndex((source) => {
+    const mime = inferVideoMimeType(source?.url || '');
+    return mime === 'video/mp4' || mime === 'application/vnd.apple.mpegurl';
+  });
+  if (streamableIndex !== -1) return streamableIndex;
+
+  return Math.max(0, sources.length - 1);
 }
 
 function getBufferedAheadSeconds(media){
@@ -1405,6 +1427,7 @@ function onVideoSetSource(player, episode, options = {}){
     if (player.__adaptivePlayback?.token !== state.token) return;
     clearTimers();
     clearVideoError();
+    window.setVideoLoadingOverlay?.(false);
     state.recoverInFlight = false;
     state.retriesInSource = 0;
     if (state.fallbackInUse) tryBackgroundUpgrade();
@@ -1420,6 +1443,7 @@ function onVideoSetSource(player, episode, options = {}){
     const hasEnoughBuffer = getBufferedAheadSeconds(player) >= 3;
     if (player.readyState >= 3 || hasEnoughBuffer) {
       clearVideoError();
+      window.setVideoLoadingOverlay?.(false);
     }
     if (state.playWhenReady && player.paused && (!state.isTvEnvironment || hasEnoughBuffer || waitedLongEnough)) {
       player.play().catch(() => {});
@@ -1428,13 +1452,7 @@ function onVideoSetSource(player, episode, options = {}){
 
   const handleWaiting = () => {
     if (player.__adaptivePlayback?.token !== state.token) return;
-    if (state.isTvEnvironment && !state.fallbackInUse) {
-      showVideoError('Carregando... ajustando o vídeo para a TV');
-    } else if (state.fallbackInUse) {
-      showVideoError('Carregando... Ajustando qualidade automaticamente');
-    } else {
-      showVideoError('Carregando... estabilizando a reprodução');
-    }
+    window.setVideoLoadingOverlay?.(true);
     if (state.isTvEnvironment && !state.waitingRecoveryId) {
       try { player.pause(); } catch (_) {}
       state.waitingRecoveryId = setTimeout(() => {
@@ -1473,7 +1491,7 @@ function onVideoSetSource(player, episode, options = {}){
     player.removeEventListener('error', handleError);
   };
 
-  const initialIndex = state.isTvEnvironment ? (state.sources.length - 1) : 0;
+  const initialIndex = state.isTvEnvironment ? pickTvPreferredSourceIndex(state.sources) : 0;
   setSource(initialIndex, { autoPlay: true, preserveTime: 0 });
 }
 
@@ -1537,9 +1555,9 @@ function setupVideoLoadingIndicator() {
   let forcedVisible = false;
   let phaseTimer = null;
 
-  const setLabel = (text) => {
+  const setLabel = () => {
     const label = overlay.querySelector('.video-loading-text');
-    if (label && text) label.textContent = text;
+    if (label) label.textContent = '';
   };
 
   const clearPhaseTimer = () => {
@@ -1549,13 +1567,13 @@ function setupVideoLoadingIndicator() {
     }
   };
 
-  const show = (text) => {
-    setLabel(text || 'Carregando episódio...');
+  const show = () => {
+    setLabel();
     overlay.classList.add('visible');
     clearPhaseTimer();
     phaseTimer = setTimeout(() => {
       if (overlay.classList.contains('visible')) {
-        setLabel('Conexão lenta... tentando estabilizar');
+        setLabel();
       }
     }, 4500);
   };
@@ -1566,10 +1584,10 @@ function setupVideoLoadingIndicator() {
     overlay.classList.remove('visible');
   };
 
-  player.addEventListener('loadstart', () => show('Preparando vídeo...'));
-  player.addEventListener('waiting', () => show('Carregando episódio...'));
-  player.addEventListener('stalled', () => show('Conexão oscilando...'));
-  player.addEventListener('seeking', () => show('Buscando trecho...'));
+  player.addEventListener('loadstart', () => show());
+  player.addEventListener('waiting', () => show());
+  player.addEventListener('stalled', () => show());
+  player.addEventListener('seeking', () => show());
   player.addEventListener('canplay', hide);
   player.addEventListener('playing', hide);
   player.addEventListener('seeked', hide);
@@ -1577,7 +1595,7 @@ function setupVideoLoadingIndicator() {
   // Expose hook for other modules when forcing spinner is useful
   window.setVideoLoadingOverlay = (visible, text) => {
     forcedVisible = !!visible;
-    if (forcedVisible) show(text || 'Carregando episódio...');
+    if (forcedVisible) show();
     else hide();
   };
 }
