@@ -400,17 +400,86 @@
     
     // Volume slider
     if (volumeContainer) {
-      volumeContainer.addEventListener('click', (e) => {
+      let isDraggingVolume = false;
+      let activeVolumePointerId = null;
+
+      const setVolumeByClientX = (clientX) => {
         const rect = volumeContainer.getBoundingClientRect();
-        const percent = (e.clientX - rect.left) / rect.width;
+        if (!rect.width) return;
+        const percent = (clientX - rect.left) / rect.width;
         player.volume = Math.max(0, Math.min(1, percent));
         player.muted = false;
         if (volumeProgress) {
           volumeProgress.style.width = (player.volume * 100) + '%';
         }
         updateVolumeIcon();
-        // Save video volume preference
         localStorage.setItem('videoVolume', player.volume.toString());
+      };
+
+      const startVolumeDrag = (clientX, pointerId = null) => {
+        isDraggingVolume = true;
+        activeVolumePointerId = pointerId;
+        setVolumeByClientX(clientX);
+      };
+
+      const endVolumeDrag = (pointerId = null) => {
+        if (!isDraggingVolume) return;
+        if (activeVolumePointerId !== null && pointerId !== null && pointerId !== activeVolumePointerId) return;
+        isDraggingVolume = false;
+        activeVolumePointerId = null;
+      };
+
+      volumeContainer.addEventListener('click', (e) => {
+        setVolumeByClientX(e.clientX);
+      });
+
+      volumeContainer.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
+        startVolumeDrag(e.clientX, e.pointerId);
+        if (volumeContainer.setPointerCapture) {
+          try { volumeContainer.setPointerCapture(e.pointerId); } catch (_) {}
+        }
+      });
+
+      volumeContainer.addEventListener('pointermove', (e) => {
+        if (!isDraggingVolume) return;
+        if (activeVolumePointerId !== null && e.pointerId !== activeVolumePointerId) return;
+        e.preventDefault();
+        setVolumeByClientX(e.clientX);
+      });
+
+      document.addEventListener('pointermove', (e) => {
+        if (!isDraggingVolume) return;
+        if (activeVolumePointerId !== null && e.pointerId !== activeVolumePointerId) return;
+        setVolumeByClientX(e.clientX);
+      });
+
+      const finishPointerDrag = (e) => {
+        if (volumeContainer.releasePointerCapture) {
+          try { volumeContainer.releasePointerCapture(e.pointerId); } catch (_) {}
+        }
+        endVolumeDrag(e.pointerId);
+      };
+
+      volumeContainer.addEventListener('pointerup', finishPointerDrag);
+      document.addEventListener('pointerup', finishPointerDrag);
+      volumeContainer.addEventListener('pointercancel', (e) => endVolumeDrag(e.pointerId));
+      volumeContainer.addEventListener('lostpointercapture', () => endVolumeDrag());
+
+      volumeContainer.addEventListener('mousedown', (e) => {
+        if (isDraggingVolume) return;
+        e.preventDefault();
+        startVolumeDrag(e.clientX);
+      });
+
+      document.addEventListener('mousemove', (e) => {
+        if (!isDraggingVolume || activeVolumePointerId !== null) return;
+        setVolumeByClientX(e.clientX);
+      });
+
+      document.addEventListener('mouseup', () => {
+        if (activeVolumePointerId !== null) return;
+        endVolumeDrag();
       });
     }
     
@@ -848,17 +917,25 @@
 })();
 
 // Keyboard shortcuts for video player
-window.addEventListener('keydown', (e) => {
+document.addEventListener('keydown', (e) => {
     // PRIORIDADE 1: Se modal de vídeo está aberto, responder APENAS vídeo
     const videoModal = document.getElementById('video-modal');
     const player = document.getElementById('anime-player');
 
     const isFullscreen = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement;
-    const isVideoActive = (videoModal && videoModal.style.display === 'flex') || isFullscreen;
+    const modalVisible = !!(videoModal && (
+        getComputedStyle(videoModal).display !== 'none' ||
+        videoModal.style.display === 'flex' ||
+        videoModal.classList.contains('active')
+    ));
+    const isVideoActive = modalVisible || isFullscreen;
 
     if (player && isVideoActive) {
         // Don't trigger if user is typing in an input
-        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+        const target = e.target;
+        const tagName = target?.tagName || '';
+        const isTypingTarget = target?.isContentEditable || tagName === 'INPUT' || tagName === 'TEXTAREA';
+        if (isTypingTarget) return;
         const key = e.key.toLowerCase();
         const code = e.code || '';
         const isSpace = code === 'Space' || e.key === ' ' || e.key === 'Spacebar';
