@@ -699,7 +699,10 @@
             navigator.serviceWorker.addEventListener('controllerchange', () => {
               if (refreshing) return;
               refreshing = true;
-              window.location.reload();
+              try {
+                localStorage.setItem('aniverse_sw_updated_at', String(Date.now()));
+              } catch (_) {}
+              console.log('AniVerse: nova versão do Service Worker ativada; atualização será aplicada no próximo reload manual.');
             });
           } catch (_) {}
         });
