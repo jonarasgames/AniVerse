@@ -917,98 +917,81 @@
 })();
 
 // Keyboard shortcuts for video player
-document.addEventListener('keydown', (e) => {
-    // PRIORIDADE 1: Se modal de vídeo está aberto, responder APENAS vídeo
+function handleVideoHotkeys(e) {
+    if (e.__aniverseVideoHandled) return;
+
     const videoModal = document.getElementById('video-modal');
     const player = document.getElementById('anime-player');
+    if (!player) return;
 
-    const isFullscreen = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement;
-    const modalVisible = !!(videoModal && (
-        getComputedStyle(videoModal).display !== 'none' ||
-        videoModal.style.display === 'flex' ||
-        videoModal.classList.contains('active')
-    ));
-    const isVideoActive = modalVisible || isFullscreen;
+    const isFullscreen = !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement);
+    const modalVisible = !!(videoModal && getComputedStyle(videoModal).display !== 'none');
+    const hasVideoSource = !!(player.currentSrc || player.src);
+    const isVideoActive = (modalVisible && hasVideoSource) || isFullscreen;
+    if (!isVideoActive) return;
 
-    if (player && isVideoActive) {
-        // Don't trigger if user is typing in an input
-        const target = e.target;
-        const tagName = target?.tagName || '';
-        const isTypingTarget = target?.isContentEditable || tagName === 'INPUT' || tagName === 'TEXTAREA';
-        if (isTypingTarget) return;
-        const key = e.key.toLowerCase();
-        const code = e.code || '';
-        const isSpace = code === 'Space' || e.key === ' ' || e.key === 'Spacebar';
+    const target = e.target;
+    const tagName = (target?.tagName || '').toUpperCase();
+    const isTypingTarget = target?.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(tagName);
+    if (isTypingTarget) return;
 
-        // Prevenir ações padrão do navegador
-        if (isSpace || ['arrowleft', 'arrowright', 'arrowup', 'arrowdown', 'k', 'm', 'f'].includes(key) || code === 'KeyK') {
-            e.preventDefault();
-        }
-        
-        const togglePlayback = () => {
-            if (player.paused) {
-                player.play().catch(() => {});
-            } else {
-                player.pause();
-            }
-        };
+    const key = String(e.key || '').toLowerCase();
+    const code = String(e.code || '');
+    const isSpace = code === 'Space' || key === ' ' || key === 'spacebar';
+    const isHotkey = isSpace || ['arrowleft', 'arrowright', 'arrowup', 'arrowdown', 'k', 'm', 'f'].includes(key) || code === 'KeyK';
+    if (!isHotkey) return;
 
-        if (isSpace) {
-            togglePlayback();
-            return;
-        }
+    e.__aniverseVideoHandled = true;
+    e.preventDefault();
+    e.stopPropagation();
 
-        switch(key) {
-            case 'k':
-                togglePlayback();
-                break;
-            default:
-                if (code === 'KeyK') {
-                    togglePlayback();
-                }
-                break;
-            case 'arrowleft':
-                player.currentTime = Math.max(0, player.currentTime - 5);
-                break;
-                
-            case 'arrowright':
-                player.currentTime = Math.min(player.duration || 0, player.currentTime + 5);
-                break;
-                
-            case 'arrowup':
-                player.volume = Math.min(1, player.volume + 0.1);
-                player.muted = false;
-                updateVideoVolumeIcon();
-                // Save video volume preference
-                localStorage.setItem('videoVolume', player.volume.toString());
-                break;
-                
-            case 'arrowdown':
-                player.volume = Math.max(0, player.volume - 0.1);
-                updateVideoVolumeIcon();
-                // Save video volume preference
-                localStorage.setItem('videoVolume', player.volume.toString());
-                break;
-                
-            case 'm':
-                player.muted = !player.muted;
-                // Atualizar ícone de volume
-                updateVideoVolumeIcon();
-                // Save video mute preference
-                localStorage.setItem('videoMuted', player.muted.toString());
-                break;
-                
-            case 'f':
-                if (typeof toggleFullscreen === 'function') {
-                    toggleFullscreen();
-                }
-                break;
-        }
-        
-        // IMPORTANTE: Retornar aqui para NÃO processar comandos de música
+    const togglePlayback = () => {
+        if (player.paused) player.play().catch(() => {});
+        else player.pause();
+    };
+
+    if (isSpace) {
+        togglePlayback();
         return;
     }
-}, { capture: true });
+
+    switch (key) {
+        case 'k':
+            togglePlayback();
+            break;
+        case 'arrowleft':
+            player.currentTime = Math.max(0, player.currentTime - 5);
+            break;
+        case 'arrowright':
+            player.currentTime = Math.min(player.duration || 0, player.currentTime + 5);
+            break;
+        case 'arrowup':
+            player.volume = Math.min(1, player.volume + 0.1);
+            player.muted = false;
+            updateVideoVolumeIcon();
+            localStorage.setItem('videoVolume', player.volume.toString());
+            break;
+        case 'arrowdown':
+            player.volume = Math.max(0, player.volume - 0.1);
+            updateVideoVolumeIcon();
+            localStorage.setItem('videoVolume', player.volume.toString());
+            break;
+        case 'm':
+            player.muted = !player.muted;
+            updateVideoVolumeIcon();
+            localStorage.setItem('videoMuted', player.muted.toString());
+            break;
+        case 'f':
+            if (typeof toggleFullscreen === 'function') toggleFullscreen();
+            break;
+        default:
+            if (code === 'KeyK') togglePlayback();
+            break;
+    }
+}
+
+document.addEventListener('keydown', handleVideoHotkeys, { capture: true });
+window.addEventListener('keydown', handleVideoHotkeys, { capture: true });
 
 function updateVideoVolumeIcon() {
     const player = document.getElementById('anime-player');
