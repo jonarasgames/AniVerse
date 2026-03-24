@@ -1449,7 +1449,6 @@ function onVideoSetSource(player, episode, options = {}){
 
   const handleWaiting = () => {
     if (player.__adaptivePlayback?.token !== state.token) return;
-    window.setVideoLoadingOverlay?.(true);
     if (state.isTvEnvironment && !state.waitingRecoveryId) {
       try { player.pause(); } catch (_) {}
       state.waitingRecoveryId = setTimeout(() => {
@@ -1617,8 +1616,6 @@ function setupVideoLoadingIndicator() {
   };
 
   player.addEventListener('loadstart', () => show(true));
-  player.addEventListener('waiting', () => show(false));
-  player.addEventListener('stalled', () => show(false));
   player.addEventListener('canplay', hide);
   player.addEventListener('playing', hide);
   player.addEventListener('seeked', hide);

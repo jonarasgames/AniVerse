@@ -991,7 +991,20 @@ function handleVideoHotkeys(e) {
 }
 
 document.addEventListener('keydown', handleVideoHotkeys, { capture: true });
-window.addEventListener('keydown', handleVideoHotkeys, { capture: true });
+document.addEventListener('DOMContentLoaded', () => {
+    const player = document.getElementById('anime-player');
+    const container = document.getElementById('video-player-container');
+
+    if (container && !container.hasAttribute('tabindex')) {
+        container.setAttribute('tabindex', '0');
+    }
+    if (player && !player.hasAttribute('tabindex')) {
+        player.setAttribute('tabindex', '0');
+    }
+
+    if (container) container.addEventListener('keydown', handleVideoHotkeys, { capture: true });
+    if (player) player.addEventListener('keydown', handleVideoHotkeys, { capture: true });
+});
 
 function updateVideoVolumeIcon() {
     const player = document.getElementById('anime-player');
