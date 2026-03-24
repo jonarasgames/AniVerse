@@ -2,7 +2,40 @@
 (function() {
     'use strict';
 
-    // Wait for DOM to be ready
+    function getBufferedAheadSeconds(player) {
+        try {
+            if (!player || !player.buffered || !player.buffered.length) return 0;
+            const now = Number(player.currentTime) || 0;
+            for (let i = 0; i < player.buffered.length; i += 1) {
+                const start = player.buffered.start(i);
+                const end = player.buffered.end(i);
+                if (now >= start && now <= end) {
+                    return Math.max(0, end - now);
+                }
+            }
+        } catch (_) {}
+        return 0;
+    }
+
+    async function probeRangeSupport(url) {
+        if (!url || url.startsWith('blob:')) return { supported: null, reason: 'blob' };
+        try {
+            const resp = await fetch(url, {
+                method: 'GET',
+                headers: { Range: 'bytes=0-1' },
+                mode: 'cors',
+                cache: 'no-store'
+            });
+            return {
+                supported: resp.status === 206,
+                status: resp.status,
+                acceptRanges: resp.headers.get('accept-ranges') || ''
+            };
+        } catch (error) {
+            return { supported: null, reason: 'cors-or-network', error: String(error) };
+        }
+    }
+
     function initPlayerFixes() {
         const player = document.getElementById('anime-player');
         if (!player) {
@@ -10,32 +43,121 @@
             return;
         }
 
-        // Fix: Ensure player has proper initialization
+        player.setAttribute('playsinline', '');
+        player.setAttribute('webkit-playsinline', 'true');
+        player.setAttribute('crossorigin', 'anonymous');
+        player.preload = 'auto';
+
+        const stallState = {
+            attempts: 0,
+            maxAttempts: 6,
+            inRecovery: false,
+            lastAt: 0,
+            timer: null,
+            lastSrc: ''
+        };
+
+        const clearRecoveryTimer = () => {
+            if (stallState.timer) {
+                clearTimeout(stallState.timer);
+                stallState.timer = null;
+            }
+        };
+
+        const resetStallState = () => {
+            stallState.inRecovery = false;
+            stallState.attempts = 0;
+            clearRecoveryTimer();
+        };
+
+        const recoverFromStall = (reason) => {
+            const now = Date.now();
+            if (stallState.inRecovery) return;
+            if (now - stallState.lastAt < 700) return;
+            if (stallState.attempts >= stallState.maxAttempts) {
+                showVideoError('Internet/servidor instável. Tentando manter a reprodução...');
+                return;
+            }
+
+            stallState.lastAt = now;
+            stallState.attempts += 1;
+            stallState.inRecovery = true;
+
+            const bufferedAhead = getBufferedAheadSeconds(player);
+            const hasSource = !!(player.currentSrc || player.src);
+
+            // Recovery strategy: do not reload from scratch; try lightweight resume first.
+            if (hasSource && bufferedAhead >= 0.4) {
+                player.play().catch(() => {});
+                stallState.inRecovery = false;
+                return;
+            }
+
+            if (hasSource) {
+                try {
+                    const jumpTo = Math.max(0, (Number(player.currentTime) || 0) - 0.2);
+                    player.currentTime = jumpTo;
+                } catch (_) {}
+            }
+
+            clearRecoveryTimer();
+            stallState.timer = setTimeout(() => {
+                player.play().catch(() => {});
+                stallState.inRecovery = false;
+            }, 450);
+
+            showVideoError(`Conexão instável. Recuperando reprodução (${stallState.attempts}/${stallState.maxAttempts})...`);
+            if (reason === 'stalled') {
+                console.warn('Player: Stalled - recovery attempt', stallState.attempts);
+            }
+        };
+
         player.addEventListener('loadstart', function() {
-            console.log('Player: Loading video...');
             clearVideoError();
+            const src = player.currentSrc || player.src || '';
+            if (src && stallState.lastSrc !== src) {
+                stallState.lastSrc = src;
+                resetStallState();
+                probeRangeSupport(src).then((result) => {
+                    window.__lastTvRangeProbe = { src, ...result, at: Date.now() };
+                    if (result.supported === false) {
+                        console.warn('Range request não suportado (status != 206). O streaming pode travar neste host.', result);
+                    }
+                }).catch(() => {});
+            }
         });
 
         player.addEventListener('loadedmetadata', function() {
-            console.log('Player: Metadata loaded');
-        });
-
-        player.addEventListener('canplay', function() {
-            console.log('Player: Can play');
             clearVideoError();
         });
 
+        player.addEventListener('canplay', function() {
+            clearVideoError();
+            stallState.inRecovery = false;
+        });
+
+        player.addEventListener('playing', function() {
+            clearVideoError();
+            resetStallState();
+        });
+
+        player.addEventListener('progress', function() {
+            if (getBufferedAheadSeconds(player) >= 1.2) {
+                clearVideoError();
+            }
+        });
+
         player.addEventListener('waiting', function() {
-            console.log('Player: Buffering...');
+            recoverFromStall('waiting');
         });
 
         player.addEventListener('stalled', function() {
-            console.warn('Player: Stalled');
-            showVideoError('Carregamento pausado. Verificando conexão...');
+            recoverFromStall('stalled');
         });
 
-        // Fix: Handle player clicks for play/pause
+        // Keep click-to-toggle for non-TV environments only.
         player.addEventListener('click', function() {
+            if (typeof window.__isTvMode === 'function' && window.__isTvMode()) return;
             if (player.paused) {
                 player.play().catch(err => {
                     console.error('Play failed:', err);
@@ -46,8 +168,9 @@
             }
         });
 
-        // Fix: Keyboard controls
+        // Keyboard shortcuts for desktop fallback only. TV mode has dedicated remote handling.
         document.addEventListener('keydown', function(e) {
+            if (typeof window.__isTvMode === 'function' && window.__isTvMode()) return;
             const modal = document.getElementById('video-modal');
             if (!modal || (!modal.classList.contains('show') && modal.style.display !== 'flex')) return;
 
@@ -67,7 +190,7 @@
                     break;
                 case 'ArrowRight':
                     e.preventDefault();
-                    player.currentTime = Math.min(player.duration, player.currentTime + 5);
+                    player.currentTime = Math.min(player.duration || 0, player.currentTime + 5);
                     break;
                 case 'ArrowUp':
                     e.preventDefault();
@@ -81,10 +204,13 @@
                     e.preventDefault();
                     player.muted = !player.muted;
                     break;
-                case 'f':
+                case 'f': {
                     e.preventDefault();
                     const fullscreenBtn = document.getElementById('fullscreen-btn');
                     if (fullscreenBtn) fullscreenBtn.click();
+                    break;
+                }
+                default:
                     break;
             }
         });
@@ -128,14 +254,12 @@
         if (el) el.remove();
     }
 
-    // Initialize when DOM is ready
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initPlayerFixes);
     } else {
         initPlayerFixes();
     }
 
-    // Export functions to window
     window.playerFixesShowError = showVideoError;
     window.playerFixesClearError = clearVideoError;
 })();
