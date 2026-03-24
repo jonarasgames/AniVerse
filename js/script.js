@@ -1359,9 +1359,6 @@ function onVideoSetSource(player, episode, options = {}){
         if (player.__adaptivePlayback?.token !== state.token) return;
         const resumeFrom = player.currentTime || 0;
         const wasPlaying = !player.paused;
-        showVideoError(`Conexão estabilizada. Voltando para ${target.label || 'qualidade maior'}...`);
-        setTimeout(clearVideoError, 1400);
-
         state.fallbackInUse = targetIndex > 0;
         state.retriesInSource = 0;
         setSource(targetIndex, { preserveTime: resumeFrom, autoPlay: wasPlaying, cacheBust: true });
@@ -1552,8 +1549,11 @@ function setupVideoLoadingIndicator() {
   const overlay = document.getElementById('video-loading-overlay');
   if (!player || !overlay) return;
 
-  let forcedVisible = false;
   let phaseTimer = null;
+  let showDelayTimer = null;
+  let lastShownAt = 0;
+  const SHOW_DELAY_MS = 420;
+  const MIN_VISIBLE_MS = 220;
 
   const setLabel = () => {
     const label = overlay.querySelector('.video-loading-text');
@@ -1567,9 +1567,17 @@ function setupVideoLoadingIndicator() {
     }
   };
 
-  const show = () => {
+  const clearShowDelay = () => {
+    if (showDelayTimer) {
+      clearTimeout(showDelayTimer);
+      showDelayTimer = null;
+    }
+  };
+
+  const showNow = () => {
     setLabel();
     overlay.classList.add('visible');
+    lastShownAt = Date.now();
     clearPhaseTimer();
     phaseTimer = setTimeout(() => {
       if (overlay.classList.contains('visible')) {
@@ -1578,26 +1586,50 @@ function setupVideoLoadingIndicator() {
     }, 4500);
   };
 
-  const hide = () => {
-    if (forcedVisible) return;
+  const show = (immediate = false) => {
+    clearShowDelay();
+    if (immediate) {
+      showNow();
+      return;
+    }
+    showDelayTimer = setTimeout(() => {
+      showDelayTimer = null;
+      showNow();
+    }, SHOW_DELAY_MS);
+  };
+
+  const hideNow = () => {
     clearPhaseTimer();
     overlay.classList.remove('visible');
   };
 
-  player.addEventListener('loadstart', () => show());
-  player.addEventListener('waiting', () => show());
-  player.addEventListener('stalled', () => show());
-  player.addEventListener('seeking', () => show());
+  const hide = () => {
+    clearShowDelay();
+    if (!overlay.classList.contains('visible')) return;
+    const elapsed = Date.now() - lastShownAt;
+    if (elapsed < MIN_VISIBLE_MS) {
+      setTimeout(() => {
+        hideNow();
+      }, MIN_VISIBLE_MS - elapsed);
+      return;
+    }
+    hideNow();
+  };
+
+  player.addEventListener('loadstart', () => show(true));
+  player.addEventListener('waiting', () => show(false));
+  player.addEventListener('stalled', () => show(false));
   player.addEventListener('canplay', hide);
   player.addEventListener('playing', hide);
   player.addEventListener('seeked', hide);
 
-  // Expose hook for other modules when forcing spinner is useful
-  window.setVideoLoadingOverlay = (visible, text) => {
-    forcedVisible = !!visible;
-    if (forcedVisible) show();
+  // Simple external hook: explicit show/hide, no sticky lock state.
+  window.setVideoLoadingOverlay = (visible) => {
+    if (visible) show(true);
     else hide();
   };
+
+  player.addEventListener('pause', hideNow);
 }
 
 // openEpisode helper: set src, resume, banner, opening

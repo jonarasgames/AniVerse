@@ -400,17 +400,86 @@
     
     // Volume slider
     if (volumeContainer) {
-      volumeContainer.addEventListener('click', (e) => {
+      let isDraggingVolume = false;
+      let activeVolumePointerId = null;
+
+      const setVolumeByClientX = (clientX) => {
         const rect = volumeContainer.getBoundingClientRect();
-        const percent = (e.clientX - rect.left) / rect.width;
+        if (!rect.width) return;
+        const percent = (clientX - rect.left) / rect.width;
         player.volume = Math.max(0, Math.min(1, percent));
         player.muted = false;
         if (volumeProgress) {
           volumeProgress.style.width = (player.volume * 100) + '%';
         }
         updateVolumeIcon();
-        // Save video volume preference
         localStorage.setItem('videoVolume', player.volume.toString());
+      };
+
+      const startVolumeDrag = (clientX, pointerId = null) => {
+        isDraggingVolume = true;
+        activeVolumePointerId = pointerId;
+        setVolumeByClientX(clientX);
+      };
+
+      const endVolumeDrag = (pointerId = null) => {
+        if (!isDraggingVolume) return;
+        if (activeVolumePointerId !== null && pointerId !== null && pointerId !== activeVolumePointerId) return;
+        isDraggingVolume = false;
+        activeVolumePointerId = null;
+      };
+
+      volumeContainer.addEventListener('click', (e) => {
+        setVolumeByClientX(e.clientX);
+      });
+
+      volumeContainer.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
+        startVolumeDrag(e.clientX, e.pointerId);
+        if (volumeContainer.setPointerCapture) {
+          try { volumeContainer.setPointerCapture(e.pointerId); } catch (_) {}
+        }
+      });
+
+      volumeContainer.addEventListener('pointermove', (e) => {
+        if (!isDraggingVolume) return;
+        if (activeVolumePointerId !== null && e.pointerId !== activeVolumePointerId) return;
+        e.preventDefault();
+        setVolumeByClientX(e.clientX);
+      });
+
+      document.addEventListener('pointermove', (e) => {
+        if (!isDraggingVolume) return;
+        if (activeVolumePointerId !== null && e.pointerId !== activeVolumePointerId) return;
+        setVolumeByClientX(e.clientX);
+      });
+
+      const finishPointerDrag = (e) => {
+        if (volumeContainer.releasePointerCapture) {
+          try { volumeContainer.releasePointerCapture(e.pointerId); } catch (_) {}
+        }
+        endVolumeDrag(e.pointerId);
+      };
+
+      volumeContainer.addEventListener('pointerup', finishPointerDrag);
+      document.addEventListener('pointerup', finishPointerDrag);
+      volumeContainer.addEventListener('pointercancel', (e) => endVolumeDrag(e.pointerId));
+      volumeContainer.addEventListener('lostpointercapture', () => endVolumeDrag());
+
+      volumeContainer.addEventListener('mousedown', (e) => {
+        if (isDraggingVolume) return;
+        e.preventDefault();
+        startVolumeDrag(e.clientX);
+      });
+
+      document.addEventListener('mousemove', (e) => {
+        if (!isDraggingVolume || activeVolumePointerId !== null) return;
+        setVolumeByClientX(e.clientX);
+      });
+
+      document.addEventListener('mouseup', () => {
+        if (activeVolumePointerId !== null) return;
+        endVolumeDrag();
       });
     }
     
@@ -848,90 +917,81 @@
 })();
 
 // Keyboard shortcuts for video player
-window.addEventListener('keydown', (e) => {
-    // PRIORIDADE 1: Se modal de vídeo está aberto, responder APENAS vídeo
+function handleVideoHotkeys(e) {
+    if (e.__aniverseVideoHandled) return;
+
     const videoModal = document.getElementById('video-modal');
     const player = document.getElementById('anime-player');
+    if (!player) return;
 
-    const isFullscreen = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement;
-    const isVideoActive = (videoModal && videoModal.style.display === 'flex') || isFullscreen;
+    const isFullscreen = !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement);
+    const modalVisible = !!(videoModal && getComputedStyle(videoModal).display !== 'none');
+    const hasVideoSource = !!(player.currentSrc || player.src);
+    const isVideoActive = (modalVisible && hasVideoSource) || isFullscreen;
+    if (!isVideoActive) return;
 
-    if (player && isVideoActive) {
-        // Don't trigger if user is typing in an input
-        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-        const key = e.key.toLowerCase();
-        const code = e.code || '';
-        const isSpace = code === 'Space' || e.key === ' ' || e.key === 'Spacebar';
+    const target = e.target;
+    const tagName = (target?.tagName || '').toUpperCase();
+    const isTypingTarget = target?.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(tagName);
+    if (isTypingTarget) return;
 
-        // Prevenir ações padrão do navegador
-        if (isSpace || ['arrowleft', 'arrowright', 'arrowup', 'arrowdown', 'k', 'm', 'f'].includes(key) || code === 'KeyK') {
-            e.preventDefault();
-        }
-        
-        const togglePlayback = () => {
-            if (player.paused) {
-                player.play().catch(() => {});
-            } else {
-                player.pause();
-            }
-        };
+    const key = String(e.key || '').toLowerCase();
+    const code = String(e.code || '');
+    const isSpace = code === 'Space' || key === ' ' || key === 'spacebar';
+    const isHotkey = isSpace || ['arrowleft', 'arrowright', 'arrowup', 'arrowdown', 'k', 'm', 'f'].includes(key) || code === 'KeyK';
+    if (!isHotkey) return;
 
-        if (isSpace) {
-            togglePlayback();
-            return;
-        }
+    e.__aniverseVideoHandled = true;
+    e.preventDefault();
+    e.stopPropagation();
 
-        switch(key) {
-            case 'k':
-                togglePlayback();
-                break;
-            default:
-                if (code === 'KeyK') {
-                    togglePlayback();
-                }
-                break;
-            case 'arrowleft':
-                player.currentTime = Math.max(0, player.currentTime - 5);
-                break;
-                
-            case 'arrowright':
-                player.currentTime = Math.min(player.duration || 0, player.currentTime + 5);
-                break;
-                
-            case 'arrowup':
-                player.volume = Math.min(1, player.volume + 0.1);
-                player.muted = false;
-                updateVideoVolumeIcon();
-                // Save video volume preference
-                localStorage.setItem('videoVolume', player.volume.toString());
-                break;
-                
-            case 'arrowdown':
-                player.volume = Math.max(0, player.volume - 0.1);
-                updateVideoVolumeIcon();
-                // Save video volume preference
-                localStorage.setItem('videoVolume', player.volume.toString());
-                break;
-                
-            case 'm':
-                player.muted = !player.muted;
-                // Atualizar ícone de volume
-                updateVideoVolumeIcon();
-                // Save video mute preference
-                localStorage.setItem('videoMuted', player.muted.toString());
-                break;
-                
-            case 'f':
-                if (typeof toggleFullscreen === 'function') {
-                    toggleFullscreen();
-                }
-                break;
-        }
-        
-        // IMPORTANTE: Retornar aqui para NÃO processar comandos de música
+    const togglePlayback = () => {
+        if (player.paused) player.play().catch(() => {});
+        else player.pause();
+    };
+
+    if (isSpace) {
+        togglePlayback();
         return;
     }
-}, { capture: true });
+
+    switch (key) {
+        case 'k':
+            togglePlayback();
+            break;
+        case 'arrowleft':
+            player.currentTime = Math.max(0, player.currentTime - 5);
+            break;
+        case 'arrowright':
+            player.currentTime = Math.min(player.duration || 0, player.currentTime + 5);
+            break;
+        case 'arrowup':
+            player.volume = Math.min(1, player.volume + 0.1);
+            player.muted = false;
+            updateVideoVolumeIcon();
+            localStorage.setItem('videoVolume', player.volume.toString());
+            break;
+        case 'arrowdown':
+            player.volume = Math.max(0, player.volume - 0.1);
+            updateVideoVolumeIcon();
+            localStorage.setItem('videoVolume', player.volume.toString());
+            break;
+        case 'm':
+            player.muted = !player.muted;
+            updateVideoVolumeIcon();
+            localStorage.setItem('videoMuted', player.muted.toString());
+            break;
+        case 'f':
+            if (typeof toggleFullscreen === 'function') toggleFullscreen();
+            break;
+        default:
+            if (code === 'KeyK') togglePlayback();
+            break;
+    }
+}
+
+document.addEventListener('keydown', handleVideoHotkeys, { capture: true });
+window.addEventListener('keydown', handleVideoHotkeys, { capture: true });
 
 function updateVideoVolumeIcon() {
     const player = document.getElementById('anime-player');
