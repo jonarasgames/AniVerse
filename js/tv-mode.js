@@ -272,6 +272,7 @@
     if (!container) return null;
     if (container.matches('#full-catalog-grid, #animes-grid, #movies-grid, #ovas-grid, #continue-grid')) return 'grid';
     if (container.matches('#music-grid')) return 'horizontal';
+    if (container.matches('#custom-video-controls .controls-row')) return 'horizontal';
     if (container.matches('.music-tracks')) return 'vertical';
     if (container.matches('#new-releases-grid, #continue-watching-grid, #collections-grid, .collection-animes, .tv-season-strip, .tv-episode-strip, .tv-similar-strip, .pronoun-pills, .customization-tabs, #music-mini-player .mini-player-controls')) return 'horizontal';
     if (container.matches('.color-grid, .background-images-grid, .character-grid, .frame-grid')) return 'grid';
@@ -280,13 +281,13 @@
 
   function getNavigationContainer(element) {
     return element?.closest?.(
-      '#new-releases-grid, #continue-watching-grid, #full-catalog-grid, #animes-grid, #movies-grid, #ovas-grid, #continue-grid, #collections-grid, .collection-animes, #music-grid, .music-tracks, .tv-season-strip, .tv-episode-strip, .tv-similar-strip, .pronoun-pills, .customization-tabs, .color-grid, .background-images-grid, .character-grid, .frame-grid, #music-mini-player .mini-player-controls'
+      '#new-releases-grid, #continue-watching-grid, #full-catalog-grid, #animes-grid, #movies-grid, #ovas-grid, #continue-grid, #collections-grid, .collection-animes, #music-grid, .music-tracks, .tv-season-strip, .tv-episode-strip, .tv-similar-strip, .pronoun-pills, .customization-tabs, .color-grid, .background-images-grid, .character-grid, .frame-grid, #music-mini-player .mini-player-controls, #custom-video-controls .controls-row'
     ) || null;
   }
 
   function getContainerItems(container) {
     if (!container) return [];
-    const items = Array.from(container.querySelectorAll('.tv-focusable, .anime-card, .music-card, .collection-card, .tv-episode-button, .tv-similar-card, .tab-btn, .pronoun-pill, .color-option, .frame-option, .bg-image-option, .character-option, #save-profile-btn, #close-profile-modal, #play-pause-btn, #next-episode-btn, #fullscreen-btn, #skip-opening-btn, #music-mini-player .mini-control-btn, #music-fullscreen-modal .music-fs-control-btn, #music-fullscreen-modal #music-fs-close-btn'))
+    const items = Array.from(container.querySelectorAll('.tv-focusable, .anime-card, .music-card, .collection-card, .tv-episode-button, .tv-similar-card, .tab-btn, .pronoun-pill, .color-option, .frame-option, .bg-image-option, .character-option, #save-profile-btn, #close-profile-modal, #play-pause-btn, #next-episode-btn, #fullscreen-btn, #skip-opening-btn, #close-video, #music-mini-player .mini-control-btn, #music-fullscreen-modal .music-fs-control-btn, #music-fullscreen-modal #music-fs-close-btn'))
       .filter((element) => isVisible(element) && !element.classList.contains('tv-sidebar-link'));
 
     items.forEach((item) => {
@@ -346,16 +347,33 @@
     const rowIndex = rows.indexOf(container);
     if (rowIndex === -1) return false;
 
-    const nextIndex = rowIndex + (direction === KEY.DOWN ? 1 : -1);
-    if (nextIndex < 0 || nextIndex >= rows.length) return false;
-
     const currentItems = getContainerItems(container);
-    const nextItems = getContainerItems(rows[nextIndex]);
-    if (!nextItems.length) return false;
-
     const currentIndex = Math.max(0, currentItems.indexOf(currentFocus));
-    focusElement(nextItems[Math.min(currentIndex, nextItems.length - 1)]);
-    return true;
+
+    const pickFromRow = (row) => {
+      const items = getContainerItems(row);
+      if (!items.length) return false;
+      focusElement(items[Math.min(currentIndex, items.length - 1)]);
+      return true;
+    };
+
+    const nextIndex = rowIndex + (direction === KEY.DOWN ? 1 : -1);
+    if (nextIndex >= 0 && nextIndex < rows.length && pickFromRow(rows[nextIndex])) {
+      return true;
+    }
+
+    // Home-specific fallback: force jump between Continue Watching and New Releases when possible.
+    if (direction === KEY.UP && container.matches('#new-releases-grid')) {
+      const continueRow = document.querySelector('#home-section #continue-watching-grid');
+      if (continueRow && pickFromRow(continueRow)) return true;
+    }
+
+    if (direction === KEY.DOWN && container.matches('#continue-watching-grid')) {
+      const releasesRow = document.querySelector('#home-section #new-releases-grid');
+      if (releasesRow && pickFromRow(releasesRow)) return true;
+    }
+
+    return false;
   }
 
   function moveAcrossMusicColumns(direction, currentSection) {
@@ -550,14 +568,14 @@
     if (active === document.body && navigateWithinContainer(direction)) {
       return;
     }
-    if (active.id === 'video-modal') {
+    if (active.id === 'video-modal' && currentFocus && currentFocus.id === 'play-pause-btn' && (direction === KEY.LEFT || direction === KEY.RIGHT)) {
       const nativeControls = window.getNativeTvVideoControls && window.getNativeTvVideoControls();
-      if (nativeControls?.isActive?.() && (direction === KEY.LEFT || direction === KEY.RIGHT)) {
+      if (nativeControls?.isActive?.()) {
         nativeControls.seekBy(direction === KEY.RIGHT ? 10 : -10);
         return;
       }
       const player = document.getElementById('anime-player');
-      if (player && (direction === KEY.LEFT || direction === KEY.RIGHT)) {
+      if (player) {
         player.currentTime = Math.max(0, Math.min(player.duration || 0, player.currentTime + (direction === KEY.RIGHT ? 10 : -10)));
         return;
       }
@@ -1254,6 +1272,42 @@
     window.__focusTvMusicPlayer = focusMusicPlayerPrimaryControl;
   }
 
+
+  function resetTvStateOnReload() {
+    if (!isTvMode()) return;
+    try { history.scrollRestoration = 'manual'; } catch (_) {}
+    const navEntry = (performance.getEntriesByType && performance.getEntriesByType('navigation')?.[0]) || null;
+    const wasReload = !!(navEntry && navEntry.type === 'reload');
+    if (!wasReload) return;
+
+    const videoModal = document.getElementById('video-modal');
+    if (videoModal && window.getComputedStyle(videoModal).display !== 'none') {
+      document.getElementById('close-video')?.click();
+    }
+
+    const detailsModal = document.getElementById('tv-details-modal');
+    if (detailsModal) detailsModal.classList.remove('active');
+
+    const musicFullscreen = document.getElementById('music-fullscreen-modal');
+    if (musicFullscreen) musicFullscreen.classList.remove('visible');
+
+    const player = document.getElementById('anime-player');
+    if (player) {
+      try { player.pause(); } catch (_) {}
+    }
+
+    const music = document.getElementById('music-playing-audio');
+    if (music) {
+      try { music.pause(); } catch (_) {}
+      music.currentTime = 0;
+    }
+
+    if (typeof window.showSection === 'function') {
+      window.showSection('home');
+    }
+    window.scrollTo(0, 0);
+  }
+
   function init() {
     try {
       const detected = detectTvMode();
@@ -1270,6 +1324,7 @@
       tvEnabled = true;
       document.body.classList.add('tv-mode');
       forceDarkMode();
+      resetTvStateOnReload();
       decorateSidebar();
       decorateDynamicElements(document);
       decorateInputs();
