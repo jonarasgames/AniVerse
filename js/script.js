@@ -1308,8 +1308,29 @@ function onVideoSetSource(player, episode, options = {}){
     clearVideoError();
 
     player.pause();
+    if (window.__tvMsePlayer && typeof window.__tvMsePlayer.cleanup === 'function') {
+      window.__tvMsePlayer.cleanup(player);
+    }
     player.removeAttribute('src');
     while (player.firstChild) player.removeChild(player.firstChild);
+
+    const shouldUseTvMse = !options.forceHtmlTag && state.isTvEnvironment
+      && window.__tvMsePlayer
+      && typeof window.__tvMsePlayer.canUseForUrl === 'function'
+      && window.__tvMsePlayer.canUseForUrl(nextUrl);
+
+    if (shouldUseTvMse && typeof window.__tvMsePlayer.load === 'function') {
+      window.__tvMsePlayer.load(player, nextUrl, { resumeTime: preserveTime }).then((loaded) => {
+        if (!loaded || player.__adaptivePlayback?.token !== state.token) {
+          setSource(index, { ...options, cacheBust: true, forceHtmlTag: true });
+          return;
+        }
+        setLoadTimeout();
+      }).catch(() => {
+        setSource(index, { ...options, cacheBust: true, forceHtmlTag: true });
+      });
+      return;
+    }
 
     const sourceEl = document.createElement('source');
     sourceEl.src = nextUrl;
@@ -1476,6 +1497,9 @@ function onVideoSetSource(player, episode, options = {}){
 
   player.__adaptiveCleanup = () => {
     clearTimers();
+    if (window.__tvMsePlayer && typeof window.__tvMsePlayer.cleanup === 'function') {
+      window.__tvMsePlayer.cleanup(player);
+    }
     if (state.upgradeIntervalId) {
       clearInterval(state.upgradeIntervalId);
       state.upgradeIntervalId = null;
