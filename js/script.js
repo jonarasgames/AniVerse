@@ -1359,9 +1359,6 @@ function onVideoSetSource(player, episode, options = {}){
         if (player.__adaptivePlayback?.token !== state.token) return;
         const resumeFrom = player.currentTime || 0;
         const wasPlaying = !player.paused;
-        showVideoError(`Conexão estabilizada. Voltando para ${target.label || 'qualidade maior'}...`);
-        setTimeout(clearVideoError, 1400);
-
         state.fallbackInUse = targetIndex > 0;
         state.retriesInSource = 0;
         setSource(targetIndex, { preserveTime: resumeFrom, autoPlay: wasPlaying, cacheBust: true });
