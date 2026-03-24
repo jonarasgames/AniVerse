@@ -19,8 +19,29 @@
     if(show) this.skipBtn.textContent = `⏩ Pular (${Math.ceil(Math.max(0,this.opening.end - t))}s)`;
   };
 
+  function clearCustomMiniPlayer(){
+    const mini = document.getElementById('mini-player');
+    const placeholder = document.getElementById('anime-player-placeholder');
+    const player = document.getElementById('anime-player');
+    const container = document.getElementById('video-player-container');
+    if (mini && player && container && placeholder && mini.contains(player)) {
+      container.appendChild(player);
+    }
+    try { mini?.remove(); } catch(e) {}
+    try { placeholder?.remove(); } catch(e) {}
+  }
+
+  function isCompactMobileViewport(){
+    try {
+      return window.matchMedia('(max-width: 768px)').matches || (window.innerWidth || 0) <= 768;
+    } catch (_) {
+      return (window.innerWidth || 0) <= 768;
+    }
+  }
+
   function showCustomMiniPlayer(player){
     if(!player) return;
+    if (isCompactMobileViewport()) return;
     let mini = document.getElementById('mini-player');
     if(!mini){ 
       mini = document.createElement('div'); 
@@ -683,7 +704,31 @@
     window.updateOpeningData = function(data){ window.currentOpeningData = data && typeof data.start === 'number' ? data : null; if(skipCtrl && typeof skipCtrl.setOpening === 'function') skipCtrl.setOpening(window.currentOpeningData); };
 
     const pipBtn = safe('pip-btn');
-    if (pipBtn) pipBtn.addEventListener('click', async ()=>{ try { if (player.requestPictureInPicture) await player.requestPictureInPicture(); else showCustomMiniPlayer(player); } catch(e){ console.warn('PiP error', e); showCustomMiniPlayer(player); } });
+    if (pipBtn) {
+      const syncPipButton = () => {
+        const compactMobile = isCompactMobileViewport();
+        pipBtn.style.display = compactMobile ? 'none' : '';
+        if (compactMobile) clearCustomMiniPlayer();
+      };
+
+      syncPipButton();
+      window.addEventListener('resize', syncPipButton);
+      window.addEventListener('orientationchange', syncPipButton);
+
+      pipBtn.addEventListener('click', async ()=>{
+        if (isCompactMobileViewport()) {
+          await toggleFullscreen();
+          return;
+        }
+        try {
+          if (player.requestPictureInPicture) await player.requestPictureInPicture();
+          else showCustomMiniPlayer(player);
+        } catch(e){
+          console.warn('PiP error', e);
+          showCustomMiniPlayer(player);
+        }
+      });
+    }
 
     const fsBtn = safe('fullscreen-btn'); if (fsBtn) fsBtn.addEventListener('click', toggleFullscreen);
     
@@ -796,6 +841,7 @@
   });
 
   window.showCustomMiniPlayer = showCustomMiniPlayer;
+  window.clearCustomMiniPlayer = clearCustomMiniPlayer;
   window.showVideoError = showVideoError;
   window.clearVideoError = clearVideoError;
   window.toggleFullscreen = toggleFullscreen;

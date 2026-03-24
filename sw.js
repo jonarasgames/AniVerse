@@ -1,5 +1,5 @@
-const STATIC_CACHE = 'aniverse-static-v9';
-const RUNTIME_CACHE = 'aniverse-runtime-v9';
+const STATIC_CACHE = 'aniverse-static-v10';
+const RUNTIME_CACHE = 'aniverse-runtime-v10';
 
 const APP_SHELL = [
   './',
@@ -23,7 +23,8 @@ self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(STATIC_CACHE)
       .then(cache => cache.addAll(APP_SHELL))
-        );
+      .then(() => self.skipWaiting())
+  );
 });
 
 self.addEventListener('activate', event => {
@@ -94,4 +95,10 @@ self.addEventListener('fetch', event => {
     return;
   }
   event.respondWith(cacheFirst(event.request));
+});
+
+self.addEventListener('message', event => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });

@@ -4733,18 +4733,7 @@ html.theme-light .inplace-duration-view {
 }
 
 .video-loading-text {
-    font-weight: 800;
-    font-size: 14px;
-    color: #fff;
-    text-shadow: 0 2px 12px rgba(0,0,0,.55);
-    letter-spacing: .25px;
-    text-align: center;
-}
-
-.video-loading-text::after {
-    content: ' • sem travar';
-    font-weight: 500;
-    opacity: .78;
+    display: none;
 }
 
 .video-loading-overlay::after {
@@ -4779,4 +4768,197 @@ html.theme-light .inplace-duration-view {
     0% { clip-path: inset(0 100% 0 0); }
     50% { clip-path: inset(0 0 0 0); }
     100% { clip-path: inset(0 0 0 100%); }
+}
+
+/* Stronger mobile layout fixes */
+@media (max-width: 768px) {
+    html, body {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+
+    body {
+        padding-bottom: 84px;
+    }
+
+    .container,
+    header .container,
+    .hero,
+    .hero-content,
+    .content-section,
+    .modal-content,
+    .search-inline-results,
+    .search-suggestions {
+        max-width: 100%;
+    }
+
+    .container {
+        width: 100%;
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    header .container {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+
+    nav ul {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .hero {
+        border-radius: 16px;
+        min-height: auto;
+    }
+
+    .hero-content {
+        padding: 18px 14px;
+    }
+
+    .hero-content h2 {
+        font-size: clamp(1.6rem, 7vw, 2.1rem);
+        line-height: 1.15;
+    }
+
+    .hero-content p,
+    .section-description,
+    .anime-meta,
+    .collection-description {
+        font-size: 0.95rem;
+    }
+
+    .search-bar {
+        flex-wrap: wrap;
+    }
+
+    .search-bar input,
+    .search-bar button,
+    .search-bar .btn {
+        width: 100%;
+    }
+
+    .anime-grid,
+    #full-catalog-grid,
+    #animes-grid,
+    #movies-grid,
+    #ovas-grid,
+    #continue-grid,
+    #continue-watching-grid,
+    #new-releases-grid,
+    #collections-grid,
+    .collections-grid,
+    .collection-animes,
+    #downloads-grid,
+    #music-grid {
+        grid-template-columns: minmax(0, 1fr) !important;
+        grid-auto-flow: row;
+        grid-auto-columns: unset;
+        gap: 14px;
+        overflow-x: hidden;
+    }
+
+    .anime-card,
+    .collection-card,
+    .download-card,
+    .news-card,
+    .music-card,
+    .episode-card {
+        min-width: 0;
+        width: 100%;
+    }
+
+    .anime-card,
+    .collection-card {
+        grid-template-columns: 1fr !important;
+    }
+
+    .anime-thumbnail,
+    .collection-thumbnail,
+    .music-cover {
+        aspect-ratio: 16 / 9;
+    }
+
+    .music-section {
+        margin-bottom: 18px;
+    }
+
+    .music-tracks {
+        grid-template-columns: 1fr;
+        overflow-x: hidden;
+    }
+
+    #video-modal {
+        padding: 0;
+    }
+
+    #video-modal .modal-content,
+    #video-player-container {
+        width: 100vw;
+        max-width: 100vw;
+        margin: 0;
+        border-radius: 0;
+    }
+
+    #video-modal .modal-content {
+        min-height: 100dvh;
+        padding: 0;
+    }
+
+    .video-info {
+        padding: 12px;
+    }
+
+    #custom-video-controls {
+        padding: 10px 12px;
+    }
+
+    #custom-video-controls .controls-row {
+        flex-wrap: wrap !important;
+        gap: 8px !important;
+    }
+
+    .timeline-container,
+    .volume-container {
+        min-width: 0;
+        width: 100% !important;
+    }
+
+    #time-display {
+        min-width: 0;
+        width: auto;
+        margin-left: auto;
+    }
+
+    #pip-btn,
+    #mini-player {
+        display: none !important;
+    }
+}
+
+@media (max-width: 480px) {
+    nav ul {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    nav a,
+    .user-controls .btn,
+    .btn,
+    .btn-icon {
+        font-size: 0.82rem;
+    }
+
+    .hero-content {
+        padding: 14px 10px;
+    }
+
+    .anime-info,
+    .collection-info,
+    .music-info,
+    .video-info {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
 }

@@ -666,6 +666,29 @@
           try {
             const registration = await navigator.serviceWorker.register('sw.js');
             const tryUpdate = () => registration.update().catch(() => {});
+            let refreshing = false;
+
+            const activateWaitingWorker = (worker) => {
+              if (worker) worker.postMessage({ type: 'SKIP_WAITING' });
+            };
+
+            const watchInstallingWorker = (worker) => {
+              if (!worker) return;
+              worker.addEventListener('statechange', () => {
+                if (worker.state === 'installed' && navigator.serviceWorker.controller) {
+                  activateWaitingWorker(registration.waiting || worker);
+                }
+              });
+            };
+
+            if (registration.waiting) {
+              activateWaitingWorker(registration.waiting);
+            }
+
+            watchInstallingWorker(registration.installing);
+            registration.addEventListener('updatefound', () => {
+              watchInstallingWorker(registration.installing);
+            });
 
             tryUpdate();
             setInterval(tryUpdate, 30 * 60 * 1000);
@@ -673,10 +696,10 @@
               if (document.visibilityState === 'visible') tryUpdate();
             });
 
-            // Evita recarregar automaticamente "do nada" durante uso do site.
             navigator.serviceWorker.addEventListener('controllerchange', () => {
-              window.__swHasUpdate = true;
-              console.info('AniVerse: nova versão em segundo plano. Atualize manualmente quando quiser.');
+              if (refreshing) return;
+              refreshing = true;
+              window.location.reload();
             });
           } catch (_) {}
         });
