@@ -1551,6 +1551,10 @@ function setupVideoLoadingIndicator() {
 
   let forcedVisible = false;
   let phaseTimer = null;
+  let showDelayTimer = null;
+  let lastShownAt = 0;
+  const SHOW_DELAY_MS = 450;
+  const MIN_VISIBLE_MS = 280;
 
   const setLabel = () => {
     const label = overlay.querySelector('.video-loading-text');
@@ -1564,9 +1568,17 @@ function setupVideoLoadingIndicator() {
     }
   };
 
-  const show = () => {
+  const clearShowDelay = () => {
+    if (showDelayTimer) {
+      clearTimeout(showDelayTimer);
+      showDelayTimer = null;
+    }
+  };
+
+  const showNow = () => {
     setLabel();
     overlay.classList.add('visible');
+    lastShownAt = Date.now();
     clearPhaseTimer();
     phaseTimer = setTimeout(() => {
       if (overlay.classList.contains('visible')) {
@@ -1575,16 +1587,36 @@ function setupVideoLoadingIndicator() {
     }, 4500);
   };
 
+  const show = (immediate = false) => {
+    clearShowDelay();
+    if (immediate) {
+      showNow();
+      return;
+    }
+    showDelayTimer = setTimeout(() => {
+      showDelayTimer = null;
+      showNow();
+    }, SHOW_DELAY_MS);
+  };
+
   const hide = () => {
     if (forcedVisible) return;
+    clearShowDelay();
+    if (!overlay.classList.contains('visible')) return;
+    const elapsed = Date.now() - lastShownAt;
+    if (elapsed < MIN_VISIBLE_MS) {
+      setTimeout(() => {
+        if (!forcedVisible) overlay.classList.remove('visible');
+      }, MIN_VISIBLE_MS - elapsed);
+      return;
+    }
     clearPhaseTimer();
     overlay.classList.remove('visible');
   };
 
-  player.addEventListener('loadstart', () => show());
-  player.addEventListener('waiting', () => show());
-  player.addEventListener('stalled', () => show());
-  player.addEventListener('seeking', () => show());
+  player.addEventListener('loadstart', () => show(true));
+  player.addEventListener('waiting', () => show(false));
+  player.addEventListener('stalled', () => show(false));
   player.addEventListener('canplay', hide);
   player.addEventListener('playing', hide);
   player.addEventListener('seeked', hide);
@@ -1592,7 +1624,7 @@ function setupVideoLoadingIndicator() {
   // Expose hook for other modules when forcing spinner is useful
   window.setVideoLoadingOverlay = (visible, text) => {
     forcedVisible = !!visible;
-    if (forcedVisible) show();
+    if (forcedVisible) show(true);
     else hide();
   };
 }
