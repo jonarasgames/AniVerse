@@ -4945,6 +4945,28 @@ html.theme-light .inplace-duration-view {
         padding: 4px;
     }
 
+    /* Bigger and safer touch targets on mobile player actions */
+    #next-episode-btn,
+    #fullscreen-btn {
+        min-width: 44px;
+        height: 44px;
+        padding: 0 !important;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.14);
+        touch-action: manipulation;
+    }
+
+    #next-episode-btn {
+        margin-left: auto !important;
+    }
+
+    #fullscreen-btn {
+        margin-left: 10px;
+    }
+
     #anime-player {
         max-height: 44vh;
         margin-bottom: 10px;
@@ -4993,6 +5015,12 @@ html.theme-light .inplace-duration-view {
     .video-info {
         padding-left: 10px;
         padding-right: 10px;
+    }
+
+    #next-episode-btn,
+    #fullscreen-btn {
+        min-width: 46px;
+        height: 46px;
     }
 
     .anime-grid,
