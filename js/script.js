@@ -930,12 +930,34 @@ function addCacheBust(url){
   try {
     const parsed = new URL(url, window.location.href);
     parsed.searchParams.set('_retry', String(Date.now()));
-    parsed.searchParams.set('anv_sw_bypass', '1');
+    if (parsed.pathname !== '/__anv_stream_proxy__') {
+      parsed.searchParams.set('anv_sw_bypass', '1');
+    }
     return parsed.toString();
   } catch (_) {
     const sep = url.includes('?') ? '&' : '?';
     return `${url}${sep}_retry=${Date.now()}&anv_sw_bypass=1`;
   }
+}
+
+function isLikelyCorsBlockedTvHost(url){
+  try {
+    const parsed = new URL(url, window.location.href);
+    const full = `${parsed.hostname}${parsed.pathname}${parsed.search}`.toLowerCase();
+    return full.includes('catbox.moe') || full.includes('bitchute.com');
+  } catch (_) {
+    return false;
+  }
+}
+
+function buildTvStreamProxyUrl(url){
+  const target = String(url || '');
+  if (!target) return target;
+  const proxy = new URL('/__anv_stream_proxy__', window.location.href);
+  proxy.searchParams.set('url', target);
+  proxy.searchParams.set('anv_proxy', '1');
+  proxy.searchParams.set('_retry', String(Date.now()));
+  return proxy.toString();
 }
 
 function isTvPlaybackEnvironment(){
@@ -1302,7 +1324,11 @@ function onVideoSetSource(player, episode, options = {}){
     }
 
     let nextUrl = source.url;
-    if (options.cacheBust) nextUrl = addCacheBust(nextUrl);
+    if (state.isTvEnvironment && isLikelyCorsBlockedTvHost(nextUrl)) {
+      nextUrl = buildTvStreamProxyUrl(nextUrl);
+    } else if (options.cacheBust) {
+      nextUrl = addCacheBust(nextUrl);
+    }
 
     if (videoLoadTimeout){ clearTimeout(videoLoadTimeout); videoLoadTimeout = null; }
     clearVideoError();
