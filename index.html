@@ -325,7 +325,7 @@
                 </video>
                 <div id="video-loading-overlay" class="video-loading-overlay" aria-hidden="true">
                     <div class="video-loading-orb"></div>
-                    <div class="video-loading-text">Carregando episódio...</div>
+                    <div class="video-loading-text" aria-hidden="true"></div>
                 </div>
                 
                 <!-- Double-tap seek zones (mobile) -->
@@ -699,7 +699,10 @@
             navigator.serviceWorker.addEventListener('controllerchange', () => {
               if (refreshing) return;
               refreshing = true;
-              window.location.reload();
+              try {
+                localStorage.setItem('aniverse_sw_updated_at', String(Date.now()));
+              } catch (_) {}
+              console.log('AniVerse: nova versão do Service Worker ativada; atualização será aplicada no próximo reload manual.');
             });
           } catch (_) {}
         });

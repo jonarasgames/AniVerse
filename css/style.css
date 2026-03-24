@@ -4806,7 +4806,14 @@ html.theme-light .inplace-duration-view {
     }
 
     nav ul {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 6px;
+    }
+
+    nav a {
+        font-size: 0.8rem;
+        padding: 6px 4px;
+        line-height: 1.2;
     }
 
     .hero {
@@ -4851,13 +4858,16 @@ html.theme-light .inplace-duration-view {
     #collections-grid,
     .collections-grid,
     .collection-animes,
-    #downloads-grid,
     #music-grid {
-        grid-template-columns: minmax(0, 1fr) !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
         grid-auto-flow: row;
         grid-auto-columns: unset;
         gap: 14px;
         overflow-x: hidden;
+    }
+
+    #downloads-grid {
+        grid-template-columns: minmax(0, 1fr) !important;
     }
 
     .anime-card,
@@ -4916,14 +4926,59 @@ html.theme-light .inplace-duration-view {
     }
 
     #custom-video-controls .controls-row {
-        flex-wrap: wrap !important;
+        flex-wrap: nowrap !important;
         gap: 8px !important;
     }
 
-    .timeline-container,
-    .volume-container {
+    .timeline-container {
         min-width: 0;
         width: 100% !important;
+    }
+
+    #volume-btn,
+    .volume-container {
+        display: none !important;
+    }
+
+    #custom-video-controls .btn-icon {
+        font-size: 0.95rem;
+        padding: 4px;
+    }
+
+    /* Bigger and safer touch targets on mobile player actions */
+    #next-episode-btn,
+    #fullscreen-btn {
+        min-width: 44px;
+        height: 44px;
+        padding: 0 !important;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.14);
+        touch-action: manipulation;
+    }
+
+    #next-episode-btn {
+        margin-left: auto !important;
+    }
+
+    #fullscreen-btn {
+        margin-left: 10px;
+    }
+
+    #anime-player {
+        max-height: 44vh;
+        margin-bottom: 10px;
+    }
+
+    .episode-selector {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .episode-selector select {
+        width: 100%;
     }
 
     #time-display {
@@ -4940,14 +4995,14 @@ html.theme-light .inplace-duration-view {
 
 @media (max-width: 480px) {
     nav ul {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
     nav a,
     .user-controls .btn,
     .btn,
     .btn-icon {
-        font-size: 0.82rem;
+        font-size: 0.78rem;
     }
 
     .hero-content {
@@ -4960,5 +5015,27 @@ html.theme-light .inplace-duration-view {
     .video-info {
         padding-left: 10px;
         padding-right: 10px;
+    }
+
+    #next-episode-btn,
+    #fullscreen-btn {
+        min-width: 46px;
+        height: 46px;
+    }
+
+    .anime-grid,
+    #full-catalog-grid,
+    #animes-grid,
+    #movies-grid,
+    #ovas-grid,
+    #continue-grid,
+    #continue-watching-grid,
+    #new-releases-grid,
+    #collections-grid,
+    .collections-grid,
+    .collection-animes,
+    #music-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 10px;
     }
 }
