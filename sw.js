@@ -21,6 +21,7 @@ const APP_SHELL = [
 ];
 
 self.addEventListener('install', event => {
+  self.skipWaiting();
   event.waitUntil(
     caches.open(STATIC_CACHE)
       .then(cache => cache.addAll(APP_SHELL))
@@ -29,6 +30,7 @@ self.addEventListener('install', event => {
 });
 
 self.addEventListener('activate', event => {
+  self.clients.claim();
   event.waitUntil(
     caches.keys()
       .then(keys => Promise.all(keys
@@ -90,6 +92,7 @@ self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
 
   if (url.origin === self.location.origin && url.pathname === STREAM_PROXY_PATH) {
+    console.log('SW Proxy: Interceptando URL...', url.toString());
     event.respondWith(handleStreamProxy(event.request));
     return;
   }
@@ -170,5 +173,6 @@ async function handleStreamProxy(request) {
 self.addEventListener('message', event => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
+    event.waitUntil(self.clients.claim());
   }
 });

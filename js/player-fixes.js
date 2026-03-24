@@ -209,6 +209,21 @@
             recoverFromStall('stalled');
         });
 
+        player.addEventListener('error', function() {
+            const src = player.currentSrc || player.src || '';
+            const mediaError = player.error;
+            if (src.includes('/__anv_stream_proxy__')) {
+                const code = mediaError && typeof mediaError.code !== 'undefined' ? mediaError.code : 'unknown';
+                console.error('TV Proxy playback failed:', {
+                    src,
+                    mediaErrorCode: code,
+                    readyState: player.readyState,
+                    networkState: player.networkState
+                });
+                showVideoError('Falha no proxy de stream (SW). Verifique status 404/500/CORS da URL de origem.');
+            }
+        });
+
         // Keep click-to-toggle for non-TV environments only.
         player.addEventListener('click', function() {
             if (typeof window.__isTvMode === 'function' && window.__isTvMode()) return;
