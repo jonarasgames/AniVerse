@@ -83,21 +83,47 @@
     const seasonsEl = document.getElementById('detail-seasons');
     const tracksEl = document.getElementById('detail-tracks');
     const tracksHintEl = document.getElementById('detail-tracks-hint');
+    const metaLineEl = document.getElementById('detail-meta-line');
+    const genreChipsEl = document.getElementById('detail-genre-chips');
+    const posterEl = document.getElementById('details-poster');
+    const detailsSectionEl = document.getElementById('anime-details-section');
+    const ageBadgeEl = document.getElementById('detail-age-rating-badge');
 
     const categories = Array.isArray(anime?.categories) ? anime.categories : [];
     const trackBreakdown = getTrackBreakdown(anime);
     const normalizedGenres = categories
       .filter(Boolean)
       .map(category => String(category).replace(/\b\w/g, c => c.toUpperCase()));
+    const typeLabel = String(anime?.type || 'anime').toUpperCase();
+    const yearLabel = getAnimeYear(anime) || 'Sem ano';
 
-    if (genresEl) genresEl.textContent = categories.length ? categories.join(', ') : 'Não informado';
+    if (genresEl) genresEl.textContent = normalizedGenres.length ? normalizedGenres.join(' • ') : 'Não informado';
     if (ratingEl) ratingEl.textContent = getAnimeScore(anime) || 'Sem nota';
     if (seasonsEl) seasonsEl.textContent = String((anime?.seasons || []).length || 0);
     if (tracksEl) tracksEl.textContent = String(trackBreakdown.total);
     if (tracksHintEl) {
       tracksHintEl.textContent = `${trackBreakdown.openings} OP • ${trackBreakdown.endings} ED • ${trackBreakdown.osts} OST`;
     }
-    if (genresEl) genresEl.textContent = normalizedGenres.length ? normalizedGenres.join(' • ') : 'Não informado';
+    if (metaLineEl) metaLineEl.textContent = `${typeLabel} • ${yearLabel} • ⭐ ${getAnimeScore(anime) || 'N/A'}`;
+    if (posterEl) {
+      posterEl.src = anime?.thumbnail || anime?.cover || anime?.banner || 'images/bg-default.jpg';
+      posterEl.alt = anime?.title || anime?.name || 'Poster';
+    }
+    if (genreChipsEl) {
+      genreChipsEl.innerHTML = normalizedGenres
+        .slice(0, 5)
+        .map(genre => `<span class="detail-genre-chip">${escapeHtml(genre)}</span>`)
+        .join('');
+    }
+    if (ageBadgeEl) {
+      ageBadgeEl.textContent = anime?.rating_age || 'L';
+    }
+    if (detailsSectionEl) {
+      const backdropUrl = anime?.banner || anime?.cover || anime?.thumbnail || 'images/bg-default.jpg';
+      detailsSectionEl.style.backgroundImage = `linear-gradient(160deg, rgba(10, 12, 24, 0.96), rgba(20, 24, 40, 0.88)), url('${escapeHtml(backdropUrl)}')`;
+      detailsSectionEl.style.backgroundSize = 'cover';
+      detailsSectionEl.style.backgroundPosition = 'center';
+    }
   }
 
   function getSimilarAnimes(anime, limit = 4) {
@@ -326,8 +352,13 @@
     if (playerContainer) {
       playerContainer.classList.toggle('details-hidden', !shouldAutoplay);
     }
+    const ageRatingSection = document.getElementById('age-rating-section');
+    if (ageRatingSection && !shouldAutoplay) {
+      ageRatingSection.classList.remove('visible');
+    }
 
     const watchCta = document.getElementById('details-watch-cta');
+    const episodesCta = document.getElementById('details-episodes-cta');
     if (watchCta) {
       watchCta.onclick = () => {
         if (playerContainer) playerContainer.classList.remove('details-hidden');
@@ -338,6 +369,11 @@
         if (window.openEpisode && typeof window.openEpisode === 'function') {
           window.openEpisode(anime, selectedSeason, selectedEpisode);
         }
+      };
+    }
+    if (episodesCta) {
+      episodesCta.onclick = () => {
+        document.querySelector('.episode-selector')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       };
     }
 
