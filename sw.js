@@ -1,5 +1,6 @@
-const STATIC_CACHE = 'aniverse-static-v12';
-const RUNTIME_CACHE = 'aniverse-runtime-v12';
+const STATIC_CACHE = 'aniverse-static-v15';
+const RUNTIME_CACHE = 'aniverse-runtime-v15';
+const MEDIA_CACHE = 'aniverse-media-v1';
 const STREAM_PROXY_PATH = '/__anv_stream_proxy__';
 
 const APP_SHELL = [
@@ -34,7 +35,7 @@ self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys()
       .then(keys => Promise.all(keys
-        .filter(k => ![STATIC_CACHE, RUNTIME_CACHE].includes(k))
+        .filter(k => ![STATIC_CACHE, RUNTIME_CACHE, MEDIA_CACHE].includes(k))
         .map(k => caches.delete(k))))
       .then(() => self.clients.claim())
   );
@@ -69,7 +70,7 @@ async function cacheFirst(request) {
   return response;
 }
 
-function shouldBypassForMedia(request) {
+function isMediaRequest(request) {
   const url = new URL(request.url);
 
   if (request.headers.has('range')) return true;
@@ -87,6 +88,16 @@ function shouldBypassForMedia(request) {
   return false;
 }
 
+async function mediaCacheFirst(request) {
+  if (request.headers.has('range')) return fetch(request);
+  const cache = await caches.open(MEDIA_CACHE);
+  const cached = await cache.match(request);
+  if (cached) return cached;
+  const response = await fetch(request, { cache: 'no-store' });
+  if (response && response.ok) cache.put(request, response.clone()).catch(() => {});
+  return response;
+}
+
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
   const url = new URL(event.request.url);
@@ -100,7 +111,10 @@ self.addEventListener('fetch', event => {
   // Never intercept cross-origin requests (e.g. Catbox media).
   if (url.origin !== self.location.origin) return;
 
-  if (shouldBypassForMedia(event.request)) return;
+  if (isMediaRequest(event.request)) {
+    event.respondWith(mediaCacheFirst(event.request));
+    return;
+  }
 
   if (shouldNetworkFirst(event.request)) {
     event.respondWith(networkFirst(event.request));
@@ -171,6 +185,15 @@ async function handleStreamProxy(request) {
 }
 
 self.addEventListener('message', event => {
+  if (event.data && event.data.type === 'GET_MEDIA_CACHE_INFO') {
+    event.waitUntil((async () => {
+      const cache = await caches.open(MEDIA_CACHE);
+      const keys = await cache.keys();
+      event.ports?.[0]?.postMessage({ entries: keys.length, cache: MEDIA_CACHE });
+    })());
+    return;
+  }
+
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
     event.waitUntil(self.clients.claim());

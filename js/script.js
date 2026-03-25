@@ -1718,9 +1718,21 @@ function openEpisode(anime, seasonNumber, episodeIndex){
     const season = (anime.seasons || []).find(s => s.number === seasonNumber);
     const episode = season && Array.isArray(season.episodes) ? season.episodes[episodeIndex] : null;
     const player = document.getElementById('anime-player'); if (!player) return;
+    window.__ANIVERSE_MARATHON_HANDLED = false;
     const bannerEl = document.querySelector('.video-banner'); const bannerUrl = anime.banner || anime.cover || 'images/bg-default.jpg';
     if (bannerEl) bannerEl.style.backgroundImage = `url('${bannerUrl}')`;
-    if (episode && episode.opening && typeof episode.opening.start === 'number' && typeof episode.opening.end === 'number') window.updateOpeningData && window.updateOpeningData({ start: episode.opening.start, end: episode.opening.end }); else window.updateOpeningData && window.updateOpeningData(null);
+    const openingData = (episode && episode.opening && typeof episode.opening.start === 'number' && typeof episode.opening.end === 'number')
+      ? { start: episode.opening.start, end: episode.opening.end }
+      : null;
+    const endingData = (episode && episode.ending && typeof episode.ending.start === 'number' && typeof episode.ending.end === 'number')
+      ? { start: episode.ending.start, end: episode.ending.end }
+      : null;
+    if (window.updateEpisodeSegments) {
+      window.updateEpisodeSegments({ opening: openingData, ending: endingData });
+    } else {
+      window.updateOpeningData && window.updateOpeningData(openingData);
+      window.updateEndingData && window.updateEndingData(endingData);
+    }
     
     // Update age rating section
     const ageRatingSection = document.getElementById('age-rating-section');
@@ -1953,81 +1965,12 @@ document.addEventListener('DOMContentLoaded', () => {
   applyMaintenanceMode();
   const player = document.getElementById('anime-player');
   if (player) {
-    let progressUpdateInterval = null;
-    
     player.addEventListener('timeupdate', () => {
       preloadNextEpisodeIfNeeded(player);
-
-      // Update progress every 5 seconds while playing
-      if (!progressUpdateInterval && !player.paused) {
-        progressUpdateInterval = setInterval(() => {
-          if (window.currentWatchingAnime && window.profileManager && player.duration > 0) {
-            const activeProfile = window.profileManager.getActiveProfile();
-            if (activeProfile) {
-              const progress = Math.min(100, Math.max(0, (player.currentTime / player.duration) * 100));
-              
-              window.profileManager.updateContinueWatching(activeProfile.id, {
-                animeId: window.currentWatchingAnime.id,
-                title: window.currentWatchingAnime.title,
-                thumbnail: window.currentWatchingAnime.thumbnail,
-                season: window.currentWatchingAnime.season,
-                episode: window.currentWatchingAnime.episode,
-                progress: progress,
-                currentTime: player.currentTime,
-                timestamp: Date.now()
-              });
-            }
-          }
-        }, 5000); // Update every 5 seconds
-      }
-    });
-    
-    player.addEventListener('pause', () => {
-      if (progressUpdateInterval) {
-        clearInterval(progressUpdateInterval);
-        progressUpdateInterval = null;
-      }
-      // Save progress on pause
-      if (window.currentWatchingAnime && window.profileManager && player.duration > 0) {
-        const activeProfile = window.profileManager.getActiveProfile();
-        if (activeProfile) {
-          const progress = Math.min(100, Math.max(0, (player.currentTime / player.duration) * 100));
-          window.profileManager.updateContinueWatching(activeProfile.id, {
-            animeId: window.currentWatchingAnime.id,
-            title: window.currentWatchingAnime.title,
-            thumbnail: window.currentWatchingAnime.thumbnail,
-            season: window.currentWatchingAnime.season,
-            episode: window.currentWatchingAnime.episode,
-            progress: progress,
-            currentTime: player.currentTime,
-            timestamp: Date.now()
-          });
-        }
-      }
     });
     
     player.addEventListener('ended', () => {
-      if (progressUpdateInterval) {
-        clearInterval(progressUpdateInterval);
-        progressUpdateInterval = null;
-      }
-      // Mark as 100% complete
-      if (window.currentWatchingAnime && window.profileManager) {
-        const activeProfile = window.profileManager.getActiveProfile();
-        if (activeProfile) {
-          window.profileManager.updateContinueWatching(activeProfile.id, {
-            animeId: window.currentWatchingAnime.id,
-            title: window.currentWatchingAnime.title,
-            thumbnail: window.currentWatchingAnime.thumbnail,
-            season: window.currentWatchingAnime.season,
-            episode: window.currentWatchingAnime.episode,
-            progress: 100,
-            currentTime: player.duration || 0,
-            timestamp: Date.now()
-          });
-        }
-      }
-      
+      if (window.__ANIVERSE_MARATHON_HANDLED) return;
       // Auto-advance to next episode
       if (window.currentAnime && window.currentWatchingAnime) {
         const currentSeason = window.currentAnime.seasons?.find(s => s.number === window.currentWatchingAnime.season);

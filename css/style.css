@@ -687,6 +687,35 @@ nav a:hover, nav a.active {
     opacity: 0.3; /* 50% transparente */
 }
 
+.continue-progress-track {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.22);
+    z-index: 3;
+}
+
+.continue-progress-bar {
+    height: 100%;
+    width: 0;
+    background: var(--primary-color);
+    transition: width 0.25s ease;
+}
+
+.continue-resume-btn {
+    margin-top: 8px;
+    width: 100%;
+    border: 0;
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-weight: 700;
+    color: #fff;
+    background: var(--primary-color);
+    cursor: pointer;
+}
+
 .category-tabs {
     display: flex;
     flex-wrap: wrap;
@@ -3900,6 +3929,31 @@ body.dark-mode .age-rating-section {
 
 .dl-pill.done {
     background: rgba(46, 204, 113, 0.25);
+}
+
+.dl-pill.status-queued { background: rgba(241, 196, 15, 0.2); }
+.dl-pill.status-downloading { background: rgba(52, 152, 219, 0.2); }
+.dl-pill.status-paused { background: rgba(149, 165, 166, 0.24); }
+.dl-pill.status-error { background: rgba(231, 76, 60, 0.25); }
+
+.downloads-status-panel {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.downloads-status-item {
+    font-size: 0.8rem;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.downloads-status-item.is-offline {
+    background: rgba(231, 76, 60, 0.16);
+    border-color: rgba(231, 76, 60, 0.38);
 }
 
 @media (max-width: 768px) {
