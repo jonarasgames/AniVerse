@@ -176,8 +176,53 @@
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   }
 
+  function debounce(fn, waitMs){
+    let timeoutId = null;
+    return function debounced(...args){
+      if (timeoutId) clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => fn.apply(this, args), waitMs);
+    };
+  }
+
   document.addEventListener('DOMContentLoaded', ()=>{
     const player = safe('anime-player'); if(!player){ console.warn('#anime-player not found'); return; }
+    let lastPersistedSecond = -1;
+    let lastPersistedProgressBucket = -1;
+    let lastPersistedAt = 0;
+    const MIN_CHECKPOINT_SECONDS = 3;
+    const PROGRESS_BUCKET_SIZE = 2;
+
+    const persistContinueWatchingNow = (force = false) => {
+      if (!window.currentWatchingAnime || !window.profileManager || !window.profileManager.getActiveProfile) return;
+      if (!player.duration || Number.isNaN(player.duration) || player.duration <= 0) return;
+
+      const activeProfile = window.profileManager.getActiveProfile();
+      if (!activeProfile) return;
+
+      const currentSecond = Math.floor(player.currentTime || 0);
+      const progress = Math.min(100, Math.max(0, (player.currentTime / player.duration) * 100));
+      const progressBucket = Math.floor(progress / PROGRESS_BUCKET_SIZE);
+      const now = Date.now();
+      const checkpointReached = Math.abs(currentSecond - lastPersistedSecond) >= MIN_CHECKPOINT_SECONDS || progressBucket !== lastPersistedProgressBucket;
+
+      if (!force && !checkpointReached && now - lastPersistedAt < 1200) return;
+
+      window.profileManager.updateContinueWatching(activeProfile.id, {
+        animeId: window.currentWatchingAnime.id,
+        title: window.currentWatchingAnime.title,
+        thumbnail: window.currentWatchingAnime.thumbnail,
+        season: window.currentWatchingAnime.season,
+        episode: window.currentWatchingAnime.episode,
+        progress: progress,
+        currentTime: player.currentTime,
+        timestamp: now
+      });
+
+      lastPersistedSecond = currentSecond;
+      lastPersistedProgressBucket = progressBucket;
+      lastPersistedAt = now;
+    };
+    const persistContinueWatchingDebounced = debounce(() => persistContinueWatchingNow(false), 800);
     
     // Custom controls
     const playPauseBtn = safe('play-pause-btn');
@@ -227,6 +272,7 @@
       if (timeDisplay) {
         timeDisplay.textContent = `${formatTime(player.currentTime)} / ${formatTime(player.duration)}`;
       }
+      persistContinueWatchingDebounced();
     });
     
     // Timeline click and drag (YouTube-style)
@@ -890,7 +936,10 @@
     }
     
     // Show controls when video is paused
-    player.addEventListener('pause', showControls);
+    player.addEventListener('pause', () => {
+      showControls();
+      persistContinueWatchingNow(true);
+    });
     
     // Hide controls when video starts playing (after delay)
     player.addEventListener('play', () => {
@@ -903,7 +952,13 @@
     });
     
     // Show controls when seeking
-    player.addEventListener('seeking', showControls);
+    player.addEventListener('seeking', () => {
+      showControls();
+      persistContinueWatchingDebounced();
+    });
+
+    player.addEventListener('ended', () => persistContinueWatchingNow(true));
+    window.addEventListener('beforeunload', () => persistContinueWatchingNow(true));
     
     // Update overlay when episode info changes
     window.updateVideoOverlay = updateVideoOverlay;
