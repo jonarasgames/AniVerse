@@ -87,6 +87,7 @@
     const genreChipsEl = document.getElementById('detail-genre-chips');
     const posterEl = document.getElementById('details-poster');
     const detailsSectionEl = document.getElementById('anime-details-section');
+    const ageBadgeEl = document.getElementById('detail-age-rating-badge');
 
     const categories = Array.isArray(anime?.categories) ? anime.categories : [];
     const trackBreakdown = getTrackBreakdown(anime);
@@ -113,6 +114,9 @@
         .slice(0, 5)
         .map(genre => `<span class="detail-genre-chip">${escapeHtml(genre)}</span>`)
         .join('');
+    }
+    if (ageBadgeEl) {
+      ageBadgeEl.textContent = anime?.rating_age || 'L';
     }
     if (detailsSectionEl) {
       const backdropUrl = anime?.banner || anime?.cover || anime?.thumbnail || 'images/bg-default.jpg';
@@ -347,6 +351,10 @@
     document.body.style.overflow = 'hidden';
     if (playerContainer) {
       playerContainer.classList.toggle('details-hidden', !shouldAutoplay);
+    }
+    const ageRatingSection = document.getElementById('age-rating-section');
+    if (ageRatingSection && !shouldAutoplay) {
+      ageRatingSection.classList.remove('visible');
     }
 
     const watchCta = document.getElementById('details-watch-cta');
