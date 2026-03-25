@@ -2,6 +2,17 @@
 (function() {
     'use strict';
 
+    function isTvPlaybackEnvironment() {
+        try {
+            if (window.__ANIVERSE_FORCE_TV_MODE__ === true) return true;
+            if (typeof window.tizen !== 'undefined' || typeof window.webapis !== 'undefined') return true;
+            const ua = navigator.userAgent || '';
+            return /tizen|smart-tv|smarttv|hbbtv|web0s|googletv|appletv|viera|aquos/i.test(ua);
+        } catch (_) {
+            return false;
+        }
+    }
+
     function getBufferedAheadSeconds(player) {
         try {
             if (!player || !player.buffered || !player.buffered.length) return 0;
@@ -45,7 +56,11 @@
 
         player.setAttribute('playsinline', '');
         player.setAttribute('webkit-playsinline', 'true');
-        player.setAttribute('crossorigin', 'anonymous');
+        if (isTvPlaybackEnvironment()) {
+            player.setAttribute('crossorigin', 'anonymous');
+        } else {
+            player.removeAttribute('crossorigin');
+        }
         player.preload = 'auto';
 
         const stallState = {
@@ -167,6 +182,7 @@
                 stallState.lastSrc = src;
                 stallState.blobFallbackTried = false;
                 resetStallState();
+                if (!isTvPlaybackEnvironment()) return;
                 probeRangeSupport(src).then((result) => {
                     window.__lastTvRangeProbe = { src, ...result, at: Date.now() };
                     if (result.supported === false) {
