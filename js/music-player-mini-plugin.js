@@ -1,4 +1,15 @@
-/* js/music-player-new.js - Mobile-safe music mini-player enhancements */
+/*
+ * js/music-player-mini-plugin.js
+ * Plugin layer for music mini-player presentation.
+ *
+ * Responsibilities:
+ * - Inject CSS adjustments specific to #music-mini-player.
+ * - Keep UI behavior isolated from playback core (js/music-player.js).
+ *
+ * Guardrail:
+ * - This file must remain a plugin-only layer. Playback logic belongs to
+ *   js/music-player.js to avoid duplicated player implementations.
+ */
 (function() {
     'use strict';
 
@@ -30,7 +41,7 @@
 
     function init() {
         ensureMiniPlayerCSS();
-        console.log('✅ Music mini-player enhancements loaded');
+        console.log('✅ Music mini-player plugin loaded');
     }
 
     if (document.readyState === 'loading') {
