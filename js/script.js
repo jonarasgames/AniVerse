@@ -1706,7 +1706,6 @@ function openEpisode(anime, seasonNumber, episodeIndex){
     }
     const videoContainer = document.getElementById('video-player-container');
     if (videoContainer) {
-        videoContainer.classList.remove('details-hidden');
         if (!videoContainer.hasAttribute('tabindex')) {
             videoContainer.setAttribute('tabindex', '-1');
         }
