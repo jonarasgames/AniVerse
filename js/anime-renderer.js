@@ -65,17 +65,39 @@
     return openings + endings + osts;
   }
 
+  function getTrackBreakdown(anime) {
+    const openings = normalizeList(anime?.openings).length;
+    const endings = normalizeList(anime?.endings).length;
+    const osts = normalizeList(anime?.osts).length;
+    return {
+      openings,
+      endings,
+      osts,
+      total: openings + endings + osts
+    };
+  }
+
   function renderAnimeDetails(anime) {
     const genresEl = document.getElementById('detail-genres');
     const ratingEl = document.getElementById('detail-rating');
     const seasonsEl = document.getElementById('detail-seasons');
     const tracksEl = document.getElementById('detail-tracks');
+    const tracksHintEl = document.getElementById('detail-tracks-hint');
 
     const categories = Array.isArray(anime?.categories) ? anime.categories : [];
+    const trackBreakdown = getTrackBreakdown(anime);
+    const normalizedGenres = categories
+      .filter(Boolean)
+      .map(category => String(category).replace(/\b\w/g, c => c.toUpperCase()));
+
     if (genresEl) genresEl.textContent = categories.length ? categories.join(', ') : 'Não informado';
     if (ratingEl) ratingEl.textContent = getAnimeScore(anime) || 'Sem nota';
     if (seasonsEl) seasonsEl.textContent = String((anime?.seasons || []).length || 0);
-    if (tracksEl) tracksEl.textContent = String(getTrackCount(anime));
+    if (tracksEl) tracksEl.textContent = String(trackBreakdown.total);
+    if (tracksHintEl) {
+      tracksHintEl.textContent = `${trackBreakdown.openings} OP • ${trackBreakdown.endings} ED • ${trackBreakdown.osts} OST`;
+    }
+    if (genresEl) genresEl.textContent = normalizedGenres.length ? normalizedGenres.join(' • ') : 'Não informado';
   }
 
   function getSimilarAnimes(anime, limit = 4) {
@@ -93,7 +115,10 @@
         return { candidate, score };
       })
       .filter(item => item.score > 0)
-      .sort((a, b) => b.score - a.score)
+      .sort((a, b) => {
+        if (b.score !== a.score) return b.score - a.score;
+        return Number.parseFloat(getAnimeScore(b.candidate) || '0') - Number.parseFloat(getAnimeScore(a.candidate) || '0');
+      })
       .slice(0, limit)
       .map(item => item.candidate);
   }
@@ -253,6 +278,7 @@
     const episode = episodeIndex !== undefined ? episodeIndex : 0;
     const hasExplicitEpisodeTarget = seasonNumber !== undefined || episodeIndex !== undefined;
     const shouldAutoplay = options?.autoplay === true || (options?.autoplay !== false && hasExplicitEpisodeTarget);
+    const playerContainer = document.getElementById('video-player-container');
     
     // Store current anime globally so selectors know which anime they're for
     window.currentAnime = anime;
@@ -285,7 +311,7 @@
       newSeasonSelect.onchange = () => {
         const newSeason = parseInt(newSeasonSelect.value);
         populateEpisodes(anime, newSeason, 0); // Reset to first episode
-        if (anime.seasons.find(s => s.number === newSeason)?.episodes?.length > 0) {
+        if (shouldAutoplay && anime.seasons.find(s => s.number === newSeason)?.episodes?.length > 0) {
           openEpisode(anime, newSeason, 0);
         }
       };
@@ -297,10 +323,14 @@
     // Show modal - use flex for proper keyboard detection
     modal.style.display = 'flex';
     document.body.style.overflow = 'hidden';
+    if (playerContainer) {
+      playerContainer.classList.toggle('details-hidden', !shouldAutoplay);
+    }
 
     const watchCta = document.getElementById('details-watch-cta');
     if (watchCta) {
       watchCta.onclick = () => {
+        if (playerContainer) playerContainer.classList.remove('details-hidden');
         const activeSeasonSelect = document.getElementById('season-select');
         const activeEpisodeSelect = document.getElementById('episode-select');
         const selectedSeason = Number.parseInt(activeSeasonSelect?.value || String(season), 10);
@@ -312,6 +342,7 @@
     }
 
     if (shouldAutoplay && window.openEpisode && typeof window.openEpisode === 'function') {
+      if (playerContainer) playerContainer.classList.remove('details-hidden');
       window.openEpisode(anime, season, episode);
     }
   }
