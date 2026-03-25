@@ -215,11 +215,9 @@ class AnimeDatabase {
         const watchedCurrentEpisodeSeconds = Math.max(watchedSecondsByProgress, Number(currentTime) || 0);
         const remainingCurrentEpisodeSeconds = Math.max(0, currentEpisodeDuration - watchedCurrentEpisodeSeconds);
 
-        const nextSuggested = this.getNextSuggestedEpisode(anime, resolvedSeason, resolvedEpisode, normalizedProgress);
         const remainingTotalSeconds = this.getRemainingAnimeSeconds(anime, resolvedSeason, resolvedEpisode, remainingCurrentEpisodeSeconds);
 
         return {
-            nextEpisodeSuggested: nextSuggested,
             remainingEpisodeSeconds: Math.round(remainingCurrentEpisodeSeconds),
             remainingTotalSeconds: Math.round(remainingTotalSeconds)
         };
@@ -230,30 +228,6 @@ class AnimeDatabase {
         const episode = season?.episodes?.[episodeNumber - 1];
         const duration = Number(episode?.duration);
         return Number.isFinite(duration) && duration > 0 ? duration : 0;
-    }
-
-    getNextSuggestedEpisode(anime, seasonNumber, episodeNumber, progress = 0) {
-        const season = anime?.seasons?.find(s => s.number === seasonNumber);
-        const episodes = season?.episodes || [];
-        if (!episodes.length) {
-            return { season: seasonNumber, episode: episodeNumber };
-        }
-
-        const shouldAdvance = progress >= 90;
-        if (!shouldAdvance) {
-            return { season: seasonNumber, episode: episodeNumber };
-        }
-
-        if (episodeNumber < episodes.length) {
-            return { season: seasonNumber, episode: episodeNumber + 1 };
-        }
-
-        const nextSeason = anime?.seasons?.find(s => s.number === seasonNumber + 1);
-        if (nextSeason?.episodes?.length) {
-            return { season: nextSeason.number, episode: 1 };
-        }
-
-        return { season: seasonNumber, episode: episodeNumber };
     }
 
     getRemainingAnimeSeconds(anime, seasonNumber, episodeNumber, remainingCurrentEpisodeSeconds) {

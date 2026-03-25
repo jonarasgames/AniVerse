@@ -148,10 +148,8 @@
     const progress = anime.progress || 0;
     const season = anime.season || 1;
     const episode = anime.episode || 1;
-    const suggestedSeason = anime.nextEpisodeSuggested?.season || season;
-    const suggestedEpisode = anime.nextEpisodeSuggested?.episode || episode;
     const remainingLabel = formatRemainingTime(anime.remainingTotalSeconds);
-    const showResumeButton = options.showResumeButton === true;
+    const showResumeButton = options.showResumeButton !== false;
     const ageRatingBadge = getAgeRatingBadge(anime.rating_age);
     
     card.innerHTML = `
@@ -169,7 +167,6 @@
       <div class="anime-info">
         <h3 class="anime-title">${title}</h3>
         <p class="anime-meta">Atual: T${season} • EP${episode}</p>
-        <p class="anime-meta">Sugestão: T${suggestedSeason} • EP${suggestedEpisode}</p>
         <p class="anime-meta">${Math.round(progress)}% • ${remainingLabel}</p>
         ${showResumeButton ? '<button type="button" class="continue-resume-btn">Retomar</button>' : ''}
       </div>
@@ -358,7 +355,7 @@
     
     const useDetailedCard = gridId === 'continue-watching-grid';
     continueWatching.forEach(anime => {
-      const card = createContinueWatchingCard(anime, { showResumeButton: useDetailedCard });
+      const card = createContinueWatchingCard(anime, { showResumeButton: true });
       if (card) grid.appendChild(card);
     });
     
