@@ -1720,7 +1720,19 @@ function openEpisode(anime, seasonNumber, episodeIndex){
     const player = document.getElementById('anime-player'); if (!player) return;
     const bannerEl = document.querySelector('.video-banner'); const bannerUrl = anime.banner || anime.cover || 'images/bg-default.jpg';
     if (bannerEl) bannerEl.style.backgroundImage = `url('${bannerUrl}')`;
-    if (episode && episode.opening && typeof episode.opening.start === 'number' && typeof episode.opening.end === 'number') window.updateOpeningData && window.updateOpeningData({ start: episode.opening.start, end: episode.opening.end }); else window.updateOpeningData && window.updateOpeningData(null);
+    const skipSegments = [];
+    if (episode?.opening && typeof episode.opening.start === 'number' && typeof episode.opening.end === 'number') {
+        skipSegments.push({ type: 'opening', start: episode.opening.start, end: episode.opening.end });
+    }
+    if (episode?.ending && typeof episode.ending.start === 'number' && typeof episode.ending.end === 'number') {
+        skipSegments.push({ type: 'ending', start: episode.ending.start, end: episode.ending.end });
+    }
+    if (typeof window.updateSkipSegmentsData === 'function') {
+        window.updateSkipSegmentsData(skipSegments);
+    } else if (typeof window.updateOpeningData === 'function') {
+        const openingOnly = skipSegments.find((segment) => segment.type === 'opening') || null;
+        window.updateOpeningData(openingOnly);
+    }
     
     // Update age rating section
     const ageRatingSection = document.getElementById('age-rating-section');
