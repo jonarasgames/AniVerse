@@ -85,9 +85,8 @@
     const tracksHintEl = document.getElementById('detail-tracks-hint');
     const metaLineEl = document.getElementById('detail-meta-line');
     const genreChipsEl = document.getElementById('detail-genre-chips');
-    const posterEl = document.getElementById('details-poster');
     const detailsSectionEl = document.getElementById('anime-details-section');
-    const ageBadgeEl = document.getElementById('detail-age-rating-badge');
+    const streamHeroEl = document.getElementById('stream-hero');
 
     const categories = Array.isArray(anime?.categories) ? anime.categories : [];
     const trackBreakdown = getTrackBreakdown(anime);
@@ -105,24 +104,19 @@
       tracksHintEl.textContent = `${trackBreakdown.openings} OP • ${trackBreakdown.endings} ED • ${trackBreakdown.osts} OST`;
     }
     if (metaLineEl) metaLineEl.textContent = `${typeLabel} • ${yearLabel} • ⭐ ${getAnimeScore(anime) || 'N/A'}`;
-    if (posterEl) {
-      posterEl.src = anime?.thumbnail || anime?.cover || anime?.banner || 'images/bg-default.jpg';
-      posterEl.alt = anime?.title || anime?.name || 'Poster';
-    }
     if (genreChipsEl) {
-      genreChipsEl.innerHTML = normalizedGenres
+      const ageChip = anime?.rating_age ? `<span class="detail-genre-chip">+${escapeHtml(anime.rating_age)}</span>` : '';
+      genreChipsEl.innerHTML = ageChip + normalizedGenres
         .slice(0, 5)
         .map(genre => `<span class="detail-genre-chip">${escapeHtml(genre)}</span>`)
         .join('');
     }
-    if (ageBadgeEl) {
-      ageBadgeEl.textContent = anime?.rating_age || 'L';
-    }
     if (detailsSectionEl) {
       const backdropUrl = anime?.banner || anime?.cover || anime?.thumbnail || 'images/bg-default.jpg';
-      detailsSectionEl.style.backgroundImage = `linear-gradient(160deg, rgba(10, 12, 24, 0.96), rgba(20, 24, 40, 0.88)), url('${escapeHtml(backdropUrl)}')`;
-      detailsSectionEl.style.backgroundSize = 'cover';
-      detailsSectionEl.style.backgroundPosition = 'center';
+      detailsSectionEl.style.backgroundImage = `linear-gradient(160deg, rgba(10, 12, 24, 0.96), rgba(20, 24, 40, 0.88))`;
+      if (streamHeroEl) {
+        streamHeroEl.style.backgroundImage = `url('${escapeHtml(backdropUrl)}')`;
+      }
     }
   }
 
