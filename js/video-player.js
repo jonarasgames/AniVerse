@@ -5,18 +5,47 @@
   function clearVideoError(){ const el=document.getElementById('video-error-container'); if(el) el.remove(); }
 
   function SkipController(player, skipId){
-    this.player = player; this.skipBtn = safe(skipId); this.opening = null;
+    this.player = player; this.skipBtn = safe(skipId); this.segments = [];
     if(!this.player || !this.skipBtn){ console.warn('SkipController: missing elements'); return; }
     this.player.addEventListener('timeupdate', ()=> this.update());
-    this.skipBtn.addEventListener('click', ()=> { if (this.opening) this.player.currentTime = this.opening.end; });
+    this.skipBtn.addEventListener('click', ()=> {
+      const active = this.getActiveSegment();
+      if (active) this.player.currentTime = active.end;
+    });
   }
-  SkipController.prototype.setOpening = function(opening){ this.opening = opening; this.update(); };
+  SkipController.prototype.isValidSegment = function(segment){
+    if (!segment || typeof segment.start !== 'number' || typeof segment.end !== 'number') return false;
+    if (!Number.isFinite(segment.start) || !Number.isFinite(segment.end)) return false;
+    if (segment.start < 0 || segment.end <= segment.start) return false;
+    return true;
+  };
+  SkipController.prototype.isSegmentCompatibleWithDuration = function(segment){
+    if (!this.isValidSegment(segment)) return false;
+    const duration = Number(this.player?.duration);
+    if (!Number.isFinite(duration) || duration <= 0) return false;
+    return segment.end <= duration;
+  };
+  SkipController.prototype.setSegments = function(segments){
+    this.segments = Array.isArray(segments)
+      ? segments
+        .map((segment) => ({ ...segment, start: Number(segment.start), end: Number(segment.end) }))
+        .filter((segment) => this.isValidSegment(segment))
+      : [];
+    this.update();
+  };
+  SkipController.prototype.getActiveSegment = function(){
+    if(!this.player || !Array.isArray(this.segments) || !this.segments.length) return null;
+    const t = this.player.currentTime || 0;
+    return this.segments.find((segment) => this.isSegmentCompatibleWithDuration(segment) && t >= segment.start && t < segment.end) || null;
+  };
   SkipController.prototype.update = function(){
     if(!this.player || !this.skipBtn) return;
-    if(!this.opening){ this.skipBtn.style.display='none'; return; }
-    const t = this.player.currentTime || 0; const show = (t >= this.opening.start && t < this.opening.end);
-    this.skipBtn.style.display = show ? 'block' : 'none';
-    if(show) this.skipBtn.textContent = `⏩ Pular (${Math.ceil(Math.max(0,this.opening.end - t))}s)`;
+    const active = this.getActiveSegment();
+    if(!active){ this.skipBtn.style.display='none'; return; }
+    const t = this.player.currentTime || 0;
+    const label = active.type === 'ending' ? 'Encerramento' : 'Abertura';
+    this.skipBtn.style.display = 'block';
+    this.skipBtn.textContent = `⏩ Pular ${label} (${Math.ceil(Math.max(0,active.end - t))}s)`;
   };
 
   function clearCustomMiniPlayer(){
@@ -93,8 +122,9 @@
       
       // Clone the click event
       miniSkip.addEventListener('click', () => {
-        if(window.currentOpeningData && window.currentOpeningData.end) {
-          player.currentTime = window.currentOpeningData.end;
+        const active = window.getActiveSkipSegment && window.getActiveSkipSegment();
+        if(active && Number.isFinite(active.end)) {
+          player.currentTime = active.end;
         }
       });
       
@@ -816,7 +846,18 @@
     });
 
     const skipCtrl = new SkipController(player, 'skip-opening-btn');
-    window.updateOpeningData = function(data){ window.currentOpeningData = data && typeof data.start === 'number' ? data : null; if(skipCtrl && typeof skipCtrl.setOpening === 'function') skipCtrl.setOpening(window.currentOpeningData); };
+    player.addEventListener('loadedmetadata', () => skipCtrl.update());
+    window.getActiveSkipSegment = () => (skipCtrl && typeof skipCtrl.getActiveSegment === 'function' ? skipCtrl.getActiveSegment() : null);
+    window.updateSkipSegmentsData = function(data){
+      const segments = Array.isArray(data) ? data : [];
+      if(skipCtrl && typeof skipCtrl.setSegments === 'function') skipCtrl.setSegments(segments);
+    };
+    window.updateOpeningData = function(data){
+      const segments = data && typeof data.start === 'number' && typeof data.end === 'number'
+        ? [{ type: 'opening', start: data.start, end: data.end }]
+        : [];
+      window.updateSkipSegmentsData(segments);
+    };
 
     const pipBtn = safe('pip-btn');
     if (pipBtn) {
