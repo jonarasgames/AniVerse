@@ -26,12 +26,14 @@
     border-radius: 20px;
     padding: 40px;
     max-width: 900px;
-    width: 90%;
+    width: min(900px, calc(100vw - 24px));
     max-height: 90vh;
     overflow-y: auto;
+    overflow-x: hidden;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
     position: relative;
     animation: modalSlideIn 0.3s ease-out;
+    box-sizing: border-box;
 }
 
 @keyframes modalSlideIn {
@@ -85,6 +87,8 @@
     display: grid;
     grid-template-columns: 300px 1fr;
     gap: 40px;
+    min-width: 0;
+    align-items: start;
 }
 
 @media (max-width: 768px) {
@@ -138,13 +142,13 @@
     
     .customization-tabs {
         gap: 5px;
-        overflow-x: auto;
-        white-space: nowrap;
+        overflow-x: visible;
+        white-space: normal;
     }
     
     .tab-btn {
         font-size: 0.9rem;
-        padding: 8px 12px;
+        padding: 7px 10px;
     }
 }
 
@@ -336,6 +340,7 @@
     display: flex;
     flex-direction: column;
     gap: 25px;
+    min-width: 0;
 }
 
 /* Form Groups */
@@ -402,6 +407,7 @@
 /* Tabs */
 .customization-tabs {
     display: flex;
+    flex-wrap: wrap;
     gap: 10px;
     border-bottom: 2px solid rgba(255, 255, 255, 0.1);
     padding-bottom: 10px;
@@ -433,6 +439,9 @@
 .tab-content {
     display: none;
     animation: fadeIn 0.3s;
+    min-width: 0;
+    overflow-x: hidden;
+    word-break: break-word;
 }
 
 .tab-content.active {
