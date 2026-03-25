@@ -118,8 +118,25 @@
     return card;
   }
 
+  function formatRemainingTime(totalSeconds) {
+    const seconds = Math.max(0, Math.round(Number(totalSeconds) || 0));
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+
+    if (hours > 0) return `${hours}h ${minutes}min restantes`;
+    return `${Math.max(1, minutes)}min restantes`;
+  }
+
+  function resumeAnime(anime, season, episode) {
+    if (typeof window.openAnimeModal === 'function') {
+      window.openAnimeModal(anime, season, episode - 1);
+    } else {
+      openAnimeModal(anime, season, episode - 1);
+    }
+  }
+
   // Create a continue watching card with progress
-  function createContinueWatchingCard(anime) {
+  function createContinueWatchingCard(anime, options = {}) {
     if (!anime) return null;
     
     const card = document.createElement('div');
@@ -131,12 +148,16 @@
     const progress = anime.progress || 0;
     const season = anime.season || 1;
     const episode = anime.episode || 1;
+    const remainingLabel = formatRemainingTime(anime.remainingTotalSeconds);
+    const showResumeButton = options.showResumeButton !== false;
     const ageRatingBadge = getAgeRatingBadge(anime.rating_age);
     
     card.innerHTML = `
       <div class="anime-thumbnail">
         <img src="${escapeHtml(thumbnail)}" alt="${title}">
-        <div class="progress-bar" style="width: ${Math.min(100, Math.max(0, progress))}%;"></div>
+        <div class="continue-progress-track">
+          <div class="continue-progress-bar" style="width: ${Math.min(100, Math.max(0, progress))}%;"></div>
+        </div>
         <div class="trailer-overlay">
           <i class="fas fa-play"></i>
           <p>Continuar</p>
@@ -145,7 +166,9 @@
       </div>
       <div class="anime-info">
         <h3 class="anime-title">${title}</h3>
-        <p class="anime-meta">T${season} • EP${episode} • ${Math.round(progress)}%</p>
+        <p class="anime-meta">Atual: T${season} • EP${episode}</p>
+        <p class="anime-meta">${Math.round(progress)}% • ${remainingLabel}</p>
+        ${showResumeButton ? '<button type="button" class="continue-resume-btn">Retomar</button>' : ''}
       </div>
     `;
     
@@ -155,12 +178,19 @@
         const playedOffline = await window.playDownloadedEpisodeFromContinue(anime);
         if (playedOffline) return;
       }
-      if (typeof window.openAnimeModal === 'function') {
-        window.openAnimeModal(anime, season, episode - 1);
-      } else {
-        openAnimeModal(anime, season, episode - 1);
-      }
+      resumeAnime(anime, season, episode);
     });
+
+    if (showResumeButton) {
+      const resumeBtn = card.querySelector('.continue-resume-btn');
+      if (resumeBtn) {
+        resumeBtn.addEventListener('click', (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          resumeAnime(anime, season, episode);
+        });
+      }
+    }
     
     return card;
   }
@@ -324,7 +354,7 @@
     }
     
     continueWatching.forEach(anime => {
-      const card = createContinueWatchingCard(anime);
+      const card = createContinueWatchingCard(anime, { showResumeButton: true });
       if (card) grid.appendChild(card);
     });
     

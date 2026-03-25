@@ -172,11 +172,14 @@ class AnimeDatabase {
                 return activeProfile.continueWatching.map(item => {
                     const anime = this.animes.find(a => a.id == item.animeId) || this.getCustomAnime(item.animeId);
                     if (anime) {
+                        const extras = this.getContinueWatchingExtras(anime, item.season, item.episode, item.progress, item.currentTime);
                         return {
                             ...anime,
                             progress: item.progress || 0,
                             episode: item.episode,
-                            season: item.season
+                            season: item.season,
+                            currentTime: item.currentTime || 0,
+                            ...extras
                         };
                     }
                     return null;
@@ -188,15 +191,61 @@ class AnimeDatabase {
         return Object.keys(this.continueWatching).map(id => {
             const anime = this.animes.find(a => a.id == id) || this.getCustomAnime(id);
             if (anime) {
+                const entry = this.continueWatching[id];
+                const extras = this.getContinueWatchingExtras(anime, entry.season, entry.episode, entry.progress, entry.currentTime);
                 return {
                     ...anime,
-                    progress: this.continueWatching[id].progress,
-                    episode: this.continueWatching[id].episode,
-                    season: this.continueWatching[id].season
+                    progress: entry.progress,
+                    episode: entry.episode,
+                    season: entry.season,
+                    currentTime: entry.currentTime || 0,
+                    ...extras
                 };
             }
             return null;
         }).filter(Boolean);
+    }
+
+    getContinueWatchingExtras(anime, seasonNumber, episodeNumber, progress = 0, currentTime = 0) {
+        const resolvedSeason = Number.isFinite(Number(seasonNumber)) ? Number(seasonNumber) : 1;
+        const resolvedEpisode = Number.isFinite(Number(episodeNumber)) ? Number(episodeNumber) : 1;
+        const normalizedProgress = Math.min(100, Math.max(0, Number(progress) || 0));
+        const currentEpisodeDuration = this.getEpisodeDuration(anime, resolvedSeason, resolvedEpisode);
+        const watchedSecondsByProgress = currentEpisodeDuration > 0 ? (currentEpisodeDuration * normalizedProgress) / 100 : 0;
+        const watchedCurrentEpisodeSeconds = Math.max(watchedSecondsByProgress, Number(currentTime) || 0);
+        const remainingCurrentEpisodeSeconds = Math.max(0, currentEpisodeDuration - watchedCurrentEpisodeSeconds);
+
+        const remainingTotalSeconds = this.getRemainingAnimeSeconds(anime, resolvedSeason, resolvedEpisode, remainingCurrentEpisodeSeconds);
+
+        return {
+            remainingEpisodeSeconds: Math.round(remainingCurrentEpisodeSeconds),
+            remainingTotalSeconds: Math.round(remainingTotalSeconds)
+        };
+    }
+
+    getEpisodeDuration(anime, seasonNumber, episodeNumber) {
+        const season = anime?.seasons?.find(s => s.number === seasonNumber);
+        const episode = season?.episodes?.[episodeNumber - 1];
+        const duration = Number(episode?.duration);
+        return Number.isFinite(duration) && duration > 0 ? duration : 0;
+    }
+
+    getRemainingAnimeSeconds(anime, seasonNumber, episodeNumber, remainingCurrentEpisodeSeconds) {
+        if (!anime?.seasons?.length) return 0;
+
+        let total = Math.max(0, Number(remainingCurrentEpisodeSeconds) || 0);
+        anime.seasons.forEach(season => {
+            const seasonEpisodes = Array.isArray(season.episodes) ? season.episodes : [];
+            seasonEpisodes.forEach((episode, index) => {
+                const duration = Number(episode.duration);
+                if (!Number.isFinite(duration) || duration <= 0) return;
+                if (season.number < seasonNumber) return;
+                if (season.number === seasonNumber && (index + 1) <= episodeNumber) return;
+                total += duration;
+            });
+        });
+
+        return total;
     }
 
     getAnimeById(id) {
