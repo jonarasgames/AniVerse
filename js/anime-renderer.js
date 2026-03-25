@@ -278,6 +278,7 @@
     const episode = episodeIndex !== undefined ? episodeIndex : 0;
     const hasExplicitEpisodeTarget = seasonNumber !== undefined || episodeIndex !== undefined;
     const shouldAutoplay = options?.autoplay === true || (options?.autoplay !== false && hasExplicitEpisodeTarget);
+    const playerContainer = document.getElementById('video-player-container');
     
     // Store current anime globally so selectors know which anime they're for
     window.currentAnime = anime;
@@ -322,10 +323,14 @@
     // Show modal - use flex for proper keyboard detection
     modal.style.display = 'flex';
     document.body.style.overflow = 'hidden';
+    if (playerContainer) {
+      playerContainer.classList.toggle('details-hidden', !shouldAutoplay);
+    }
 
     const watchCta = document.getElementById('details-watch-cta');
     if (watchCta) {
       watchCta.onclick = () => {
+        if (playerContainer) playerContainer.classList.remove('details-hidden');
         const activeSeasonSelect = document.getElementById('season-select');
         const activeEpisodeSelect = document.getElementById('episode-select');
         const selectedSeason = Number.parseInt(activeSeasonSelect?.value || String(season), 10);
@@ -337,6 +342,7 @@
     }
 
     if (shouldAutoplay && window.openEpisode && typeof window.openEpisode === 'function') {
+      if (playerContainer) playerContainer.classList.remove('details-hidden');
       window.openEpisode(anime, season, episode);
     }
   }
