@@ -378,8 +378,44 @@
                 <span id="age-rating-content" class="age-rating-content"></span>
             </div>
             <div class="video-info">
-                <h2 id="video-title">Título do Anime</h2>
-                <p id="video-description">Descrição do anime...</p>
+                <div id="anime-details-section" class="stream-details">
+                    <div class="stream-hero" id="stream-hero">
+                        <div class="stream-hero-overlay">
+                            <span class="stream-kicker">AniVerse</span>
+                            <h2 id="video-title">Título do Anime</h2>
+                            <p id="video-description">Descrição do anime...</p>
+                            <p id="detail-meta-line" class="stream-meta-line">ANIME • 2026 • ⭐ N/A</p>
+                            <div id="detail-genre-chips" class="stream-chips"></div>
+                            <div class="stream-actions">
+                                <button id="details-watch-cta" class="btn btn-primary" type="button">
+                                    <i class="fas fa-play"></i> Assistir
+                                </button>
+                                <button id="details-episodes-cta" class="btn btn-secondary" type="button">
+                                    <i class="fas fa-list"></i> Episódios e mais
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stream-stats">
+                        <div class="stream-stat-item">
+                            <span class="label">Gêneros</span>
+                            <span class="value" id="detail-genres">-</span>
+                        </div>
+                        <div class="stream-stat-item">
+                            <span class="label">Nota</span>
+                            <span class="value" id="detail-rating">-</span>
+                        </div>
+                        <div class="stream-stat-item">
+                            <span class="label">Temporadas</span>
+                            <span class="value" id="detail-seasons">-</span>
+                        </div>
+                        <div class="stream-stat-item">
+                            <span class="label">Trilhas</span>
+                            <span class="value" id="detail-tracks">-</span>
+                            <span class="subvalue" id="detail-tracks-hint">0 OP • 0 ED • 0 OST</span>
+                        </div>
+                    </div>
+                </div>
                 <div style="margin: 10px 0;">
                     <span id="current-season-label">Temporada 1</span> • 
                     <span id="current-episode-label">Episódio 1</span>
@@ -404,6 +440,10 @@
                     <select id="episode-select">
                         <option>Episódio 1</option>
                     </select>
+                </div>
+                <div id="similar-anime-section" class="similar-anime-section">
+                    <h3>Você também pode gostar</h3>
+                    <div id="similar-anime-grid" class="similar-anime-grid"></div>
                 </div>
             </div>
         </div>
