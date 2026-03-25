@@ -100,7 +100,7 @@
         const nextUrl = options.cacheBust ? addMediaCacheBust(url) : url;
 
         audio.pause();
-        audio.crossOrigin = 'anonymous';
+        audio.removeAttribute('crossorigin');
         audio.removeAttribute('src');
         while (audio.firstChild) audio.removeChild(audio.firstChild);
 
@@ -168,7 +168,7 @@
             audio = document.createElement('audio');
             audio.id = 'music-playing-audio';
             audio.preload = isTvMusicEnvironment() ? 'auto' : 'metadata';
-            audio.crossOrigin = 'anonymous';
+            audio.removeAttribute('crossorigin');
             audio.style.display = 'none';
             document.body.appendChild(audio);
             
@@ -204,7 +204,7 @@
         }
         
         audio.preload = isTvMusicEnvironment() ? 'auto' : 'metadata';
-        audio.crossOrigin = 'anonymous';
+        audio.removeAttribute('crossorigin');
         audio.setAttribute('preload', audio.preload);
 
         musicPlayerInstance = audio;
