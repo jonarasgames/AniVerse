@@ -974,6 +974,7 @@
 
     const floatingSkipOpeningBtn = safe('floating-skip-opening-btn');
     const floatingSkipEndingBtn = safe('floating-skip-ending-btn');
+    const skipEndingBtn = safe('skip-ending-btn');
     const skipOpeningCtrl = new SkipController(player, 'skip-opening-btn', 'Pular abertura');
     const floatingSkipOpeningCtrl = new SkipController(player, 'floating-skip-opening-btn', 'Pular abertura');
     const skipEndingCtrl = new SkipController(player, 'skip-ending-btn', 'Pular encerramento');
@@ -1005,6 +1006,8 @@
 
       if (shouldShowEndingCountdown) {
         startNextEpisodeCountdown('ending');
+        if (skipEndingBtn) skipEndingBtn.style.display = 'none';
+        if (floatingSkipEndingBtn) floatingSkipEndingBtn.style.display = 'none';
       } else if (nextEpisodeCountdownSource === 'ending') {
         clearNextEpisodeCountdown();
       }
