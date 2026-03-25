@@ -1022,7 +1022,8 @@
       if (floatingActionsEl) {
         const hasVisibleAction = [floatingNextEpisodeBtn, floatingSkipOpeningBtn, floatingSkipEndingBtn]
           .some(el => el && el.style.display !== 'none');
-        floatingActionsEl.style.display = hasVisibleAction ? 'flex' : 'none';
+        const shouldShowFloating = hasVisibleAction && !controlsVisible;
+        floatingActionsEl.style.display = shouldShowFloating ? 'flex' : 'none';
       }
     });
 
