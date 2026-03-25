@@ -93,8 +93,9 @@
       
       // Clone the click event
       miniSkip.addEventListener('click', () => {
-        if(window.currentOpeningData && window.currentOpeningData.end) {
-          player.currentTime = window.currentOpeningData.end;
+        const active = window.getActiveSkipSegment && window.getActiveSkipSegment();
+        if(active && Number.isFinite(active.end)) {
+          player.currentTime = active.end;
         }
       });
       
