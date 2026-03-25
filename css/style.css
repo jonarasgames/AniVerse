@@ -687,6 +687,35 @@ nav a:hover, nav a.active {
     opacity: 0.3; /* 50% transparente */
 }
 
+.continue-progress-track {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.22);
+    z-index: 3;
+}
+
+.continue-progress-bar {
+    height: 100%;
+    width: 0;
+    background: var(--primary-color);
+    transition: width 0.25s ease;
+}
+
+.continue-resume-btn {
+    margin-top: 8px;
+    width: 100%;
+    border: 0;
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-weight: 700;
+    color: #fff;
+    background: var(--primary-color);
+    cursor: pointer;
+}
+
 .category-tabs {
     display: flex;
     flex-wrap: wrap;
