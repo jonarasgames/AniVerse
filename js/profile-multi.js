@@ -4,6 +4,15 @@
 
     const STORAGE_KEY = 'aniverse_profiles';
     const ACTIVE_PROFILE_KEY = 'aniverse_active_profile';
+    const DEFAULT_MARATHON_PREFERENCES = {
+        enabled: true,
+        autoNext: true,
+        breakEveryEpisodes: 0,
+        sessionLimit: 0,
+        autoSkipOpening: false,
+        autoSkipEnding: false,
+        countdownSeconds: 8
+    };
 
     function canUseLocalStorage() {
         try {
@@ -63,7 +72,11 @@
         loadProfiles() {
             try {
                 const data = storageGet(STORAGE_KEY);
-                return data ? JSON.parse(data) : [];
+                const profiles = data ? JSON.parse(data) : [];
+                return profiles.map(profile => ({
+                    ...profile,
+                    marathon: { ...DEFAULT_MARATHON_PREFERENCES, ...(profile.marathon || {}) }
+                }));
             } catch (e) {
                 console.error('Error loading profiles:', e);
                 return [];
@@ -86,7 +99,8 @@
                 avatar: profileData.avatar || {},
                 password: profileData.password || null,
                 createdAt: new Date().toISOString(),
-                continueWatching: []
+                continueWatching: [],
+                marathon: { ...DEFAULT_MARATHON_PREFERENCES, ...(profileData.marathon || {}) }
             };
             this.profiles.push(profile);
             this.saveProfiles();
@@ -167,6 +181,23 @@
             profile.continueWatching = profile.continueWatching.slice(0, 20);
             
             this.saveProfiles();
+        }
+
+        getMarathonPreferences(profileId = null) {
+            const targetId = profileId || this.activeProfileId;
+            const profile = targetId ? this.getProfile(targetId) : null;
+            return { ...DEFAULT_MARATHON_PREFERENCES, ...(profile?.marathon || {}) };
+        }
+
+        updateMarathonPreferences(profileId = null, updates = {}) {
+            const targetId = profileId || this.activeProfileId;
+            if (!targetId) return null;
+            const profile = this.getProfile(targetId);
+            if (!profile) return null;
+
+            profile.marathon = { ...DEFAULT_MARATHON_PREFERENCES, ...(profile.marathon || {}), ...updates };
+            this.saveProfiles();
+            return profile.marathon;
         }
     }
 
@@ -547,6 +578,9 @@
             // Reset form
             const nameInput = document.getElementById('profile-name');
             if (nameInput) nameInput.value = '';
+            const passwordInput = document.getElementById('profile-password');
+            if (passwordInput) passwordInput.value = '';
+            fillMarathonSettings(DEFAULT_MARATHON_PREFERENCES);
             
             // Clear previous selections
             document.querySelectorAll('.bg-option, .char-option, .gradient-option, .frame-option').forEach(el => {
@@ -593,6 +627,7 @@
         
         const pronounSelect = document.getElementById('selected-pronoun');
         if (pronounSelect) pronounSelect.value = profile.pronoun || '-san';
+        fillMarathonSettings(profile.marathon || DEFAULT_MARATHON_PREFERENCES);
         
         // Update pronoun pills
         document.querySelectorAll('.pronoun-pill').forEach(pill => {
@@ -663,6 +698,44 @@
         if (saveBtn) {
             saveBtn.innerHTML = '<i class="fas fa-check"></i> Salvar Alterações';
         }
+    }
+
+    function fillMarathonSettings(marathon) {
+        const prefs = { ...DEFAULT_MARATHON_PREFERENCES, ...(marathon || {}) };
+        const bindChecked = (id, value) => {
+            const el = document.getElementById(id);
+            if (el) el.checked = !!value;
+        };
+        const bindNumber = (id, value) => {
+            const el = document.getElementById(id);
+            if (el) el.value = Number.isFinite(Number(value)) ? Number(value) : 0;
+        };
+
+        bindChecked('marathon-enabled', prefs.enabled);
+        bindChecked('marathon-auto-next', prefs.autoNext);
+        bindChecked('marathon-auto-skip-opening', prefs.autoSkipOpening);
+        bindChecked('marathon-auto-skip-ending', prefs.autoSkipEnding);
+        bindNumber('marathon-break-every-episodes', prefs.breakEveryEpisodes);
+        bindNumber('marathon-session-limit', prefs.sessionLimit);
+        bindNumber('marathon-countdown-seconds', prefs.countdownSeconds);
+    }
+
+    function collectMarathonSettingsFromForm() {
+        const readChecked = (id, fallback = false) => !!(document.getElementById(id)?.checked ?? fallback);
+        const readNumber = (id, fallback = 0) => {
+            const value = Number(document.getElementById(id)?.value);
+            return Number.isFinite(value) && value >= 0 ? Math.floor(value) : fallback;
+        };
+
+        return {
+            enabled: readChecked('marathon-enabled', true),
+            autoNext: readChecked('marathon-auto-next', true),
+            breakEveryEpisodes: readNumber('marathon-break-every-episodes', 0),
+            sessionLimit: readNumber('marathon-session-limit', 0),
+            autoSkipOpening: readChecked('marathon-auto-skip-opening', false),
+            autoSkipEnding: readChecked('marathon-auto-skip-ending', false),
+            countdownSeconds: Math.max(1, readNumber('marathon-countdown-seconds', 8))
+        };
     }
 
     function showManageProfilesScreen() {
@@ -1078,7 +1151,8 @@
                     name: nameInput.value.trim(),
                     pronoun: pronounInput ? pronounInput.value : '-san',
                     avatar: avatarData,
-                    password: passwordInput ? (passwordInput.value.trim() || null) : null
+                    password: passwordInput ? (passwordInput.value.trim() || null) : null,
+                    marathon: collectMarathonSettingsFromForm()
                 };
 
                 // Check if we're editing an existing profile
