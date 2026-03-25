@@ -595,6 +595,49 @@
       watchedCount: 0
     };
     let nextEpisodeCountdownTimer = null;
+    let nextEpisodeCountdownSource = null;
+    const countdownInlineEl = document.getElementById('next-episode-countdown');
+    const floatingNextEpisodeBtn = document.getElementById('floating-next-episode-btn');
+    const floatingActionsEl = document.getElementById('video-floating-actions');
+
+    function syncFloatingActionsLayout() {
+      if (!floatingActionsEl) return;
+      if (isCompactMobileViewport()) {
+        floatingActionsEl.style.left = '8px';
+        floatingActionsEl.style.right = '8px';
+        floatingActionsEl.style.bottom = '86px';
+        floatingActionsEl.style.alignItems = 'stretch';
+      } else {
+        floatingActionsEl.style.left = '';
+        floatingActionsEl.style.right = '12px';
+        floatingActionsEl.style.bottom = '72px';
+        floatingActionsEl.style.alignItems = 'flex-end';
+      }
+    }
+    syncFloatingActionsLayout();
+    window.addEventListener('resize', syncFloatingActionsLayout);
+    window.addEventListener('orientationchange', syncFloatingActionsLayout);
+
+    function isEndingNearEpisodeEnd(endingSegment) {
+      if (!endingSegment || !Number.isFinite(player.duration) || player.duration <= 0) return false;
+      return Number(endingSegment.end) >= (player.duration - 3);
+    }
+
+    function setCountdownMessage(message, asPause = false) {
+      if (countdownInlineEl) {
+        countdownInlineEl.style.display = 'block';
+        countdownInlineEl.textContent = message;
+      }
+      if (floatingNextEpisodeBtn) {
+        floatingNextEpisodeBtn.style.display = 'block';
+        floatingNextEpisodeBtn.textContent = asPause ? '⏸️ Pausar maratona' : message;
+      }
+    }
+
+    function hideCountdownMessage() {
+      if (countdownInlineEl) countdownInlineEl.style.display = 'none';
+      if (floatingNextEpisodeBtn) floatingNextEpisodeBtn.style.display = 'none';
+    }
 
     function getMarathonPreferences() {
       const defaults = {
@@ -639,12 +682,12 @@
     }
 
     function clearNextEpisodeCountdown() {
-      const countdownEl = document.getElementById('next-episode-countdown');
       if (nextEpisodeCountdownTimer) {
         clearInterval(nextEpisodeCountdownTimer);
         nextEpisodeCountdownTimer = null;
       }
-      if (countdownEl) countdownEl.style.display = 'none';
+      nextEpisodeCountdownSource = null;
+      hideCountdownMessage();
     }
 
     function ensureSessionState() {
@@ -656,12 +699,51 @@
       }
     }
 
-    function shouldPauseByMarathonPolicy(prefs) {
+    function shouldPauseByMarathonPolicy(prefs, completedOffset = 0) {
       ensureSessionState();
-      const nextCount = marathonSessionState.watchedCount;
+      const nextCount = marathonSessionState.watchedCount + completedOffset;
       const hasSessionLimit = prefs.sessionLimit > 0 && nextCount >= prefs.sessionLimit;
       const hasBreakInterval = prefs.breakEveryEpisodes > 0 && (nextCount % prefs.breakEveryEpisodes === 0);
       return { shouldPause: hasSessionLimit || hasBreakInterval, nextCount };
+    }
+
+    function startNextEpisodeCountdown(source = 'ended') {
+      if (nextEpisodeCountdownTimer && nextEpisodeCountdownSource === source) return;
+      const prefs = getMarathonPreferences();
+      const target = getNextEpisodeTarget();
+      if (!target || !prefs.enabled || !prefs.autoNext) {
+        if (source === 'ended') hideCountdownMessage();
+        return;
+      }
+
+      if (!nextEpisodeCountdownTimer) {
+        const policy = shouldPauseByMarathonPolicy(prefs, source === 'ending' ? 1 : 0);
+        if (policy.shouldPause) {
+          setCountdownMessage(`⏸️ Pausa da maratona após ${policy.nextCount} episódios.`, true);
+          return;
+        }
+      }
+
+      if (nextEpisodeCountdownTimer && nextEpisodeCountdownSource !== source) {
+        clearInterval(nextEpisodeCountdownTimer);
+      }
+
+      nextEpisodeCountdownSource = source;
+      let remaining = Math.max(1, Number(prefs.countdownSeconds) || 8);
+      setCountdownMessage(`⏭️ Próximo episódio em ${remaining}s`);
+      nextEpisodeCountdownTimer = setInterval(() => {
+        remaining -= 1;
+        if (remaining <= 0) {
+          if (source === 'ending') {
+            ensureSessionState();
+            marathonSessionState.watchedCount += 1;
+          }
+          clearNextEpisodeCountdown();
+          goToNextEpisode();
+          return;
+        }
+        setCountdownMessage(`⏭️ Próximo episódio em ${remaining}s`);
+      }, 1000);
     }
 
     function handleEpisodeEndedWithMarathon() {
@@ -670,36 +752,14 @@
       ensureSessionState();
       marathonSessionState.watchedCount += 1;
 
-      const countdownEl = document.getElementById('next-episode-countdown');
-      const target = getNextEpisodeTarget();
-      if (!target || !prefs.enabled || !prefs.autoNext) {
-        if (countdownEl) countdownEl.style.display = 'none';
-        return;
-      }
-
       const policy = shouldPauseByMarathonPolicy(prefs);
       if (policy.shouldPause) {
-        if (countdownEl) {
-          countdownEl.style.display = 'block';
-          countdownEl.textContent = `⏸️ Pausa da maratona após ${policy.nextCount} episódios.`;
-        }
+        clearNextEpisodeCountdown();
+        setCountdownMessage(`⏸️ Pausa da maratona após ${policy.nextCount} episódios.`, true);
         return;
       }
 
-      let remaining = Math.max(1, Number(prefs.countdownSeconds) || 8);
-      if (countdownEl) {
-        countdownEl.style.display = 'block';
-        countdownEl.textContent = `⏭️ Próximo episódio em ${remaining}s`;
-      }
-      nextEpisodeCountdownTimer = setInterval(() => {
-        remaining -= 1;
-        if (remaining <= 0) {
-          clearNextEpisodeCountdown();
-          goToNextEpisode();
-          return;
-        }
-        if (countdownEl) countdownEl.textContent = `⏭️ Próximo episódio em ${remaining}s`;
-      }, 1000);
+      startNextEpisodeCountdown('ended');
     }
     
     // Next episode button functionality
@@ -709,6 +769,12 @@
             clearNextEpisodeCountdown();
             goToNextEpisode();
         });
+    }
+    if (floatingNextEpisodeBtn) {
+      floatingNextEpisodeBtn.addEventListener('click', () => {
+        clearNextEpisodeCountdown();
+        goToNextEpisode();
+      });
     }
     
     // Double-tap to seek (mobile) - Track tap times and positions
@@ -907,17 +973,24 @@
         }
     });
 
+    const floatingSkipOpeningBtn = safe('floating-skip-opening-btn');
+    const floatingSkipEndingBtn = safe('floating-skip-ending-btn');
     const skipOpeningCtrl = new SkipController(player, 'skip-opening-btn', 'Pular abertura');
+    const floatingSkipOpeningCtrl = new SkipController(player, 'floating-skip-opening-btn', 'Pular abertura');
     const skipEndingCtrl = new SkipController(player, 'skip-ending-btn', 'Pular encerramento');
+    const floatingSkipEndingCtrl = new SkipController(player, 'floating-skip-ending-btn', 'Pular encerramento');
     window.currentOpeningData = null;
     window.currentEndingData = null;
     window.updateOpeningData = function(data){
       window.currentOpeningData = data && typeof data.start === 'number' ? data : null;
       if(skipOpeningCtrl && typeof skipOpeningCtrl.setSegment === 'function') skipOpeningCtrl.setSegment(window.currentOpeningData);
+      if(floatingSkipOpeningCtrl && typeof floatingSkipOpeningCtrl.setSegment === 'function') floatingSkipOpeningCtrl.setSegment(window.currentOpeningData);
     };
     window.updateEndingData = function(data){
       window.currentEndingData = data && typeof data.start === 'number' ? data : null;
       if(skipEndingCtrl && typeof skipEndingCtrl.setSegment === 'function') skipEndingCtrl.setSegment(window.currentEndingData);
+      if(floatingSkipEndingCtrl && typeof floatingSkipEndingCtrl.setSegment === 'function') floatingSkipEndingCtrl.setSegment(window.currentEndingData);
+      clearNextEpisodeCountdown();
     };
     window.updateEpisodeSegments = function(segments){
       window.updateOpeningData(segments?.opening || null);
@@ -927,11 +1000,27 @@
     player.addEventListener('timeupdate', () => {
       const prefs = getMarathonPreferences();
       const currentTime = player.currentTime || 0;
+      const inEnding = !!(window.currentEndingData && currentTime >= window.currentEndingData.start && currentTime < window.currentEndingData.end);
+      const endingNearEpisodeEnd = isEndingNearEpisodeEnd(window.currentEndingData);
+      const shouldShowEndingCountdown = prefs.enabled && prefs.autoNext && inEnding && endingNearEpisodeEnd;
+
+      if (shouldShowEndingCountdown) {
+        startNextEpisodeCountdown('ending');
+      } else if (nextEpisodeCountdownSource === 'ending') {
+        clearNextEpisodeCountdown();
+      }
+
       if (prefs.enabled && prefs.autoSkipOpening && window.currentOpeningData && currentTime >= window.currentOpeningData.start && currentTime < window.currentOpeningData.end) {
         player.currentTime = window.currentOpeningData.end;
       }
-      if (prefs.enabled && prefs.autoSkipEnding && window.currentEndingData && currentTime >= window.currentEndingData.start && currentTime < window.currentEndingData.end) {
+      if (prefs.enabled && prefs.autoSkipEnding && inEnding && !endingNearEpisodeEnd) {
         player.currentTime = window.currentEndingData.end;
+      }
+
+      if (floatingActionsEl) {
+        const hasVisibleAction = [floatingNextEpisodeBtn, floatingSkipOpeningBtn, floatingSkipEndingBtn]
+          .some(el => el && el.style.display !== 'none');
+        floatingActionsEl.style.display = hasVisibleAction ? 'flex' : 'none';
       }
     });
 
@@ -1056,6 +1145,7 @@
     player.addEventListener('pause', () => {
       showControls();
       persistContinueWatchingNow(true);
+      if (nextEpisodeCountdownSource === 'ending') clearNextEpisodeCountdown();
     });
     
     // Hide controls when video starts playing (after delay)
