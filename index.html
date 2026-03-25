@@ -370,6 +370,9 @@
                         <button id="skip-opening-btn" class="btn btn-secondary" style="display: none; margin-left: auto;">
                             ⏩ Pular Abertura
                         </button>
+                        <button id="skip-ending-btn" class="btn btn-secondary" style="display: none;">
+                            ⏩ Pular Encerramento
+                        </button>
                         <button id="next-episode-btn" class="btn-icon" title="Próximo Episódio" style="margin-left: auto;">
                             <i class="fas fa-step-forward"></i>
                         </button>
@@ -380,6 +383,7 @@
                             <i class="fas fa-expand"></i>
                         </button>
                     </div>
+                    <div id="next-episode-countdown" style="display:none; margin-top:8px; color:#fff; font-size:13px; text-align:right;"></div>
                 </div>
             </div>
             <!-- Age Rating Section -->
@@ -468,6 +472,29 @@
                         <label>Senha (opcional) 🔒</label>
                         <input type="password" id="profile-password" class="input-modern" placeholder="Deixe vazio para sem senha">
                         <small style="color: rgba(255,255,255,0.6); font-size: 12px;">Se definir senha, será solicitada ao selecionar o perfil.</small>
+                    </div>
+
+                    <!-- Configurações de Maratona -->
+                    <div class="form-group-modern">
+                        <label>Maratona</label>
+                        <div style="display:grid; gap:10px; color:#fff;">
+                            <label><input type="checkbox" id="marathon-enabled" checked> Ativar modo maratona</label>
+                            <label><input type="checkbox" id="marathon-auto-next" checked> Avançar automaticamente para próximo episódio</label>
+                            <label><input type="checkbox" id="marathon-auto-skip-opening"> Pular abertura automaticamente</label>
+                            <label><input type="checkbox" id="marathon-auto-skip-ending"> Pular encerramento automaticamente</label>
+                            <label style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+                                <span>Contagem regressiva (segundos)</span>
+                                <input type="number" id="marathon-countdown-seconds" class="input-modern" min="1" max="60" value="8" style="max-width:110px;">
+                            </label>
+                            <label style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+                                <span>Pausa automática a cada X episódios (0 desativa)</span>
+                                <input type="number" id="marathon-break-every-episodes" class="input-modern" min="0" max="50" value="0" style="max-width:110px;">
+                            </label>
+                            <label style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+                                <span>Limite de episódios por sessão (0 ilimitado)</span>
+                                <input type="number" id="marathon-session-limit" class="input-modern" min="0" max="100" value="0" style="max-width:110px;">
+                            </label>
+                        </div>
                     </div>
                     
                     <!-- Tabs: Cores / Fundos / Personagens / Molduras -->

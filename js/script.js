@@ -1718,20 +1718,20 @@ function openEpisode(anime, seasonNumber, episodeIndex){
     const season = (anime.seasons || []).find(s => s.number === seasonNumber);
     const episode = season && Array.isArray(season.episodes) ? season.episodes[episodeIndex] : null;
     const player = document.getElementById('anime-player'); if (!player) return;
+    window.__ANIVERSE_MARATHON_HANDLED = false;
     const bannerEl = document.querySelector('.video-banner'); const bannerUrl = anime.banner || anime.cover || 'images/bg-default.jpg';
     if (bannerEl) bannerEl.style.backgroundImage = `url('${bannerUrl}')`;
-    const skipSegments = [];
-    if (episode?.opening && typeof episode.opening.start === 'number' && typeof episode.opening.end === 'number') {
-        skipSegments.push({ type: 'opening', start: episode.opening.start, end: episode.opening.end });
-    }
-    if (episode?.ending && typeof episode.ending.start === 'number' && typeof episode.ending.end === 'number') {
-        skipSegments.push({ type: 'ending', start: episode.ending.start, end: episode.ending.end });
-    }
-    if (typeof window.updateSkipSegmentsData === 'function') {
-        window.updateSkipSegmentsData(skipSegments);
-    } else if (typeof window.updateOpeningData === 'function') {
-        const openingOnly = skipSegments.find((segment) => segment.type === 'opening') || null;
-        window.updateOpeningData(openingOnly);
+    const openingData = (episode && episode.opening && typeof episode.opening.start === 'number' && typeof episode.opening.end === 'number')
+      ? { start: episode.opening.start, end: episode.opening.end }
+      : null;
+    const endingData = (episode && episode.ending && typeof episode.ending.start === 'number' && typeof episode.ending.end === 'number')
+      ? { start: episode.ending.start, end: episode.ending.end }
+      : null;
+    if (window.updateEpisodeSegments) {
+      window.updateEpisodeSegments({ opening: openingData, ending: endingData });
+    } else {
+      window.updateOpeningData && window.updateOpeningData(openingData);
+      window.updateEndingData && window.updateEndingData(endingData);
     }
     
     // Update age rating section
@@ -1970,6 +1970,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
     player.addEventListener('ended', () => {
+      if (window.__ANIVERSE_MARATHON_HANDLED) return;
       // Auto-advance to next episode
       if (window.currentAnime && window.currentWatchingAnime) {
         const currentSeason = window.currentAnime.seasons?.find(s => s.number === window.currentWatchingAnime.season);

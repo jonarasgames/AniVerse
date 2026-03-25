@@ -4,48 +4,19 @@
   function showVideoError(msg){ let el=document.getElementById('video-error-container'); if(!el){ el=document.createElement('div'); el.id='video-error-container'; Object.assign(el.style,{position:'absolute',left:'50%',bottom:'14%',transform:'translateX(-50%)',background:'rgba(0,0,0,0.78)',color:'#fff',padding:'10px 14px',borderRadius:'10px',zIndex:1001,pointerEvents:'none',maxWidth:'min(88%, 460px)',textAlign:'center'}); (document.getElementById('video-player-container')||document.body).appendChild(el);} el.textContent=msg; }
   function clearVideoError(){ const el=document.getElementById('video-error-container'); if(el) el.remove(); }
 
-  function SkipController(player, skipId){
-    this.player = player; this.skipBtn = safe(skipId); this.segments = [];
+  function SkipController(player, skipId, labelPrefix){
+    this.player = player; this.skipBtn = safe(skipId); this.segment = null; this.labelPrefix = labelPrefix || 'Pular';
     if(!this.player || !this.skipBtn){ console.warn('SkipController: missing elements'); return; }
     this.player.addEventListener('timeupdate', ()=> this.update());
-    this.skipBtn.addEventListener('click', ()=> {
-      const active = this.getActiveSegment();
-      if (active) this.player.currentTime = active.end;
-    });
+    this.skipBtn.addEventListener('click', ()=> { if (this.segment) this.player.currentTime = this.segment.end; });
   }
-  SkipController.prototype.isValidSegment = function(segment){
-    if (!segment || typeof segment.start !== 'number' || typeof segment.end !== 'number') return false;
-    if (!Number.isFinite(segment.start) || !Number.isFinite(segment.end)) return false;
-    if (segment.start < 0 || segment.end <= segment.start) return false;
-    return true;
-  };
-  SkipController.prototype.isSegmentCompatibleWithDuration = function(segment){
-    if (!this.isValidSegment(segment)) return false;
-    const duration = Number(this.player?.duration);
-    if (!Number.isFinite(duration) || duration <= 0) return false;
-    return segment.end <= duration;
-  };
-  SkipController.prototype.setSegments = function(segments){
-    this.segments = Array.isArray(segments)
-      ? segments
-        .map((segment) => ({ ...segment, start: Number(segment.start), end: Number(segment.end) }))
-        .filter((segment) => this.isValidSegment(segment))
-      : [];
-    this.update();
-  };
-  SkipController.prototype.getActiveSegment = function(){
-    if(!this.player || !Array.isArray(this.segments) || !this.segments.length) return null;
-    const t = this.player.currentTime || 0;
-    return this.segments.find((segment) => this.isSegmentCompatibleWithDuration(segment) && t >= segment.start && t < segment.end) || null;
-  };
+  SkipController.prototype.setSegment = function(segment){ this.segment = segment; this.update(); };
   SkipController.prototype.update = function(){
     if(!this.player || !this.skipBtn) return;
-    const active = this.getActiveSegment();
-    if(!active){ this.skipBtn.style.display='none'; return; }
-    const t = this.player.currentTime || 0;
-    const label = active.type === 'ending' ? 'Encerramento' : 'Abertura';
-    this.skipBtn.style.display = 'block';
-    this.skipBtn.textContent = `⏩ Pular ${label} (${Math.ceil(Math.max(0,active.end - t))}s)`;
+    if(!this.segment){ this.skipBtn.style.display='none'; return; }
+    const t = this.player.currentTime || 0; const show = (t >= this.segment.start && t < this.segment.end);
+    this.skipBtn.style.display = show ? 'block' : 'none';
+    if(show) this.skipBtn.textContent = `⏩ ${this.labelPrefix} (${Math.ceil(Math.max(0,this.segment.end - t))}s)`;
   };
 
   function clearCustomMiniPlayer(){
@@ -618,34 +589,125 @@
     
     // Listen for when episode changes
     player.addEventListener('loadedmetadata', updateVideoOverlay);
+
+    const marathonSessionState = {
+      profileId: null,
+      watchedCount: 0
+    };
+    let nextEpisodeCountdownTimer = null;
+
+    function getMarathonPreferences() {
+      const defaults = {
+        enabled: true,
+        autoNext: true,
+        breakEveryEpisodes: 0,
+        sessionLimit: 0,
+        autoSkipOpening: false,
+        autoSkipEnding: false,
+        countdownSeconds: 8
+      };
+      const fromProfileManager = (window.profileManager && typeof window.profileManager.getMarathonPreferences === 'function')
+        ? window.profileManager.getMarathonPreferences()
+        : null;
+      const fromAnimeDb = (window.animeDB && typeof window.animeDB.getActiveProfileMarathonPreferences === 'function')
+        ? window.animeDB.getActiveProfileMarathonPreferences()
+        : null;
+      return { ...defaults, ...(fromAnimeDb || {}), ...(fromProfileManager || {}) };
+    }
+
+    function getNextEpisodeTarget() {
+      if (!window.currentAnime || !window.currentWatchingAnime) return null;
+      const currentSeason = window.currentAnime.seasons?.find(s => s.number === window.currentWatchingAnime.season);
+      if (currentSeason?.episodes) {
+        const nextEpisodeIndex = window.currentWatchingAnime.episode;
+        if (nextEpisodeIndex < currentSeason.episodes.length) {
+          return { season: window.currentWatchingAnime.season, episodeIndex: nextEpisodeIndex };
+        }
+      }
+      const nextSeason = window.currentAnime.seasons?.find(s => s.number === window.currentWatchingAnime.season + 1);
+      if (nextSeason?.episodes?.length) {
+        return { season: nextSeason.number, episodeIndex: 0 };
+      }
+      return null;
+    }
+
+    function goToNextEpisode() {
+      const target = getNextEpisodeTarget();
+      if (!target || typeof window.openEpisode !== 'function') return false;
+      window.openEpisode(window.currentAnime, target.season, target.episodeIndex);
+      return true;
+    }
+
+    function clearNextEpisodeCountdown() {
+      const countdownEl = document.getElementById('next-episode-countdown');
+      if (nextEpisodeCountdownTimer) {
+        clearInterval(nextEpisodeCountdownTimer);
+        nextEpisodeCountdownTimer = null;
+      }
+      if (countdownEl) countdownEl.style.display = 'none';
+    }
+
+    function ensureSessionState() {
+      const activeProfile = window.profileManager?.getActiveProfile?.();
+      if (!activeProfile?.id) return;
+      if (marathonSessionState.profileId !== activeProfile.id) {
+        marathonSessionState.profileId = activeProfile.id;
+        marathonSessionState.watchedCount = 0;
+      }
+    }
+
+    function shouldPauseByMarathonPolicy(prefs) {
+      ensureSessionState();
+      const nextCount = marathonSessionState.watchedCount;
+      const hasSessionLimit = prefs.sessionLimit > 0 && nextCount >= prefs.sessionLimit;
+      const hasBreakInterval = prefs.breakEveryEpisodes > 0 && (nextCount % prefs.breakEveryEpisodes === 0);
+      return { shouldPause: hasSessionLimit || hasBreakInterval, nextCount };
+    }
+
+    function handleEpisodeEndedWithMarathon() {
+      clearNextEpisodeCountdown();
+      const prefs = getMarathonPreferences();
+      ensureSessionState();
+      marathonSessionState.watchedCount += 1;
+
+      const countdownEl = document.getElementById('next-episode-countdown');
+      const target = getNextEpisodeTarget();
+      if (!target || !prefs.enabled || !prefs.autoNext) {
+        if (countdownEl) countdownEl.style.display = 'none';
+        return;
+      }
+
+      const policy = shouldPauseByMarathonPolicy(prefs);
+      if (policy.shouldPause) {
+        if (countdownEl) {
+          countdownEl.style.display = 'block';
+          countdownEl.textContent = `⏸️ Pausa da maratona após ${policy.nextCount} episódios.`;
+        }
+        return;
+      }
+
+      let remaining = Math.max(1, Number(prefs.countdownSeconds) || 8);
+      if (countdownEl) {
+        countdownEl.style.display = 'block';
+        countdownEl.textContent = `⏭️ Próximo episódio em ${remaining}s`;
+      }
+      nextEpisodeCountdownTimer = setInterval(() => {
+        remaining -= 1;
+        if (remaining <= 0) {
+          clearNextEpisodeCountdown();
+          goToNextEpisode();
+          return;
+        }
+        if (countdownEl) countdownEl.textContent = `⏭️ Próximo episódio em ${remaining}s`;
+      }, 1000);
+    }
     
     // Next episode button functionality
     const nextEpisodeBtn = safe('next-episode-btn');
     if (nextEpisodeBtn) {
         nextEpisodeBtn.addEventListener('click', () => {
-            if (window.currentAnime && window.currentWatchingAnime) {
-                const currentSeason = window.currentAnime.seasons?.find(s => s.number === window.currentWatchingAnime.season);
-                if (currentSeason && currentSeason.episodes) {
-                    // episode is 1-based, openEpisode takes 0-based index
-                    // So next episode index = current episode number (e.g., watching ep 1 → next index is 1 → ep 2)
-                    const nextEpisodeIndex = window.currentWatchingAnime.episode;
-                    
-                    if (nextEpisodeIndex < currentSeason.episodes.length) {
-                        // Next episode exists in current season
-                        console.log(`⏭️ Going to next episode: S${window.currentWatchingAnime.season}E${nextEpisodeIndex + 1}`);
-                        window.openEpisode(window.currentAnime, window.currentWatchingAnime.season, nextEpisodeIndex);
-                    } else {
-                        // Check if there's a next season
-                        const nextSeason = window.currentAnime.seasons?.find(s => s.number === window.currentWatchingAnime.season + 1);
-                        if (nextSeason && nextSeason.episodes && nextSeason.episodes.length > 0) {
-                            console.log(`⏭️ Going to next season: S${nextSeason.number}E1`);
-                            window.openEpisode(window.currentAnime, nextSeason.number, 0);
-                        } else {
-                            console.log('✅ No more episodes available');
-                        }
-                    }
-                }
-            }
+            clearNextEpisodeCountdown();
+            goToNextEpisode();
         });
     }
     
@@ -845,19 +907,33 @@
         }
     });
 
-    const skipCtrl = new SkipController(player, 'skip-opening-btn');
-    player.addEventListener('loadedmetadata', () => skipCtrl.update());
-    window.getActiveSkipSegment = () => (skipCtrl && typeof skipCtrl.getActiveSegment === 'function' ? skipCtrl.getActiveSegment() : null);
-    window.updateSkipSegmentsData = function(data){
-      const segments = Array.isArray(data) ? data : [];
-      if(skipCtrl && typeof skipCtrl.setSegments === 'function') skipCtrl.setSegments(segments);
-    };
+    const skipOpeningCtrl = new SkipController(player, 'skip-opening-btn', 'Pular abertura');
+    const skipEndingCtrl = new SkipController(player, 'skip-ending-btn', 'Pular encerramento');
+    window.currentOpeningData = null;
+    window.currentEndingData = null;
     window.updateOpeningData = function(data){
-      const segments = data && typeof data.start === 'number' && typeof data.end === 'number'
-        ? [{ type: 'opening', start: data.start, end: data.end }]
-        : [];
-      window.updateSkipSegmentsData(segments);
+      window.currentOpeningData = data && typeof data.start === 'number' ? data : null;
+      if(skipOpeningCtrl && typeof skipOpeningCtrl.setSegment === 'function') skipOpeningCtrl.setSegment(window.currentOpeningData);
     };
+    window.updateEndingData = function(data){
+      window.currentEndingData = data && typeof data.start === 'number' ? data : null;
+      if(skipEndingCtrl && typeof skipEndingCtrl.setSegment === 'function') skipEndingCtrl.setSegment(window.currentEndingData);
+    };
+    window.updateEpisodeSegments = function(segments){
+      window.updateOpeningData(segments?.opening || null);
+      window.updateEndingData(segments?.ending || null);
+    };
+
+    player.addEventListener('timeupdate', () => {
+      const prefs = getMarathonPreferences();
+      const currentTime = player.currentTime || 0;
+      if (prefs.enabled && prefs.autoSkipOpening && window.currentOpeningData && currentTime >= window.currentOpeningData.start && currentTime < window.currentOpeningData.end) {
+        player.currentTime = window.currentOpeningData.end;
+      }
+      if (prefs.enabled && prefs.autoSkipEnding && window.currentEndingData && currentTime >= window.currentEndingData.start && currentTime < window.currentEndingData.end) {
+        player.currentTime = window.currentEndingData.end;
+      }
+    });
 
     const pipBtn = safe('pip-btn');
     if (pipBtn) {
@@ -998,7 +1074,15 @@
       persistContinueWatchingDebounced();
     });
 
-    player.addEventListener('ended', () => persistContinueWatchingNow(true));
+    player.addEventListener('ended', (e) => {
+      window.__ANIVERSE_MARATHON_HANDLED = true;
+      if (e && typeof e.stopImmediatePropagation === 'function') {
+        e.stopImmediatePropagation();
+      }
+      persistContinueWatchingNow(true);
+      handleEpisodeEndedWithMarathon();
+    });
+    player.addEventListener('play', () => clearNextEpisodeCountdown());
     window.addEventListener('beforeunload', () => persistContinueWatchingNow(true));
     
     // Update overlay when episode info changes
