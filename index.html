@@ -380,6 +380,29 @@
             <div class="video-info">
                 <h2 id="video-title">Título do Anime</h2>
                 <p id="video-description">Descrição do anime...</p>
+                <div id="anime-details-section" class="anime-details-section">
+                    <div class="anime-details-grid">
+                        <div class="detail-item">
+                            <span class="label">Gêneros</span>
+                            <span class="value" id="detail-genres">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">Nota</span>
+                            <span class="value" id="detail-rating">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">Temporadas</span>
+                            <span class="value" id="detail-seasons">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">Trilhas</span>
+                            <span class="value" id="detail-tracks">-</span>
+                        </div>
+                    </div>
+                    <button id="details-watch-cta" class="btn btn-primary" type="button">
+                        <i class="fas fa-play"></i> Assistir
+                    </button>
+                </div>
                 <div style="margin: 10px 0;">
                     <span id="current-season-label">Temporada 1</span> • 
                     <span id="current-episode-label">Episódio 1</span>
@@ -404,6 +427,10 @@
                     <select id="episode-select">
                         <option>Episódio 1</option>
                     </select>
+                </div>
+                <div id="similar-anime-section" class="similar-anime-section">
+                    <h3>Você também pode gostar</h3>
+                    <div id="similar-anime-grid" class="similar-anime-grid"></div>
                 </div>
             </div>
         </div>
