@@ -46,6 +46,51 @@
     return String(value || '').split('\n').map(v => v.trim()).filter(Boolean);
   }
 
+  function parseOptionalSeconds(value) {
+    const text = String(value ?? '').trim();
+    if (!text) return null;
+    const parsed = Number(text);
+    if (!Number.isFinite(parsed) || parsed < 0) return null;
+    return Math.floor(parsed);
+  }
+
+  function getEpisodeTimingFromRow(row, key) {
+    const start = parseOptionalSeconds(row.querySelector(`[data-field="${key}Start"]`)?.value);
+    const end = parseOptionalSeconds(row.querySelector(`[data-field="${key}End"]`)?.value);
+    if (start === null && end === null) return null;
+    if (start === null || end === null) return null;
+    if (end <= start) return null;
+    return { start, end };
+  }
+
+  function validateEpisodeTimingInputs(row, key) {
+    const startInput = row.querySelector(`[data-field="${key}Start"]`);
+    const endInput = row.querySelector(`[data-field="${key}End"]`);
+    if (!startInput || !endInput) return true;
+
+    const startText = String(startInput.value || '').trim();
+    const endText = String(endInput.value || '').trim();
+    const hasAny = !!startText || !!endText;
+    const start = parseOptionalSeconds(startInput.value);
+    const end = parseOptionalSeconds(endInput.value);
+
+    startInput.setCustomValidity('');
+    endInput.setCustomValidity('');
+
+    if (!hasAny) return true;
+    if (start === null || end === null) {
+      const msg = 'Preencha início e fim com segundos válidos (>= 0).';
+      startInput.setCustomValidity(msg);
+      endInput.setCustomValidity(msg);
+      return false;
+    }
+    if (end <= start) {
+      endInput.setCustomValidity('O fim precisa ser maior que o início.');
+      return false;
+    }
+    return true;
+  }
+
   function toList(value) {
     if (Array.isArray(value)) return value.map(v => String(v));
     if (typeof value === 'string') return value ? [value] : [];
@@ -104,7 +149,10 @@
         <label>Título <input type="text" class="episode-field" data-field="title" value="${toText(episode?.title)}"></label>
         <label>Duração <input type="text" class="episode-field" data-field="duration" value="${toText(episode?.duration)}"></label>
         <label>Vídeo URL <input type="text" class="episode-field" data-field="videoUrl" value="${toText(episode?.videoUrl)}"></label>
-        <label>Opening <input type="text" class="episode-field" data-field="opening" value="${toText(episode?.opening)}"></label>
+        <label>Opening início (s) <input type="number" min="0" step="1" class="episode-field" data-field="openingStart" value="${toText(episode?.opening?.start)}"></label>
+        <label>Opening fim (s) <input type="number" min="0" step="1" class="episode-field" data-field="openingEnd" value="${toText(episode?.opening?.end)}"></label>
+        <label>Ending início (s) <input type="number" min="0" step="1" class="episode-field" data-field="endingStart" value="${toText(episode?.ending?.start)}"></label>
+        <label>Ending fim (s) <input type="number" min="0" step="1" class="episode-field" data-field="endingEnd" value="${toText(episode?.ending?.end)}"></label>
       </div>
       <div class="anime-editor-episode-actions">
         <button type="button" class="btn btn-secondary anime-editor-preview-video">Ver vídeo</button>
@@ -118,7 +166,14 @@
         ep.title = row.querySelector('[data-field="title"]')?.value || '';
         ep.duration = row.querySelector('[data-field="duration"]')?.value || '';
         ep.videoUrl = row.querySelector('[data-field="videoUrl"]')?.value || '';
-        ep.opening = row.querySelector('[data-field="opening"]')?.value || '';
+        const opening = getEpisodeTimingFromRow(row, 'opening');
+        const ending = getEpisodeTimingFromRow(row, 'ending');
+        if (opening) ep.opening = opening;
+        else delete ep.opening;
+        if (ending) ep.ending = ending;
+        else delete ep.ending;
+        validateEpisodeTimingInputs(row, 'opening');
+        validateEpisodeTimingInputs(row, 'ending');
         syncJsonFromState();
       });
     });
@@ -169,7 +224,7 @@
       const seasonRef = currentData.animes[animeIndex]?.seasons?.[seasonIndex];
       if (!seasonRef) return;
       seasonRef.episodes = Array.isArray(seasonRef.episodes) ? seasonRef.episodes : [];
-      seasonRef.episodes.push({ title: `Episódio ${seasonRef.episodes.length + 1}`, duration: '24 min', videoUrl: '', opening: '' });
+      seasonRef.episodes.push({ title: `Episódio ${seasonRef.episodes.length + 1}`, duration: '24 min', videoUrl: '' });
       syncJsonFromState();
       renderVisualEditor();
     });
