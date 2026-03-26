@@ -596,8 +596,11 @@
     };
     let nextEpisodeCountdownTimer = null;
     let nextEpisodeCountdownSource = null;
+    let suppressAutoNextForCurrentEpisode = false;
     const countdownInlineEl = document.getElementById('next-episode-countdown');
     const floatingNextEpisodeBtn = document.getElementById('floating-next-episode-btn');
+    const floatingCreditsBtn = document.getElementById('floating-credits-btn');
+    const floatingEndingActions = document.getElementById('floating-ending-actions');
     const floatingActionsEl = document.getElementById('video-floating-actions');
 
     function syncFloatingActionsLayout() {
@@ -632,11 +635,24 @@
         floatingNextEpisodeBtn.style.display = 'block';
         floatingNextEpisodeBtn.textContent = asPause ? '⏸️ Pausar maratona' : message;
       }
+      if (floatingCreditsBtn) floatingCreditsBtn.style.display = asPause ? 'none' : 'block';
+      if (floatingEndingActions) floatingEndingActions.style.display = 'flex';
     }
 
     function hideCountdownMessage() {
       if (countdownInlineEl) countdownInlineEl.style.display = 'none';
       if (floatingNextEpisodeBtn) floatingNextEpisodeBtn.style.display = 'none';
+      if (floatingCreditsBtn) floatingCreditsBtn.style.display = 'none';
+      if (floatingEndingActions) floatingEndingActions.style.display = 'none';
+    }
+
+    function cancelUpcomingAutoNext(showNotice = true) {
+      clearNextEpisodeCountdown();
+      suppressAutoNextForCurrentEpisode = true;
+      if (showNotice && countdownInlineEl) {
+        countdownInlineEl.style.display = 'block';
+        countdownInlineEl.textContent = '🎬 Créditos ativados. Próximo episódio cancelado.';
+      }
     }
 
     function getMarathonPreferences() {
@@ -709,6 +725,7 @@
 
     function startNextEpisodeCountdown(source = 'ended') {
       if (nextEpisodeCountdownTimer && nextEpisodeCountdownSource === source) return;
+      if (suppressAutoNextForCurrentEpisode) return;
       const prefs = getMarathonPreferences();
       const target = getNextEpisodeTarget();
       if (!target || !prefs.enabled || !prefs.autoNext) {
@@ -748,6 +765,7 @@
 
     function handleEpisodeEndedWithMarathon() {
       clearNextEpisodeCountdown();
+      if (suppressAutoNextForCurrentEpisode) return;
       const prefs = getMarathonPreferences();
       ensureSessionState();
       marathonSessionState.watchedCount += 1;
@@ -772,8 +790,14 @@
     }
     if (floatingNextEpisodeBtn) {
       floatingNextEpisodeBtn.addEventListener('click', () => {
+        suppressAutoNextForCurrentEpisode = false;
         clearNextEpisodeCountdown();
         goToNextEpisode();
+      });
+    }
+    if (floatingCreditsBtn) {
+      floatingCreditsBtn.addEventListener('click', () => {
+        cancelUpcomingAutoNext(true);
       });
     }
     
@@ -989,6 +1013,7 @@
     };
     window.updateEndingData = function(data){
       window.currentEndingData = data && typeof data.start === 'number' ? data : null;
+      suppressAutoNextForCurrentEpisode = false;
       if(skipEndingCtrl && typeof skipEndingCtrl.setSegment === 'function') skipEndingCtrl.setSegment(window.currentEndingData);
       if(floatingSkipEndingCtrl && typeof floatingSkipEndingCtrl.setSegment === 'function') floatingSkipEndingCtrl.setSegment(window.currentEndingData);
       clearNextEpisodeCountdown();
@@ -1021,7 +1046,7 @@
       }
 
       if (floatingActionsEl) {
-        const hasVisibleAction = [floatingNextEpisodeBtn, floatingSkipOpeningBtn, floatingSkipEndingBtn]
+        const hasVisibleAction = [floatingNextEpisodeBtn, floatingSkipOpeningBtn, floatingSkipEndingBtn, floatingCreditsBtn]
           .some(el => el && el.style.display !== 'none');
         const shouldShowFloating = hasVisibleAction && !controlsVisible;
         floatingActionsEl.style.display = shouldShowFloating ? 'flex' : 'none';
