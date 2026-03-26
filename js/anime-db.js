@@ -1,5 +1,14 @@
 class AnimeDatabase {
     constructor() {
+        this.defaultMarathonPreferences = {
+            enabled: true,
+            autoNext: true,
+            breakEveryEpisodes: 0,
+            sessionLimit: 0,
+            autoSkipOpening: false,
+            autoSkipEnding: false,
+            countdownSeconds: 8
+        };
         this.animes = [];
         this.collections = [];
         this.watchedEpisodes = JSON.parse(localStorage.getItem('watchedEpisodes')) || {};
@@ -395,6 +404,20 @@ class AnimeDatabase {
 
     getProfile() {
         return this.profile;
+    }
+
+    getActiveProfileMarathonPreferences() {
+        if (window.profileManager && typeof window.profileManager.getMarathonPreferences === 'function') {
+            return window.profileManager.getMarathonPreferences();
+        }
+        return { ...this.defaultMarathonPreferences };
+    }
+
+    updateActiveProfileMarathonPreferences(updates = {}) {
+        if (window.profileManager && typeof window.profileManager.updateMarathonPreferences === 'function') {
+            return window.profileManager.updateMarathonPreferences(null, updates);
+        }
+        return { ...this.defaultMarathonPreferences, ...updates };
     }
 
     // Novo método para verificar se um link expirou
