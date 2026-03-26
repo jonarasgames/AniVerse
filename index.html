@@ -370,6 +370,9 @@
                         <button id="skip-opening-btn" class="btn btn-secondary" style="display: none; margin-left: auto;">
                             ⏩ Pular Abertura
                         </button>
+                        <button id="skip-ending-btn" class="btn btn-secondary" style="display: none;">
+                            ⏩ Pular Encerramento
+                        </button>
                         <button id="next-episode-btn" class="btn-icon" title="Próximo Episódio" style="margin-left: auto;">
                             <i class="fas fa-step-forward"></i>
                         </button>
@@ -379,6 +382,15 @@
                         <button id="fullscreen-btn" class="btn-icon" title="Tela Cheia">
                             <i class="fas fa-expand"></i>
                         </button>
+                    </div>
+                    <div id="next-episode-countdown" style="display:none; margin-top:8px; color:#fff; font-size:13px; text-align:right;"></div>
+                </div>
+                <div id="video-floating-actions" style="position:absolute; right:12px; bottom:72px; z-index:1010; display:none; flex-direction:column; gap:6px; align-items:flex-end; pointer-events:none;">
+                    <button id="floating-skip-opening-btn" class="btn btn-secondary" style="display:none; pointer-events:auto; background:rgba(0,0,0,0.45); border:1px solid rgba(255,255,255,0.25); color:#fff; font-size:12px; padding:6px 10px;">⏩ Pular Abertura</button>
+                    <button id="floating-skip-ending-btn" class="btn btn-secondary" style="display:none; pointer-events:auto; background:rgba(0,0,0,0.45); border:1px solid rgba(255,255,255,0.25); color:#fff; font-size:12px; padding:6px 10px;">⏩ Pular Encerramento</button>
+                    <div id="floating-ending-actions" style="display:none; gap:6px; pointer-events:none;">
+                        <button id="floating-next-episode-btn" class="btn btn-primary" style="display:none; pointer-events:auto; background:rgba(102,126,234,0.45); border:1px solid rgba(255,255,255,0.3); color:#fff; font-size:12px; padding:6px 10px;">⏭️ Próximo episódio</button>
+                        <button id="floating-credits-btn" class="btn btn-secondary" style="display:none; pointer-events:auto; background:rgba(0,0,0,0.45); border:1px solid rgba(255,255,255,0.25); color:#fff; font-size:12px; padding:6px 10px;">🎬 Créditos</button>
                     </div>
                 </div>
             </div>
@@ -469,13 +481,14 @@
                         <input type="password" id="profile-password" class="input-modern" placeholder="Deixe vazio para sem senha">
                         <small style="color: rgba(255,255,255,0.6); font-size: 12px;">Se definir senha, será solicitada ao selecionar o perfil.</small>
                     </div>
-                    
+
                     <!-- Tabs: Cores / Fundos / Personagens / Molduras -->
                     <div class="customization-tabs">
                         <button type="button" class="tab-btn active" data-tab="colors">Cores</button>
                         <button type="button" class="tab-btn" data-tab="backgrounds">Fundos</button>
                         <button type="button" class="tab-btn" data-tab="characters">Personagens</button>
                         <button type="button" class="tab-btn" data-tab="frames">Molduras</button>
+                        <button type="button" class="tab-btn" data-tab="preferences">Preferências</button>
                     </div>
                     
                     <!-- Tab Content: Cores -->
@@ -545,6 +558,41 @@
                                 <div class="frame-preview frame-electric-preview"></div>
                                 <span>Elétrico</span>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab Content: Preferências -->
+                    <div class="tab-content" id="tab-preferences">
+                        <label class="tab-label">Preferências de Maratona</label>
+                        <div style="display:grid; gap:12px; color:#fff;">
+                            <label style="display:grid; gap:2px;">
+                                <span><input type="checkbox" id="marathon-enabled" checked> <strong>Ativar modo maratona</strong></span>
+                                <small style="opacity:.75;">Liga as automações abaixo para este perfil. Se desativado, tudo roda manualmente.</small>
+                            </label>
+                            <label style="display:grid; gap:2px;">
+                                <span><input type="checkbox" id="marathon-auto-next" checked> <strong>Auto próximo episódio</strong></span>
+                                <small style="opacity:.75;">Quando um episódio termina, o player inicia contagem regressiva e abre o próximo.</small>
+                            </label>
+                            <label style="display:grid; gap:2px;">
+                                <span><input type="checkbox" id="marathon-auto-skip-opening"> <strong>Auto pular abertura</strong></span>
+                                <small style="opacity:.75;">Se o episódio tiver timestamps de opening, salta automaticamente esse trecho.</small>
+                            </label>
+                            <label style="display:grid; gap:2px;">
+                                <span><input type="checkbox" id="marathon-auto-skip-ending"> <strong>Auto pular encerramento</strong></span>
+                                <small style="opacity:.75;">Se houver timestamps de ending, pula o trecho automaticamente.</small>
+                            </label>
+                            <label style="display:grid; gap:6px;">
+                                <span><strong>Contagem regressiva (segundos)</strong><br><small style="opacity:.75;">Tempo de espera antes de avançar para o próximo episódio.</small></span>
+                                <input type="number" id="marathon-countdown-seconds" class="input-modern" min="1" max="60" value="8" style="max-width:140px;">
+                            </label>
+                            <label style="display:grid; gap:6px;">
+                                <span><strong>Pausa a cada X episódios</strong><br><small style="opacity:.75;">Ex.: 3 = pausa automática no 3º, 6º, 9º... (0 desativa).</small></span>
+                                <input type="number" id="marathon-break-every-episodes" class="input-modern" min="0" max="50" value="0" style="max-width:140px;">
+                            </label>
+                            <label style="display:grid; gap:6px;">
+                                <span><strong>Limite por sessão</strong><br><small style="opacity:.75;">Número máximo de episódios seguidos antes de pausar (0 ilimitado).</small></span>
+                                <input type="number" id="marathon-session-limit" class="input-modern" min="0" max="100" value="0" style="max-width:140px;">
+                            </label>
                         </div>
                     </div>
                     
