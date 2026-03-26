@@ -600,6 +600,7 @@
     const countdownInlineEl = document.getElementById('next-episode-countdown');
     const floatingNextEpisodeBtn = document.getElementById('floating-next-episode-btn');
     const floatingCreditsBtn = document.getElementById('floating-credits-btn');
+    const creditsBtn = document.getElementById('credits-btn');
     const floatingEndingActions = document.getElementById('floating-ending-actions');
     const floatingActionsEl = document.getElementById('video-floating-actions');
 
@@ -635,6 +636,7 @@
         floatingNextEpisodeBtn.style.display = 'block';
         floatingNextEpisodeBtn.textContent = asPause ? '⏸️ Pausar maratona' : message;
       }
+      if (creditsBtn) creditsBtn.style.display = asPause ? 'none' : 'inline-flex';
       if (floatingCreditsBtn) floatingCreditsBtn.style.display = asPause ? 'none' : 'block';
       if (floatingEndingActions) floatingEndingActions.style.display = 'flex';
     }
@@ -642,6 +644,7 @@
     function hideCountdownMessage() {
       if (countdownInlineEl) countdownInlineEl.style.display = 'none';
       if (floatingNextEpisodeBtn) floatingNextEpisodeBtn.style.display = 'none';
+      if (creditsBtn) creditsBtn.style.display = 'none';
       if (floatingCreditsBtn) floatingCreditsBtn.style.display = 'none';
       if (floatingEndingActions) floatingEndingActions.style.display = 'none';
     }
@@ -797,6 +800,11 @@
     }
     if (floatingCreditsBtn) {
       floatingCreditsBtn.addEventListener('click', () => {
+        cancelUpcomingAutoNext(true);
+      });
+    }
+    if (creditsBtn) {
+      creditsBtn.addEventListener('click', () => {
         cancelUpcomingAutoNext(true);
       });
     }

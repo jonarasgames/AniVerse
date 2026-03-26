@@ -575,6 +575,9 @@
         const player = document.getElementById('anime-player');
         if (player) {
           try {
+            if (typeof player.__adaptiveCleanup === 'function') {
+              player.__adaptiveCleanup();
+            }
             player.pause();
             // Save progress if animeDB is available
             if (window.animeDB && window.currentAnimeData) {
