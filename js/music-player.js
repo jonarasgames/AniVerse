@@ -19,12 +19,7 @@
 
     // remove other audio elements created by previous code
     document.querySelectorAll('audio').forEach(el => { if (el.id !== 'music-playing-audio') try { el.pause(); el.remove(); } catch(e){} });
-
-    a = document.createElement('audio');
-    a.id = 'music-playing-audio';
-    a.preload = 'metadata';
-    a.removeAttribute('crossorigin');
-    a.style.display = 'none';
+    a = document.createElement('audio'); a.id='music-playing-audio'; a.preload='metadata'; a.removeAttribute('crossorigin'); a.style.display='none';
     document.body.appendChild(a);
 
     a.addEventListener('error', ()=> showMusicError('Erro ao reproduzir a faixa.'));

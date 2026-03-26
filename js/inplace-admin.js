@@ -277,14 +277,18 @@
       const eps = episodes.map((ep, eIdx) => {
         const opStart = Number(ep?.opening?.start ?? 0);
         const opEnd = Number(ep?.opening?.end ?? 0);
-        const epExtras = collectExtraPairs(ep, ['title', 'duration', 'videoUrl', 'opening']);
+        const edStart = Number(ep?.ending?.start ?? 0);
+        const edEnd = Number(ep?.ending?.end ?? 0);
+        const epExtras = collectExtraPairs(ep, ['title', 'duration', 'videoUrl', 'opening', 'ending']);
         return `
         <div class="inplace-episode" data-s="${sIdx}" data-e="${eIdx}">
           <input data-ep="title" placeholder="Título" value="${escAttr(ep?.title)}">
           <input data-ep="duration" placeholder="Duração" value="${escAttr(timeToHMS(ep?.duration || 0))}" readonly>
           <input data-ep="videoUrl" placeholder="URL do vídeo" value="${escAttr(ep?.videoUrl)}">
-          <input data-ep="openingStart" placeholder="Abertura início (HH:MM:SS)" value="${escAttr(timeToHMS(opStart))}">
-          <input data-ep="openingEnd" placeholder="Abertura fim (HH:MM:SS)" value="${escAttr(timeToHMS(opEnd))}">
+          <input data-ep="openingStart" placeholder="Abertura início (segundos)" inputmode="numeric" value="${escAttr(opStart)}">
+          <input data-ep="openingEnd" placeholder="Abertura fim (segundos)" inputmode="numeric" value="${escAttr(opEnd)}">
+          <input data-ep="endingStart" placeholder="Ending início (segundos)" inputmode="numeric" value="${escAttr(edStart)}">
+          <input data-ep="endingEnd" placeholder="Ending fim (segundos)" inputmode="numeric" value="${escAttr(edEnd)}">
           <span class="inplace-duration-view" data-duration-view>${escAttr(timeToHMS(ep?.duration || 0))}</span>
           <div class="inplace-opening-actions">
             <button type="button" class="btn btn-secondary inplace-set-opening-start">Pegar início (player)</button>
@@ -373,12 +377,27 @@
     if (!row) return;
     const startInput = row.querySelector('input[data-ep="openingStart"]');
     const endInput = row.querySelector('input[data-ep="openingEnd"]');
+    const endingStartInput = row.querySelector('input[data-ep="endingStart"]');
+    const endingEndInput = row.querySelector('input[data-ep="endingEnd"]');
     if (!startInput || !endInput) return;
 
     const startSec = parseTimeToSeconds(startInput.value);
     const endSec = parseTimeToSeconds(endInput.value);
-    startInput.value = timeToHMS(startSec);
-    endInput.value = timeToHMS(Math.max(endSec, startSec));
+    startInput.value = String(startSec);
+    endInput.value = String(Math.max(endSec, startSec));
+
+    if (endingStartInput && endingEndInput) {
+      const edStartSec = parseTimeToSeconds(endingStartInput.value);
+      const edEndSec = parseTimeToSeconds(endingEndInput.value);
+      endingStartInput.value = String(edStartSec);
+      endingEndInput.value = String(Math.max(edEndSec, edStartSec));
+    }
+
+    [startInput, endInput, endingStartInput, endingEndInput].forEach((input) => {
+      if (!input) return;
+      const parsed = Number(input.value);
+      input.setCustomValidity(Number.isFinite(parsed) && parsed >= 0 ? '' : 'Use segundos válidos (número inteiro >= 0).');
+    });
   }
 
   function wireOpeningTimingActions(card) {
@@ -388,7 +407,7 @@
       if (!row || seconds === null) return;
       const input = row.querySelector(targetSelector);
       if (!input) return;
-      input.value = timeToHMS(seconds);
+      input.value = String(seconds);
       syncOpeningInputs(row);
     };
 
@@ -567,7 +586,7 @@
         const sIdx = Number(btn.closest('.inplace-season')?.dataset.s);
         if (!Number.isFinite(sIdx)) return;
         anime.seasons[sIdx].episodes = Array.isArray(anime.seasons[sIdx].episodes) ? anime.seasons[sIdx].episodes : [];
-        anime.seasons[sIdx].episodes.push({ title: 'Novo episódio', duration: 0, videoUrl: '', opening: { start: 0, end: 90 } });
+        anime.seasons[sIdx].episodes.push({ title: 'Novo episódio', duration: 0, videoUrl: '', opening: { start: 0, end: 90 }, ending: { start: 0, end: 0 } });
         enterEditMode(card, anime, isNew);
       });
     });
@@ -644,7 +663,10 @@
         target.videoUrl = row.querySelector('input[data-ep="videoUrl"]')?.value || '';
         const opStart = parseTimeToSeconds(row.querySelector('input[data-ep="openingStart"]')?.value || 0);
         const opEnd = parseTimeToSeconds(row.querySelector('input[data-ep="openingEnd"]')?.value || 0);
+        const edStart = parseTimeToSeconds(row.querySelector('input[data-ep="endingStart"]')?.value || 0);
+        const edEnd = parseTimeToSeconds(row.querySelector('input[data-ep="endingEnd"]')?.value || 0);
         target.opening = { start: opStart, end: Math.max(opEnd, opStart) };
+        target.ending = { start: edStart, end: Math.max(edEnd, edStart) };
         row.querySelectorAll('input[data-ep-extra-key]').forEach((extra) => {
           const key = extra.dataset.epExtraKey;
           if (!key) return;
