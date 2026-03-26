@@ -2045,3 +2045,130 @@ if (document.readyState === 'loading') {
 }
 
 window.addEventListener('adminModeChanged', syncModalAdminEditorVisibility);
+
+document.addEventListener('DOMContentLoaded', () => {
+  const fab = document.getElementById('achievements-fab');
+  const dot = fab?.querySelector('.achievements-fab-dot');
+  const modal = document.getElementById('achievements-modal');
+  const closeBtn = document.getElementById('close-achievements-modal');
+  const list = document.getElementById('achievements-list');
+  const feed = document.getElementById('achievements-unlock-feed');
+  const markSeenBtn = document.getElementById('achievements-mark-seen');
+  const soundToggle = document.getElementById('achievements-sound-toggle');
+  const audio = document.getElementById('achievements-audio');
+
+  if (!fab || !modal || !list || !window.achievementEngine) return;
+
+  function updateFab(snapshot) {
+    fab.style.display = 'flex';
+    if (dot) dot.style.display = snapshot && snapshot.unseenCount > 0 ? 'block' : 'none';
+  }
+
+  function renderList(snapshot) {
+    if (!snapshot) {
+      list.innerHTML = '<p>Conquistas indisponíveis.</p>';
+      return;
+    }
+
+    const unlocked = snapshot.items.filter((item) => item.unlocked);
+    const locked = snapshot.items.filter((item) => !item.unlocked);
+    const ordered = unlocked.concat(locked);
+
+    list.innerHTML = ordered.map((item) => {
+      const progressText = item.unlocked
+        ? 'Desbloqueada'
+        : `${Math.min(item.progress, item.goal)}/${item.goal}`;
+      return `
+        <article class="achievement-card ${item.unlocked ? 'is-unlocked' : 'is-locked'}">
+          <img src="${item.icon}" alt="${item.name}">
+          <div class="achievement-info">
+            <h4>${item.name}</h4>
+            <p>${item.desc}</p>
+            <div class="achievement-progress">${progressText}</div>
+          </div>
+        </article>
+      `;
+    }).join('');
+
+    if (soundToggle) soundToggle.checked = !!snapshot.soundEnabled;
+  }
+
+  function playUnlockFeedback(unlockItems, snapshot) {
+    if (!unlockItems.length) {
+      if (feed) feed.style.display = 'none';
+      return;
+    }
+
+    if (feed) {
+      const names = unlockItems.map((item) => item.name).join(', ');
+      feed.textContent = `🏆 Nova conquista: ${names}`;
+      feed.style.display = 'block';
+      feed.classList.remove('animate-restart');
+      void feed.offsetWidth;
+      feed.classList.add('animate-restart');
+    }
+
+    if (!snapshot?.soundEnabled || !audio) return;
+
+    const firstWithSound = unlockItems.find((item) => item.sound);
+    if (!firstWithSound) return;
+    audio.src = firstWithSound.sound;
+    audio.currentTime = 0;
+    audio.play().catch(() => {});
+  }
+
+  function openAchievementsModal() {
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+
+    const snapshot = window.achievementEngine.getSnapshot();
+    renderList(snapshot);
+    updateFab(snapshot);
+
+    const pending = window.achievementEngine.drainPendingUnlocks();
+    playUnlockFeedback(pending, snapshot);
+
+    if (pending.length > 0) {
+      window.achievementEngine.markAllSeen();
+      const refreshed = window.achievementEngine.getSnapshot();
+      updateFab(refreshed);
+    }
+  }
+
+  function closeAchievementsModal() {
+    modal.style.display = 'none';
+    document.body.style.overflow = '';
+    if (feed) feed.style.display = 'none';
+  }
+
+  fab.addEventListener('click', openAchievementsModal);
+  closeBtn?.addEventListener('click', closeAchievementsModal);
+  window.addEventListener('click', (event) => {
+    if (event.target === modal) closeAchievementsModal();
+  });
+
+  markSeenBtn?.addEventListener('click', () => {
+    window.achievementEngine.markAllSeen();
+    const snapshot = window.achievementEngine.getSnapshot();
+    renderList(snapshot);
+    updateFab(snapshot);
+  });
+
+  soundToggle?.addEventListener('change', () => {
+    window.achievementEngine.setSoundEnabled(soundToggle.checked);
+  });
+
+  window.addEventListener('achievements:updated', () => {
+    const snapshot = window.achievementEngine.getSnapshot();
+    updateFab(snapshot);
+    if (modal.style.display === 'flex') renderList(snapshot);
+  });
+
+  window.achievementEngine.loadData()
+    .then(() => window.achievementEngine.refresh({ eventType: 'app_open' }))
+    .then(() => {
+      const snapshot = window.achievementEngine.getSnapshot();
+      renderList(snapshot);
+      updateFab(snapshot);
+    });
+});
