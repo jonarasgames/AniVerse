@@ -181,6 +181,9 @@
             profile.continueWatching = profile.continueWatching.slice(0, 20);
             
             this.saveProfiles();
+            if (window.achievementEngine && typeof window.achievementEngine.refresh === 'function') {
+                window.achievementEngine.refresh({ eventType: 'continue_update' });
+            }
         }
 
         getMarathonPreferences(profileId = null) {

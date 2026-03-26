@@ -225,6 +225,46 @@
         <span class="news-fab-dot" aria-hidden="true"></span>
     </button>
 
+
+    <button id="achievements-fab" class="achievements-fab" aria-label="Conquistas">
+        <i class="fas fa-trophy"></i>
+        <span class="achievements-fab-dot" aria-hidden="true"></span>
+        <span class="achievements-fab-count" id="achievements-fab-count">0</span>
+    </button>
+
+    <div id="achievements-modal" class="modal">
+        <div class="modal-content achievements-modal-content">
+            <span class="close-modal" id="close-achievements-modal">&times;</span>
+            <div class="news-modal-header">
+                <div>
+                    <h2>Achievements</h2>
+                    <p class="news-modal-subtitle">Seu progresso fica salvo localmente por perfil.</p>
+                </div>
+                <div class="achievements-actions">
+                    <label class="achievements-sound-toggle">
+                        <input type="checkbox" id="achievements-sound-toggle" checked>
+                        <span>Som</span>
+                    </label>
+                    <button type="button" class="btn btn-secondary" id="achievements-mark-seen">Marcar vistas</button>
+                </div>
+            </div>
+            <div id="achievements-unlock-feed" class="achievements-unlock-feed"></div>
+            <div id="achievements-stats" class="achievements-stats"></div>
+            <div class="achievements-filter" id="achievements-filter">
+                <button type="button" data-filter="all" class="is-active">Todas</button>
+                <button type="button" data-filter="unlocked">Desbloqueadas</button>
+                <button type="button" data-filter="locked">Em progresso</button>
+            </div>
+            <div id="achievements-list" class="achievements-list"></div>
+            <audio id="achievements-audio" preload="auto"></audio>
+        </div>
+    </div>
+
+    <div id="achievements-silent-toast" class="achievements-silent-toast" role="status" aria-live="polite">
+        <span id="achievements-silent-toast-text">Novas conquistas disponíveis.</span>
+        <button type="button" id="achievements-silent-toast-open">Ver</button>
+    </div>
+
     <div id="news-modal" class="modal">
         <div class="modal-content news-modal-content">
             <span class="close-modal" id="close-news-modal">&times;</span>
@@ -708,6 +748,7 @@
     <script src="js/profile-modal-bindings.js?v=20260326-2" defer></script>
     <script src="js/music.js?v=20260326-2" defer></script>
     <script src="js/music-player.js?v=20260326-2" defer></script>
+    <script src="js/achievements.js?v=20260326-3" defer></script>
     <script src="js/video-player.js?v=20260326-2" defer></script>
     <script src="js/player-fixes.js?v=20260326-2" defer></script>
     <script src="js/download-manager.js?v=20260326-2" defer></script>

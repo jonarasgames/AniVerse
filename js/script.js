@@ -199,6 +199,10 @@ document.addEventListener('DOMContentLoaded', () => {
       targetSection.classList.add('active');
     }
 
+    if (window.achievementEngine && typeof window.achievementEngine.refresh === 'function') {
+      window.achievementEngine.refresh({ eventType: 'section_visit', sectionId });
+    }
+
     if (sectionId === 'animes' && typeof loadAnimeSection === 'function') {
       loadAnimeSection('anime');
     } else if (sectionId === 'movies' && typeof loadAnimeSection === 'function') {
@@ -2045,3 +2049,195 @@ if (document.readyState === 'loading') {
 }
 
 window.addEventListener('adminModeChanged', syncModalAdminEditorVisibility);
+
+document.addEventListener('DOMContentLoaded', () => {
+  const fab = document.getElementById('achievements-fab');
+  const dot = fab?.querySelector('.achievements-fab-dot');
+  const count = document.getElementById('achievements-fab-count');
+  const modal = document.getElementById('achievements-modal');
+  const closeBtn = document.getElementById('close-achievements-modal');
+  const list = document.getElementById('achievements-list');
+  const feed = document.getElementById('achievements-unlock-feed');
+  const stats = document.getElementById('achievements-stats');
+  const filterWrap = document.getElementById('achievements-filter');
+  const markSeenBtn = document.getElementById('achievements-mark-seen');
+  const soundToggle = document.getElementById('achievements-sound-toggle');
+  const audio = document.getElementById('achievements-audio');
+  const silentToast = document.getElementById('achievements-silent-toast');
+  const silentToastText = document.getElementById('achievements-silent-toast-text');
+  const silentToastOpen = document.getElementById('achievements-silent-toast-open');
+
+  if (!fab || !modal || !list || !window.achievementEngine) return;
+
+  let activeFilter = 'all';
+
+  function filterItems(items) {
+    if (activeFilter === 'unlocked') return items.filter((item) => item.unlocked);
+    if (activeFilter === 'locked') return items.filter((item) => !item.unlocked);
+    return items;
+  }
+
+  function setFilter(filter) {
+    activeFilter = filter;
+    filterWrap?.querySelectorAll('button[data-filter]').forEach((btn) => {
+      btn.classList.toggle('is-active', btn.dataset.filter === filter);
+    });
+    const snapshot = window.achievementEngine.getSnapshot();
+    renderList(snapshot);
+  }
+
+  function updateSilentToast(snapshot) {
+    if (!silentToast) return;
+    const hasUnseen = snapshot && snapshot.unseenCount > 0;
+    const isModalOpen = modal.style.display === 'flex';
+    if (!hasUnseen || isModalOpen) {
+      silentToast.style.display = 'none';
+      return;
+    }
+
+    silentToastText.textContent = `🏆 ${snapshot.unseenCount} conquista(s) nova(s)`;
+    silentToast.style.display = 'flex';
+  }
+
+  function updateFab(snapshot) {
+    fab.style.display = 'flex';
+    const unseen = snapshot?.unseenCount || 0;
+    if (dot) dot.style.display = unseen > 0 ? 'block' : 'none';
+    if (count) {
+      count.textContent = String(unseen);
+      count.style.display = unseen > 0 ? 'inline-flex' : 'none';
+    }
+    updateSilentToast(snapshot);
+  }
+
+  function renderStats(snapshot) {
+    if (!stats || !snapshot?.stats) return;
+    stats.innerHTML = `
+      <div class="stat">🔥 Streak: <strong>${snapshot.stats.streak}</strong></div>
+      <div class="stat">📅 Dias ativos: <strong>${snapshot.stats.daysOpened}</strong></div>
+      <div class="stat">🎬 Episódios: <strong>${snapshot.stats.episodesCompleted}</strong></div>
+      <div class="stat">🧭 Seções: <strong>${snapshot.stats.sectionsVisited}</strong></div>
+    `;
+  }
+
+  function renderList(snapshot) {
+    if (!snapshot) {
+      list.innerHTML = '<p>Conquistas indisponíveis.</p>';
+      return;
+    }
+
+    const ordered = snapshot.items
+      .slice()
+      .sort((a, b) => Number(b.unlocked) - Number(a.unlocked) || b.progressPercent - a.progressPercent);
+
+    const visible = filterItems(ordered);
+    if (!visible.length) {
+      list.innerHTML = '<p>Nenhuma conquista neste filtro.</p>';
+      return;
+    }
+
+    list.innerHTML = visible.map((item) => {
+      const progressText = item.unlocked ? 'Desbloqueada' : `${Math.min(item.progress, item.goal)}/${item.goal}`;
+      return `
+        <article class="achievement-card ${item.unlocked ? 'is-unlocked' : 'is-locked'}">
+          <img src="${item.icon}" alt="${item.name}" loading="lazy">
+          <div class="achievement-info">
+            <h4>${item.name}</h4>
+            <p>${item.desc}</p>
+            <div class="achievement-progress">${progressText}</div>
+            <div class="achievement-progress-bar"><span style="width:${item.progressPercent}%;"></span></div>
+          </div>
+        </article>
+      `;
+    }).join('');
+
+    if (soundToggle) soundToggle.checked = !!snapshot.soundEnabled;
+    renderStats(snapshot);
+  }
+
+  function playUnlockFeedback(unlockItems, snapshot) {
+    if (!unlockItems.length) {
+      if (feed) feed.style.display = 'none';
+      return;
+    }
+
+    if (feed) {
+      const names = unlockItems.map((item) => item.name).join(', ');
+      feed.textContent = `🏆 Nova conquista: ${names}`;
+      feed.style.display = 'block';
+    }
+
+    if (!snapshot?.soundEnabled || !audio) return;
+    const firstWithSound = unlockItems.find((item) => item.sound);
+    if (!firstWithSound) return;
+    audio.src = firstWithSound.sound;
+    audio.currentTime = 0;
+    audio.play().catch(() => {});
+  }
+
+  function openAchievementsModal() {
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+
+    const snapshot = window.achievementEngine.getSnapshot();
+    renderList(snapshot);
+    updateFab(snapshot);
+
+    const pending = window.achievementEngine.drainPendingUnlocks();
+    playUnlockFeedback(pending, snapshot);
+
+    if (pending.length > 0) {
+      window.achievementEngine.markAllSeen();
+      const refreshed = window.achievementEngine.getSnapshot();
+      updateFab(refreshed);
+      renderList(refreshed);
+    }
+  }
+
+  function closeAchievementsModal() {
+    modal.style.display = 'none';
+    document.body.style.overflow = '';
+    if (feed) feed.style.display = 'none';
+    updateSilentToast(window.achievementEngine.getSnapshot());
+  }
+
+  fab.addEventListener('click', openAchievementsModal);
+  closeBtn?.addEventListener('click', closeAchievementsModal);
+  silentToastOpen?.addEventListener('click', openAchievementsModal);
+
+  window.addEventListener('click', (event) => {
+    if (event.target === modal) closeAchievementsModal();
+  });
+
+  markSeenBtn?.addEventListener('click', () => {
+    window.achievementEngine.markAllSeen();
+    const snapshot = window.achievementEngine.getSnapshot();
+    renderList(snapshot);
+    updateFab(snapshot);
+  });
+
+  soundToggle?.addEventListener('change', () => {
+    window.achievementEngine.setSoundEnabled(soundToggle.checked);
+  });
+
+  filterWrap?.addEventListener('click', (event) => {
+    const btn = event.target.closest('button[data-filter]');
+    if (!btn) return;
+    setFilter(btn.dataset.filter || 'all');
+  });
+
+  window.addEventListener('achievements:updated', () => {
+    const snapshot = window.achievementEngine.getSnapshot();
+    updateFab(snapshot);
+    if (modal.style.display === 'flex') renderList(snapshot);
+  });
+
+  window.achievementEngine.loadData()
+    .then(() => window.achievementEngine.refresh({ eventType: 'app_open' }))
+    .then(() => {
+      const snapshot = window.achievementEngine.getSnapshot();
+      setFilter('all');
+      renderList(snapshot);
+      updateFab(snapshot);
+    });
+});
