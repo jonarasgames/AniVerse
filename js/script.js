@@ -2066,10 +2066,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const silentToast = document.getElementById('achievements-silent-toast');
   const silentToastText = document.getElementById('achievements-silent-toast-text');
   const silentToastOpen = document.getElementById('achievements-silent-toast-open');
+  const unlockCenter = document.getElementById('achievements-unlock-center');
+  const unlockCenterIcon = document.getElementById('achievements-unlock-center-icon');
+  const unlockCenterTitle = document.getElementById('achievements-unlock-center-title');
 
   if (!fab || !modal || !list || !window.achievementEngine) return;
 
   let activeFilter = 'all';
+  let unlockAnimationRunning = false;
+  let unlockQueue = [];
 
   function filterItems(items) {
     if (activeFilter === 'unlocked') return items.filter((item) => item.unlocked);
@@ -2155,24 +2160,54 @@ document.addEventListener('DOMContentLoaded', () => {
     renderStats(snapshot);
   }
 
+  function wait(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  async function playUnlockAnimationQueue(snapshot) {
+    if (unlockAnimationRunning || !unlockQueue.length) return;
+    unlockAnimationRunning = true;
+
+    while (unlockQueue.length > 0) {
+      const item = unlockQueue.shift();
+
+      if (feed) {
+        feed.textContent = `🏆 Nova conquista: ${item.name}`;
+        feed.style.display = 'block';
+      }
+
+      if (unlockCenter && unlockCenterTitle && unlockCenterIcon) {
+        unlockCenterTitle.textContent = item.name;
+        unlockCenterIcon.src = item.icon;
+        unlockCenterIcon.alt = item.name;
+        unlockCenter.classList.remove('show');
+        void unlockCenter.offsetWidth;
+        unlockCenter.classList.add('show');
+      }
+
+      if (snapshot?.soundEnabled && audio && item.sound) {
+        audio.src = item.sound;
+        audio.currentTime = 0;
+        audio.play().catch(() => {});
+      }
+
+      await wait(1300);
+      unlockCenter?.classList.remove('show');
+      await wait(180);
+    }
+
+    unlockAnimationRunning = false;
+    if (feed) feed.style.display = 'none';
+  }
+
   function playUnlockFeedback(unlockItems, snapshot) {
     if (!unlockItems.length) {
       if (feed) feed.style.display = 'none';
       return;
     }
 
-    if (feed) {
-      const names = unlockItems.map((item) => item.name).join(', ');
-      feed.textContent = `🏆 Nova conquista: ${names}`;
-      feed.style.display = 'block';
-    }
-
-    if (!snapshot?.soundEnabled || !audio) return;
-    const firstWithSound = unlockItems.find((item) => item.sound);
-    if (!firstWithSound) return;
-    audio.src = firstWithSound.sound;
-    audio.currentTime = 0;
-    audio.play().catch(() => {});
+    unlockQueue = unlockQueue.concat(unlockItems);
+    playUnlockAnimationQueue(snapshot);
   }
 
   function openAchievementsModal() {
@@ -2198,6 +2233,7 @@ document.addEventListener('DOMContentLoaded', () => {
     modal.style.display = 'none';
     document.body.style.overflow = '';
     if (feed) feed.style.display = 'none';
+    unlockCenter?.classList.remove('show');
     updateSilentToast(window.achievementEngine.getSnapshot());
   }
 
