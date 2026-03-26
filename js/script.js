@@ -930,11 +930,34 @@ function addCacheBust(url){
   try {
     const parsed = new URL(url, window.location.href);
     parsed.searchParams.set('_retry', String(Date.now()));
+    if (parsed.pathname !== '/__anv_stream_proxy__') {
+      parsed.searchParams.set('anv_sw_bypass', '1');
+    }
     return parsed.toString();
   } catch (_) {
     const sep = url.includes('?') ? '&' : '?';
-    return `${url}${sep}_retry=${Date.now()}`;
+    return `${url}${sep}_retry=${Date.now()}&anv_sw_bypass=1`;
   }
+}
+
+function isLikelyCorsBlockedTvHost(url){
+  try {
+    const parsed = new URL(url, window.location.href);
+    const full = `${parsed.hostname}${parsed.pathname}${parsed.search}`.toLowerCase();
+    return full.includes('catbox.moe') || full.includes('bitchute.com');
+  } catch (_) {
+    return false;
+  }
+}
+
+function buildTvStreamProxyUrl(url){
+  const target = String(url || '');
+  if (!target) return target;
+  const proxy = new URL('/__anv_stream_proxy__', window.location.href);
+  proxy.searchParams.set('url', target);
+  proxy.searchParams.set('anv_proxy', '1');
+  proxy.searchParams.set('_retry', String(Date.now()));
+  return proxy.toString();
 }
 
 function isTvPlaybackEnvironment(){
@@ -1112,9 +1135,10 @@ function openNativeTvVideo(url, resumeTimeSeconds = 0, onFailure = null){
   avplay.open(url);
   try { avplay.setDisplayRect(0, 0, width, height); } catch (_) {}
   try { avplay.setDisplayMethod('PLAYER_DISPLAY_MODE_FULL_SCREEN'); } catch (_) {}
-  try { avplay.setBufferingParam?.('PLAYER_BUFFER_FOR_PLAY', 'PLAYER_BUFFER_SIZE_IN_SECOND', 6); } catch (_) {}
-  try { avplay.setBufferingParam?.('PLAYER_BUFFER_FOR_RESUME', 'PLAYER_BUFFER_SIZE_IN_SECOND', 8); } catch (_) {}
-  try { avplay.setStreamingProperty?.('ADAPTIVE_INFO', 'FIXED_MAX_RESOLUTION=1280X720'); } catch (_) {}
+  try { avplay.setBufferingParam?.('PLAYER_BUFFER_FOR_PLAY', 'PLAYER_BUFFER_SIZE_IN_SECOND', 10); } catch (_) {}
+  try { avplay.setBufferingParam?.('PLAYER_BUFFER_FOR_RESUME', 'PLAYER_BUFFER_SIZE_IN_SECOND', 12); } catch (_) {}
+  try { avplay.setBufferingParam?.('PLAYER_BUFFER_FOR_PLAY_READY', 'PLAYER_BUFFER_SIZE_IN_SECOND', 14); } catch (_) {}
+  try { avplay.setStreamingProperty?.('ADAPTIVE_INFO', 'FIXED_MAX_RESOLUTION=960X540'); } catch (_) {}
 
   avplay.setListener({
     onbufferingstart() {
@@ -1244,7 +1268,7 @@ function onVideoSetSource(player, episode, options = {}){
     currentIndex: 0,
     retriesInSource: 0,
     maxRetriesPerSource: isTvPlaybackEnvironment() ? 3 : 3,
-    loadTimeoutMs: isTvPlaybackEnvironment() ? 30000 : 15000,
+    loadTimeoutMs: isTvPlaybackEnvironment() ? 40000 : 15000,
     loadTimeoutId: null,
     retryTimeoutId: null,
     waitingRecoveryId: null,
@@ -1300,14 +1324,39 @@ function onVideoSetSource(player, episode, options = {}){
     }
 
     let nextUrl = source.url;
-    if (options.cacheBust) nextUrl = addCacheBust(nextUrl);
+    if (state.isTvEnvironment && isLikelyCorsBlockedTvHost(nextUrl)) {
+      nextUrl = buildTvStreamProxyUrl(nextUrl);
+    } else if (options.cacheBust) {
+      nextUrl = addCacheBust(nextUrl);
+    }
 
     if (videoLoadTimeout){ clearTimeout(videoLoadTimeout); videoLoadTimeout = null; }
     clearVideoError();
 
     player.pause();
+    if (window.__tvMsePlayer && typeof window.__tvMsePlayer.cleanup === 'function') {
+      window.__tvMsePlayer.cleanup(player);
+    }
     player.removeAttribute('src');
     while (player.firstChild) player.removeChild(player.firstChild);
+
+    const shouldUseTvMse = !options.forceHtmlTag && state.isTvEnvironment
+      && window.__tvMsePlayer
+      && typeof window.__tvMsePlayer.canUseForUrl === 'function'
+      && window.__tvMsePlayer.canUseForUrl(nextUrl);
+
+    if (shouldUseTvMse && typeof window.__tvMsePlayer.load === 'function') {
+      window.__tvMsePlayer.load(player, nextUrl, { resumeTime: preserveTime }).then((loaded) => {
+        if (!loaded || player.__adaptivePlayback?.token !== state.token) {
+          setSource(index, { ...options, cacheBust: true, forceHtmlTag: true });
+          return;
+        }
+        setLoadTimeout();
+      }).catch(() => {
+        setSource(index, { ...options, cacheBust: true, forceHtmlTag: true });
+      });
+      return;
+    }
 
     const sourceEl = document.createElement('source');
     sourceEl.src = nextUrl;
@@ -1437,7 +1486,8 @@ function onVideoSetSource(player, episode, options = {}){
       state.loadTimeoutId = null;
     }
     const waitedLongEnough = Date.now() - state.playStartAt >= 2200;
-    const hasEnoughBuffer = getBufferedAheadSeconds(player) >= 3;
+    const minBufferSeconds = state.isTvEnvironment ? 6 : 3;
+    const hasEnoughBuffer = getBufferedAheadSeconds(player) >= minBufferSeconds;
     if (player.readyState >= 3 || hasEnoughBuffer) {
       clearVideoError();
       window.setVideoLoadingOverlay?.(false);
@@ -1454,7 +1504,7 @@ function onVideoSetSource(player, episode, options = {}){
       state.waitingRecoveryId = setTimeout(() => {
         state.waitingRecoveryId = null;
         recoverPlayback('waiting');
-      }, 1800);
+      }, 2600);
     }
   };
 
@@ -1473,6 +1523,9 @@ function onVideoSetSource(player, episode, options = {}){
 
   player.__adaptiveCleanup = () => {
     clearTimers();
+    if (window.__tvMsePlayer && typeof window.__tvMsePlayer.cleanup === 'function') {
+      window.__tvMsePlayer.cleanup(player);
+    }
     if (state.upgradeIntervalId) {
       clearInterval(state.upgradeIntervalId);
       state.upgradeIntervalId = null;
@@ -1665,9 +1718,21 @@ function openEpisode(anime, seasonNumber, episodeIndex){
     const season = (anime.seasons || []).find(s => s.number === seasonNumber);
     const episode = season && Array.isArray(season.episodes) ? season.episodes[episodeIndex] : null;
     const player = document.getElementById('anime-player'); if (!player) return;
+    window.__ANIVERSE_MARATHON_HANDLED = false;
     const bannerEl = document.querySelector('.video-banner'); const bannerUrl = anime.banner || anime.cover || 'images/bg-default.jpg';
     if (bannerEl) bannerEl.style.backgroundImage = `url('${bannerUrl}')`;
-    if (episode && episode.opening && typeof episode.opening.start === 'number' && typeof episode.opening.end === 'number') window.updateOpeningData && window.updateOpeningData({ start: episode.opening.start, end: episode.opening.end }); else window.updateOpeningData && window.updateOpeningData(null);
+    const openingData = (episode && episode.opening && typeof episode.opening.start === 'number' && typeof episode.opening.end === 'number')
+      ? { start: episode.opening.start, end: episode.opening.end }
+      : null;
+    const endingData = (episode && episode.ending && typeof episode.ending.start === 'number' && typeof episode.ending.end === 'number')
+      ? { start: episode.ending.start, end: episode.ending.end }
+      : null;
+    if (window.updateEpisodeSegments) {
+      window.updateEpisodeSegments({ opening: openingData, ending: endingData });
+    } else {
+      window.updateOpeningData && window.updateOpeningData(openingData);
+      window.updateEndingData && window.updateEndingData(endingData);
+    }
     
     // Update age rating section
     const ageRatingSection = document.getElementById('age-rating-section');
@@ -1900,81 +1965,12 @@ document.addEventListener('DOMContentLoaded', () => {
   applyMaintenanceMode();
   const player = document.getElementById('anime-player');
   if (player) {
-    let progressUpdateInterval = null;
-    
     player.addEventListener('timeupdate', () => {
       preloadNextEpisodeIfNeeded(player);
-
-      // Update progress every 5 seconds while playing
-      if (!progressUpdateInterval && !player.paused) {
-        progressUpdateInterval = setInterval(() => {
-          if (window.currentWatchingAnime && window.profileManager && player.duration > 0) {
-            const activeProfile = window.profileManager.getActiveProfile();
-            if (activeProfile) {
-              const progress = Math.min(100, Math.max(0, (player.currentTime / player.duration) * 100));
-              
-              window.profileManager.updateContinueWatching(activeProfile.id, {
-                animeId: window.currentWatchingAnime.id,
-                title: window.currentWatchingAnime.title,
-                thumbnail: window.currentWatchingAnime.thumbnail,
-                season: window.currentWatchingAnime.season,
-                episode: window.currentWatchingAnime.episode,
-                progress: progress,
-                currentTime: player.currentTime,
-                timestamp: Date.now()
-              });
-            }
-          }
-        }, 5000); // Update every 5 seconds
-      }
-    });
-    
-    player.addEventListener('pause', () => {
-      if (progressUpdateInterval) {
-        clearInterval(progressUpdateInterval);
-        progressUpdateInterval = null;
-      }
-      // Save progress on pause
-      if (window.currentWatchingAnime && window.profileManager && player.duration > 0) {
-        const activeProfile = window.profileManager.getActiveProfile();
-        if (activeProfile) {
-          const progress = Math.min(100, Math.max(0, (player.currentTime / player.duration) * 100));
-          window.profileManager.updateContinueWatching(activeProfile.id, {
-            animeId: window.currentWatchingAnime.id,
-            title: window.currentWatchingAnime.title,
-            thumbnail: window.currentWatchingAnime.thumbnail,
-            season: window.currentWatchingAnime.season,
-            episode: window.currentWatchingAnime.episode,
-            progress: progress,
-            currentTime: player.currentTime,
-            timestamp: Date.now()
-          });
-        }
-      }
     });
     
     player.addEventListener('ended', () => {
-      if (progressUpdateInterval) {
-        clearInterval(progressUpdateInterval);
-        progressUpdateInterval = null;
-      }
-      // Mark as 100% complete
-      if (window.currentWatchingAnime && window.profileManager) {
-        const activeProfile = window.profileManager.getActiveProfile();
-        if (activeProfile) {
-          window.profileManager.updateContinueWatching(activeProfile.id, {
-            animeId: window.currentWatchingAnime.id,
-            title: window.currentWatchingAnime.title,
-            thumbnail: window.currentWatchingAnime.thumbnail,
-            season: window.currentWatchingAnime.season,
-            episode: window.currentWatchingAnime.episode,
-            progress: 100,
-            currentTime: player.duration || 0,
-            timestamp: Date.now()
-          });
-        }
-      }
-      
+      if (window.__ANIVERSE_MARATHON_HANDLED) return;
       // Auto-advance to next episode
       if (window.currentAnime && window.currentWatchingAnime) {
         const currentSeason = window.currentAnime.seasons?.find(s => s.number === window.currentWatchingAnime.season);

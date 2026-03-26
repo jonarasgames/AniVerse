@@ -961,3 +961,36 @@ body.tv-mode .tv-input-shell .tv-input-hint {
     grid-template-columns: 1fr;
   }
 }
+
+
+body.tv-mode #full-catalog-grid .anime-thumbnail,
+body.tv-mode #animes-grid .anime-thumbnail,
+body.tv-mode #movies-grid .anime-thumbnail,
+body.tv-mode #ovas-grid .anime-thumbnail,
+body.tv-mode #continue-grid .anime-thumbnail {
+  aspect-ratio: 16 / 9;
+  background: #090c14;
+}
+
+body.tv-mode #full-catalog-grid .anime-thumbnail img,
+body.tv-mode #animes-grid .anime-thumbnail img,
+body.tv-mode #movies-grid .anime-thumbnail img,
+body.tv-mode #ovas-grid .anime-thumbnail img,
+body.tv-mode #continue-grid .anime-thumbnail img {
+  object-fit: contain;
+  background: #090c14;
+}
+
+body.tv-mode #music-grid {
+  grid-auto-columns: minmax(300px, 360px);
+  gap: 20px;
+}
+
+body.tv-mode .music-section {
+  width: min(360px, 76vw);
+  min-width: 300px;
+}
+
+body.tv-mode .music-card {
+  min-height: 200px;
+}
