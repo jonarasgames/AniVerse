@@ -596,7 +596,7 @@
     };
     let nextEpisodeCountdownTimer = null;
     let nextEpisodeCountdownSource = null;
-    let suppressAutoNextForCurrentEpisode = false;
+    let suppressEndingCountdownForCurrentEpisode = false;
     const countdownInlineEl = document.getElementById('next-episode-countdown');
     const floatingNextEpisodeBtn = document.getElementById('floating-next-episode-btn');
     const floatingCreditsBtn = document.getElementById('floating-credits-btn');
@@ -649,12 +649,12 @@
       if (floatingEndingActions) floatingEndingActions.style.display = 'none';
     }
 
-    function cancelUpcomingAutoNext(showNotice = true) {
+    function preferWatchingCredits(showNotice = true) {
       clearNextEpisodeCountdown();
-      suppressAutoNextForCurrentEpisode = true;
+      suppressEndingCountdownForCurrentEpisode = true;
       if (showNotice && countdownInlineEl) {
         countdownInlineEl.style.display = 'block';
-        countdownInlineEl.textContent = '🎬 Créditos ativados. Próximo episódio cancelado.';
+        countdownInlineEl.textContent = '🎬 Créditos ativados. Próximo episódio no fim do episódio.';
       }
     }
 
@@ -728,7 +728,7 @@
 
     function startNextEpisodeCountdown(source = 'ended') {
       if (nextEpisodeCountdownTimer && nextEpisodeCountdownSource === source) return;
-      if (suppressAutoNextForCurrentEpisode) return;
+      if (source === 'ending' && suppressEndingCountdownForCurrentEpisode) return;
       const prefs = getMarathonPreferences();
       const target = getNextEpisodeTarget();
       if (!target || !prefs.enabled || !prefs.autoNext) {
@@ -768,7 +768,6 @@
 
     function handleEpisodeEndedWithMarathon() {
       clearNextEpisodeCountdown();
-      if (suppressAutoNextForCurrentEpisode) return;
       const prefs = getMarathonPreferences();
       ensureSessionState();
       marathonSessionState.watchedCount += 1;
@@ -793,19 +792,19 @@
     }
     if (floatingNextEpisodeBtn) {
       floatingNextEpisodeBtn.addEventListener('click', () => {
-        suppressAutoNextForCurrentEpisode = false;
+        suppressEndingCountdownForCurrentEpisode = false;
         clearNextEpisodeCountdown();
         goToNextEpisode();
       });
     }
     if (floatingCreditsBtn) {
       floatingCreditsBtn.addEventListener('click', () => {
-        cancelUpcomingAutoNext(true);
+        preferWatchingCredits(true);
       });
     }
     if (creditsBtn) {
       creditsBtn.addEventListener('click', () => {
-        cancelUpcomingAutoNext(true);
+        preferWatchingCredits(true);
       });
     }
     
@@ -1021,7 +1020,7 @@
     };
     window.updateEndingData = function(data){
       window.currentEndingData = data && typeof data.start === 'number' ? data : null;
-      suppressAutoNextForCurrentEpisode = false;
+      suppressEndingCountdownForCurrentEpisode = false;
       if(skipEndingCtrl && typeof skipEndingCtrl.setSegment === 'function') skipEndingCtrl.setSegment(window.currentEndingData);
       if(floatingSkipEndingCtrl && typeof floatingSkipEndingCtrl.setSegment === 'function') floatingSkipEndingCtrl.setSegment(window.currentEndingData);
       clearNextEpisodeCountdown();
