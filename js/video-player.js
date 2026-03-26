@@ -1207,7 +1207,12 @@
       }
       persistContinueWatchingNow(true);
       if (window.achievementEngine && typeof window.achievementEngine.refresh === 'function') {
-        window.achievementEngine.refresh({ eventType: 'episode_complete' });
+        window.achievementEngine.refresh({
+          eventType: 'episode_complete',
+          animeId: window.currentWatchingAnime?.id,
+          season: window.currentWatchingAnime?.season,
+          episode: window.currentWatchingAnime?.episode
+        });
       }
       handleEpisodeEndedWithMarathon();
     });

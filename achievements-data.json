@@ -1,33 +1,33 @@
 {
-  "version": 1,
+  "version": 2,
   "soundEnabledByDefault": true,
   "items": [
     {
       "id": "watch_1",
       "name": "Primeiro Episódio",
-      "desc": "Assista 1 episódio completo.",
+      "desc": "Complete 1 episódio.",
       "icon": "assets/achievements/first-steps.svg",
       "sound": "assets/achievements/sounds/impact_unlock.mp3",
-      "type": "episodes_watched",
+      "type": "episodes_completed_total",
       "goal": 1
     },
     {
       "id": "watch_10",
       "name": "Maratonista",
-      "desc": "Assista 10 episódios completos.",
+      "desc": "Complete 10 episódios.",
       "icon": "assets/achievements/binge-watcher.svg",
       "sound": "assets/achievements/sounds/impact_unlock.mp3",
-      "type": "episodes_watched",
+      "type": "episodes_completed_total",
       "goal": 10
     },
     {
-      "id": "rate_5",
-      "name": "Crítico Otaku",
-      "desc": "Faça 5 avaliações de episódios.",
-      "icon": "assets/achievements/critic.svg",
+      "id": "watch_50",
+      "name": "Lenda do Play",
+      "desc": "Complete 50 episódios.",
+      "icon": "assets/achievements/binge-watcher.svg",
       "sound": "assets/achievements/sounds/impact_unlock.mp3",
-      "type": "ratings_given",
-      "goal": 5
+      "type": "episodes_completed_total",
+      "goal": 50
     },
     {
       "id": "streak_3",
@@ -37,6 +37,51 @@
       "sound": "assets/achievements/sounds/impact_unlock.mp3",
       "type": "daily_streak",
       "goal": 3
+    },
+    {
+      "id": "streak_7",
+      "name": "Semana Fechada",
+      "desc": "Abra o AniVerse por 7 dias seguidos.",
+      "icon": "assets/achievements/streaker.svg",
+      "sound": "assets/achievements/sounds/impact_unlock.mp3",
+      "type": "daily_streak",
+      "goal": 7
+    },
+    {
+      "id": "days_7",
+      "name": "Visitante Frequente",
+      "desc": "Abra o AniVerse em 7 dias diferentes.",
+      "icon": "https://cdn-icons-png.flaticon.com/512/3652/3652191.png",
+      "sound": "assets/achievements/sounds/impact_unlock.mp3",
+      "type": "days_open_total",
+      "goal": 7
+    },
+    {
+      "id": "anime_5",
+      "name": "Explorador de Catálogo",
+      "desc": "Comece 5 animes diferentes.",
+      "icon": "assets/achievements/critic.svg",
+      "sound": "assets/achievements/sounds/impact_unlock.mp3",
+      "type": "anime_started_total",
+      "goal": 5
+    },
+    {
+      "id": "continue_5",
+      "name": "Fila de Continua",
+      "desc": "Tenha 5 itens no Continuar Assistindo.",
+      "icon": "assets/achievements/first-steps.svg",
+      "sound": "assets/achievements/sounds/impact_unlock.mp3",
+      "type": "continue_entries",
+      "goal": 5
+    },
+    {
+      "id": "sections_4",
+      "name": "Turista do Site",
+      "desc": "Visite 4 seções diferentes do AniVerse.",
+      "icon": "assets/achievements/critic.svg",
+      "sound": "assets/achievements/sounds/impact_unlock.mp3",
+      "type": "sections_visited_total",
+      "goal": 4
     }
   ]
 }
