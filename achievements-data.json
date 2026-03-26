@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "soundEnabledByDefault": true,
+  "items": [
+    {
+      "id": "watch_1",
+      "name": "Primeiro Episódio",
+      "desc": "Assista 1 episódio completo.",
+      "icon": "assets/achievements/first-steps.svg",
+      "sound": "assets/achievements/sounds/impact_unlock.mp3",
+      "type": "episodes_watched",
+      "goal": 1
+    },
+    {
+      "id": "watch_10",
+      "name": "Maratonista",
+      "desc": "Assista 10 episódios completos.",
+      "icon": "assets/achievements/binge-watcher.svg",
+      "sound": "assets/achievements/sounds/impact_unlock.mp3",
+      "type": "episodes_watched",
+      "goal": 10
+    },
+    {
+      "id": "rate_5",
+      "name": "Crítico Otaku",
+      "desc": "Faça 5 avaliações de episódios.",
+      "icon": "assets/achievements/critic.svg",
+      "sound": "assets/achievements/sounds/impact_unlock.mp3",
+      "type": "ratings_given",
+      "goal": 5
+    },
+    {
+      "id": "streak_3",
+      "name": "Presença Diária",
+      "desc": "Abra o AniVerse por 3 dias seguidos.",
+      "icon": "assets/achievements/streaker.svg",
+      "sound": "assets/achievements/sounds/impact_unlock.mp3",
+      "type": "daily_streak",
+      "goal": 3
+    }
+  ]
+}

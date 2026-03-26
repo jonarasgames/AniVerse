@@ -1206,6 +1206,9 @@
         e.stopImmediatePropagation();
       }
       persistContinueWatchingNow(true);
+      if (window.achievementEngine && typeof window.achievementEngine.refresh === 'function') {
+        window.achievementEngine.refresh({ eventType: 'episode_complete' });
+      }
       handleEpisodeEndedWithMarathon();
     });
     player.addEventListener('play', () => clearNextEpisodeCountdown());

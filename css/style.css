@@ -5093,3 +5093,108 @@ html.theme-light .inplace-duration-view {
         gap: 10px;
     }
 }
+
+.achievements-fab {
+    position: fixed;
+    right: 24px;
+    bottom: 84px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(26, 26, 46, 0.9);
+    color: white;
+    box-shadow: var(--shadow);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1500;
+}
+
+.achievements-fab:hover {
+    transform: translateY(-2px);
+}
+
+.achievements-fab-dot {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #f1c40f;
+    display: none;
+}
+
+.achievements-modal-content {
+    max-width: 800px;
+}
+
+.achievements-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.achievements-sound-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #fff;
+}
+
+.achievements-unlock-feed {
+    display: none;
+    margin: 12px 0;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: rgba(230, 57, 70, 0.2);
+    border: 1px solid rgba(230, 57, 70, 0.4);
+    color: #fff;
+    animation: achievementPulse 550ms ease;
+}
+
+@keyframes achievementPulse {
+    0% { transform: scale(0.98); opacity: 0.5; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.achievements-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 12px;
+    max-height: 62vh;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.achievement-card {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    padding: 12px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.achievement-card.is-locked {
+    opacity: 0.72;
+}
+
+.achievement-card img {
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.achievement-info h4 {
+    margin: 0 0 4px;
+}
+
+.achievement-progress {
+    font-size: 0.9rem;
+    color: #ddd;
+}
