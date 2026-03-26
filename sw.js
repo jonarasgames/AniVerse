@@ -1,5 +1,5 @@
-const STATIC_CACHE = 'aniverse-static-v10';
-const RUNTIME_CACHE = 'aniverse-runtime-v10';
+const STATIC_CACHE = 'aniverse-static-v11';
+const RUNTIME_CACHE = 'aniverse-runtime-v11';
 
 const APP_SHELL = [
   './',
