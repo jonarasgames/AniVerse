@@ -97,8 +97,9 @@
       
       // Clone the click event
       miniSkip.addEventListener('click', () => {
-        if(window.currentOpeningData && window.currentOpeningData.end) {
-          player.currentTime = window.currentOpeningData.end;
+        const active = window.getActiveSkipSegment && window.getActiveSkipSegment();
+        if(active && Number.isFinite(active.end)) {
+          player.currentTime = active.end;
         }
       });
       
@@ -732,6 +733,7 @@
     function startNextEpisodeCountdown(source = 'ended') {
       if (nextEpisodeCountdownTimer && nextEpisodeCountdownSource === source) return;
       if (source !== 'ended' && suppressEndingCountdownForCurrentEpisode) return;
+      if (source !== 'ended' && suppressEndingCountdownForCurrentEpisode) return;
       const prefs = getMarathonPreferences();
       const target = getNextEpisodeTarget();
       if (!target || !prefs.enabled || !prefs.autoNext) {
@@ -740,6 +742,7 @@
       }
 
       if (!nextEpisodeCountdownTimer) {
+        const policy = shouldPauseByMarathonPolicy(prefs, source !== 'ended' ? 1 : 0);
         const policy = shouldPauseByMarathonPolicy(prefs, source !== 'ended' ? 1 : 0);
         if (policy.shouldPause) {
           setCountdownMessage(`⏸️ Pausa da maratona após ${policy.nextCount} episódios.`, true);
@@ -757,6 +760,7 @@
       nextEpisodeCountdownTimer = setInterval(() => {
         remaining -= 1;
         if (remaining <= 0) {
+          if (source !== 'ended') {
           if (source !== 'ended') {
             ensureSessionState();
             marathonSessionState.watchedCount += 1;

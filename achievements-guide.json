@@ -1,0 +1,63 @@
+{
+  "version": 1,
+  "itemSchema": {
+    "requiredFields": ["id", "name", "desc", "icon", "sound", "type", "goal"],
+    "notes": [
+      "icon aceita caminho local OU URL externa (http/https)",
+      "sound aceita caminho local (recomendado) e pode ser trocado por arquivo real",
+      "goal deve ser numero inteiro > 0"
+    ]
+  },
+  "supportedTypes": [
+    { "type": "episodes_completed_total", "description": "Total de episodios completos detectados por evento de fim de episodio." },
+    { "type": "anime_started_total", "description": "Quantidade de animes unicos iniciados." },
+    { "type": "daily_streak", "description": "Dias consecutivos abrindo o site." },
+    { "type": "days_open_total", "description": "Total de dias unicos que o app foi aberto." },
+    { "type": "continue_entries", "description": "Quantidade atual de itens no Continuar Assistindo do perfil ativo." },
+    { "type": "sections_visited_total", "description": "Quantidade de secoes diferentes visitadas na navegacao." },
+    { "type": "profile_count", "description": "Quantidade de perfis cadastrados localmente." },
+    { "type": "achievements_unlocked_total", "description": "Quantidade total de conquistas ja desbloqueadas." }
+  ],
+  "aliasesLegacy": [
+    "episodes_watched -> episodes_completed_total",
+    "ratings_given -> ratings_given (mantido para compatibilidade, nao usado por padrao)"
+  ],
+  "eventHooksDisponiveis": [
+    { "eventType": "app_open", "disparaQuando": "DOMContentLoaded" },
+    { "eventType": "episode_complete", "disparaQuando": "player ended", "payload": ["animeId", "season", "episode"] },
+    { "eventType": "section_visit", "disparaQuando": "troca de secao via menu", "payload": ["sectionId"] },
+    { "eventType": "continue_update", "disparaQuando": "atualizacao de continuar assistindo" }
+  ],
+  "ideiasQuePodemVirarConquista": [
+    "episodios completos totais",
+    "episodios completos por anime especifico",
+    "episodios completos por categoria (anime/filme/ova)",
+    "animes iniciados",
+    "animes finalizados",
+    "temporadas finalizadas",
+    "dias seguidos (streak)",
+    "dias totais de uso",
+    "visitas por secao (home, animes, movies, ovas, collections, openings, continue, downloads)",
+    "quantidade de itens no historico/continue watching",
+    "tempo total assistido (se quiser salvar em segundos)",
+    "uso de auto-next/maratona",
+    "uso de fullscreen",
+    "uso de modo TV",
+    "downloads iniciados",
+    "downloads concluidos",
+    "quantidade de musicas reproduzidas",
+    "quantidade de colecoes abertas",
+    "quantidade de buscas realizadas",
+    "quantidade de conquistas desbloqueadas",
+    "quantidade de perfis criados",
+    "dias com pelo menos um episodio completo",
+    "primeiro episodio por cada secao de conteudo",
+    "volta ao app apos X dias",
+    "sequencia semanal/mensal",
+    "conquista secreta por combinacao de eventos",
+    "conquista sazonal baseada em data",
+    "conquista por zerar fila de continue watching",
+    "conquista por explorar todas as secoes",
+    "conquista por assistir 3 episodios no mesmo dia"
+  ]
+}

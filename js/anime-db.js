@@ -380,6 +380,9 @@ class AnimeDatabase {
         
         localStorage.setItem('episodeRatings', JSON.stringify(this.ratings));
         localStorage.setItem('userEpisodeRatings', JSON.stringify(this.userRatings));
+        if (window.achievementEngine && typeof window.achievementEngine.refresh === 'function') {
+            window.achievementEngine.refresh({ eventType: 'rating_updated' });
+        }
     }
 
     getEpisodeRating(animeId, seasonNumber, episodeNumber) {
