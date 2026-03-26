@@ -4,7 +4,6 @@
   function showVideoError(msg){ let el=document.getElementById('video-error-container'); if(!el){ el=document.createElement('div'); el.id='video-error-container'; Object.assign(el.style,{position:'absolute',left:'50%',bottom:'14%',transform:'translateX(-50%)',background:'rgba(0,0,0,0.78)',color:'#fff',padding:'10px 14px',borderRadius:'10px',zIndex:1001,pointerEvents:'none',maxWidth:'min(88%, 460px)',textAlign:'center'}); (document.getElementById('video-player-container')||document.body).appendChild(el);} el.textContent=msg; }
   function clearVideoError(){ const el=document.getElementById('video-error-container'); if(el) el.remove(); }
 
-<<<<<<< codex/add-marathon-preferences-to-profiles-dys31t
   function SkipController(player, skipId, labelPrefix, onSkip){
     this.player = player; this.skipBtn = safe(skipId); this.segment = null; this.labelPrefix = labelPrefix || 'Pular'; this.onSkip = onSkip;
     if(!this.player || !this.skipBtn){ console.warn('SkipController: missing elements'); return; }
@@ -14,13 +13,6 @@
       if (typeof this.onSkip === 'function') this.onSkip(this.segment.end, this.labelPrefix);
       else this.player.currentTime = this.segment.end;
     });
-=======
-  function SkipController(player, skipId, labelPrefix){
-    this.player = player; this.skipBtn = safe(skipId); this.segment = null; this.labelPrefix = labelPrefix || 'Pular';
-    if(!this.player || !this.skipBtn){ console.warn('SkipController: missing elements'); return; }
-    this.player.addEventListener('timeupdate', ()=> this.update());
-    this.skipBtn.addEventListener('click', ()=> { if (this.segment) this.player.currentTime = this.segment.end; });
->>>>>>> main
   }
   SkipController.prototype.setSegment = function(segment){ this.segment = segment; this.update(); };
   SkipController.prototype.update = function(){
@@ -740,11 +732,8 @@
 
     function startNextEpisodeCountdown(source = 'ended') {
       if (nextEpisodeCountdownTimer && nextEpisodeCountdownSource === source) return;
-<<<<<<< codex/add-marathon-preferences-to-profiles-dys31t
       if (source !== 'ended' && suppressEndingCountdownForCurrentEpisode) return;
-=======
-      if (source === 'ending' && suppressEndingCountdownForCurrentEpisode) return;
->>>>>>> main
+      if (source !== 'ended' && suppressEndingCountdownForCurrentEpisode) return;
       const prefs = getMarathonPreferences();
       const target = getNextEpisodeTarget();
       if (!target || !prefs.enabled || !prefs.autoNext) {
@@ -753,11 +742,8 @@
       }
 
       if (!nextEpisodeCountdownTimer) {
-<<<<<<< codex/add-marathon-preferences-to-profiles-dys31t
         const policy = shouldPauseByMarathonPolicy(prefs, source !== 'ended' ? 1 : 0);
-=======
-        const policy = shouldPauseByMarathonPolicy(prefs, source === 'ending' ? 1 : 0);
->>>>>>> main
+        const policy = shouldPauseByMarathonPolicy(prefs, source !== 'ended' ? 1 : 0);
         if (policy.shouldPause) {
           setCountdownMessage(`⏸️ Pausa da maratona após ${policy.nextCount} episódios.`, true);
           return;
@@ -774,11 +760,8 @@
       nextEpisodeCountdownTimer = setInterval(() => {
         remaining -= 1;
         if (remaining <= 0) {
-<<<<<<< codex/add-marathon-preferences-to-profiles-dys31t
           if (source !== 'ended') {
-=======
-          if (source === 'ending') {
->>>>>>> main
+          if (source !== 'ended') {
             ensureSessionState();
             marathonSessionState.watchedCount += 1;
           }
@@ -1028,7 +1011,6 @@
         }
     });
 
-<<<<<<< codex/add-marathon-preferences-to-profiles-dys31t
     let smoothSkipLockUntil = 0;
     function smoothSkipTo(targetTime) {
       if (!Number.isFinite(targetTime)) return;
@@ -1075,15 +1057,6 @@
     const floatingSkipOpeningCtrl = new SkipController(player, 'floating-skip-opening-btn', 'Pular abertura', smoothSkipTo);
     const skipEndingCtrl = new SkipController(player, 'skip-ending-btn', 'Pular encerramento', smoothSkipTo);
     const floatingSkipEndingCtrl = new SkipController(player, 'floating-skip-ending-btn', 'Pular encerramento', smoothSkipTo);
-=======
-    const floatingSkipOpeningBtn = safe('floating-skip-opening-btn');
-    const floatingSkipEndingBtn = safe('floating-skip-ending-btn');
-    const skipEndingBtn = safe('skip-ending-btn');
-    const skipOpeningCtrl = new SkipController(player, 'skip-opening-btn', 'Pular abertura');
-    const floatingSkipOpeningCtrl = new SkipController(player, 'floating-skip-opening-btn', 'Pular abertura');
-    const skipEndingCtrl = new SkipController(player, 'skip-ending-btn', 'Pular encerramento');
-    const floatingSkipEndingCtrl = new SkipController(player, 'floating-skip-ending-btn', 'Pular encerramento');
->>>>>>> main
     window.currentOpeningData = null;
     window.currentEndingData = null;
     window.updateOpeningData = function(data){
@@ -1108,21 +1081,16 @@
       const currentTime = player.currentTime || 0;
       const inEnding = !!(window.currentEndingData && currentTime >= window.currentEndingData.start && currentTime < window.currentEndingData.end);
       const endingNearEpisodeEnd = isEndingNearEpisodeEnd(window.currentEndingData);
-<<<<<<< codex/add-marathon-preferences-to-profiles-dys31t
       const endingHasTailContent = !!(window.currentEndingData && Number.isFinite(player.duration) && player.duration > 0 && Number(window.currentEndingData.end) < (player.duration - 3));
       const countdownSeconds = Math.max(1, Number(prefs.countdownSeconds) || 8);
       const remainingSeconds = Math.max(0, (player.duration || 0) - currentTime);
       const shouldShowEndingCountdown = prefs.enabled && prefs.autoNext && inEnding && endingNearEpisodeEnd;
       const shouldShowTailCountdown = prefs.enabled && prefs.autoNext && endingHasTailContent && remainingSeconds <= countdownSeconds && remainingSeconds > 0;
-=======
-      const shouldShowEndingCountdown = prefs.enabled && prefs.autoNext && inEnding && endingNearEpisodeEnd;
->>>>>>> main
 
       if (shouldShowEndingCountdown) {
         startNextEpisodeCountdown('ending');
         if (skipEndingBtn) skipEndingBtn.style.display = 'none';
         if (floatingSkipEndingBtn) floatingSkipEndingBtn.style.display = 'none';
-<<<<<<< codex/add-marathon-preferences-to-profiles-dys31t
       } else if (shouldShowTailCountdown) {
         startNextEpisodeCountdown('tail');
       } else if (nextEpisodeCountdownSource === 'ending') {
@@ -1136,17 +1104,6 @@
       }
       if (prefs.enabled && prefs.autoSkipEnding && inEnding && !endingNearEpisodeEnd) {
         smoothSkipTo(window.currentEndingData.end);
-=======
-      } else if (nextEpisodeCountdownSource === 'ending') {
-        clearNextEpisodeCountdown();
-      }
-
-      if (prefs.enabled && prefs.autoSkipOpening && window.currentOpeningData && currentTime >= window.currentOpeningData.start && currentTime < window.currentOpeningData.end) {
-        player.currentTime = window.currentOpeningData.end;
-      }
-      if (prefs.enabled && prefs.autoSkipEnding && inEnding && !endingNearEpisodeEnd) {
-        player.currentTime = window.currentEndingData.end;
->>>>>>> main
       }
 
       if (floatingActionsEl) {
@@ -1303,17 +1260,6 @@
         e.stopImmediatePropagation();
       }
       persistContinueWatchingNow(true);
-<<<<<<< codex/add-marathon-preferences-to-profiles-dys31t
-=======
-      if (window.achievementEngine && typeof window.achievementEngine.refresh === 'function') {
-        window.achievementEngine.refresh({
-          eventType: 'episode_complete',
-          animeId: window.currentWatchingAnime?.id,
-          season: window.currentWatchingAnime?.season,
-          episode: window.currentWatchingAnime?.episode
-        });
-      }
->>>>>>> main
       handleEpisodeEndedWithMarathon();
     });
     player.addEventListener('play', () => clearNextEpisodeCountdown());

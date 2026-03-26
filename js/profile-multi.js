@@ -219,6 +219,23 @@
             this.saveProfiles();
             return profile.marathon;
         }
+
+        getMarathonPreferences(profileId = null) {
+            const targetId = profileId || this.activeProfileId;
+            const profile = targetId ? this.getProfile(targetId) : null;
+            return { ...DEFAULT_MARATHON_PREFERENCES, ...(profile?.marathon || {}) };
+        }
+
+        updateMarathonPreferences(profileId = null, updates = {}) {
+            const targetId = profileId || this.activeProfileId;
+            if (!targetId) return null;
+            const profile = this.getProfile(targetId);
+            if (!profile) return null;
+
+            profile.marathon = { ...DEFAULT_MARATHON_PREFERENCES, ...(profile.marathon || {}), ...updates };
+            this.saveProfiles();
+            return profile.marathon;
+        }
     }
 
     // Initialize profile manager
