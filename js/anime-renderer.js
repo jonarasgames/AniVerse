@@ -155,6 +155,8 @@
     const episode = anime.episode || 1;
     const remainingLabel = formatRemainingTime(anime.remainingTotalSeconds);
     const showResumeButton = options.showResumeButton !== false;
+    const showHomeOverlayDetails = options.showHomeOverlayDetails === true;
+    const showHomeAgeChip = options.showHomeAgeChip === true;
     const ageRatingBadge = getAgeRatingBadge(anime.rating_age);
     const ageRatingLabel = escapeHtml(getAgeRatingLabel(anime.rating_age));
     const hoverDetails = `
@@ -167,14 +169,22 @@
     card.innerHTML = `
       <div class="anime-thumbnail">
         <img src="${escapeHtml(thumbnail)}" alt="${title}">
+<<<<<<< codex/add-episode-details-to-continue-watching-8yqc9u
+        ${(showHomeAgeChip && ageRatingLabel) ? `<span class="continue-age-rating-chip" aria-label="Classificação indicativa ${ageRatingLabel}">${ageRatingLabel}</span>` : ''}
+=======
         ${ageRatingLabel ? `<span class="continue-age-rating-chip" aria-label="Classificação indicativa ${ageRatingLabel}">${ageRatingLabel}</span>` : ''}
+>>>>>>> main
         <div class="continue-progress-track">
           <div class="continue-progress-bar" style="width: ${Math.min(100, Math.max(0, progress))}%;"></div>
         </div>
         <div class="trailer-overlay">
           <i class="fas fa-play"></i>
           <p>Continuar</p>
+<<<<<<< codex/add-episode-details-to-continue-watching-8yqc9u
+          ${showHomeOverlayDetails ? hoverDetails : ''}
+=======
           ${hoverDetails}
+>>>>>>> main
           ${ageRatingBadge}
         </div>
       </div>
@@ -367,9 +377,13 @@
       return;
     }
     
-    const useDetailedCard = gridId === 'continue-watching-grid';
+    const isHomeContinueGrid = gridId === 'continue-watching-grid';
     continueWatching.forEach(anime => {
-      const card = createContinueWatchingCard(anime, { showResumeButton: true });
+      const card = createContinueWatchingCard(anime, {
+        showResumeButton: true,
+        showHomeOverlayDetails: isHomeContinueGrid,
+        showHomeAgeChip: isHomeContinueGrid
+      });
       if (card) grid.appendChild(card);
     });
     
