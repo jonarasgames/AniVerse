@@ -353,7 +353,6 @@
       return;
     }
     
-    const useDetailedCard = gridId === 'continue-watching-grid';
     continueWatching.forEach(anime => {
       const card = createContinueWatchingCard(anime, { showResumeButton: true });
       if (card) grid.appendChild(card);
