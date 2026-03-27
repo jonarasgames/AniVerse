@@ -96,7 +96,7 @@
                         <img src="" alt="Avatar" class="avatar-char-layer">
                         <div class="avatar-frame-layer" id="header-avatar-frame"></div>
                     </div>
-                    <button class="btn btn-secondary" id="open-anime-editor-btn"><i class="fas fa-code"></i> Editor Anime</button>
+                    <button class="btn btn-secondary" id="open-anime-editor-btn" style="display:none;" aria-hidden="true"><i class="fas fa-code"></i> Editor Anime</button>
                     <button class="btn btn-primary" id="login-btn"><i class="fas fa-user"></i> Entrar</button>
                 </div>
             </div>
@@ -320,7 +320,7 @@
                     </div>
                 </form>
                 <p class="news-admin-hint">
-                    Atalho para ativar o modo admin: <strong>Ctrl + Shift + A</strong>. Depois de editar, baixe o JSON e substitua o arquivo <strong>news-data.json</strong>.
+                    Atalho para ativar o modo admin local: <strong>Ctrl + Shift + A</strong>. Um token de sessão é solicitado em tempo de execução (não persistido). Depois de editar, baixe o JSON e substitua o arquivo <strong>news-data.json</strong>.
                 </p>
             </div>
         </div>
@@ -359,7 +359,7 @@
 
             <textarea id="anime-editor-textarea" class="anime-editor-textarea" spellcheck="false" style="display:none;"></textarea>
             <p id="anime-editor-status" class="anime-editor-status"></p>
-            <p class="news-admin-hint">Dica: salve o arquivo baixado e substitua o <strong>anime-data.json</strong> no seu GitHub.</p>
+            <p class="news-admin-hint">Dica: autentique o admin local com token de sessão para liberar o editor, depois salve o arquivo baixado e substitua o <strong>anime-data.json</strong> no seu GitHub.</p>
         </div>
     </div>
 
@@ -666,6 +666,10 @@
                 
                 <h3>2. Uso do Serviço</h3>
                 <p>O AniVerse é uma plataforma de streaming de anime fornecida "como está". Você concorda em usar o serviço apenas para fins legais e de acordo com estes termos.</p>
+
+                <h3>2.1 Modelo de Segurança Local (Admin e Perfis)</h3>
+                <p>Os recursos administrativos (como editor de animes e edição inline) usam autenticação local no próprio navegador. O acesso administrativo depende de token de sessão informado manualmente em tempo de execução e mantido somente em memória da aba atual.</p>
+                <p>As senhas de perfil são protegidas localmente por hash SHA-256 com salt por perfil. O AniVerse não envia esse segredo para servidores próprios.</p>
                 
                 <h3>3. Propriedade Intelectual</h3>
                 <p>Todo o conteúdo disponível no AniVerse, incluindo mas não limitado a textos, gráficos, logos, ícones, imagens, clipes de áudio e vídeo, está sendo usado para o site, mas não hospedado aqui.</p>
@@ -683,6 +687,7 @@
                 
                 <h3>6. Limitação de Responsabilidade</h3>
                 <p>O AniVerse não será responsável por quaisquer danos diretos, indiretos, incidentais, consequenciais ou punitivos resultantes do uso ou incapacidade de usar o serviço.</p>
+                <p>Como o modelo de segurança é local (front-end), ele não substitui controles de servidor. Usuários com acesso ao dispositivo/navegador podem manipular dados locais, limpar armazenamento ou contornar proteções de interface.</p>
             </div>
         </div>
     </div>
@@ -695,6 +700,7 @@
             <div class="privacy-content">
                 <h3>1. Informações que Coletamos</h3>
                 <p>O AniVerse coleta informações limitadas para melhorar sua experiência. Todas as informações são armazenadas localmente no seu navegador usando localStorage.</p>
+                <p>Para perfis com senha, armazenamos somente hash com salt por perfil (não a senha em texto puro). Para autenticação admin local, o token de sessão fica somente em memória enquanto a aba está aberta.</p>
                 
                 <h3>2. Como Usamos Suas Informações</h3>
                 <p>As informações coletadas são usadas para:</p>
@@ -706,6 +712,7 @@
                 
                 <h3>3. Armazenamento de Dados</h3>
                 <p>Todos os seus dados são armazenados localmente no seu dispositivo usando a tecnologia localStorage do navegador. Não enviamos ou compartilhamos suas informações com terceiros.</p>
+                <p>Observação: dados em memória (como token de sessão admin) não são persistidos em localStorage/cookies e podem ser perdidos ao recarregar/fechar a aba.</p>
                 
                 <h3>4. Cookies e Tecnologias Similares</h3>
                 <p>Utilizamos localStorage para armazenar suas preferências e progresso. Você pode limpar esses dados a qualquer momento através das configurações do seu navegador.</p>
@@ -720,6 +727,7 @@
                 
                 <h3>6. Segurança</h3>
                 <p>Como todos os dados são armazenados localmente no seu dispositivo, a segurança depende das configurações de segurança do seu navegador e dispositivo.</p>
+                <p>Limitações importantes: sem backend dedicado de autenticação, não há garantia forte contra usuários locais avançados, extensões maliciosas do navegador, scripts injetados por ambiente comprometido ou acesso físico ao dispositivo.</p>
                 
                 <h3>7. Alterações na Política</h3>
                 <p>Podemos atualizar esta política de privacidade periodicamente. Recomendamos revisar esta página regularmente para estar ciente de quaisquer alterações.</p>
