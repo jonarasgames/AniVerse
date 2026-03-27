@@ -26,6 +26,11 @@
     return `<img src="${AGE_RATING_IMAGES[ratingAge]}" alt="Classificação ${ratingAge === 'L' ? 'Livre' : ratingAge + ' anos'}" class="age-rating-badge">`;
   }
 
+  function getAgeRatingLabel(ratingAge) {
+    if (!ratingAge) return '';
+    return ratingAge === 'L' ? 'L' : `${ratingAge}+`;
+  }
+
   // Export for use in other files
   window.AGE_RATING_IMAGES = AGE_RATING_IMAGES;
 
@@ -150,17 +155,28 @@
     const episode = anime.episode || 1;
     const remainingLabel = formatRemainingTime(anime.remainingTotalSeconds);
     const showResumeButton = options.showResumeButton !== false;
+    const showHomeOverlayDetails = options.showHomeOverlayDetails === true;
+    const showHomeAgeChip = options.showHomeAgeChip === true;
     const ageRatingBadge = getAgeRatingBadge(anime.rating_age);
+    const ageRatingLabel = escapeHtml(getAgeRatingLabel(anime.rating_age));
+    const hoverDetails = `
+      <div class="continue-hover-details">
+        <span>Atual: T${season} • EP${episode}</span>
+        <span>${Math.round(progress)}% • ${remainingLabel}</span>
+      </div>
+    `;
     
     card.innerHTML = `
       <div class="anime-thumbnail">
         <img src="${escapeHtml(thumbnail)}" alt="${title}">
+        ${(showHomeAgeChip && ageRatingLabel) ? `<span class="continue-age-rating-chip" aria-label="Classificação indicativa ${ageRatingLabel}">${ageRatingLabel}</span>` : ''}
         <div class="continue-progress-track">
           <div class="continue-progress-bar" style="width: ${Math.min(100, Math.max(0, progress))}%;"></div>
         </div>
         <div class="trailer-overlay">
           <i class="fas fa-play"></i>
           <p>Continuar</p>
+          ${showHomeOverlayDetails ? hoverDetails : ''}
           ${ageRatingBadge}
         </div>
       </div>
@@ -353,9 +369,13 @@
       return;
     }
     
-    const useDetailedCard = gridId === 'continue-watching-grid';
+    const isHomeContinueGrid = gridId === 'continue-watching-grid';
     continueWatching.forEach(anime => {
-      const card = createContinueWatchingCard(anime, { showResumeButton: true });
+      const card = createContinueWatchingCard(anime, {
+        showResumeButton: true,
+        showHomeOverlayDetails: isHomeContinueGrid,
+        showHomeAgeChip: isHomeContinueGrid
+      });
       if (card) grid.appendChild(card);
     });
     
