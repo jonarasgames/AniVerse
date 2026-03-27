@@ -704,33 +704,6 @@ nav a:hover, nav a.active {
     transition: width 0.25s ease;
 }
 
-.continue-age-rating-chip {
-    position: absolute;
-    top: 8px;
-    left: 8px;
-    z-index: 4;
-    padding: 2px 6px;
-    border-radius: 999px;
-    font-size: 0.7rem;
-    font-weight: 800;
-    letter-spacing: 0.02em;
-    color: #fff;
-    background: rgba(0, 0, 0, 0.65);
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    backdrop-filter: blur(2px);
-}
-
-.continue-hover-details {
-    margin-top: 8px;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    font-size: 0.78rem;
-    opacity: 0.94;
-    text-align: center;
-    line-height: 1.25;
-}
-
 .continue-resume-btn {
     margin-top: 8px;
     width: 100%;
