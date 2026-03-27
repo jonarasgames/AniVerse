@@ -180,32 +180,18 @@ class AnimeDatabase {
             if (activeProfile && activeProfile.continueWatching) {
                 return activeProfile.continueWatching.map(item => {
                     const anime = this.animes.find(a => a.id == item.animeId) || this.getCustomAnime(item.animeId);
-                    const fallbackAnime = {
-                        id: item.animeId,
-                        animeId: item.animeId,
-                        title: item.title || item.name || 'Sem título',
-                        thumbnail: item.thumbnail || item.cover || 'images/bg-default.jpg',
-                        cover: item.cover || item.thumbnail || 'images/bg-default.jpg',
-                        rating_age: item.rating_age || null,
-                        seasons: []
-                    };
-                    const resolvedAnime = anime || fallbackAnime;
-                    const extras = anime
-                        ? this.getContinueWatchingExtras(anime, item.season, item.episode, item.progress, item.currentTime)
-                        : {
-                            remainingEpisodeSeconds: 0,
-                            remainingTotalSeconds: 0,
-                            currentEpisodeDurationSeconds: 0
+                    if (anime) {
+                        const extras = this.getContinueWatchingExtras(anime, item.season, item.episode, item.progress, item.currentTime);
+                        return {
+                            ...anime,
+                            progress: item.progress || 0,
+                            episode: item.episode,
+                            season: item.season,
+                            currentTime: item.currentTime || 0,
+                            ...extras
                         };
-
-                    return {
-                        ...resolvedAnime,
-                        progress: item.progress || 0,
-                        episode: item.episode,
-                        season: item.season,
-                        currentTime: item.currentTime || 0,
-                        ...extras
-                    };
+                    }
+                    return null;
                 }).filter(Boolean);
             }
         }
