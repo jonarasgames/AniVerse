@@ -13,6 +13,35 @@
         autoSkipEnding: false,
         countdownSeconds: 8
     };
+    const PASSWORD_HASH_VERSION = 'sha256-v1';
+
+    function bytesToHex(bytes) {
+        return Array.from(bytes, (byte) => byte.toString(16).padStart(2, '0')).join('');
+    }
+
+    function generateSaltHex(size = 16) {
+        const bytes = new Uint8Array(size);
+        window.crypto.getRandomValues(bytes);
+        return bytesToHex(bytes);
+    }
+
+    async function hashPasswordWithSalt(password, saltHex) {
+        const encoder = new TextEncoder();
+        const payload = encoder.encode(`${PASSWORD_HASH_VERSION}:${saltHex}:${String(password || '')}`);
+        const digest = await window.crypto.subtle.digest('SHA-256', payload);
+        return bytesToHex(new Uint8Array(digest));
+    }
+
+    async function makePasswordSecurity(password) {
+        const normalized = String(password || '').trim();
+        if (!normalized) {
+            return { passwordHash: null, passwordSalt: null, passwordHashVersion: null };
+        }
+
+        const passwordSalt = generateSaltHex();
+        const passwordHash = await hashPasswordWithSalt(normalized, passwordSalt);
+        return { passwordHash, passwordSalt, passwordHashVersion: PASSWORD_HASH_VERSION };
+    }
 
     function canUseLocalStorage() {
         try {
@@ -75,6 +104,9 @@
                 const profiles = data ? JSON.parse(data) : [];
                 return profiles.map(profile => ({
                     ...profile,
+                    passwordHash: profile.passwordHash || null,
+                    passwordSalt: profile.passwordSalt || null,
+                    passwordHashVersion: profile.passwordHashVersion || null,
                     marathon: { ...DEFAULT_MARATHON_PREFERENCES, ...(profile.marathon || {}) }
                 }));
             } catch (e) {
@@ -97,7 +129,9 @@
                 name: profileData.name || 'Usuário',
                 pronoun: profileData.pronoun || '-san',
                 avatar: profileData.avatar || {},
-                password: profileData.password || null,
+                passwordHash: profileData.passwordHash || null,
+                passwordSalt: profileData.passwordSalt || null,
+                passwordHashVersion: profileData.passwordHashVersion || null,
                 createdAt: new Date().toISOString(),
                 continueWatching: [],
                 marathon: { ...DEFAULT_MARATHON_PREFERENCES, ...(profileData.marathon || {}) }
@@ -111,6 +145,9 @@
             const index = this.profiles.findIndex(p => p.id === profileId);
             if (index !== -1) {
                 this.profiles[index] = { ...this.profiles[index], ...updates };
+                if (Object.prototype.hasOwnProperty.call(updates, 'passwordHash')) {
+                    delete this.profiles[index].password;
+                }
                 this.saveProfiles();
                 return this.profiles[index];
             }
@@ -207,6 +244,31 @@
     // Initialize profile manager
     const profileManager = new ProfileManager();
     window.profileManager = profileManager;
+
+    async function verifyProfilePassword(profile, rawPassword) {
+        if (!profile) return false;
+        const typedPassword = String(rawPassword || '');
+
+        if (profile.passwordHash && profile.passwordSalt) {
+            const computed = await hashPasswordWithSalt(typedPassword, profile.passwordSalt);
+            return computed === profile.passwordHash;
+        }
+
+        if (profile.password) {
+            const isMatch = typedPassword === String(profile.password);
+            if (isMatch) {
+                const security = await makePasswordSecurity(typedPassword);
+                profile.passwordHash = security.passwordHash;
+                profile.passwordSalt = security.passwordSalt;
+                profile.passwordHashVersion = security.passwordHashVersion;
+                delete profile.password;
+                profileManager.saveProfiles();
+            }
+            return isMatch;
+        }
+
+        return true;
+    }
 
     // Profile Selection Screen
     function showProfileSelectionScreen() {
@@ -334,12 +396,13 @@
         card.addEventListener('mouseleave', () => {
             card.style.transform = 'scale(1)';
         });
-        card.addEventListener('click', (e) => {
+        card.addEventListener('click', async (e) => {
             if (!e.target.closest('.profile-card-overlay')) {
                 // If profile has password, ask for it
-                if (profile.password) {
+                if (profile.passwordHash || profile.password) {
                     const inputPassword = prompt(`Digite a senha para ${profile.name}${profile.pronoun}:`);
-                    if (inputPassword !== profile.password) {
+                    const isValid = await verifyProfilePassword(profile, inputPassword);
+                    if (!isValid) {
                         alert('Senha incorreta! ❌');
                         return;
                     }
@@ -626,7 +689,10 @@
         if (nameInput) nameInput.value = profile.name;
         
         const passwordInput = document.getElementById('profile-password');
-        if (passwordInput) passwordInput.value = profile.password || '';
+        if (passwordInput) {
+            passwordInput.value = '';
+            passwordInput.placeholder = (profile.passwordHash || profile.password) ? 'Digite nova senha para alterar' : 'Senha (opcional)';
+        }
         
         const pronounSelect = document.getElementById('selected-pronoun');
         if (pronounSelect) pronounSelect.value = profile.pronoun || '-san';
@@ -1105,7 +1171,7 @@
         // This ensures profile creation works even when there are no profiles
         const saveBtn = document.getElementById('save-profile-btn');
         if (saveBtn) {
-            saveBtn.onclick = function(e) {
+            saveBtn.onclick = async function(e) {
                 const modal = document.getElementById('profile-modal');
                 const nameInput = document.getElementById('profile-name');
                 const pronounInput = document.getElementById('selected-pronoun');
@@ -1150,16 +1216,28 @@
                     avatarData.frame = selectedFrame.dataset.frame;
                 }
 
+                // Check if we're editing an existing profile
+                const editingProfileId = modal?.dataset.editingProfileId;
+                const editingProfile = editingProfileId ? profileManager.getProfile(editingProfileId) : null;
+                const typedPassword = passwordInput ? passwordInput.value.trim() : '';
+                const keepCurrentPassword = !!editingProfileId && !typedPassword;
+                const passwordSecurity = keepCurrentPassword
+                    ? {
+                        passwordHash: editingProfile?.passwordHash || null,
+                        passwordSalt: editingProfile?.passwordSalt || null,
+                        passwordHashVersion: editingProfile?.passwordHashVersion || null
+                    }
+                    : await makePasswordSecurity(typedPassword);
+
                 const profileData = {
                     name: nameInput.value.trim(),
                     pronoun: pronounInput ? pronounInput.value : '-san',
                     avatar: avatarData,
-                    password: passwordInput ? (passwordInput.value.trim() || null) : null,
+                    passwordHash: passwordSecurity.passwordHash,
+                    passwordSalt: passwordSecurity.passwordSalt,
+                    passwordHashVersion: passwordSecurity.passwordHashVersion,
                     marathon: collectMarathonSettingsFromForm()
                 };
-
-                // Check if we're editing an existing profile
-                const editingProfileId = modal?.dataset.editingProfileId;
                 
                 if (editingProfileId) {
                     // Update existing profile

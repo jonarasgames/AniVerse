@@ -2,10 +2,39 @@
 (function () {
   'use strict';
 
-  const SECRET_PIN = 'rafaaxprs';
   let currentData = { animes: [], collections: [] };
 
   const byId = (id) => document.getElementById(id);
+
+  function getAdminSession() {
+    if (!window.__aniverseAdminSession) {
+      window.__aniverseAdminSession = { token: null, authenticated: false };
+    }
+    return window.__aniverseAdminSession;
+  }
+
+  function isAdminAuthenticated() {
+    const session = getAdminSession();
+    return !!(session.authenticated && session.token);
+  }
+
+  function setAdminSessionToken(token) {
+    const normalized = String(token || '').trim();
+    const session = getAdminSession();
+    session.token = normalized || null;
+    session.authenticated = !!normalized;
+    window.dispatchEvent(new CustomEvent('aniverse-admin-auth-changed', {
+      detail: { authenticated: session.authenticated }
+    }));
+  }
+
+  function ensureAdminSessionToken(contextLabel) {
+    if (isAdminAuthenticated()) return true;
+    const token = prompt(`Token de sessão admin (${contextLabel}):`);
+    if (!token) return false;
+    setAdminSessionToken(token);
+    return isAdminAuthenticated();
+  }
 
   function setStatus(text, isError) {
     const el = byId('anime-editor-status');
@@ -503,28 +532,19 @@
   }
 
   function requestAccessAndOpen() {
-    const pin = prompt('PIN do editor:');
-    if (!pin) return;
-    if (pin !== SECRET_PIN) {
-      alert('PIN incorreto.');
+    if (!ensureAdminSessionToken('editor de animes')) {
+      alert('Token de sessão inválido ou vazio.');
       return;
     }
     openModal();
   }
 
-  function removePublicEditorButtons() {
-    const shouldRemove = (el) => {
-      const text = (el.textContent || '').replace(/\s+/g, ' ').trim().toLowerCase();
-      const id = (el.id || '').toLowerCase();
-      const cls = (el.className || '').toString().toLowerCase();
-      const hasEditorWords = text.includes('editor anime') || (text.includes('editor') && text.includes('anime')) || text === 'editar anime';
-      const knownPublicId = id === 'open-anime-editor-btn' || id === 'editor-anime-btn';
-      return hasEditorWords || knownPublicId || cls.includes('open-anime-editor-btn') || cls.includes('anime-editor-btn');
-    };
-
-    document.querySelectorAll('#open-anime-editor-btn, .open-anime-editor-btn, button, a').forEach((el) => {
-      if (shouldRemove(el)) el.remove();
-    });
+  function syncEditorEntryVisibility() {
+    const editorButton = byId('open-anime-editor-btn');
+    if (!editorButton) return;
+    const allowed = isAdminAuthenticated();
+    editorButton.style.display = allowed ? 'inline-flex' : 'none';
+    editorButton.setAttribute('aria-hidden', allowed ? 'false' : 'true');
   }
 
   function bindSecretTriggers() {
@@ -537,6 +557,12 @@
   }
 
   function bind() {
+    const editorButton = byId('open-anime-editor-btn');
+    editorButton?.addEventListener('click', (event) => {
+      event.preventDefault();
+      requestAccessAndOpen();
+    });
+
     byId('close-anime-editor')?.addEventListener('click', closeModal);
     byId('anime-editor-load')?.addEventListener('click', loadCurrentIntoEditor);
     byId('anime-editor-format')?.addEventListener('click', syncStateFromJson);
@@ -565,8 +591,8 @@
       if (event.target === byId('anime-editor-modal')) closeModal();
     });
 
-    removePublicEditorButtons();
-    new MutationObserver(removePublicEditorButtons).observe(document.body, { childList: true, subtree: true });
+    syncEditorEntryVisibility();
+    window.addEventListener('aniverse-admin-auth-changed', syncEditorEntryVisibility);
 
     const raw = byId('anime-editor-textarea');
     if (raw) raw.style.display = 'none';

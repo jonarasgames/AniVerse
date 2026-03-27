@@ -2,17 +2,49 @@
 (function () {
   'use strict';
 
-  const ADMIN_PIN = 'rafaaxprs';
   const STORE_KEY = 'aniverse-admin-edits-v3';
-  const ADMIN_UNLOCK_KEY = 'aniverse-admin-unlocked';
 
   let adminEnabled = false;
-  let adminUnlocked = sessionStorage.getItem(ADMIN_UNLOCK_KEY) === '1';
+  let adminUnlocked = false;
   let dragAnimeId = null;
 
   const byId = (id) => document.getElementById(id);
   const toText = (v) => v === null || v === undefined ? '' : String(v);
   const escAttr = (v) => toText(v).replaceAll('"', '&quot;');
+
+  function getAdminSession() {
+    if (!window.__aniverseAdminSession) {
+      window.__aniverseAdminSession = { token: null, authenticated: false };
+    }
+    return window.__aniverseAdminSession;
+  }
+
+  function isAdminAuthenticated() {
+    const session = getAdminSession();
+    return !!(session.authenticated && session.token);
+  }
+
+  function setAdminSessionToken(token) {
+    const normalized = String(token || '').trim();
+    const session = getAdminSession();
+    session.token = normalized || null;
+    session.authenticated = !!normalized;
+    adminUnlocked = session.authenticated;
+    window.dispatchEvent(new CustomEvent('aniverse-admin-auth-changed', {
+      detail: { authenticated: session.authenticated }
+    }));
+  }
+
+  function ensureAdminSessionToken(contextLabel) {
+    if (isAdminAuthenticated()) {
+      adminUnlocked = true;
+      return true;
+    }
+    const token = prompt(`Token de sessão admin (${contextLabel}):`);
+    if (!token) return false;
+    setAdminSessionToken(token);
+    return isAdminAuthenticated();
+  }
 
   function getDB() { return window.animeDB; }
   function clone(v) { return JSON.parse(JSON.stringify(v)); }
@@ -858,10 +890,7 @@
 
     toggleBtn?.addEventListener('click', () => {
       if (!adminEnabled) {
-        const pin = prompt('PIN admin:');
-        if (pin !== ADMIN_PIN) return;
-        adminUnlocked = true;
-        sessionStorage.setItem(ADMIN_UNLOCK_KEY, '1');
+        if (!ensureAdminSessionToken('modo admin inline')) return;
       }
       toggleAdmin();
       syncButtons();
@@ -880,11 +909,9 @@
     // Hidden unlock: Ctrl+Shift+A
     document.addEventListener('keydown', (e) => {
       if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'a') {
-        const pin = prompt('PIN admin:');
-        if (pin !== ADMIN_PIN) return;
-        adminUnlocked = true;
-        sessionStorage.setItem(ADMIN_UNLOCK_KEY, '1');
+        if (!ensureAdminSessionToken('atalho admin inline')) return;
         bar.classList.add('visible');
+        syncButtons();
       }
     });
 
@@ -902,6 +929,7 @@
   }
 
   function init() {
+    adminUnlocked = isAdminAuthenticated();
     ensureAdminBar();
 
     const local = loadEditsLocal();
@@ -919,6 +947,13 @@
       if (adminEnabled) decorateEditableCards();
     });
     mo.observe(document.body, { childList: true, subtree: true });
+
+    window.addEventListener('aniverse-admin-auth-changed', () => {
+      adminUnlocked = isAdminAuthenticated();
+      const bar = document.querySelector('.admin-inline-bar');
+      if (bar) bar.classList.toggle('visible', adminUnlocked);
+      if (!adminUnlocked && adminEnabled) toggleAdmin(false);
+    });
   }
 
   window.openInlineEditorInHost = openInlineEditorInHost;
