@@ -5157,10 +5157,10 @@ html.theme-light .inplace-duration-view {
 
     #video-player-container.landscape-overlay-active #anime-player {
         width: 100%;
-        height: clamp(240px, 64dvh, 74dvh);
+        height: auto;
         max-height: 74dvh;
         margin-bottom: 0;
-        object-fit: cover;
+        object-fit: contain;
     }
 
     #video-player-container.landscape-overlay-active #custom-video-controls {
