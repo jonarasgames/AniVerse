@@ -397,30 +397,30 @@
                 <div id="seek-feedback-right" class="seek-feedback"><i class="fas fa-forward"></i> 5s</div>
                 
                 <!-- Custom controls overlay -->
-                <div id="custom-video-controls" style="position: relative; background: rgba(0,0,0,0.8); padding: 10px; border-radius: 0 0 8px 8px;">
-                    <div class="controls-row" style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                <div id="custom-video-controls">
+                    <div class="controls-row controls-row-primary">
                         <button id="play-pause-btn" class="btn-icon" title="Play/Pause">
                             <i class="fas fa-play"></i>
                         </button>
-                        <div class="timeline-container" style="flex: 1; height: 6px; background: rgba(255,255,255,0.3); border-radius: 3px; cursor: pointer; position: relative;">
-                            <div id="timeline-progress" style="height: 100%; background: var(--primary-color, #007bff); border-radius: 3px; width: 0%;"></div>
+                        <div class="timeline-container">
+                            <div id="timeline-progress"></div>
                         </div>
-                        <span id="time-display" style="color: white; font-size: 12px; min-width: 90px; text-align: right;">0:00 / 0:00</span>
+                        <span id="time-display">0:00 / 0:00</span>
                     </div>
-                    <div class="controls-row" style="display: flex; align-items: center; gap: 10px;">
+                    <div class="controls-row controls-row-secondary">
                         <button id="volume-btn" class="btn-icon" title="Volume">
                             <i class="fas fa-volume-up"></i>
                         </button>
-                        <div class="volume-container" style="width: 80px; height: 6px; background: rgba(255,255,255,0.3); border-radius: 3px; cursor: pointer; position: relative;">
-                            <div id="volume-progress" style="height: 100%; background: var(--primary-color, #007bff); border-radius: 3px; width: 100%;"></div>
+                        <div class="volume-container">
+                            <div id="volume-progress"></div>
                         </div>
-                        <button id="skip-opening-btn" class="btn btn-secondary" style="display: none; margin-left: auto;">
+                        <button id="skip-opening-btn" class="btn btn-secondary" style="display: none;">
                             ⏩ Pular Abertura
                         </button>
                         <button id="skip-ending-btn" class="btn btn-secondary" style="display: none;">
                             ⏩ Pular Encerramento
                         </button>
-                        <button id="next-episode-btn" class="btn-icon" title="Próximo Episódio" style="margin-left: auto;">
+                        <button id="next-episode-btn" class="btn-icon" title="Próximo Episódio">
                             <i class="fas fa-step-forward"></i>
                         </button>
                         <button id="credits-btn" class="btn btn-secondary" style="display:none;">
@@ -433,7 +433,7 @@
                             <i class="fas fa-expand"></i>
                         </button>
                     </div>
-                    <div id="next-episode-countdown" style="display:none; margin-top:8px; color:#fff; font-size:13px; text-align:right;"></div>
+                    <div id="next-episode-countdown" style="display:none;"></div>
                 </div>
                 <div id="video-floating-actions" style="position:absolute; right:12px; bottom:72px; z-index:1010; display:none; flex-direction:column; gap:6px; align-items:flex-end; pointer-events:none;">
                     <button id="floating-skip-opening-btn" class="btn btn-secondary" style="display:none; pointer-events:auto; background:rgba(0,0,0,0.45); border:1px solid rgba(255,255,255,0.25); color:#fff; font-size:12px; padding:6px 10px;">⏩ Pular Abertura</button>
