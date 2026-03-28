@@ -156,7 +156,7 @@
             container.style.position = 'fixed';
             container.style.top = '0';
             container.style.left = '0';
-            container.style.width = '100vw';
+            container.style.width = '100%';
             container.style.height = '100vh';
             container.style.zIndex = '9999';
         } else {
@@ -604,17 +604,39 @@
     const floatingEndingActions = document.getElementById('floating-ending-actions');
     const floatingActionsEl = document.getElementById('video-floating-actions');
 
+    function isLandscapeOverlayViewport() {
+      const isLandscape = window.matchMedia && window.matchMedia('(orientation: landscape)').matches;
+      return (window.innerWidth || 0) <= 900 && !!isLandscape;
+    }
+
+    function applyLandscapeOverlayLayout() {
+      const container = document.getElementById('video-player-container');
+      const controls = document.getElementById('custom-video-controls');
+      if (!container) return false;
+      const shouldOverlay = isLandscapeOverlayViewport() && !isInFullscreen();
+
+      container.classList.toggle('landscape-overlay-active', shouldOverlay);
+
+      if (controls) {
+        const controlsHeight = shouldOverlay ? Math.max(80, Math.ceil(controls.getBoundingClientRect().height) + 8) : 112;
+        container.style.setProperty('--tap-zone-bottom', `${controlsHeight}px`);
+      }
+
+      return shouldOverlay;
+    }
+
     function syncFloatingActionsLayout() {
       if (!floatingActionsEl) return;
+      const overlayMode = applyLandscapeOverlayLayout();
       if (isCompactMobileViewport()) {
         floatingActionsEl.style.left = '8px';
         floatingActionsEl.style.right = '8px';
-        floatingActionsEl.style.bottom = '86px';
-        floatingActionsEl.style.alignItems = 'stretch';
+        floatingActionsEl.style.bottom = overlayMode ? 'calc(var(--tap-zone-bottom) + 8px)' : '86px';
+        floatingActionsEl.style.alignItems = overlayMode ? 'flex-start' : 'stretch';
       } else {
         floatingActionsEl.style.left = '';
         floatingActionsEl.style.right = '12px';
-        floatingActionsEl.style.bottom = '72px';
+        floatingActionsEl.style.bottom = overlayMode ? 'calc(var(--tap-zone-bottom) + 8px)' : '72px';
         floatingActionsEl.style.alignItems = 'flex-end';
       }
     }
@@ -1100,6 +1122,7 @@
                 container.classList.remove('controls-hidden');
                 controlsVisible = true;
             }
+            syncFloatingActionsLayout();
         });
     });
 
@@ -1175,6 +1198,12 @@
                 controlsHideTimeout = setTimeout(hideControls, HIDE_CONTROLS_DELAY);
             }
         });
+    }
+
+    const controlsPanel = document.getElementById('custom-video-controls');
+    if (controlsPanel && window.ResizeObserver) {
+      const controlsResizeObserver = new ResizeObserver(() => syncFloatingActionsLayout());
+      controlsResizeObserver.observe(controlsPanel);
     }
     
     // Show controls when video is paused
