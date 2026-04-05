@@ -1,6 +1,7 @@
-const STATIC_CACHE = 'aniverse-static-v23';
-const RUNTIME_CACHE = 'aniverse-runtime-v23';
+const STATIC_CACHE = 'aniverse-static-v25';
+const RUNTIME_CACHE = 'aniverse-runtime-v25';
 const MEDIA_CACHE = 'aniverse-media-v2';
+const IMAGE_CACHE = 'aniverse-images-v5';
 const STREAM_PROXY_PATH = '/__anv_stream_proxy__';
 
 const APP_SHELL = [
@@ -35,7 +36,7 @@ self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys()
       .then(keys => Promise.all(keys
-        .filter(k => ![STATIC_CACHE, RUNTIME_CACHE, MEDIA_CACHE].includes(k))
+        .filter(k => ![STATIC_CACHE, RUNTIME_CACHE, MEDIA_CACHE, IMAGE_CACHE].includes(k))
         .map(k => caches.delete(k))))
       .then(() => self.clients.claim())
   );
@@ -98,6 +99,52 @@ async function mediaCacheFirst(request) {
   return response;
 }
 
+function isImageRequest(request) {
+  const url = new URL(request.url);
+  if (request.destination === 'image') return true;
+  return /\.(png|jpe?g|webp|gif|svg|avif|ico)(\?|$)/i.test(url.pathname + url.search);
+}
+
+function isCacheableImageResponse(response) {
+  if (!response) return false;
+  if (response.type === 'opaque') return true;
+  const contentType = response.headers?.get('content-type') || '';
+  return response.ok && contentType.toLowerCase().startsWith('image/');
+}
+
+async function fetchImageFromNetwork(request) {
+  const requestUrl = new URL(request.url);
+
+  // Cross-origin <img> requests should stay in a no-cors flow; forcing CORS here can
+  // trigger wildcard ACAO + credential-mode mismatches on some CDNs.
+  if (requestUrl.origin !== self.location.origin) {
+    const crossOriginImageRequest = new Request(request.url, {
+      method: 'GET',
+      mode: 'no-cors',
+      cache: 'no-store',
+      credentials: 'omit'
+    });
+    return fetch(crossOriginImageRequest);
+  }
+
+  return fetch(new Request(request, { cache: 'no-store' }));
+}
+
+async function networkFirstImage(request) {
+  const cache = await caches.open(IMAGE_CACHE);
+  try {
+    const fresh = await fetchImageFromNetwork(request);
+    if (isCacheableImageResponse(fresh)) {
+      cache.put(request, fresh.clone()).catch(() => {});
+    }
+    return fresh;
+  } catch (_) {
+    const cached = await cache.match(request, { ignoreVary: true });
+    if (cached) return cached;
+    throw new Error('Image unavailable');
+  }
+}
+
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
   const url = new URL(event.request.url);
@@ -108,7 +155,14 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // Never intercept cross-origin requests (e.g. Catbox media).
+  if (isImageRequest(event.request)) {
+    event.respondWith(
+      networkFirstImage(event.request).catch(() => caches.match('./images/bg-default.jpg'))
+    );
+    return;
+  }
+
+  // Never intercept remaining cross-origin requests (e.g. stream/media endpoints).
   if (url.origin !== self.location.origin) return;
 
   if (isMediaRequest(event.request)) {
@@ -165,8 +219,7 @@ async function handleStreamProxy(request) {
     outHeaders.set('cache-control', 'no-store');
     outHeaders.set('x-anv-stream-proxy', '1');
 
-    const status = incomingRange ? 206 : (corsResp.status >= 200 && corsResp.status < 300 ? 206 : corsResp.status);
-    return new Response(corsResp.body, { status, headers: outHeaders });
+    return new Response(corsResp.body, { status: corsResp.status, headers: outHeaders });
   } catch (_) {
     // Best-effort fallback for hosts that only allow no-cors fetch.
     // Opaque responses cannot be re-headered/re-framed by a Service Worker.
