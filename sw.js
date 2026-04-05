@@ -1,7 +1,7 @@
 const STATIC_CACHE = 'aniverse-static-v25';
 const RUNTIME_CACHE = 'aniverse-runtime-v25';
 const MEDIA_CACHE = 'aniverse-media-v2';
-const IMAGE_CACHE = 'aniverse-images-v6';
+const IMAGE_CACHE = 'aniverse-images-v7';
 const STREAM_PROXY_PATH = '/__anv_stream_proxy__';
 
 const APP_SHELL = [
@@ -107,7 +107,9 @@ function isImageRequest(request) {
 
 function isCacheableImageResponse(response) {
   if (!response) return false;
-  if (response.type === 'opaque') return true;
+  // Do not cache opaque image responses from cross-origin no-cors requests.
+  // They can be hotlink-protection placeholders/logos and would get "stuck".
+  if (response.type === 'opaque') return false;
   const contentType = response.headers?.get('content-type') || '';
   return response.ok && contentType.toLowerCase().startsWith('image/');
 }
@@ -132,6 +134,8 @@ async function fetchImageFromNetwork(request) {
 
 async function networkFirstImage(request) {
   const cache = await caches.open(IMAGE_CACHE);
+  const requestUrl = new URL(request.url);
+  const isCrossOrigin = requestUrl.origin !== self.location.origin;
   try {
     const fresh = await fetchImageFromNetwork(request);
     if (isCacheableImageResponse(fresh)) {
@@ -140,7 +144,9 @@ async function networkFirstImage(request) {
     return fresh;
   } catch (_) {
     const cached = await cache.match(request, { ignoreVary: true });
-    if (cached) return cached;
+    // For cross-origin, don't serve opaque cache as "success", otherwise
+    // temporary host placeholder responses may persist forever.
+    if (cached && !(isCrossOrigin && cached.type === 'opaque')) return cached;
     throw new Error('Image unavailable');
   }
 }
