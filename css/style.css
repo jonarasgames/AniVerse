@@ -3513,6 +3513,11 @@ html.theme-dark select {
     padding: 10px 0;
 }
 
+.collections-grid.collections-expanded {
+    grid-template-columns: 1fr;
+    gap: 20px;
+}
+
 .collection-card {
     background: var(--card-bg);
     border-radius: 12px;
@@ -3638,6 +3643,14 @@ html.theme-dark select {
 
 .collection-animes {
     margin-top: 15px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+}
+
+@media (max-width: 1100px) {
+    .collection-animes {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
 }
 
 /* Collection Indicator in Video Player */

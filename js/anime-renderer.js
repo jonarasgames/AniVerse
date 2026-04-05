@@ -447,6 +447,7 @@
     
     const grid = document.getElementById('collections-grid');
     if (!grid) return;
+    grid.classList.add('collections-expanded');
     
     // Get animes in this collection
     const animes = window.animeDB.getAnimesInCollection(collection.id);
@@ -491,6 +492,7 @@
       return;
     }
     
+    grid.classList.remove('collections-expanded');
     grid.innerHTML = '';
     
     if (!collections || collections.length === 0) {

@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+    <meta name="aniverse-build" content="20260405-android-fix1">
     <title>AniVerse - Seu Universo de Animes</title>
     <script>
         (function() {
@@ -32,6 +33,23 @@
                     localStorage.removeItem('aniverseTvMode');
                     sessionStorage.removeItem('aniverseTvMode');
                 } catch (_) {}
+            } catch (_) {}
+        })();
+    </script>
+    <script>
+        (function() {
+            var BUILD_ID = '20260405-android-fix1';
+            var PARAM_KEY = 'anv_build';
+            try {
+                var savedBuild = localStorage.getItem('aniverse_build_id');
+                if (savedBuild !== BUILD_ID) {
+                    localStorage.setItem('aniverse_build_id', BUILD_ID);
+                    var nextUrl = new URL(window.location.href);
+                    if (nextUrl.searchParams.get(PARAM_KEY) !== BUILD_ID) {
+                        nextUrl.searchParams.set(PARAM_KEY, BUILD_ID);
+                        window.location.replace(nextUrl.toString());
+                    }
+                }
             } catch (_) {}
         })();
     </script>
@@ -781,7 +799,7 @@
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', async () => {
           try {
-            const registration = await navigator.serviceWorker.register('/sw.js', { scope: '/' });
+            const registration = await navigator.serviceWorker.register('/sw.js?v=20260405-android-fix1', { scope: '/', updateViaCache: 'none' });
             const tryUpdate = () => registration.update().catch(() => {});
             let refreshing = false;
 
@@ -819,7 +837,15 @@
               try {
                 localStorage.setItem('aniverse_sw_updated_at', String(Date.now()));
               } catch (_) {}
-              console.log('AniVerse: nova versão do Service Worker ativada; atualização será aplicada no próximo reload manual.');
+              try {
+                const alreadyReloaded = sessionStorage.getItem('aniverse_sw_autoreload_done');
+                if (!alreadyReloaded) {
+                  sessionStorage.setItem('aniverse_sw_autoreload_done', '1');
+                  window.location.reload();
+                  return;
+                }
+              } catch (_) {}
+              console.log('AniVerse: nova versão do Service Worker ativada.');
             });
           } catch (_) {}
         });
