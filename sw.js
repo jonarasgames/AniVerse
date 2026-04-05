@@ -1,7 +1,7 @@
 const STATIC_CACHE = 'aniverse-static-v25';
 const RUNTIME_CACHE = 'aniverse-runtime-v25';
 const MEDIA_CACHE = 'aniverse-media-v2';
-const IMAGE_CACHE = 'aniverse-images-v5';
+const IMAGE_CACHE = 'aniverse-images-v6';
 const STREAM_PROXY_PATH = '/__anv_stream_proxy__';
 
 const APP_SHELL = [
@@ -145,6 +145,17 @@ async function networkFirstImage(request) {
   }
 }
 
+function imageFailureResponse() {
+  return new Response('Image unavailable', {
+    status: 503,
+    statusText: 'Image unavailable',
+    headers: {
+      'cache-control': 'no-store, max-age=0',
+      'content-type': 'text/plain; charset=utf-8'
+    }
+  });
+}
+
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
   const url = new URL(event.request.url);
@@ -157,7 +168,7 @@ self.addEventListener('fetch', event => {
 
   if (isImageRequest(event.request)) {
     event.respondWith(
-      networkFirstImage(event.request).catch(() => caches.match('./images/bg-default.jpg'))
+      networkFirstImage(event.request).catch(() => imageFailureResponse())
     );
     return;
   }
