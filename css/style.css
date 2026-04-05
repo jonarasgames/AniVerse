@@ -3513,6 +3513,11 @@ html.theme-dark select {
     padding: 10px 0;
 }
 
+.collections-grid.collections-expanded {
+    grid-template-columns: 1fr;
+    gap: 20px;
+}
+
 .collection-card {
     background: var(--card-bg);
     border-radius: 12px;
