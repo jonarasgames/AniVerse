@@ -1,7 +1,7 @@
 const STATIC_CACHE = 'aniverse-static-v25';
 const RUNTIME_CACHE = 'aniverse-runtime-v25';
 const MEDIA_CACHE = 'aniverse-media-v2';
-const IMAGE_CACHE = 'aniverse-images-v3';
+const IMAGE_CACHE = 'aniverse-images-v4';
 const STREAM_PROXY_PATH = '/__anv_stream_proxy__';
 
 const APP_SHELL = [
@@ -113,8 +113,8 @@ function isCacheableImageResponse(response) {
 }
 
 async function fetchImageFromNetwork(request) {
-  return fetch(request, { cache: 'no-store', mode: 'cors' })
-    .catch(() => fetch(request, { cache: 'no-store', mode: 'no-cors' }));
+  return fetch(request, { cache: 'no-store', mode: 'cors', credentials: 'omit' })
+    .catch(() => fetch(request, { cache: 'no-store', mode: 'no-cors', credentials: 'omit' }));
 }
 
 async function networkFirstImage(request) {

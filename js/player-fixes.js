@@ -35,7 +35,8 @@
                 method: 'GET',
                 headers: { Range: 'bytes=0-1' },
                 mode: 'cors',
-                cache: 'no-store'
+                cache: 'no-store',
+                credentials: 'omit'
             });
             return {
                 supported: resp.status === 206,
@@ -100,7 +101,7 @@
             showVideoError('Tentando modo alternativo de buffer (Blob)...');
 
             try {
-                const head = await fetch(src, { method: 'HEAD', mode: 'cors', cache: 'no-store' });
+                const head = await fetch(src, { method: 'HEAD', mode: 'cors', cache: 'no-store', credentials: 'omit' });
                 const lenRaw = head.headers.get('content-length') || '0';
                 const contentLength = Number(lenRaw);
                 const maxBlobBytes = 120 * 1024 * 1024;
@@ -114,7 +115,7 @@
 
             try {
                 const resumeAt = Number(player.currentTime) || 0;
-                const response = await fetch(src, { mode: 'cors', cache: 'no-store' });
+                const response = await fetch(src, { mode: 'cors', cache: 'no-store', credentials: 'omit' });
                 if (!response.ok) throw new Error(`status ${response.status}`);
                 const mediaBlob = await response.blob();
                 const blobUrl = URL.createObjectURL(mediaBlob);

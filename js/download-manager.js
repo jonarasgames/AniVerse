@@ -201,7 +201,7 @@
   }
 
   async function fetchWithProgress(url, onProgress, signal) {
-    const response = await fetch(url, { mode: 'cors', signal });
+    const response = await fetch(url, { mode: 'cors', credentials: 'omit', signal });
     if (!response.ok) throw new Error(`http-${response.status}`);
     const total = Number(response.headers.get('content-length')) || 0;
     if (!response.body || !total) {
@@ -244,7 +244,7 @@
     } catch (_) {}
 
     // fallback for restrictive CORS endpoints
-    const opaqueResp = await fetch(url, { mode: 'no-cors', signal });
+    const opaqueResp = await fetch(url, { mode: 'no-cors', credentials: 'omit', signal });
     await cacheResponse(url, opaqueResp.clone());
     progressState.set(key, 100);
   }
