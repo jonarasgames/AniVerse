@@ -1,6 +1,7 @@
-const STATIC_CACHE = 'aniverse-static-v23';
-const RUNTIME_CACHE = 'aniverse-runtime-v23';
+const STATIC_CACHE = 'aniverse-static-v25';
+const RUNTIME_CACHE = 'aniverse-runtime-v25';
 const MEDIA_CACHE = 'aniverse-media-v2';
+const IMAGE_CACHE = 'aniverse-images-v2';
 const STREAM_PROXY_PATH = '/__anv_stream_proxy__';
 
 const APP_SHELL = [
@@ -35,7 +36,7 @@ self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys()
       .then(keys => Promise.all(keys
-        .filter(k => ![STATIC_CACHE, RUNTIME_CACHE, MEDIA_CACHE].includes(k))
+        .filter(k => ![STATIC_CACHE, RUNTIME_CACHE, MEDIA_CACHE, IMAGE_CACHE].includes(k))
         .map(k => caches.delete(k))))
       .then(() => self.clients.claim())
   );
@@ -98,6 +99,36 @@ async function mediaCacheFirst(request) {
   return response;
 }
 
+function isImageRequest(request) {
+  const url = new URL(request.url);
+  if (request.destination === 'image') return true;
+  return /\.(png|jpe?g|webp|gif|svg|avif|ico)(\?|$)/i.test(url.pathname + url.search);
+}
+
+async function staleWhileRevalidateImage(request) {
+  const cache = await caches.open(IMAGE_CACHE);
+  const cached = await cache.match(request, { ignoreVary: true });
+
+  const networkUpdate = fetch(request, { cache: 'no-store', mode: 'cors' })
+    .catch(() => fetch(request, { cache: 'no-store', mode: 'no-cors' }))
+    .then(response => {
+      if (response && (response.ok || response.type === 'opaque')) {
+        cache.put(request, response.clone()).catch(() => {});
+      }
+      return response;
+    })
+    .catch(() => null);
+
+  if (cached) {
+    networkUpdate.catch(() => {});
+    return cached;
+  }
+
+  const fresh = await networkUpdate;
+  if (fresh) return fresh;
+  throw new Error('Image unavailable');
+}
+
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
   const url = new URL(event.request.url);
@@ -108,7 +139,14 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // Never intercept cross-origin requests (e.g. Catbox media).
+  if (isImageRequest(event.request)) {
+    event.respondWith(
+      staleWhileRevalidateImage(event.request).catch(() => caches.match('./images/bg-default.jpg'))
+    );
+    return;
+  }
+
+  // Never intercept remaining cross-origin requests (e.g. stream/media endpoints).
   if (url.origin !== self.location.origin) return;
 
   if (isMediaRequest(event.request)) {
