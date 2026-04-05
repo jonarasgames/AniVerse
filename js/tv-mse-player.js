@@ -137,7 +137,7 @@
     video.dataset.tvMseSource = url;
 
     const chunkSize = 1024 * 1024; // 1MB
-    const head = await fetch(url, { method: 'HEAD', mode: 'cors', cache: 'no-store', signal: TV_MSE.abortController.signal });
+    const head = await fetch(url, { method: 'HEAD', mode: 'cors', cache: 'no-store', credentials: 'omit', signal: TV_MSE.abortController.signal });
     if (!head.ok) throw new Error(`HEAD ${head.status}`);
     const length = Number(head.headers.get('content-length') || '0');
     if (!length || Number.isNaN(length)) throw new Error('content-length unavailable for MSE');
@@ -174,6 +174,7 @@
         method: 'GET',
         mode: 'cors',
         cache: 'no-store',
+        credentials: 'omit',
         headers: { Range: `bytes=${position}-${end}` },
         signal: TV_MSE.abortController.signal
       });
