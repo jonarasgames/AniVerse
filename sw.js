@@ -1,7 +1,7 @@
-const STATIC_CACHE = 'aniverse-static-v24';
-const RUNTIME_CACHE = 'aniverse-runtime-v24';
+const STATIC_CACHE = 'aniverse-static-v25';
+const RUNTIME_CACHE = 'aniverse-runtime-v25';
 const MEDIA_CACHE = 'aniverse-media-v2';
-const IMAGE_CACHE = 'aniverse-images-v1';
+const IMAGE_CACHE = 'aniverse-images-v2';
 const STREAM_PROXY_PATH = '/__anv_stream_proxy__';
 
 const APP_SHELL = [
