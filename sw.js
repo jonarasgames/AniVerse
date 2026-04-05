@@ -1,7 +1,7 @@
 const STATIC_CACHE = 'aniverse-static-v25';
 const RUNTIME_CACHE = 'aniverse-runtime-v25';
 const MEDIA_CACHE = 'aniverse-media-v2';
-const IMAGE_CACHE = 'aniverse-images-v4';
+const IMAGE_CACHE = 'aniverse-images-v5';
 const STREAM_PROXY_PATH = '/__anv_stream_proxy__';
 
 const APP_SHELL = [
@@ -113,8 +113,21 @@ function isCacheableImageResponse(response) {
 }
 
 async function fetchImageFromNetwork(request) {
-  return fetch(request, { cache: 'no-store', mode: 'cors', credentials: 'omit' })
-    .catch(() => fetch(request, { cache: 'no-store', mode: 'no-cors', credentials: 'omit' }));
+  const requestUrl = new URL(request.url);
+
+  // Cross-origin <img> requests should stay in a no-cors flow; forcing CORS here can
+  // trigger wildcard ACAO + credential-mode mismatches on some CDNs.
+  if (requestUrl.origin !== self.location.origin) {
+    const crossOriginImageRequest = new Request(request.url, {
+      method: 'GET',
+      mode: 'no-cors',
+      cache: 'no-store',
+      credentials: 'omit'
+    });
+    return fetch(crossOriginImageRequest);
+  }
+
+  return fetch(new Request(request, { cache: 'no-store' }));
 }
 
 async function networkFirstImage(request) {

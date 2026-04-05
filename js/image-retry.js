@@ -4,7 +4,21 @@
 
   const MAX_RETRIES = 10;
   const RETRY_DELAY = 1500; // 1.5 seconds
+  const NON_RETRYABLE_HOSTS = new Set(['example.com', 'www.example.com']);
   const PLACEHOLDER_IMAGE = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100%25" height="100%25" viewBox="0 0 300 400"%3E%3Crect fill="%23333" width="300" height="400"/%3E%3Ctext x="50%25" y="50%25" fill="%23999" font-family="Arial" font-size="18" text-anchor="middle" dominant-baseline="middle"%3EImagem indisponível%3C/text%3E%3C/svg%3E';
+
+  function isNonRetryableImageSource(src) {
+    if (!src || src.startsWith('data:') || src.startsWith('blob:')) {
+      return true;
+    }
+
+    try {
+      const parsedUrl = new URL(src, window.location.href);
+      return NON_RETRYABLE_HOSTS.has(parsedUrl.hostname);
+    } catch (_) {
+      return false;
+    }
+  }
 
   /**
    * Setup retry logic for an image element
@@ -33,6 +47,14 @@
     img.onerror = function() {
       const retryCount = parseInt(img.dataset.retryCount || '0');
       const originalSrc = img.dataset.originalSrc || img.src;
+
+      // Stop retrying URLs that are known placeholders/non-existent
+      if (isNonRetryableImageSource(originalSrc)) {
+        console.warn('Skipping retries for non-retryable image URL:', originalSrc);
+        img.src = PLACEHOLDER_IMAGE;
+        img.alt = 'Imagem indisponível';
+        return;
+      }
 
       // If we've exceeded max retries, show placeholder
       if (retryCount >= MAX_RETRIES) {
