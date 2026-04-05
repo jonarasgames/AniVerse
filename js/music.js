@@ -45,6 +45,119 @@
         return url;
     }
 
+    function getMusicUrlDiagnostics(url) {
+        const input = String(url || '').trim();
+        if (!input) {
+            return {
+                ok: false,
+                reason: 'invalid_url',
+                userMessage: 'URL da música está vazia ou inválida.'
+            };
+        }
+
+        let parsed;
+        try {
+            parsed = new URL(input, window.location.href);
+        } catch (_) {
+            return {
+                ok: false,
+                reason: 'invalid_url',
+                userMessage: 'URL da música inválida. Verifique o link informado.'
+            };
+        }
+
+        if (!['http:', 'https:', 'blob:', 'data:'].includes(parsed.protocol)) {
+            return {
+                ok: false,
+                reason: 'unsupported_protocol',
+                userMessage: 'Formato de link não suportado para reprodução.'
+            };
+        }
+
+        const knownNonDirectHosts = [
+            'youtube.com',
+            'youtu.be',
+            'music.youtube.com',
+            'open.spotify.com',
+            'soundcloud.com',
+            'drive.google.com'
+        ];
+        const lowerHost = parsed.hostname.toLowerCase();
+        const lowerPath = parsed.pathname.toLowerCase();
+        const directAudioPattern = /\.(mp3|m4a|aac|ogg|wav|flac|opus)(\?|$)/i;
+        const likelyHtmlPage = (
+            knownNonDirectHosts.some((host) => lowerHost === host || lowerHost.endsWith(`.${host}`)) ||
+            (/\/(watch|playlist|album|artist|track|file|view)\b/.test(lowerPath) && !directAudioPattern.test(lowerPath))
+        );
+
+        return {
+            ok: true,
+            url: parsed.toString(),
+            isCrossOrigin: parsed.origin !== window.location.origin,
+            isLikelyDirectAudio: directAudioPattern.test(`${lowerPath}${parsed.search}`),
+            likelyHtmlPage
+        };
+    }
+
+    async function probeMusicUrl(url) {
+        const diagnostics = getMusicUrlDiagnostics(url);
+        if (!diagnostics.ok) return diagnostics;
+
+        if (!diagnostics.url || diagnostics.url.startsWith('blob:') || diagnostics.url.startsWith('data:')) {
+            return { ...diagnostics, reason: 'ok' };
+        }
+
+        try {
+            const response = await fetch(diagnostics.url, {
+                method: 'HEAD',
+                mode: diagnostics.isCrossOrigin ? 'cors' : 'same-origin',
+                cache: 'no-store',
+                credentials: 'omit'
+            });
+            if (response.status === 404) {
+                return {
+                    ...diagnostics,
+                    ok: false,
+                    reason: 'http_404',
+                    userMessage: 'Arquivo de áudio não encontrado (HTTP 404).'
+                };
+            }
+            if (!response.ok) {
+                return {
+                    ...diagnostics,
+                    ok: false,
+                    reason: 'http_error',
+                    status: response.status,
+                    userMessage: `Servidor retornou erro HTTP ${response.status} ao verificar o áudio.`
+                };
+            }
+            return { ...diagnostics, reason: 'ok' };
+        } catch (_) {
+            // Muitos hosts bloqueiam HEAD/CORS. Não impedir playback nesses casos.
+            return { ...diagnostics, reason: 'head_blocked' };
+        }
+    }
+
+    function messageForPlaybackFailure(error, diagnostics) {
+        const errorName = error?.name || '';
+        if (errorName === 'NotAllowedError') {
+            return 'Reprodução bloqueada pelo navegador. Toque no player para iniciar a música.';
+        }
+        if (diagnostics?.reason === 'http_404') {
+            return 'Arquivo de áudio não encontrado (HTTP 404).';
+        }
+        if (diagnostics?.reason === 'invalid_url' || diagnostics?.reason === 'unsupported_protocol') {
+            return diagnostics.userMessage || 'URL da música inválida.';
+        }
+        if (diagnostics?.likelyHtmlPage || (!diagnostics?.isLikelyDirectAudio && errorName === 'NotSupportedError')) {
+            return 'Esse link não parece ser um arquivo de áudio direto. Use um link direto (.mp3, .m4a, etc).';
+        }
+        if (errorName === 'NotSupportedError') {
+            return 'Não foi possível reproduzir: formato não suportado ou fonte inválida.';
+        }
+        return 'Erro ao reproduzir. Clique para tentar novamente.';
+    }
+
     function getBufferedAhead(media) {
         try {
             if (!media || !media.buffered || media.buffered.length === 0) return 0;
@@ -809,6 +922,15 @@
         refreshMusicPlayerUI();
         miniPlayer.classList.remove('hidden');
 
+        const diagnostics = await probeMusicUrl(src);
+        if (!diagnostics.ok) {
+            showMusicError(diagnostics.userMessage || 'URL da música inválida.');
+            return;
+        }
+        if (diagnostics.likelyHtmlPage) {
+            showMusicError('Aviso: link pode não ser áudio direto. Tentando reproduzir...');
+        }
+
         const resolvedSrc = await resolveTvAudioSource(src);
         if (!currentMusicData || currentMusicData.src !== src) return;
         currentMusicData.resolvedSrc = resolvedSrc;
@@ -825,10 +947,23 @@
         const clearLoadTimeout = () => {
             clearTimeout(loadTimeout);
         };
+
+        const onPlaybackError = () => {
+            clearLoadTimeout();
+            const mediaError = audio.error;
+            let playbackError = null;
+            if (mediaError?.code === MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED) {
+                playbackError = { name: 'NotSupportedError' };
+            } else if (mediaError?.code === MediaError.MEDIA_ERR_NETWORK) {
+                playbackError = { name: 'NetworkError' };
+            }
+            showMusicError(messageForPlaybackFailure(playbackError, diagnostics));
+        };
         
         audio.addEventListener('loadeddata', clearLoadTimeout, { once: true });
         audio.addEventListener('playing', clearLoadTimeout, { once: true });
         audio.addEventListener('canplay', clearLoadTimeout, { once: true });
+        audio.addEventListener('error', onPlaybackError, { once: true });
         
         let playbackStarted = false;
         const startPlayback = () => {
@@ -837,7 +972,7 @@
             audio.play().catch(err => {
                 clearTimeout(loadTimeout);
                 console.error('Play failed:', err);
-                showMusicError('Erro ao reproduzir. Clique para tentar novamente.');
+                showMusicError(messageForPlaybackFailure(err, diagnostics));
             });
         };
 
