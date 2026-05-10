@@ -5513,3 +5513,14 @@ html.theme-light .inplace-duration-view {
     80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
     100% { opacity: 0; transform: translate(-50%, -54%) scale(0.98); }
 }
+body.performance-mode *,
+body.performance-mode *::before,
+body.performance-mode *::after {
+  animation: none !important;
+  transition: none !important;
+}
+
+body.performance-mode .card-hover-trailer,
+body.performance-mode video[autoplay] {
+  display: none !important;
+}

@@ -176,6 +176,20 @@ function applyMaintenanceMode() {
 document.addEventListener('DOMContentLoaded', () => {
   applyMaintenanceMode();
   setupVideoLoadingIndicator();
+  const perfToggle = document.getElementById('performance-mode-toggle');
+  const updatePerfLabel = () => {
+    if (!perfToggle) return;
+    const enabled = localStorage.getItem('aniversePerformanceMode') === '1';
+    perfToggle.checked = enabled;
+    document.body.classList.toggle('performance-mode', enabled);
+  };
+  if (perfToggle) {
+    perfToggle.addEventListener('change', () => {
+      localStorage.setItem('aniversePerformanceMode', perfToggle.checked ? '1' : '0');
+      updatePerfLabel();
+    });
+  }
+  updatePerfLabel();
 
   // Navigation handling
   const navLinks = document.querySelectorAll('nav a[data-section]');
@@ -2035,6 +2049,9 @@ function preloadTvModeContent() {
 window.preloadTvModeContent = preloadTvModeContent;
 
 window.addEventListener('animeDataLoaded', () => {
+  if (typeof window.openAnimeFromUrlParams === 'function') {
+    setTimeout(() => window.openAnimeFromUrlParams(), 0);
+  }
   try { if (typeof loadAnimeSection === 'function') loadAnimeSection('anime'); } catch(e){}
   preloadTvModeContent();
   try { if (window.animeDB && typeof renderContinueWatchingGrid === 'function') renderContinueWatchingGrid(animeDB.getContinueWatching(),'continue-watching-grid'); } catch(e){}
