@@ -63,11 +63,12 @@
     const ageRatingBadge = getAgeRatingBadge(anime.rating_age);
     
     const trailer = anime.trailer || '';
+    const performanceMode = localStorage.getItem('aniversePerformanceMode') === '1';
 
     card.innerHTML = `
       <div class="anime-thumbnail">
-        <img src="${escapeHtml(thumbnail)}" alt="${title}">
-        <video class="card-hover-trailer" muted playsinline preload="metadata" loop style="display:none"></video>
+        <img src="${escapeHtml(thumbnail)}" alt="${title}" loading="lazy" decoding="async">
+        <video class="card-hover-trailer" muted playsinline preload="none" loop style="display:none"></video>
         <div class="trailer-overlay">
           <i class="fas fa-play"></i>
           <p>Assistir</p>
@@ -84,7 +85,7 @@
     let hoverTimer = null;
 
     card.addEventListener('mouseenter', () => {
-      if (!trailer || !trailerVideo) return;
+      if (performanceMode || !trailer || !trailerVideo) return;
       clearTimeout(hoverTimer);
       hoverTimer = setTimeout(() => {
         trailerVideo.src = trailer;
@@ -209,6 +210,19 @@
     
     // Store current anime globally so selectors know which anime they're for
     window.currentAnime = anime;
+    const slug = String(anime?.slug || anime?.id || '').toLowerCase();
+    if (slug) {
+      const nextUrl = new URL(window.location.href);
+      nextUrl.searchParams.set('anime', slug);
+      nextUrl.searchParams.set('season', String(season || 1));
+      nextUrl.searchParams.set('ep', String((episode || 0) + 1));
+      window.history.replaceState({}, '', nextUrl.toString());
+      localStorage.setItem('aniverseLastAnimeLink', JSON.stringify({
+        anime: slug,
+        season: Number(season || 1),
+        ep: Number((episode || 0) + 1)
+      }));
+    }
     
     // Update video title and description
     const titleEl = document.getElementById('video-title');
@@ -623,6 +637,27 @@
 
   // Export openAnimeModal to window for use by other modules (e.g., profile-multi.js)
   window.openAnimeModal = openAnimeModal;
+  window.openAnimeFromUrlParams = function() {
+    const params = new URLSearchParams(window.location.search || '');
+    const animeParam = params.get('anime');
+    let resolvedAnimeParam = animeParam;
+    let season = Number(params.get('season')) || 1;
+    let episode = Math.max(0, (Number(params.get('ep')) || 1) - 1);
+    if (!resolvedAnimeParam) {
+      try {
+        const saved = JSON.parse(localStorage.getItem('aniverseLastAnimeLink') || 'null');
+        if (saved?.anime) {
+          resolvedAnimeParam = String(saved.anime);
+          season = Number(saved.season) || 1;
+          episode = Math.max(0, (Number(saved.ep) || 1) - 1);
+        }
+      } catch (_) {}
+    }
+    if (!resolvedAnimeParam || !window.animeDB || !Array.isArray(window.animeDB.animes)) return;
+    const anime = window.animeDB.animes.find(a => String(a.slug || a.id || '').toLowerCase() === resolvedAnimeParam.toLowerCase());
+    if (!anime) return;
+    openAnimeModal(anime, season, episode);
+  };
 
   console.log('✅ Anime renderer loaded');
 })();

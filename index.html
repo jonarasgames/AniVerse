@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <meta name="aniverse-build" content="20260405-android-fix1">
+    <meta property="og:type" content="video.tv_show">
+    <meta property="og:title" content="AniVerse - Seu Universo de Animes">
+    <meta property="og:description" content="Assista aos melhores animes no AniVerse.">
+    <meta property="og:image" content="images/logo.png">
+    <meta property="og:url" content="">
     <title>AniVerse - Seu Universo de Animes</title>
     <script>
         (function() {
@@ -64,6 +69,33 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap" rel="stylesheet">
+    <script>
+        (function () {
+            var params = new URLSearchParams(window.location.search || '');
+            var animeSlug = params.get('anime');
+            if (!animeSlug) return;
+            fetch('anime-data.json').then(function (res) { return res.json(); }).then(function (raw) {
+                var list = Array.isArray(raw) ? raw : (raw && raw.animes) || [];
+                var found = list.find(function (a) {
+                    var slug = String(a.slug || a.id || '').toLowerCase();
+                    return slug === String(animeSlug).toLowerCase();
+                });
+                if (!found) return;
+                var title = found.title || found.name || 'Anime';
+                var desc = found.description || 'Assista agora no AniVerse.';
+                var image = found.thumbnail || found.cover || 'images/logo.png';
+                var t = document.querySelector('meta[property="og:title"]');
+                var d = document.querySelector('meta[property="og:description"]');
+                var i = document.querySelector('meta[property="og:image"]');
+                var u = document.querySelector('meta[property="og:url"]');
+                if (t) t.setAttribute('content', title + ' • AniVerse');
+                if (d) d.setAttribute('content', desc);
+                if (i) i.setAttribute('content', image);
+                if (u) u.setAttribute('content', window.location.href);
+                document.title = title + ' • AniVerse';
+            }).catch(function () {});
+        })();
+    </script>
 </head>
 <body>
 
@@ -648,6 +680,10 @@
                             <label style="display:grid; gap:2px;">
                                 <span><input type="checkbox" id="marathon-auto-skip-ending"> <strong>Auto pular encerramento</strong></span>
                                 <small style="opacity:.75;">Se houver timestamps de ending, pula o trecho automaticamente.</small>
+                            </label>
+                            <label style="display:grid; gap:2px;">
+                                <span><input type="checkbox" id="performance-mode-toggle"> <strong>Modo desempenho</strong></span>
+                                <small style="opacity:.75;">Reduz animações e prévias para carregar mais rápido em internet/PC fracos.</small>
                             </label>
                             <label style="display:grid; gap:6px;">
                                 <span><strong>Contagem regressiva (segundos)</strong><br><small style="opacity:.75;">Tempo de espera antes de avançar para o próximo episódio.</small></span>
