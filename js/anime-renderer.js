@@ -624,6 +624,15 @@
         if (window.getNativeTvVideoControls) {
           try { window.getNativeTvVideoControls().stop(); } catch (_) {}
         }
+
+        // Limpa os parâmetros da URL ao fechar o modal
+        try {
+          const nextUrl = new URL(window.location.href);
+          nextUrl.searchParams.delete('anime');
+          nextUrl.searchParams.delete('season');
+          nextUrl.searchParams.delete('ep');
+          window.history.replaceState({}, '', nextUrl.toString());
+        } catch (_) {}
       }
     });
   }
@@ -673,5 +682,5 @@
     openAnimeModal(anime, season, episode);
   };
 
-  console.log('✅ rendenizou tudo ae broder');
+  console.log('✅ Anime renderer loaded');
 })();
