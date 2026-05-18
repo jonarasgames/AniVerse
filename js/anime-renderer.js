@@ -196,6 +196,15 @@
     return card;
   }
 
+
+  function getCanonicalAnimeParam(anime) {
+    const slug = String(anime?.slug || '').trim().toLowerCase();
+    if (slug) return slug;
+    const id = String(anime?.id || '').trim().toLowerCase();
+    return id;
+  }
+
+  
   // Open anime modal (video player)
   function openAnimeModal(anime, seasonNumber, episodeIndex) {
     const modal = document.getElementById('video-modal');
@@ -210,15 +219,15 @@
     
     // Store current anime globally so selectors know which anime they're for
     window.currentAnime = anime;
-    const slug = String(anime?.slug || anime?.id || '').toLowerCase();
-    if (slug) {
+    const canonicalAnimeParam = getCanonicalAnimeParam(anime);
+    if (canonicalAnimeParam) {
       const nextUrl = new URL(window.location.href);
-      nextUrl.searchParams.set('anime', slug);
+      nextUrl.searchParams.set('anime', canonicalAnimeParam);
       nextUrl.searchParams.set('season', String(season || 1));
       nextUrl.searchParams.set('ep', String((episode || 0) + 1));
       window.history.replaceState({}, '', nextUrl.toString());
       localStorage.setItem('aniverseLastAnimeLink', JSON.stringify({
-        anime: slug,
+        anime: canonicalAnimeParam,
         season: Number(season || 1),
         ep: Number((episode || 0) + 1)
       }));
@@ -640,24 +649,29 @@
   window.openAnimeFromUrlParams = function() {
     const params = new URLSearchParams(window.location.search || '');
     const animeParam = params.get('anime');
-    let resolvedAnimeParam = animeParam;
-    let season = Number(params.get('season')) || 1;
-    let episode = Math.max(0, (Number(params.get('ep')) || 1) - 1);
-    if (!resolvedAnimeParam) {
-      try {
-        const saved = JSON.parse(localStorage.getItem('aniverseLastAnimeLink') || 'null');
-        if (saved?.anime) {
-          resolvedAnimeParam = String(saved.anime);
-          season = Number(saved.season) || 1;
-          episode = Math.max(0, (Number(saved.ep) || 1) - 1);
-        }
-      } catch (_) {}
-    }
-    if (!resolvedAnimeParam || !window.animeDB || !Array.isArray(window.animeDB.animes)) return;
-    const anime = window.animeDB.animes.find(a => String(a.slug || a.id || '').toLowerCase() === resolvedAnimeParam.toLowerCase());
+    const season = Number(params.get('season')) || 1;
+    const episode = Math.max(0, (Number(params.get('ep')) || 1) - 1);
+    if (!animeParam || !window.animeDB || !Array.isArray(window.animeDB.animes)) return;
+
+    const normalizedAnimeParam = String(animeParam).trim().toLowerCase();
+    const anime = window.animeDB.animes.find((item) => {
+      const slug = String(item?.slug || '').trim().toLowerCase();
+      const id = String(item?.id || '').trim().toLowerCase();
+      return normalizedAnimeParam === slug || normalizedAnimeParam === id;
+    });
     if (!anime) return;
+    
+    const canonicalAnimeParam = getCanonicalAnimeParam(anime);
+    if (canonicalAnimeParam && normalizedAnimeParam !== canonicalAnimeParam) {
+      const nextUrl = new URL(window.location.href);
+      nextUrl.searchParams.set('anime', canonicalAnimeParam);
+      nextUrl.searchParams.set('season', String(season || 1));
+      nextUrl.searchParams.set('ep', String((episode || 0) + 1));
+      window.history.replaceState({}, '', nextUrl.toString());
+    }
+
     openAnimeModal(anime, season, episode);
   };
 
-  console.log('✅ Anime renderer loaded');
+  console.log('✅ rendenizou tudo ae broder');
 })();
