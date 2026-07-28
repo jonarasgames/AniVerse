@@ -13,7 +13,7 @@
   // Age rating image URLs mapping
   const AGE_RATING_IMAGES = {
     'L': 'https://raw.githubusercontent.com/jonarasgames/AniVerse/7012ea675089ee7c2ecf5bab6de15349e8d9c195/images/Livre.svg',
-    '6': 'https://raw.githubusercontent.com/jonarasgames/AniVerse/7012ea675089ee7c2ecf5bab6de15349e8d9c195/images/6.svg'
+    '6': 'https://raw.githubusercontent.com/jonarasgames/AniVerse/7012ea675089ee7c2ecf5bab6de15349e8d9c195/images/6.svg',
     '10': 'https://raw.githubusercontent.com/jonarasgames/AniVerse/7012ea675089ee7c2ecf5bab6de15349e8d9c195/images/10.svg',
     '12': 'https://raw.githubusercontent.com/jonarasgames/AniVerse/7012ea675089ee7c2ecf5bab6de15349e8d9c195/images/12.svg',
     '14': 'https://raw.githubusercontent.com/jonarasgames/AniVerse/7012ea675089ee7c2ecf5bab6de15349e8d9c195/images/14.svg',
