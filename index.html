@@ -1,16 +1,901 @@
-@@
-                 <!-- Video element (hidden native controls) -->
-                 <video id="anime-player" playsinline="" webkit-playsinline="true" preload="auto" style="width: 100%; display: block;">
-                     Seu navegador não suporta vídeos.
-                 </video>
-+                <!-- Age rating overlay (webm com alfa) -->
-+                <video id="age-rating-overlay"
-+                       class="age-rating-overlay top-left"
-+                       src="assets/webm/16/GC 16 - superior esquerdo.webm"
-+                       muted preload="auto" playsinline webkit-playsinline
-+                       style="display:none; pointer-events:none;" aria-hidden="true"></video>
-                 <div id="video-loading-overlay" class="video-loading-overlay" aria-hidden="true">
-                     <div class="video-loading-orb"></div>
-                     <div class="video-loading-text" aria-hidden="true"></div>
-                 </div>
-@@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+    <meta name="aniverse-build" content="20260405-android-fix1">
+    <meta property="og:type" content="video.tv_show">
+    <meta property="og:title" content="AniVerse - Seu Universo de Animes">
+    <meta property="og:description" content="Assista aos melhores animes no AniVerse.">
+    <meta property="og:image" content="images/logo.png">
+    <meta property="og:url" content="">
+    <title>AniVerse - Seu Universo de Animes</title>
+    <script>
+        (function() {
+            try {
+                var params = new URLSearchParams(window.location.search || '');
+                var looksLikeRealTv = typeof window.tizen !== 'undefined' ||
+                    typeof window.webapis !== 'undefined' ||
+                    /tizen|smart-tv|smarttv|hbbtv|web0s|googletv|appletv|viera|aquos/i.test(navigator.userAgent || '');
+                if (params.get('tv') === '1') {
+                    window.__ANIVERSE_FORCE_TV_MODE__ = true;
+                    try { sessionStorage.setItem('aniverseTvMode', 'enabled'); } catch (_) {}
+                    return;
+                }
+                if (params.get('tv') === '0') {
+                    window.__ANIVERSE_FORCE_TV_MODE__ = false;
+                    try {
+                        localStorage.removeItem('aniverseTvMode');
+                        sessionStorage.removeItem('aniverseTvMode');
+                    } catch (_) {}
+                    return;
+                }
+                if (looksLikeRealTv) {
+                    window.__ANIVERSE_FORCE_TV_MODE__ = true;
+                    return;
+                }
+                try {
+                    localStorage.removeItem('aniverseTvMode');
+                    sessionStorage.removeItem('aniverseTvMode');
+                } catch (_) {}
+            } catch (_) {}
+        })();
+    </script>
+    <script>
+        (function() {
+            var BUILD_ID = '20260405-android-fix1';
+            var PARAM_KEY = 'anv_build';
+            try {
+                var savedBuild = localStorage.getItem('aniverse_build_id');
+                if (savedBuild !== BUILD_ID) {
+                    localStorage.setItem('aniverse_build_id', BUILD_ID);
+                    var nextUrl = new URL(window.location.href);
+                    if (nextUrl.searchParams.get(PARAM_KEY) !== BUILD_ID) {
+                        nextUrl.searchParams.set(PARAM_KEY, BUILD_ID);
+                        window.location.replace(nextUrl.toString());
+                    }
+                }
+            } catch (_) {}
+        })();
+    </script>
+    <link rel="stylesheet" href="css/style.css?v=20260326-2">
+    <link rel="stylesheet" href="css/profile-enhancements.css?v=20260326-2">
+    <link rel="stylesheet" href="css/profile-modal-modern.css?v=20260326-2">
+    <link rel="stylesheet" href="css/hero-video-rotator.css?v=20260326-2">
+    <link rel="stylesheet" href="css/dark-mode.css?v=20260326-2" id="dark-mode-style">
+    <link rel="stylesheet" href="css/tv-mode.css?v=20260326-2">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="icon" href="images/logo.png" type="image/png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap" rel="stylesheet">
+    <script>
+        (function () {
+            var params = new URLSearchParams(window.location.search || '');
+            var animeSlug = params.get('anime');
+            if (!animeSlug) return;
+            fetch('anime-data.json').then(function (res) { return res.json(); }).then(function (raw) {
+                var list = Array.isArray(raw) ? raw : (raw && raw.animes) || [];
+                var found = list.find(function (a) {
+                    var slug = String(a.slug || a.id || '').toLowerCase();
+                    return slug === String(animeSlug).toLowerCase();
+                });
+                if (!found) return;
+                var title = found.title || found.name || 'Anime';
+                var desc = found.description || 'Assista agora no AniVerse.';
+                var image = found.thumbnail || found.cover || 'images/logo.png';
+                var t = document.querySelector('meta[property="og:title"]');
+                var d = document.querySelector('meta[property="og:description"]');
+                var i = document.querySelector('meta[property="og:image"]');
+                var u = document.querySelector('meta[property="og:url"]');
+                if (t) t.setAttribute('content', title + ' • AniVerse');
+                if (d) d.setAttribute('content', desc);
+                if (i) i.setAttribute('content', image);
+                if (u) u.setAttribute('content', window.location.href);
+                document.title = title + ' • AniVerse';
+            }).catch(function () {});
+        })();
+    </script>
+</head>
+<body>
+
+    <div id="maintenance-overlay" aria-hidden="true">
+        <div class="maintenance-content">
+            <h1>MANUTENÇÃO</h1>
+            <p>Fique ligado no nosso X para atualizações e recomende algum anime do MyAnimeList no nosso Forms</p>
+            <div class="maintenance-links">
+                <a href="https://myanimelist.net/anime.php" target="_blank" rel="noopener noreferrer" class="maintenance-link" title="MyAnimeList">
+                    <img src="https://files.catbox.moe/vrvxy5.webp" alt="MyAnimeList">
+                </a>
+                <a href="https://x.com/AniVerseSite" target="_blank" rel="noopener noreferrer" class="maintenance-link" title="X">
+                    <img src="https://files.catbox.moe/l55utf.webp" alt="X">
+                </a>
+                <a href="https://forms.gle/bu4tXPzUSahNKtzg8" target="_blank" rel="noopener noreferrer" class="maintenance-link" title="Forms">
+                    <img src="https://files.catbox.moe/rv1soq.webp" alt="Forms">
+                </a>
+            </div>
+            <audio id="maintenance-audio" src="https://files.catbox.moe/z0bun6.mp3" preload="auto" loop></audio>
+        </div>
+    </div>
+
+    <header>
+        <div class="container">
+            <div class="logo-container">
+                <img src="images/logo.png" alt="AniVerse Logo" class="logo">
+                <h1>AniVerse</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#" class="active" data-section="home">Início</a></li>
+                    <li><a href="#" data-section="animes">Animes</a></li>
+                    <li><a href="#" data-section="movies">Filmes</a></li>
+                    <li><a href="#" data-section="ovas">OVAs</a></li>
+                    <li><a href="#" data-section="collections">Coleções</a></li>
+                    <li><a href="#" data-section="openings">Músicas</a></li>
+                    <li><a href="#" data-section="continue">Histórico</a></li>
+                    <li><a href="#" data-section="downloads">Downloads</a></li>
+                </ul>
+            </nav>
+            <div class="user-controls">
+                <button id="dark-mode-toggle" class="btn-icon">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <div class="user-profile">
+                    <div class="user-avatar" id="header-avatar">
+                        <div class="avatar-bg-layer" id="header-avatar-bg"></div>
+                        <img src="" alt="Avatar" class="avatar-char-layer">
+                        <div class="avatar-frame-layer" id="header-avatar-frame"></div>
+                    </div>
+                    <button class="btn btn-secondary" id="open-anime-editor-btn" style="display:none;" aria-hidden="true"><i class="fas fa-code"></i> Editor Anime</button>
+                    <button class="btn btn-primary" id="login-btn"><i class="fas fa-user"></i> Entrar</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <section id="home-section" class="content-section active">
+            <div class="hero">
+                <div class="hero-content">
+                    <h2>Assista aos melhores animes</h2>
+                    <p>Milhares de episódios disponíveis a qualquer momento</p>
+                    <div class="search-bar">
+                        <input type="text" id="search-input" placeholder="Buscar animes..." autocomplete="off">
+                        <button class="btn btn-primary" id="search-btn"><i class="fas fa-search"></i></button>
+                        <button class="btn btn-secondary" id="search-clear-btn" type="button" style="display: none;">Limpar</button>
+                    </div>
+                    <div id="search-suggestions" class="search-suggestions"></div>
+                    <div id="search-inline-results" class="search-inline-results"></div>
+                </div>
+            </div>
+
+            <section class="user-welcome">
+                <div class="container">
+                    <div id="user-welcome-container"></div>
+                </div>
+            </section>
+
+            <section class="continue-watching">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 class="section-title" style="margin: 0;">Continuar Assistindo</h2>
+                    <button id="clear-history" class="btn btn-secondary">
+                        <i class="fas fa-trash"></i> Limpar Histórico
+                    </button>
+                </div>
+                <div class="anime-grid" id="continue-watching-grid"></div>
+            </section>
+
+            <section class="new-releases">
+                <h2 class="section-title">Novos Lançamentos</h2>
+                <div class="anime-grid" id="new-releases-grid"></div>
+            </section>
+
+            <section class="full-catalog">
+                <h2 class="section-title">Catálogo Completo</h2>
+                <p id="search-result-status" class="search-result-status" aria-live="polite"></p>
+                <div class="anime-grid" id="full-catalog-grid"></div>
+            </section>
+        </section>
+
+        <!-- Animes Section -->
+        <section id="animes-section" class="content-section">
+            <h2 class="section-title">Animes</h2>
+            <div class="anime-grid" id="animes-grid"></div>
+        </section>
+
+        <!-- Movies Section -->
+        <section id="movies-section" class="content-section">
+            <h2 class="section-title">Filmes</h2>
+            <div class="anime-grid" id="movies-grid"></div>
+        </section>
+
+        <!-- OVAs Section -->
+        <section id="ovas-section" class="content-section">
+            <h2 class="section-title">OVAs</h2>
+            <div class="anime-grid" id="ovas-grid"></div>
+        </section>
+
+        <!-- Collections Section -->
+        <section id="collections-section" class="content-section">
+            <h2 class="section-title">Coleções</h2>
+            <p class="section-description">Todos seus animes favoritos em coleções para maratonar a vontade</p>
+            <div class="collections-grid" id="collections-grid"></div>
+        </section>
+
+        <!-- Openings Section -->
+        <section id="openings-section" class="content-section">
+            <h2 class="section-title">Músicas</h2>
+            <div class="music-download-top">
+                <button id="download-current-music-btn" class="btn btn-secondary"><i class="fas fa-download"></i> Baixar música atual</button>
+                <span id="download-music-status" class="download-status-inline"></span>
+            </div>
+            <div id="music-player-container">
+                <div id="music-grid" class="music-grid"></div>
+            </div>
+            <div class="music-download-floating">
+                <button id="download-current-music-btn" class="btn btn-secondary" title="Baixar música tocando"><i class="fas fa-download"></i> Música</button>
+                <span id="download-music-status" class="download-status-inline"></span>
+            </div>
+        </section>
+
+        <!-- Continue Watching Section -->
+        <section id="continue-section" class="content-section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 class="section-title" style="margin: 0;">Histórico</h2>
+                <button id="clear-history-btn-2" class="btn btn-secondary" style="display: none;">
+                    <i class="fas fa-trash"></i> Limpar Histórico
+                </button>
+            </div>
+            <div class="anime-grid" id="continue-grid"></div>
+        </section>
+
+        <section id="downloads-section" class="content-section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 class="section-title" style="margin: 0;">Downloads</h2>
+                <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;">
+                    <button id="download-season-from-downloads-btn" class="btn btn-primary">
+                        <i class="fas fa-layer-group"></i> Baixar temporada
+                    </button>
+                    <button id="clear-downloads-btn" class="btn btn-secondary">
+                        <i class="fas fa-trash"></i> Limpar Downloads
+                    </button>
+                </div>
+            </div>
+            <div id="downloads-status-panel" class="downloads-status-panel">
+                <span id="downloads-offline-status" class="downloads-status-item">Online: fila ativa</span>
+                <span id="downloads-queue-status" class="downloads-status-item">Fila 0 • Baixando 0 • Pausados 0 • Erros 0</span>
+                <span id="downloads-sw-status" class="downloads-status-item">SW mídia: cache-first</span>
+            </div>
+            <div id="downloads-grid" class="downloads-grid"></div>
+        </section>
+    </main>
+
+    <button id="news-fab" class="news-fab" aria-label="Novidades">
+        <i class="fas fa-bullhorn"></i>
+        <span class="news-fab-dot" aria-hidden="true"></span>
+    </button>
+
+
+    <button id="achievements-fab" class="achievements-fab" aria-label="Conquistas">
+        <i class="fas fa-trophy"></i>
+        <span class="achievements-fab-dot" aria-hidden="true"></span>
+        <span class="achievements-fab-count" id="achievements-fab-count">0</span>
+    </button>
+
+    <div id="achievements-modal" class="modal">
+        <div class="modal-content achievements-modal-content">
+            <span class="close-modal" id="close-achievements-modal">&times;</span>
+            <div class="news-modal-header">
+                <div>
+                    <h2>Achievements</h2>
+                    <p class="news-modal-subtitle">Seu progresso fica salvo localmente por perfil.</p>
+                </div>
+                <div class="achievements-actions">
+                    <label class="achievements-sound-toggle">
+                        <input type="checkbox" id="achievements-sound-toggle" checked>
+                        <span>Som</span>
+                    </label>
+                    <button type="button" class="btn btn-secondary" id="achievements-mark-seen">Marcar vistas</button>
+                </div>
+            </div>
+            <div id="achievements-unlock-feed" class="achievements-unlock-feed"></div>
+            <div id="achievements-unlock-center" class="achievements-unlock-center" aria-hidden="true">
+                <img id="achievements-unlock-center-icon" src="" alt="">
+                <div class="text">
+                    <small>Conquista desbloqueada</small>
+                    <strong id="achievements-unlock-center-title"></strong>
+                </div>
+            </div>
+            <div id="achievements-stats" class="achievements-stats"></div>
+            <div class="achievements-filter" id="achievements-filter">
+                <button type="button" data-filter="all" class="is-active">Todas</button>
+                <button type="button" data-filter="unlocked">Desbloqueadas</button>
+                <button type="button" data-filter="locked">Em progresso</button>
+            </div>
+            <div id="achievements-list" class="achievements-list"></div>
+            <audio id="achievements-audio" preload="auto"></audio>
+        </div>
+    </div>
+
+    <div id="achievements-silent-toast" class="achievements-silent-toast" role="status" aria-live="polite">
+        <span id="achievements-silent-toast-text">Novas conquistas disponíveis.</span>
+        <button type="button" id="achievements-silent-toast-open">Ver</button>
+    </div>
+
+    <div id="news-modal" class="modal">
+        <div class="modal-content news-modal-content">
+            <span class="close-modal" id="close-news-modal">&times;</span>
+            <div class="news-modal-header">
+                <div>
+                    <h2>Novidades &amp; Anúncios</h2>
+                    <p class="news-modal-subtitle">Fique por dentro das atualizações mais recentes.</p>
+                </div>
+                <div class="news-admin-actions" id="news-admin-actions">
+                    <button class="btn btn-secondary" id="news-admin-toggle">Modo admin</button>
+                    <button class="btn btn-secondary" id="news-admin-logout">Sair</button>
+                </div>
+            </div>
+            <div id="news-list" class="news-list"></div>
+
+            <div id="news-admin-panel" class="news-admin-panel">
+                <h3>Publicar nova notícia</h3>
+                <div class="news-formatting">
+                    <button type="button" class="btn btn-secondary" data-format="bold"><strong>B</strong></button>
+                    <button type="button" class="btn btn-secondary" data-format="italic"><em>I</em></button>
+                    <button type="button" class="btn btn-secondary" data-format="list">• Lista</button>
+                    <button type="button" class="btn btn-secondary" data-format="link">🔗 Link</button>
+                    <button type="button" class="btn btn-secondary" data-format="break">↵ Linha</button>
+                </div>
+                <form id="news-form" class="news-form">
+                    <label>
+                        Título
+                        <input type="text" id="news-title" placeholder="Título da notícia" required>
+                    </label>
+                    <label>
+                        Mensagem
+                        <textarea id="news-message" rows="4" placeholder="Escreva a atualização..." required></textarea>
+                    </label>
+                    <label>
+                        URL da imagem (opcional)
+                        <input type="url" id="news-image-url" placeholder="https://exemplo.com/imagem.jpg">
+                    </label>
+                    <label>
+                        Upload de imagem (opcional)
+                        <input type="file" id="news-image-file" accept="image/*">
+                    </label>
+                    <div class="news-form-actions">
+                        <button type="submit" class="btn btn-primary">Publicar</button>
+                        <button type="button" class="btn btn-secondary" id="news-form-clear">Limpar</button>
+                        <button type="button" class="btn btn-secondary" id="news-download-json">Baixar JSON</button>
+                    </div>
+                </form>
+                <p class="news-admin-hint">
+                    Atalho para ativar o modo admin local: <strong>Ctrl + Shift + A</strong>. Um token de sessão é solicitado em tempo de execução (não persistido). Depois de editar, baixe o JSON e substitua o arquivo <strong>news-data.json</strong>.
+                </p>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="anime-editor-modal" class="modal" style="display:none !important;">
+        <div class="modal-content anime-editor-modal-content">
+            <span class="close-modal" id="close-anime-editor">&times;</span>
+            <div class="news-modal-header">
+                <div>
+                    <h2>Editor de Anime (Visual)</h2>
+                    <p class="news-modal-subtitle">Edite anime, temporadas e episódios de forma visual e simples.</p>
+                </div>
+            </div>
+
+            <div class="anime-editor-toolbar">
+                <button class="btn btn-secondary" id="anime-editor-load">Carregar atual</button>
+                <button class="btn btn-secondary" id="anime-editor-format">Importar JSON (opcional)</button>
+                <button class="btn btn-primary" id="anime-editor-apply">Aplicar no site</button>
+                <button class="btn btn-secondary" id="anime-editor-copy">Copiar JSON</button>
+                <button class="btn btn-secondary" id="anime-editor-download">Baixar anime-data.json</button>
+                <button class="btn btn-secondary" id="anime-editor-view-visual">Visual</button>
+                            </div>
+
+            <div id="anime-editor-visual" class="anime-editor-visual">
+                <div class="anime-editor-visual-actions">
+                    <button class="btn btn-primary" id="anime-editor-add-anime">+ Anime</button>
+                </div>
+                <div id="anime-editor-visual-list" class="anime-editor-visual-list"></div>
+                <label class="anime-editor-collections-label">Coleções (JSON de apoio)
+                    <textarea id="anime-editor-collections" class="anime-editor-collections" spellcheck="false"></textarea>
+                </label>
+                <div id="anime-editor-collections-visual"></div>
+            </div>
+
+            <textarea id="anime-editor-textarea" class="anime-editor-textarea" spellcheck="false" style="display:none;"></textarea>
+            <p id="anime-editor-status" class="anime-editor-status"></p>
+            <p class="news-admin-hint">Dica: autentique o admin local com token de sessão para liberar o editor, depois salve o arquivo baixado e substitua o <strong>anime-data.json</strong> no seu GitHub.</p>
+        </div>
+    </div>
+
+    <div id="video-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" id="close-video">&times;</span>
+            <div id="video-player-container">
+                <!-- Anime info overlay (top) -->
+                <div id="video-info-overlay" class="video-info-overlay">
+                    <span id="overlay-anime-title">Anime</span>
+                    <span id="overlay-episode-info">Episódio 1</span>
+                </div>
+                
+                <!-- Banner above video -->
+                <div class="video-banner" style="background-image: url('https://files.catbox.moe/fhnk72.jpg');"></div>
+                
+                <!-- Video element (hidden native controls) -->
+                <video id="anime-player" playsinline="" webkit-playsinline="true" preload="auto" style="width: 100%; display: block;">
+                    Seu navegador não suporta vídeos.
+                </video>
+                <video id="age-rating-overlay"
+                       class="age-rating-overlay top-left"
+                       src="assets/webm/16/GC 16 - superior esquerdo.webm"
+                       muted
+                       preload="auto"
+                       playsinline
+                       webkit-playsinline
+                       style="display:none; pointer-events:none;"
+                       aria-hidden="true"></video>
+                <div id="video-loading-overlay" class="video-loading-overlay" aria-hidden="true">
+                    <div class="video-loading-orb"></div>
+                    <div class="video-loading-text" aria-hidden="true"></div>
+                </div>
+                
+                <!-- Double-tap seek zones (mobile) -->
+                <div id="video-tap-zones">
+                    <div id="tap-zone-left" class="video-tap-zone"></div>
+                    <div id="tap-zone-center" class="video-tap-zone"></div>
+                    <div id="tap-zone-right" class="video-tap-zone"></div>
+                </div>
+                
+                <!-- Seek feedback -->
+                <div id="seek-feedback-left" class="seek-feedback"><i class="fas fa-backward"></i> 5s</div>
+                <div id="seek-feedback-right" class="seek-feedback"><i class="fas fa-forward"></i> 5s</div>
+                
+                <!-- Custom controls overlay -->
+                <div id="custom-video-controls">
+                    <div class="controls-row controls-row-primary">
+                        <button id="play-pause-btn" class="btn-icon" title="Play/Pause">
+                            <i class="fas fa-play"></i>
+                        </button>
+                        <div class="timeline-container">
+                            <div id="timeline-progress"></div>
+                        </div>
+                        <span id="time-display">0:00 / 0:00</span>
+                    </div>
+                    <div class="controls-row controls-row-secondary">
+                        <button id="volume-btn" class="btn-icon" title="Volume">
+                            <i class="fas fa-volume-up"></i>
+                        </button>
+                        <div class="volume-container">
+                            <div id="volume-progress"></div>
+                        </div>
+                        <button id="skip-opening-btn" class="btn btn-secondary" style="display: none;">
+                            ⏩ Pular Abertura
+                        </button>
+                        <button id="skip-ending-btn" class="btn btn-secondary" style="display: none;">
+                            ⏩ Pular Encerramento
+                        </button>
+                        <button id="next-episode-btn" class="btn-icon" title="Próximo Episódio">
+                            <i class="fas fa-step-forward"></i>
+                        </button>
+                        <button id="credits-btn" class="btn btn-secondary" style="display:none;">
+                            🎬 Créditos
+                        </button>
+                        <button id="pip-btn" class="btn-icon" title="Picture-in-Picture">
+                            <i class="fas fa-tv"></i>
+                        </button>
+                        <button id="fullscreen-btn" class="btn-icon" title="Tela Cheia">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                    </div>
+                    <div id="next-episode-countdown" style="display:none;"></div>
+                </div>
+                <div id="video-floating-actions" style="position:absolute; right:12px; bottom:72px; z-index:1010; display:none; flex-direction:column; gap:6px; align-items:flex-end; pointer-events:none;">
+                    <button id="floating-skip-opening-btn" class="btn btn-secondary" style="display:none; pointer-events:auto; background:rgba(0,0,0,0.45); border:1px solid rgba(255,255,255,0.25); color:#fff; font-size:12px; padding:6px 10px;">⏩ Pular Abertura</button>
+                    <button id="floating-skip-ending-btn" class="btn btn-secondary" style="display:none; pointer-events:auto; background:rgba(0,0,0,0.45); border:1px solid rgba(255,255,255,0.25); color:#fff; font-size:12px; padding:6px 10px;">⏩ Pular Encerramento</button>
+                    <div id="floating-ending-actions" style="display:none; gap:6px; pointer-events:none;">
+                        <button id="floating-next-episode-btn" class="btn btn-primary" style="display:none; pointer-events:auto; background:rgba(102,126,234,0.45); border:1px solid rgba(255,255,255,0.3); color:#fff; font-size:12px; padding:6px 10px;">⏭️ Próximo episódio</button>
+                        <button id="floating-credits-btn" class="btn btn-secondary" style="display:none; pointer-events:auto; background:rgba(0,0,0,0.45); border:1px solid rgba(255,255,255,0.25); color:#fff; font-size:12px; padding:6px 10px;">🎬 Créditos</button>
+                    </div>
+                </div>
+            </div>
+            <!-- Age Rating Section -->
+            <div id="age-rating-section" class="age-rating-section">
+                <img id="age-rating-image" src="" alt="Classificação Indicativa" class="age-rating-image">
+                <span id="age-rating-content" class="age-rating-content"></span>
+            </div>
+            <div class="video-info">
+                <h2 id="video-title">Título do Anime</h2>
+                <p id="video-description">Descrição do anime...</p>
+                <div style="margin: 10px 0;">
+                    <span id="current-season-label">Temporada 1</span> • 
+                    <span id="current-episode-label">Episódio 1</span>
+                </div>
+                <!-- Collection indicator in player -->
+                <div id="collection-indicator" class="collection-indicator" style="display: none;">
+                    <i class="fas fa-layer-group"></i>
+                    <span id="collection-name">Coleção</span>
+                    <div id="collection-items" class="collection-items"></div>
+                </div>
+                <div class="download-actions compact-download-actions" style="margin: 10px 0;">
+                    <button id="download-episode-btn" class="btn btn-primary" title="Baixar episódio"><i class="fas fa-download"></i> Episódio</button>
+                    <button id="download-season-btn" class="btn btn-secondary" title="Baixar temporada"><i class="fas fa-layer-group"></i> Temporada</button>
+                    <button id="download-anime-btn" class="btn btn-secondary" title="Baixar anime"><i class="fas fa-film"></i> Anime</button>
+                    <button id="download-collection-btn" class="btn btn-secondary" title="Baixar coleção"><i class="fas fa-box-open"></i> Coleção</button>
+                    <span id="download-episode-status" class="download-status-inline"></span>
+                </div>
+                <div class="episode-selector">
+                    <select id="season-select">
+                        <option>Temporada 1</option>
+                    </select>
+                    <select id="episode-select">
+                        <option>Episódio 1</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="profile-modal" class="modal">
+        <div class="modal-content profile-modal-modern">
+            <button type="button" class="close-modal-btn" id="close-profile-modal">
+                <i class="fas fa-times"></i>
+            </button>
+            
+            <h2 class="profile-modal-title">Personalizar Perfil</h2>
+            
+            <div class="profile-editor-layout">
+                <!-- Coluna da Esquerda: Preview -->
+                <div class="profile-preview-column">
+                    <div class="profile-preview-card">
+                        <div class="profile-avatar-preview" id="avatar-live-preview">
+                            <div class="avatar-bg-layer" id="preview-bg"></div>
+                            <img src="images/IMG_20250628_194234.png" alt="Personagem" id="preview-char" class="avatar-char-layer">
+                            <div class="avatar-frame-layer" id="preview-frame"></div>
+                        </div>
+                        <div class="profile-name-preview" id="preview-name">Nome-san</div>
+                    </div>
+                    <p class="preview-hint">Visualização em tempo real</p>
+                </div>
+                
+                <!-- Coluna da Direita: Opções -->
+                <div class="profile-options-column">
+                    <!-- Nome -->
+                    <div class="form-group-modern">
+                        <label>Nome do Perfil</label>
+                        <input type="text" id="profile-name" class="input-modern" placeholder="Digite seu nome" maxlength="20">
+                    </div>
+                    
+                    <!-- Pronome -->
+                    <div class="form-group-modern">
+                        <label>Pronome</label>
+                        <div class="pronoun-pills">
+                            <button type="button" class="pronoun-pill active" data-pronoun="-san">-san</button>
+                            <button type="button" class="pronoun-pill" data-pronoun="-kun">-kun</button>
+                            <button type="button" class="pronoun-pill" data-pronoun="-chan">-chan</button>
+                            <button type="button" class="pronoun-pill" data-pronoun="-sama">-sama</button>
+                            <button type="button" class="pronoun-pill" data-pronoun="-senpai">-senpai</button>
+                            <button type="button" class="pronoun-pill" data-pronoun="">Nenhum</button>
+                        </div>
+                        <input type="hidden" id="selected-pronoun" value="-san">
+                    </div>
+                    
+                    <!-- Senha (opcional) -->
+                    <div class="form-group-modern">
+                        <label>Senha (opcional) 🔒</label>
+                        <input type="password" id="profile-password" class="input-modern" placeholder="Deixe vazio para sem senha">
+                        <small style="color: rgba(255,255,255,0.6); font-size: 12px;">Se definir senha, será solicitada ao selecionar o perfil.</small>
+                    </div>
+
+                    <!-- Tabs: Cores / Fundos / Personagens / Molduras -->
+                    <div class="customization-tabs">
+                        <button type="button" class="tab-btn active" data-tab="colors">Cores</button>
+                        <button type="button" class="tab-btn" data-tab="backgrounds">Fundos</button>
+                        <button type="button" class="tab-btn" data-tab="characters">Personagens</button>
+                        <button type="button" class="tab-btn" data-tab="frames">Molduras</button>
+                        <button type="button" class="tab-btn" data-tab="preferences">Preferências</button>
+                    </div>
+                    
+                    <!-- Tab Content: Cores -->
+                    <div class="tab-content active" id="tab-colors">
+                        <label class="tab-label">Fundo Sólido</label>
+                        <div class="color-grid">
+                            <div class="color-option selected" data-type="solid" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);" data-value="linear-gradient(135deg, #667eea 0%, #764ba2 100%)"></div>
+                            <div class="color-option" data-type="solid" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);" data-value="linear-gradient(135deg, #f093fb 0%, #f5576c 100%)"></div>
+                            <div class="color-option" data-type="solid" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);" data-value="linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)"></div>
+                            <div class="color-option" data-type="solid" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);" data-value="linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)"></div>
+                            <div class="color-option" data-type="solid" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);" data-value="linear-gradient(135deg, #fa709a 0%, #fee140 100%)"></div>
+                            <div class="color-option" data-type="solid" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);" data-value="linear-gradient(135deg, #30cfd0 0%, #330867 100%)"></div>
+                            <div class="color-option" data-type="solid" style="background: #ff6b6b;" data-value="#ff6b6b"></div>
+                            <div class="color-option" data-type="solid" style="background: #4ecdc4;" data-value="#4ecdc4"></div>
+                            <div class="color-option" data-type="solid" style="background: #ffe66d;" data-value="#ffe66d"></div>
+                            <div class="color-option" data-type="solid" style="background: #a8e6cf;" data-value="#a8e6cf"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Tab Content: Fundos -->
+                    <div class="tab-content" id="tab-backgrounds">
+                        <label class="tab-label">Imagem de Fundo</label>
+                        <div class="background-images-grid" id="background-images-grid">
+                            <!-- Imagens injetadas via JS -->
+                        </div>
+                    </div>
+                    
+                    <!-- Tab Content: Personagens -->
+                    <div class="tab-content" id="tab-characters">
+                        <div class="character-grid" id="character-grid">
+                            <!-- Personagens serão injetados via JS -->
+                        </div>
+                    </div>
+                    
+                    <!-- Tab Content: Molduras -->
+                    <div class="tab-content" id="tab-frames">
+                        <div class="frame-grid">
+                            <div class="frame-option selected" data-frame="">
+                                <div class="frame-preview-none">✕</div>
+                                <span>Sem moldura</span>
+                            </div>
+                            <div class="frame-option" data-frame="glow">
+                                <div class="frame-preview frame-glow-preview"></div>
+                                <span>Brilho</span>
+                            </div>
+                            <div class="frame-option" data-frame="rainbow">
+                                <div class="frame-preview frame-rainbow-preview"></div>
+                                <span>Arco-íris</span>
+                            </div>
+                            <div class="frame-option" data-frame="pulse">
+                                <div class="frame-preview frame-pulse-preview"></div>
+                                <span>Pulse</span>
+                            </div>
+                            <div class="frame-option" data-frame="spin">
+                                <div class="frame-preview frame-spin-preview"></div>
+                                <span>Spin</span>
+                            </div>
+                            <div class="frame-option" data-frame="neon">
+                                <div class="frame-preview frame-neon-preview"></div>
+                                <span>Neon</span>
+                            </div>
+                            <div class="frame-option" data-frame="fire">
+                                <div class="frame-preview frame-fire-preview"></div>
+                                <span>Fogo</span>
+                            </div>
+                            <div class="frame-option" data-frame="electric">
+                                <div class="frame-preview frame-electric-preview"></div>
+                                <span>Elétrico</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab Content: Preferências -->
+                    <div class="tab-content" id="tab-preferences">
+                        <label class="tab-label">Preferências de Maratona</label>
+                        <div style="display:grid; gap:12px; color:#fff;">
+                            <label style="display:grid; gap:2px;">
+                                <span><input type="checkbox" id="marathon-enabled" checked> <strong>Ativar modo maratona</strong></span>
+                                <small style="opacity:.75;">Liga as automações abaixo para este perfil. Se desativado, tudo roda manualmente.</small>
+                            </label>
+                            <label style="display:grid; gap:2px;">
+                                <span><input type="checkbox" id="marathon-auto-next" checked> <strong>Auto próximo episódio</strong></span>
+                                <small style="opacity:.75;">Quando um episódio termina, o player inicia contagem regressiva e abre o próximo.</small>
+                            </label>
+                            <label style="display:grid; gap:2px;">
+                                <span><input type="checkbox" id="marathon-auto-skip-opening"> <strong>Auto pular abertura</strong></span>
+                                <small style="opacity:.75;">Se o episódio tiver timestamps de opening, salta automaticamente esse trecho.</small>
+                            </label>
+                            <label style="display:grid; gap:2px;">
+                                <span><input type="checkbox" id="marathon-auto-skip-ending"> <strong>Auto pular encerramento</strong></span>
+                                <small style="opacity:.75;">Se houver timestamps de ending, pula o trecho automaticamente.</small>
+                            </label>
+                            <label style="display:grid; gap:2px;">
+                                <span><input type="checkbox" id="performance-mode-toggle"> <strong>Modo desempenho</strong></span>
+                                <small style="opacity:.75;">Reduz animações e prévias para carregar mais rápido em internet/PC fracos.</small>
+                            </label>
+                            <label style="display:grid; gap:6px;">
+                                <span><strong>Contagem regressiva (segundos)</strong><br><small style="opacity:.75;">Tempo de espera antes de avançar para o próximo episódio.</small></span>
+                                <input type="number" id="marathon-countdown-seconds" class="input-modern" min="1" max="60" value="8" style="max-width:140px;">
+                            </label>
+                            <label style="display:grid; gap:6px;">
+                                <span><strong>Pausa a cada X episódios</strong><br><small style="opacity:.75;">Ex.: 3 = pausa automática no 3º, 6º, 9º... (0 desativa).</small></span>
+                                <input type="number" id="marathon-break-every-episodes" class="input-modern" min="0" max="50" value="0" style="max-width:140px;">
+                            </label>
+                            <label style="display:grid; gap:6px;">
+                                <span><strong>Limite por sessão</strong><br><small style="opacity:.75;">Número máximo de episódios seguidos antes de pausar (0 ilimitado).</small></span>
+                                <input type="number" id="marathon-session-limit" class="input-modern" min="0" max="100" value="0" style="max-width:140px;">
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Botão Salvar -->
+                    <button type="button" class="btn-save-profile" id="save-profile-btn">
+                        <i class="fas fa-check"></i> Salvar Perfil
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Terms Modal -->
+    <div id="terms-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal close-terms">&times;</span>
+            <h2>Termos de Serviço</h2>
+            <div class="terms-content">
+                <h3>1. Aceitação dos Termos</h3>
+                <p>Ao acessar e usar o AniVerse, você concorda em estar vinculado a estes Termos de Serviço e a todas as leis e regulamentos aplicáveis.</p>
+                
+                <h3>2. Uso do Serviço</h3>
+                <p>O AniVerse é uma plataforma de streaming de anime fornecida "como está". Você concorda em usar o serviço apenas para fins legais e de acordo com estes termos.</p>
+
+                <h3>2.1 Modelo de Segurança Local (Admin e Perfis)</h3>
+                <p>Os recursos administrativos (como editor de animes e edição inline) usam autenticação local no próprio navegador. O acesso administrativo depende de token de sessão informado manualmente em tempo de execução e mantido somente em memória da aba atual.</p>
+                <p>As senhas de perfil são protegidas localmente por hash SHA-256 com salt por perfil. O AniVerse não envia esse segredo para servidores próprios.</p>
+                
+                <h3>3. Propriedade Intelectual</h3>
+                <p>Todo o conteúdo disponível no AniVerse, incluindo mas não limitado a textos, gráficos, logos, ícones, imagens, clipes de áudio e vídeo, está sendo usado para o site, mas não hospedado aqui.</p>
+                
+                <h3>4. Conduta do Usuário</h3>
+                <p>Você concorda em não usar o serviço para:</p>
+                <ul>
+                    <li>Violar qualquer integridade a usuários ou criadores</li>
+                    <li>Transmitir material prejudicial, ameaçador, abusivo ou difamatório</li>
+                    <li>Interferir ou interromper o serviço ou servidores</li>
+                </ul>
+                
+                <h3>5. Modificações dos Termos</h3>
+                <p>Reservamo-nos o direito de modificar estes termos a qualquer momento. Continuando a usar o serviço após tais modificações, você concorda com os termos revisados.</p>
+                
+                <h3>6. Limitação de Responsabilidade</h3>
+                <p>O AniVerse não será responsável por quaisquer danos diretos, indiretos, incidentais, consequenciais ou punitivos resultantes do uso ou incapacidade de usar o serviço.</p>
+                <p>Como o modelo de segurança é local (front-end), ele não substitui controles de servidor. Usuários com acesso ao dispositivo/navegador podem manipular dados locais, limpar armazenamento ou contornar proteções de interface.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Privacy Policy Modal -->
+    <div id="privacy-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal close-privacy">&times;</span>
+            <h2>Política de Privacidade</h2>
+            <div class="privacy-content">
+                <h3>1. Informações que Coletamos</h3>
+                <p>O AniVerse coleta informações limitadas para melhorar sua experiência. Todas as informações são armazenadas localmente no seu navegador usando localStorage.</p>
+                <p>Para perfis com senha, armazenamos somente hash com salt por perfil (não a senha em texto puro). Para autenticação admin local, o token de sessão fica somente em memória enquanto a aba está aberta.</p>
+                
+                <h3>2. Como Usamos Suas Informações</h3>
+                <p>As informações coletadas são usadas para:</p>
+                <ul>
+                    <li>Personalizar sua experiência de visualização</li>
+                    <li>Lembrar suas preferências e progresso de visualização</li>
+                    <li>Manter suas configurações de perfil</li>
+                </ul>
+                
+                <h3>3. Armazenamento de Dados</h3>
+                <p>Todos os seus dados são armazenados localmente no seu dispositivo usando a tecnologia localStorage do navegador. Não enviamos ou compartilhamos suas informações com terceiros.</p>
+                <p>Observação: dados em memória (como token de sessão admin) não são persistidos em localStorage/cookies e podem ser perdidos ao recarregar/fechar a aba.</p>
+                
+                <h3>4. Cookies e Tecnologias Similares</h3>
+                <p>Utilizamos localStorage para armazenar suas preferências e progresso. Você pode limpar esses dados a qualquer momento através das configurações do seu navegador.</p>
+                
+                <h3>5. Seus Direitos</h3>
+                <p>Você tem o direito de:</p>
+                <ul>
+                    <li>Acessar seus dados armazenados</li>
+                    <li>Excluir seus dados a qualquer momento</li>
+                    <li>Optar por não usar certas funcionalidades</li>
+                </ul>
+                
+                <h3>6. Segurança</h3>
+                <p>Como todos os dados são armazenados localmente no seu dispositivo, a segurança depende das configurações de segurança do seu navegador e dispositivo.</p>
+                <p>Limitações importantes: sem backend dedicado de autenticação, não há garantia forte contra usuários locais avançados, extensões maliciosas do navegador, scripts injetados por ambiente comprometido ou acesso físico ao dispositivo.</p>
+                
+                <h3>7. Alterações na Política</h3>
+                <p>Podemos atualizar esta política de privacidade periodicamente. Recomendamos revisar esta página regularmente para estar ciente de quaisquer alterações.</p>
+                
+                <h3>8. Contato</h3>
+                <p>Se você tiver dúvidas sobre esta política de privacidade, entre em contato através do formulário de sugestões.</p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p> 2026 AniVerse - Seu Universo de Animes</p>
+            <div class="footer-links">
+                <a href="#" class="footer-link terms-link">Termos de Serviço</a>
+                <a href="#" class="footer-link privacy-link">Política de Privacidade</a>
+                <a href="#" class="footer-link news-link">Novidades</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Theme must load first, without defer -->
+    <script src="js/theme.js?v=20260326-2"></script>
+    
+    <!-- Image retry system - loads early to catch all images -->
+    <script src="js/image-retry.js?v=20260326-2"></script>
+    
+    <!-- Core scripts with defer -->
+    <script src="js/anime-db.js?v=20260326-2" defer></script>
+    <script src="js/anime-renderer.js?v=20260326-2" defer></script>
+    <script src="js/anime-render-fallback.js?v=20260326-2" defer></script>
+    <script src="js/hero-video-rotator.js?v=20260326-2" defer></script>
+    <script src="js/profile-modal-bindings.js?v=20260326-2" defer></script>
+    <script src="js/music.js?v=20260326-2" defer></script>
+    <script src="js/music-player.js?v=20260326-2" defer></script>
+    <script src="js/achievements.js?v=20260326-3" defer></script>
+    <script src="js/video-player.js?v=20260326-2" defer></script>
+    <script src="js/player-fixes.js?v=20260326-2" defer></script>
+    <script src="js/download-manager.js?v=20260326-2" defer></script>
+    <script src="js/script.js?v=20260326-2" defer></script>
+    <script src="js/info-section.js?v=20260326-2" defer></script>
+    <script src="js/fixes.js?v=20260326-2" defer></script>
+    <script src="js/profile-enhancements.js?v=20260326-2" defer></script>
+    <script src="js/profile-multi.js?v=20260326-2" defer></script>
+    <script src="js/profile-modal-new.js?v=20260326-2" defer></script>
+    <script src="js/music-player-new.js?v=20260326-2" defer></script>
+    <script src="js/inplace-admin.js?v=20260326-2" defer></script>
+    <script src="js/tv-mode.js?v=20260326-2" defer></script>
+    
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', async () => {
+          try {
+            const registration = await navigator.serviceWorker.register('/sw.js?v=20260405-android-fix3', { scope: '/', updateViaCache: 'none' });
+            const tryUpdate = () => registration.update().catch(() => {});
+            let refreshing = false;
+
+            const activateWaitingWorker = (worker) => {
+              if (worker) worker.postMessage({ type: 'SKIP_WAITING' });
+            };
+
+            const watchInstallingWorker = (worker) => {
+              if (!worker) return;
+              worker.addEventListener('statechange', () => {
+                if (worker.state === 'installed' && navigator.serviceWorker.controller) {
+                  activateWaitingWorker(registration.waiting || worker);
+                }
+              });
+            };
+
+            if (registration.waiting) {
+              activateWaitingWorker(registration.waiting);
+            }
+
+            watchInstallingWorker(registration.installing);
+            registration.addEventListener('updatefound', () => {
+              watchInstallingWorker(registration.installing);
+            });
+
+            tryUpdate();
+            setInterval(tryUpdate, 30 * 60 * 1000);
+            document.addEventListener('visibilitychange', () => {
+              if (document.visibilityState === 'visible') tryUpdate();
+            });
+
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+              if (refreshing) return;
+              refreshing = true;
+              try {
+                localStorage.setItem('aniverse_sw_updated_at', String(Date.now()));
+              } catch (_) {}
+              try {
+                const alreadyReloaded = sessionStorage.getItem('aniverse_sw_autoreload_done');
+                if (!alreadyReloaded) {
+                  sessionStorage.setItem('aniverse_sw_autoreload_done', '1');
+                  window.location.reload();
+                  return;
+                }
+              } catch (_) {}
+              console.log('AniVerse: nova versão do Service Worker ativada.');
+            });
+          } catch (_) {}
+        });
+      }
+    </script>
+    <script id="ani-diagnostic-init">/* ANI-diagnostic-init-check */(function(){try{console.log("AniVerse init check running"); fetch(window.location.pathname.replace(/\/[^\/]*$/, "") + "/anime-data.json", {cache: "no-store"}).then(function(r){console.log("fetch anime-data.json ->", r.status, r.statusText); if(r.ok){ try{ window.dispatchEvent(new Event("animeDataLoaded")); console.log("Dispatched animeDataLoaded for diagnostic"); } catch(e){console.warn("dispatch error", e);} } }).catch(function(err){console.warn("fetch anime-data.json failed:", err); });}catch(e){console.error("ANI-diagnostic error:", e);}})();</script>
+</body>
+</html>
