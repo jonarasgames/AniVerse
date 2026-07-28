@@ -1131,56 +1131,106 @@
       const overlay = document.getElementById('age-rating-overlay');
       if (!container || !overlay) return;
 
-      let shownThisFullscreen = false;
+      let completedEpisodeKey = null;
+      let activeEpisodeKey = null;
+      let overlayPlaying = false;
       let hideTimeout = null;
 
-      function resetOverlay(){
+      function getEpisodeKey(){
+        const watching = window.currentWatchingAnime || {};
+        const src = player?.currentSrc || player?.src || '';
+        return [watching.id || watching.title || 'anime', watching.season || 'season', watching.episode || 'episode', src].join('::');
+      }
+
+      function clearFallbackTimeout(){
         if (hideTimeout) {
           clearTimeout(hideTimeout);
           hideTimeout = null;
         }
+      }
+
+      function resetOverlay(markCompleted = false){
+        clearFallbackTimeout();
         overlay.classList.remove('visible');
         try { overlay.pause(); } catch (_) {}
         overlay.style.display = 'none';
         try { overlay.currentTime = 0; } catch (_) {}
+        overlayPlaying = false;
+        if (markCompleted) completedEpisodeKey = activeEpisodeKey || getEpisodeKey();
       }
 
-      function showAgeOverlayOnce(){
-        if (shownThisFullscreen) return;
-        shownThisFullscreen = true;
-        resetOverlay();
+      function isContainerFullscreen(){
+        const fullscreenElement = document.fullscreenElement ||
+          document.webkitFullscreenElement ||
+          document.msFullscreenElement;
+        return fullscreenElement === container || container.classList.contains('is-fullscreen');
+      }
+
+      function canPlayAgeOverlay(){
+        return isContainerFullscreen() &&
+          container.classList.contains('controls-hidden') &&
+          player &&
+          !player.paused &&
+          !player.ended;
+      }
+
+      function interruptOverlayIfNeeded(){
+        if (!overlayPlaying) return;
+        // If the player chrome/title comes back, do not count the vinheta as watched.
+        if (!canPlayAgeOverlay()) resetOverlay(false);
+      }
+
+      function tryPlayAgeOverlay(){
+        const episodeKey = getEpisodeKey();
+        if (completedEpisodeKey === episodeKey || overlayPlaying || !canPlayAgeOverlay()) {
+          interruptOverlayIfNeeded();
+          return;
+        }
+
+        activeEpisodeKey = episodeKey;
+        resetOverlay(false);
+        activeEpisodeKey = episodeKey;
         overlay.style.display = 'block';
         overlay.classList.add('visible');
+        overlayPlaying = true;
 
         const playPromise = overlay.play();
         if (playPromise && typeof playPromise.catch === 'function') {
           playPromise.catch(() => {
-            setTimeout(() => overlay.play().catch(() => {}), 200);
+            resetOverlay(false);
+            setTimeout(tryPlayAgeOverlay, 250);
           });
         }
 
-        overlay.addEventListener('ended', resetOverlay, { once: true });
-        hideTimeout = setTimeout(resetOverlay, 7000);
+        clearFallbackTimeout();
+        hideTimeout = setTimeout(() => resetOverlay(true), 12000);
       }
 
-      function onFullscreenChange(){
-        const fullscreenElement = document.fullscreenElement ||
-          document.webkitFullscreenElement ||
-          document.msFullscreenElement;
-        const inFullscreen = fullscreenElement === container || container.classList.contains('is-fullscreen');
+      overlay.addEventListener('ended', () => resetOverlay(true));
 
-        if (inFullscreen) {
-          shownThisFullscreen = false;
-          showAgeOverlayOnce();
-        } else {
-          shownThisFullscreen = false;
-          resetOverlay();
-        }
+      function resetForNewEpisode(){
+        const episodeKey = getEpisodeKey();
+        if (activeEpisodeKey && activeEpisodeKey !== episodeKey) completedEpisodeKey = null;
+        activeEpisodeKey = episodeKey;
+        resetOverlay(false);
+        setTimeout(tryPlayAgeOverlay, 350);
       }
 
-      document.addEventListener('fullscreenchange', onFullscreenChange);
-      document.addEventListener('webkitfullscreenchange', onFullscreenChange);
-      document.addEventListener('msfullscreenchange', onFullscreenChange);
+      function onPlaybackChance(){
+        interruptOverlayIfNeeded();
+        setTimeout(tryPlayAgeOverlay, 350);
+      }
+
+      const controlsObserver = new MutationObserver(onPlaybackChance);
+      controlsObserver.observe(container, { attributes: true, attributeFilter: ['class'] });
+
+      document.addEventListener('fullscreenchange', onPlaybackChance);
+      document.addEventListener('webkitfullscreenchange', onPlaybackChance);
+      document.addEventListener('msfullscreenchange', onPlaybackChance);
+      player.addEventListener('play', onPlaybackChance);
+      player.addEventListener('loadedmetadata', resetForNewEpisode);
+      player.addEventListener('emptied', resetForNewEpisode);
+      player.addEventListener('pause', () => resetOverlay(false));
 
       window.setAgeRatingOverlayPosition = function(posClass){
         const positions = ['top-left', 'top-right', 'bottom-left', 'bottom-right'];

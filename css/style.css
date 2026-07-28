@@ -959,35 +959,26 @@ nav a:hover, nav a.active {
 /* Overlay de vídeo de classificação (webm com alfa) */
 .age-rating-overlay {
     position: absolute;
-    width: 220px;
-    height: auto;
+    inset: 0;
+    width: 100%;
+    height: 100%;
     z-index: 2050;
     display: none;
     pointer-events: none;
+    object-fit: contain;
+    object-position: center center;
     transform-origin: center center;
     transition: opacity 0.25s ease;
     opacity: 0;
 }
 
-.age-rating-overlay.top-left {
-    top: 12px;
-    left: 12px;
-}
+.age-rating-overlay.top-left { object-position: left top; }
 
-.age-rating-overlay.top-right {
-    top: 12px;
-    right: 12px;
-}
+.age-rating-overlay.top-right { object-position: right top; }
 
-.age-rating-overlay.bottom-left {
-    bottom: 12px;
-    left: 12px;
-}
+.age-rating-overlay.bottom-left { object-position: left bottom; }
 
-.age-rating-overlay.bottom-right {
-    right: 12px;
-    bottom: 12px;
-}
+.age-rating-overlay.bottom-right { object-position: right bottom; }
 
 .age-rating-overlay.visible {
     display: block;
@@ -997,7 +988,8 @@ nav a:hover, nav a.active {
 #video-player-container:fullscreen .age-rating-overlay,
 #video-player-container:-webkit-full-screen .age-rating-overlay,
 #video-player-container.is-fullscreen .age-rating-overlay {
-    width: 260px;
+    width: 100%;
+    height: 100%;
 }
 
 #custom-video-controls .controls-row {
