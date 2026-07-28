@@ -1770,6 +1770,35 @@ function openEpisode(anime, seasonNumber, episodeIndex){
             }
             
             ageRatingSection.classList.add('visible');
+
+	const overlayEl = document.getElementById('age-rating-overlay');
+	if (overlayEl) {
+ 	 const rating = String(anime.rating_age || '').trim();
+	  // Mapeie para os nomes reais dos seus webms. Ajuste se necessário.
+	  const overlayMap = {
+	    '10': 'GC 10 - superior esquerdo.webm',
+	    '12': 'GC 12 - superior esquerdo.webm',
+ 	   '14': 'GC 14 - superior esquerdo.webm',
+ 	   '16': 'GC 16 - superior esquerdo.webm',
+ 	   '18': 'GC 18 - superior esquerdo.webm',
+ 	   'L': 'GC Livre - superior esquerdo.webm'
+ 	 };
+
+  	const filename = overlayMap[rating];
+ 	 if (filename) {
+  	  const path = `assets/webm/${rating}/${encodeURIComponent(filename)}`;
+	
+   	 if (overlayEl.getAttribute('src') !== path) {
+   	   overlayEl.src = path;
+   	   try { overlayEl.load(); } catch (e) { /* ignore */ }
+ 	   }
+ 	 } else {
+  	  // limpar overlay se não houver arquivo para esse rating
+  	  try { overlayEl.pause(); } catch (_) {}
+  	  try { overlayEl.currentTime = 0; } catch (_) {}
+  	  overlayEl.removeAttribute('src');
+ 	 }
+	}
         } else {
             ageRatingSection.classList.remove('visible');
         }
