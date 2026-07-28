@@ -12,12 +12,13 @@
 
   // Age rating image URLs mapping
   const AGE_RATING_IMAGES = {
-    'L': 'https://upload.wikimedia.org/wikipedia/commons/a/a7/Classifica%C3%A7%C3%A3o_Indicativa_Livre.svg',
-    '10': 'https://upload.wikimedia.org/wikipedia/commons/9/92/Classifica%C3%A7%C3%A3o_Indicativa_10_anos.svg',
-    '12': 'https://upload.wikimedia.org/wikipedia/commons/6/60/Classifica%C3%A7%C3%A3o_Indicativa_12_anos.svg',
-    '14': 'https://upload.wikimedia.org/wikipedia/commons/3/35/Classifica%C3%A7%C3%A3o_Indicativa_14_anos.svg',
-    '16': 'https://upload.wikimedia.org/wikipedia/commons/f/fc/Classifica%C3%A7%C3%A3o_Indicativa_16_anos.svg',
-    '18': 'https://files.catbox.moe/anym1r.png'
+    'L': 'https://raw.githubusercontent.com/jonarasgames/AniVerse/7012ea675089ee7c2ecf5bab6de15349e8d9c195/images/Livre.svg',
+    '6': 'https://raw.githubusercontent.com/jonarasgames/AniVerse/7012ea675089ee7c2ecf5bab6de15349e8d9c195/images/6.svg'
+    '10': 'https://raw.githubusercontent.com/jonarasgames/AniVerse/7012ea675089ee7c2ecf5bab6de15349e8d9c195/images/10.svg',
+    '12': 'https://raw.githubusercontent.com/jonarasgames/AniVerse/7012ea675089ee7c2ecf5bab6de15349e8d9c195/images/12.svg',
+    '14': 'https://raw.githubusercontent.com/jonarasgames/AniVerse/7012ea675089ee7c2ecf5bab6de15349e8d9c195/images/14.svg',
+    '16': 'https://raw.githubusercontent.com/jonarasgames/AniVerse/7012ea675089ee7c2ecf5bab6de15349e8d9c195/images/16.svg',
+    '18': 'https://raw.githubusercontent.com/jonarasgames/AniVerse/7012ea675089ee7c2ecf5bab6de15349e8d9c195/images/18.svg'
   };
 
   // Helper function to get age rating badge HTML
