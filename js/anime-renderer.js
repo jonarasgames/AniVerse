@@ -12,13 +12,12 @@
 
   // Age rating image URLs mapping
   const AGE_RATING_IMAGES = {
-    'L': 'https://media.discordapp.net/attachments/1414839380685885510/1531666654331670625/xb49hz2.png?ex=6a6a0b3b&is=6a68b9bb&hm=b8ae2734c9e73e65382d74977fff0b8ce5eb3fe8b71ec8b1d27865c8f20befdf&=&format=webp&quality=lossless&width=384&height=384',
-    '6': 'https://media.discordapp.net/attachments/1414839380685885510/1531666651928592585/x2n67kn.png?ex=6a6a0b3a&is=6a68b9ba&hm=05e60f082b0284d136492d765543e79839db1305ca87b834f90a0f518df8e280&=&format=webp&quality=lossless&width=384&height=384'
-    '10': 'https://media.discordapp.net/attachments/1414839380685885510/1531666652301889577/srbz961.png?ex=6a6a0b3a&is=6a68b9ba&hm=003e674894a5749d401045e4e57f1dcd31e2771a0bb285bdc4475a8b45af34fa&=&format=webp&quality=lossless&width=384&height=384',
-    '12': 'https://media.discordapp.net/attachments/1414839380685885510/1531666652666663064/bshf143.png?ex=6a6a0b3a&is=6a68b9ba&hm=ce0144414e9a114bc3dc506c9458b061ea61b468701ad36c2f334abe7b281daf&=&format=webp&quality=lossless&width=384&height=384',
-    '14': 'https://media.discordapp.net/attachments/1414839380685885510/1531666653077835816/x9b0j2m.png?ex=6a6a0b3b&is=6a68b9bb&hm=60aaf19fb0996d3e809310369997db9053a60e1e0a19603d6f0f86b8a8072357&=&format=webp&quality=lossless&width=384&height=384',
-    '16': 'https://media.discordapp.net/attachments/1414839380685885510/1531666653404987574/w7zxxrq.png?ex=6a6a0b3b&is=6a68b9bb&hm=f653939933eda4d7ec50c7891cff7c7c07479d4d62a4ab6cd2451eda6eb3bea1&=&format=webp&quality=lossless&width=384&height=384',
-    '18': 'https://media.discordapp.net/attachments/1414839380685885510/1531666653899788480/km5dd0w.png?ex=6a6a0b3b&is=6a68b9bb&hm=5a0877c17c8e275c226dbc736a62f4e03d905bf1ba0525f6d2c2fda224a28c06&=&format=webp&quality=lossless&width=384&height=384'
+    'L': 'https://upload.wikimedia.org/wikipedia/commons/a/a7/Classifica%C3%A7%C3%A3o_Indicativa_Livre.svg',
+    '10': 'https://upload.wikimedia.org/wikipedia/commons/9/92/Classifica%C3%A7%C3%A3o_Indicativa_10_anos.svg',
+    '12': 'https://upload.wikimedia.org/wikipedia/commons/6/60/Classifica%C3%A7%C3%A3o_Indicativa_12_anos.svg',
+    '14': 'https://upload.wikimedia.org/wikipedia/commons/3/35/Classifica%C3%A7%C3%A3o_Indicativa_14_anos.svg',
+    '16': 'https://upload.wikimedia.org/wikipedia/commons/f/fc/Classifica%C3%A7%C3%A3o_Indicativa_16_anos.svg',
+    '18': 'https://files.catbox.moe/anym1r.png'
   };
 
   // Helper function to get age rating badge HTML
