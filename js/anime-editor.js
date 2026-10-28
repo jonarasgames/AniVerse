@@ -178,6 +178,7 @@
         <label>Título <input type="text" class="episode-field" data-field="title" value="${toText(episode?.title)}"></label>
         <label>Duração <input type="text" class="episode-field" data-field="duration" value="${toText(episode?.duration)}"></label>
         <label>Vídeo URL <input type="text" class="episode-field" data-field="videoUrl" value="${toText(episode?.videoUrl)}"></label>
+        <label>Imagem de prévia <input type="text" class="episode-field" data-field="thumbnail" value="${toText(episode?.thumbnail)}" placeholder="images/episodes/anime/1.jpg"></label>
         <label>Opening início (s) <input type="number" min="0" step="1" class="episode-field" data-field="openingStart" value="${toText(episode?.opening?.start)}"></label>
         <label>Opening fim (s) <input type="number" min="0" step="1" class="episode-field" data-field="openingEnd" value="${toText(episode?.opening?.end)}"></label>
         <label>Ending início (s) <input type="number" min="0" step="1" class="episode-field" data-field="endingStart" value="${toText(episode?.ending?.start)}"></label>
@@ -195,6 +196,7 @@
         ep.title = row.querySelector('[data-field="title"]')?.value || '';
         ep.duration = row.querySelector('[data-field="duration"]')?.value || '';
         ep.videoUrl = row.querySelector('[data-field="videoUrl"]')?.value || '';
+        ep.thumbnail = row.querySelector('[data-field="thumbnail"]')?.value?.trim() || '';
         const opening = getEpisodeTimingFromRow(row, 'opening');
         const ending = getEpisodeTimingFromRow(row, 'ending');
         if (opening) ep.opening = opening;
@@ -498,9 +500,9 @@
       id: Date.now(),
       title: 'Novo Anime',
       description: '',
-      thumbnail: 'images/bg-default.jpg',
-      cover: 'images/bg-default.jpg',
-      banner: 'images/bg-default.jpg',
+      thumbnail: 'images/bg-default.png',
+      cover: 'images/bg-default.png',
+      banner: 'images/bg-default.png',
       trailer: '',
       type: 'anime',
       dateAdded: new Date().toISOString(),

@@ -70,7 +70,7 @@ class AnimeDatabase {
                             title: op.title || `Opening ${anime.title}`,
                             artist: op.artist || "Artista Desconhecido",
                             anime: anime.title,
-                            cover: op.cover || anime.thumbnail || 'images/bg-default.jpg',
+                            cover: op.cover || anime.thumbnail || 'images/bg-default.png',
                             audio: op.audio,
                             type: "opening"
                         });
@@ -86,7 +86,7 @@ class AnimeDatabase {
                             title: ed.title || `Ending ${anime.title}`,
                             artist: ed.artist || "Artista Desconhecido",
                             anime: anime.title,
-                            cover: ed.cover || anime.thumbnail || 'images/bg-default.jpg',
+                            cover: ed.cover || anime.thumbnail || 'images/bg-default.png',
                             audio: ed.audio,
                             type: "ending"
                         });
@@ -100,7 +100,7 @@ class AnimeDatabase {
                     if (!this.musicLibrary.osts[albumName]) {
                         this.musicLibrary.osts[albumName] = {
                             year: albumData.year || "",
-                            cover: albumData.cover || anime.thumbnail || 'images/bg-default.jpg',
+                            cover: albumData.cover || anime.thumbnail || 'images/bg-default.png',
                             tracks: []
                         };
                     }
@@ -267,7 +267,7 @@ class AnimeDatabase {
             return {
                 id: id,
                 title: this.customVideos[id].title || "Vídeo Customizado",
-                thumbnail: "images/bg-default.jpg",
+                thumbnail: "images/bg-default.png",
                 description: "Vídeo adicionado manualmente",
                 type: "custom",
                 seasons: [{
@@ -445,5 +445,5 @@ window.addEventListener('animeDataLoaded', () => {
     if (typeof loadFullCatalog === 'function') loadFullCatalog();
 });
 
-// Cria e exporta a instância global
-window.animeDB = new AnimeDatabase();
+// Share one database with legacy callers and the window-based renderer.
+window.animeDB = animeDB;

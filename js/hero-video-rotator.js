@@ -11,76 +11,80 @@
 
   const ROTATE_INTERVAL = 9000;
 
-  function createVideoLayer(src) {
-    const container = document.createElement('div');
-    container.className = 'hero-video-container';
-    Object.assign(container.style, {
-      position: 'absolute',
-      inset: '0',
-      zIndex: '0',
-      opacity: '0',
-      transition: 'opacity 900ms ease'
-    });
-
-    const video = document.createElement('video');
-    video.className = 'hero-video-layer';
-    video.src = src;
-    video.autoplay = true;
-    video.muted = true;
-    video.loop = true;
-    video.playsInline = true;
-    video.preload = 'metadata';
-    video.controls = false;
-    video.defaultMuted = true;
-    video.setAttribute('muted', 'muted');
-
-    container.appendChild(video);
-    return { container, video };
-  }
-
-  function swapSource(layerObj, src) {
-    const { video } = layerObj;
-    if (!video) return;
-    video.pause();
-    video.src = src;
-    video.load();
-    video.play().catch(() => {});
-  }
-
   function init() {
     const hero = document.querySelector('.hero');
     if (!hero) return;
-
-    const layerA = createVideoLayer(HERO_VIDEO_URLS[0]);
-    const layerB = createVideoLayer(HERO_VIDEO_URLS[1]);
-
-    hero.appendChild(layerA.container);
-    hero.appendChild(layerB.container);
-
-    layerA.video.play().catch(() => {});
-
-    let currentIndex = 0;
-    let showingA = true;
-
-    setTimeout(() => {
-      layerA.container.style.opacity = '1';
-    }, 120);
-
-    function rotate() {
-      const nextIndex = (currentIndex + 1) % HERO_VIDEO_URLS.length;
-      const nextLayer = showingA ? layerB : layerA;
-      const currentLayer = showingA ? layerA : layerB;
-
-      swapSource(nextLayer, HERO_VIDEO_URLS[nextIndex]);
-      nextLayer.container.style.opacity = '1';
-      currentLayer.container.style.opacity = '0';
-
-      currentIndex = nextIndex;
-      showingA = !showingA;
+    const connection = navigator.connection;
+    if (connection?.saveData || /(^|-)2g$/.test(connection?.effectiveType || '') ||
+        localStorage.getItem('aniversePerformanceMode') === '1' ||
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      hero.classList.add('hero-static-fallback');
+      return;
     }
 
-    const intervalId = setInterval(rotate, ROTATE_INTERVAL);
-    window.addEventListener('beforeunload', () => clearInterval(intervalId));
+    // Only one decorative stream is active. Start after the page resources load.
+    const container = document.createElement('div');
+    container.className = 'hero-video-container';
+    const video = document.createElement('video');
+    video.className = 'hero-video-layer';
+    video.muted = true;
+    video.defaultMuted = true;
+    video.loop = true;
+    video.playsInline = true;
+    video.preload = 'none';
+    container.appendChild(video);
+    hero.appendChild(container);
+
+    let visible = false;
+    let pageReady = document.readyState === 'complete';
+    let index = 0;
+    let intervalId = null;
+    const modal = document.getElementById('video-modal');
+    const player = document.getElementById('anime-player');
+
+    function syncPlayback() {
+      const modalOpen = modal && getComputedStyle(modal).display !== 'none';
+      const shouldPlay = pageReady && visible && !document.hidden && !modalOpen && !(player && !player.paused);
+      if (!shouldPlay) {
+        clearInterval(intervalId);
+        intervalId = null;
+        video.pause();
+        if (video.hasAttribute('src')) {
+          video.removeAttribute('src');
+          video.load();
+        }
+        return;
+      }
+      if (!video.hasAttribute('src')) video.src = HERO_VIDEO_URLS[index];
+      video.play().catch(() => {});
+      if (!intervalId) intervalId = setInterval(() => {
+        index = (index + 1) % HERO_VIDEO_URLS.length;
+        video.src = HERO_VIDEO_URLS[index];
+        video.play().catch(() => {});
+      }, ROTATE_INTERVAL);
+    }
+
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(entries => {
+        visible = entries[0].isIntersecting;
+        syncPlayback();
+      }).observe(hero);
+    } else {
+      visible = true;
+    }
+    if (modal) new MutationObserver(syncPlayback).observe(modal, { attributes: true, attributeFilter: ['style', 'class'] });
+    if (player) {
+      player.addEventListener('play', syncPlayback);
+      player.addEventListener('pause', syncPlayback);
+    }
+    document.addEventListener('visibilitychange', syncPlayback);
+    window.addEventListener('load', () => { pageReady = true; syncPlayback(); }, { once: true });
+    window.addEventListener('pagehide', () => { visible = false; syncPlayback(); });
+    window.addEventListener('pageshow', () => {
+      visible = hero.getClientRects().length > 0 && hero.getBoundingClientRect().bottom > 0 && hero.getBoundingClientRect().top < innerHeight;
+      syncPlayback();
+    });
+    syncPlayback();
   }
 
   if (document.readyState === 'loading') {

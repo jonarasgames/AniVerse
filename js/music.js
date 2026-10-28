@@ -266,16 +266,7 @@
     function getMusicAudio() {
         if (musicPlayerInstance) return musicPlayerInstance;
         
-        // Remove any existing audio elements except ours
-        document.querySelectorAll('audio').forEach(el => {
-            if (el.id !== 'music-playing-audio') {
-                try {
-                    el.pause();
-                    el.remove();
-                } catch(e) {}
-            }
-        });
-        
+        // Reuse the music element; achievement and maintenance audio belong to their own features.
         let audio = document.getElementById('music-playing-audio');
         if (!audio) {
             audio = document.createElement('audio');
@@ -390,7 +381,7 @@
         document.getElementById('mini-close').addEventListener('click', closeMiniPlayer);
         document.getElementById('mini-music-fullscreen').addEventListener('click', openMusicFullscreen);
         miniPlayer.addEventListener('click', (event) => {
-            if (!event.target.closest('button')) {
+            if (!event.defaultPrevented && !event.target.closest('button, input, select, a, [role="slider"], .mini-volume-container, .mini-player-progress-container')) {
                 openMusicFullscreen();
             }
         });
@@ -413,24 +404,51 @@
         
         // VOLUME SLIDER
         const volumeSlider = document.getElementById('mini-volume-slider');
-        volumeSlider.addEventListener('click', (e) => {
+        volumeSlider.setAttribute('role', 'slider');
+        volumeSlider.setAttribute('aria-label', 'Volume da música');
+        volumeSlider.setAttribute('aria-valuemin', '0');
+        volumeSlider.setAttribute('aria-valuemax', '100');
+        volumeSlider.tabIndex = 0;
+        let volumePointer = null;
+        const setVolumeFromPointer = (event) => {
             if (!audio) return;
             const rect = volumeSlider.getBoundingClientRect();
-            const percent = (e.clientX - rect.left) / rect.width;
-            audio.volume = Math.max(0, Math.min(1, percent));
+            if (rect.width <= 0) return;
+            audio.volume = Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width));
             audio.muted = false;
             updateMusicVolume();
-            // Save volume preference
-            localStorage.setItem('musicVolume', audio.volume.toString());
+        };
+        volumeSlider.addEventListener('click', (e) => {
+            e.stopPropagation();
+            setVolumeFromPointer(e);
+        });
+        volumeSlider.addEventListener('pointerdown', event => {
+            if (event.button !== 0) return;
+            event.stopPropagation();
+            volumePointer = event.pointerId;
+            volumeSlider.setPointerCapture(event.pointerId);
+            setVolumeFromPointer(event);
+        });
+        volumeSlider.addEventListener('pointermove', event => {
+            if (volumePointer === event.pointerId) setVolumeFromPointer(event);
+        });
+        ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(type => volumeSlider.addEventListener(type, () => { volumePointer = null; }));
+        volumeSlider.addEventListener('keydown', event => {
+            if (!['ArrowLeft', 'ArrowRight', 'ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) return;
+            event.preventDefault(); event.stopPropagation();
+            audio.volume = event.key === 'Home' ? 0 : event.key === 'End' ? 1 : Math.max(0, Math.min(1, audio.volume + (['ArrowUp', 'ArrowRight'].includes(event.key) ? .05 : -.05)));
+            audio.muted = false;
+            updateMusicVolume();
         });
         
         // BARRA DE PROGRESSO CLICÁVEL
         const progressContainer = document.getElementById('music-progress-container');
         progressContainer.addEventListener('click', (e) => {
-            if (!audio) return;
+            e.stopPropagation();
+            if (!audio || !Number.isFinite(audio.duration) || audio.duration <= 0) return;
             const rect = progressContainer.getBoundingClientRect();
             const percent = (e.clientX - rect.left) / rect.width;
-            audio.currentTime = percent * audio.duration;
+            audio.currentTime = Math.max(0, Math.min(1, percent)) * audio.duration;
         });
         
         // Update play/pause icon based on audio state
@@ -529,6 +547,11 @@
         
         if (volumeFill) {
             volumeFill.style.width = (audio.volume * 100) + '%';
+        }
+        const volumeSlider = document.getElementById('mini-volume-slider');
+        if (volumeSlider) {
+            volumeSlider.setAttribute('aria-valuenow', String(Math.round(audio.volume * 100)));
+            volumeSlider.setAttribute('aria-valuetext', audio.muted ? 'Sem som' : `${Math.round(audio.volume * 100)}%`);
         }
         
         if (volumeBtn) {
@@ -631,7 +654,7 @@
         const miniTitle = document.getElementById('mini-player-title');
         const miniArtist = document.getElementById('mini-player-artist');
         if (miniThumb) {
-            miniThumb.onerror = () => { miniThumb.src = 'images/bg-default.jpg'; };
+            miniThumb.onerror = () => { miniThumb.src = 'images/bg-default.png'; };
             miniThumb.src = thumb;
         }
         if (miniTitle) miniTitle.textContent = title;
@@ -642,7 +665,7 @@
         const fsArtist = document.getElementById('music-fs-artist');
         const fsBg = document.getElementById('music-fs-bg');
         if (fsThumb) {
-            fsThumb.onerror = () => { fsThumb.src = 'images/bg-default.jpg'; };
+            fsThumb.onerror = () => { fsThumb.src = 'images/bg-default.png'; };
             fsThumb.src = thumb;
         }
         if (fsTitle) fsTitle.textContent = title;
@@ -655,7 +678,7 @@
 
     function normalizeTrackArtwork(thumb) {
         const value = String(thumb || '').trim();
-        return value || 'images/bg-default.jpg';
+        return value || 'images/bg-default.png';
     }
 
     function setupMediaSessionHandlers() {
@@ -678,6 +701,8 @@
         }
     }
     
+    let fullscreenPreviousOverflow = '';
+    let fullscreenSeekGesture = null;
     function openMusicFullscreen() {
         if (!currentMusicData) return;
         
@@ -692,46 +717,28 @@
             fullscreenModal.className = 'music-fullscreen-modal';
             fullscreenModal.innerHTML = `
                 <div class="music-fullscreen-bg" id="music-fs-bg"></div>
-                <button class="music-fs-close" id="music-fs-close-btn">
-                    <i class="fas fa-chevron-down"></i>
-                </button>
-                <div class="music-fullscreen-content">
-                    <div class="music-fs-artwork">
-                        <img src="" alt="Album Art" id="music-fs-thumb">
-                    </div>
-                    <div class="music-fs-info">
-                        <h2 id="music-fs-title">Título</h2>
-                        <p id="music-fs-artist">Artista</p>
-                    </div>
-                    <div class="music-fs-progress-container" id="music-fs-progress-container">
-                        <div class="music-fs-time">
-                            <span id="music-fs-current">0:00</span>
-                            <span id="music-fs-duration">0:00</span>
-                        </div>
-                        <div class="music-fs-progress-bar">
-                            <div class="music-fs-progress-fill" id="music-fs-progress-fill"></div>
-                        </div>
-                    </div>
-                    <div class="music-fs-controls">
-                        <button class="music-fs-control-btn" id="music-fs-prev" aria-label="Faixa anterior">
-                            <i class="fas fa-step-backward"></i>
-                        </button>
-                        <button class="music-fs-control-btn" id="music-fs-play-pause" aria-label="Reproduzir/Pausar">
-                            <i class="fas fa-pause"></i>
-                        </button>
-                        <button class="music-fs-control-btn" id="music-fs-next" aria-label="Próxima faixa">
-                            <i class="fas fa-step-forward"></i>
-                        </button>
-                        <button class="music-fs-control-btn" id="music-fs-download" aria-label="Baixar música">
-                            <i class="fas fa-download"></i>
-                        </button>
-                    </div>
-                </div>
-            `;
+                <button class="music-fs-close" id="music-fs-close-btn" aria-label="Fechar player"><i class="fas fa-chevron-down"></i></button>
+                <main class="music-fullscreen-content">
+                    <div class="music-fs-artwork"><img src="" alt="Capa do álbum" id="music-fs-thumb" decoding="async"></div>
+                    <section class="music-fs-details"><p class="music-fs-eyebrow">TOCANDO AGORA</p><h2 id="music-fs-title">Título</h2><p id="music-fs-artist">Artista</p>
+                        <div class="music-fs-progress-container" id="music-fs-progress-container"><div class="music-fs-progress-bar" role="slider" tabindex="0" aria-label="Posição da música" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="music-fs-progress-fill" id="music-fs-progress-fill"></div></div><div class="music-fs-time"><span id="music-fs-current">0:00</span><span id="music-fs-duration">0:00</span></div></div>
+                        <div class="music-fs-controls"><button class="music-fs-control-btn" id="music-fs-download" aria-label="Baixar música"><i class="fas fa-download"></i></button><button class="music-fs-control-btn" id="music-fs-prev" aria-label="Faixa anterior"><i class="fas fa-backward-step"></i></button><button class="music-fs-control-btn primary" id="music-fs-play-pause" aria-label="Reproduzir ou pausar"><i class="fas fa-pause"></i></button><button class="music-fs-control-btn" id="music-fs-next" aria-label="Próxima faixa"><i class="fas fa-forward-step"></i></button></div>
+                    </section>
+                </main>`;
             document.body.appendChild(fullscreenModal);
+            fullscreenModal.setAttribute('aria-hidden', 'true');
             
             // Event listeners
             document.getElementById('music-fs-close-btn').addEventListener('click', closeMusicFullscreen);
+            fullscreenModal.addEventListener('click', event => {
+                if (event.target === fullscreenModal) closeMusicFullscreen();
+            });
+            fullscreenModal.addEventListener('keydown', event => {
+                if (event.key === 'Escape') {
+                    event.preventDefault();
+                    closeMusicFullscreen();
+                }
+            });
             document.getElementById('music-fs-play-pause').addEventListener('click', togglePlayPause);
             document.getElementById('music-fs-prev').addEventListener('click', playPreviousTrack);
             document.getElementById('music-fs-next').addEventListener('click', playNextTrack);
@@ -742,12 +749,41 @@
             });
             
             const fsProgressContainer = document.getElementById('music-fs-progress-container');
-            fsProgressContainer.addEventListener('click', (e) => {
-                if (!audio) return;
-                const progressBar = e.currentTarget.querySelector('.music-fs-progress-bar');
-                const rect = progressBar.getBoundingClientRect();
-                const percent = (e.clientX - rect.left) / rect.width;
-                audio.currentTime = percent * audio.duration;
+            const seekBar = fsProgressContainer.querySelector('[role="slider"]');
+            const previewSeek = event => {
+                if (!fullscreenSeekGesture || event.pointerId !== fullscreenSeekGesture.pointerId) return;
+                const rect = seekBar.getBoundingClientRect();
+                if (!rect.width) return;
+                const percent = Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width));
+                fullscreenSeekGesture.time = percent * audio.duration;
+                document.getElementById('music-fs-progress-fill').style.width = `${percent * 100}%`;
+                document.getElementById('music-fs-current').textContent = formatTime(fullscreenSeekGesture.time);
+                seekBar.setAttribute('aria-valuenow', String(Math.round(percent * 100)));
+            };
+            seekBar.addEventListener('pointerdown', event => {
+                if (event.button !== 0 || !Number.isFinite(audio.duration) || audio.duration <= 0) return;
+                event.preventDefault();
+                fullscreenSeekGesture = { pointerId: event.pointerId, time: audio.currentTime };
+                seekBar.setPointerCapture(event.pointerId);
+                previewSeek(event);
+            });
+            seekBar.addEventListener('pointermove', previewSeek);
+            seekBar.addEventListener('pointerup', event => {
+                if (fullscreenSeekGesture?.pointerId !== event.pointerId) return;
+                previewSeek(event);
+                audio.currentTime = fullscreenSeekGesture.time;
+                fullscreenSeekGesture = null;
+                seekBar.releasePointerCapture(event.pointerId);
+                updateFullscreenProgress();
+            });
+            const cancelSeek = () => { fullscreenSeekGesture = null; updateFullscreenProgress(); };
+            seekBar.addEventListener('pointercancel', cancelSeek);
+            seekBar.addEventListener('lostpointercapture', cancelSeek);
+            fsProgressContainer.querySelector('[role="slider"]').addEventListener('keydown', event => {
+                if (!Number.isFinite(audio.duration) || audio.duration <= 0) return;
+                if (!['ArrowLeft','ArrowRight','Home','End'].includes(event.key)) return;
+                event.preventDefault();
+                audio.currentTime = event.key === 'Home' ? 0 : event.key === 'End' ? audio.duration : Math.max(0, Math.min(audio.duration, audio.currentTime + (event.key === 'ArrowRight' ? 5 : -5)));
             });
             
             if (audio) {
@@ -763,19 +799,29 @@
         // Atualizar botão play/pause
         updateFullscreenPlayPauseIcon();
         
+        if (!fullscreenModal.classList.contains('visible')) fullscreenPreviousOverflow = document.body.style.overflow;
         fullscreenModal.classList.add('visible');
+        fullscreenModal.setAttribute('aria-modal', 'true');
+        fullscreenModal.setAttribute('role', 'dialog');
+        fullscreenModal.setAttribute('aria-hidden', 'false');
         document.body.style.overflow = 'hidden';
+        document.getElementById('music-fs-close-btn')?.focus();
     }
     
     function closeMusicFullscreen() {
+        fullscreenSeekGesture = null;
         const fullscreenModal = document.getElementById('music-fullscreen-modal');
         if (fullscreenModal) {
             fullscreenModal.classList.remove('visible');
-            document.body.style.overflow = '';
+            fullscreenModal.removeAttribute('aria-modal');
+            fullscreenModal.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = fullscreenPreviousOverflow;
+            document.getElementById('mini-music-fullscreen')?.focus({ preventScroll: true });
         }
     }
     
     function updateFullscreenProgress() {
+        if (fullscreenSeekGesture) return;
         const audio = getMusicAudio();
         if (!audio) return;
         
@@ -786,6 +832,7 @@
         if (fill && audio.duration) {
             const percent = (audio.currentTime / audio.duration) * 100;
             fill.style.width = percent + '%';
+            document.querySelector('#music-fs-progress-container [role="slider"]')?.setAttribute('aria-valuenow', String(Math.round(percent)));
         }
         
         if (currentEl) {
@@ -871,6 +918,7 @@
         while (audio.firstChild) audio.removeChild(audio.firstChild);
         audio.load();
         currentMusicData = null;
+        document.getElementById('music-error-container')?.remove();
         
         const miniPlayer = document.getElementById('music-mini-player');
         if (miniPlayer) {
@@ -885,6 +933,9 @@
         const fullscreenModal = document.getElementById('music-fullscreen-modal');
         if (fullscreenModal) {
             fullscreenModal.classList.remove('visible');
+            fullscreenModal.removeAttribute('aria-modal');
+            fullscreenModal.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = fullscreenPreviousOverflow;
         }
     }
     
@@ -923,6 +974,7 @@
         miniPlayer.classList.remove('hidden');
 
         const diagnostics = await probeMusicUrl(src);
+        if (!currentMusicData || currentMusicData.src !== src) return;
         if (!diagnostics.ok) {
             showMusicError(diagnostics.userMessage || 'URL da música inválida.');
             return;
@@ -938,6 +990,7 @@
         
         // Timeout for loading
         const loadTimeout = setTimeout(() => {
+            if (!currentMusicData || currentMusicData.src !== src) return;
             if (audio.readyState < 2 && audio.paused) {
                 showMusicError('Tempo de carregamento excedido. Tente novamente.');
             }
@@ -950,6 +1003,7 @@
 
         const onPlaybackError = () => {
             clearLoadTimeout();
+            if (!currentMusicData || currentMusicData.src !== src || !audio.getAttribute('src')) return;
             const mediaError = audio.error;
             let playbackError = null;
             if (mediaError?.code === MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED) {
@@ -967,10 +1021,11 @@
         
         let playbackStarted = false;
         const startPlayback = () => {
-            if (playbackStarted) return;
+            if (playbackStarted || !currentMusicData || currentMusicData.src !== src) return;
             playbackStarted = true;
             audio.play().catch(err => {
                 clearTimeout(loadTimeout);
+                if (!currentMusicData || currentMusicData.src !== src || err.name === 'AbortError') return;
                 console.error('Play failed:', err);
                 showMusicError(messageForPlaybackFailure(err, diagnostics));
             });
@@ -1092,11 +1147,11 @@
                 card.dataset.src = track.audio;
                 card.dataset.title = track.title;
                 card.dataset.artist = track.artist || animeTitle;
-                card.dataset.thumb = track.cover || 'images/bg-default.jpg';
+                card.dataset.thumb = track.cover || 'images/bg-default.png';
                 
                 card.innerHTML = `
                     <div class="music-cover">
-                        <img src="${track.cover || 'images/bg-default.jpg'}" alt="${track.title}">
+                        <img src="${track.cover || 'images/bg-default.png'}" alt="${track.title}" loading="lazy" decoding="async">
                         <div class="music-play-overlay">
                             <i class="fas fa-play"></i>
                         </div>

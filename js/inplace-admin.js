@@ -311,12 +311,13 @@
         const opEnd = Number(ep?.opening?.end ?? 0);
         const edStart = Number(ep?.ending?.start ?? 0);
         const edEnd = Number(ep?.ending?.end ?? 0);
-        const epExtras = collectExtraPairs(ep, ['title', 'duration', 'videoUrl', 'opening', 'ending']);
+        const epExtras = collectExtraPairs(ep, ['title', 'duration', 'videoUrl', 'thumbnail', 'opening', 'ending']);
         return `
         <div class="inplace-episode" data-s="${sIdx}" data-e="${eIdx}">
           <input data-ep="title" placeholder="Título" value="${escAttr(ep?.title)}">
           <input data-ep="duration" placeholder="Duração" value="${escAttr(timeToHMS(ep?.duration || 0))}" readonly>
           <input data-ep="videoUrl" placeholder="URL do vídeo" value="${escAttr(ep?.videoUrl)}">
+          <input data-ep="thumbnail" placeholder="Imagem de prévia do episódio (URL ou images/...)" value="${escAttr(ep?.thumbnail)}">
           <input data-ep="openingStart" placeholder="Abertura início (segundos)" inputmode="numeric" value="${escAttr(opStart)}">
           <input data-ep="openingEnd" placeholder="Abertura fim (segundos)" inputmode="numeric" value="${escAttr(opEnd)}">
           <input data-ep="endingStart" placeholder="Ending início (segundos)" inputmode="numeric" value="${escAttr(edStart)}">
@@ -511,7 +512,7 @@
     card.innerHTML = `
       <div class="inplace-edit">
         <div class="inplace-preview">
-          <img class="inplace-preview-image" src="${escAttr(anime.thumbnail || anime.cover || 'images/bg-default.jpg')}" alt="preview">
+          <img class="inplace-preview-image" src="${escAttr(anime.thumbnail || anime.cover || 'images/bg-default.png')}" alt="preview">
           <video class="inplace-preview-video" controls muted playsinline style="display:none"></video>
           <audio class="inplace-preview-audio" controls style="display:none"></audio>
         </div>
@@ -693,6 +694,7 @@
         target.title = row.querySelector('input[data-ep="title"]')?.value || '';
         target.duration = parseTimeToSeconds(row.querySelector('input[data-ep="duration"]')?.value || 0);
         target.videoUrl = row.querySelector('input[data-ep="videoUrl"]')?.value || '';
+        target.thumbnail = row.querySelector('input[data-ep="thumbnail"]')?.value?.trim() || '';
         const opStart = parseTimeToSeconds(row.querySelector('input[data-ep="openingStart"]')?.value || 0);
         const opEnd = parseTimeToSeconds(row.querySelector('input[data-ep="openingEnd"]')?.value || 0);
         const edStart = parseTimeToSeconds(row.querySelector('input[data-ep="endingStart"]')?.value || 0);
@@ -772,7 +774,7 @@
       e.stopPropagation();
       enterEditMode(card, {
         id: '',
-        title: '', description: '', thumbnail: 'images/bg-default.jpg', cover: 'images/bg-default.jpg', banner: '', trailer: '',
+        title: '', description: '', thumbnail: 'images/bg-default.png', cover: 'images/bg-default.png', banner: '', trailer: '',
         type: 'anime', year: '', rating: '', dateAdded: new Date().toISOString(), rating_age: '14', rating_content: [],
         categories: [], openings: [], endings: [], osts: [], seasons: [{ number: 1, episodes: [] }]
       }, true);
@@ -821,8 +823,8 @@
       id: Date.now(),
       title: `Novo ${type.toUpperCase()}`,
       description: '',
-      thumbnail: 'images/bg-default.jpg',
-      cover: 'images/bg-default.jpg',
+      thumbnail: 'images/bg-default.png',
+      cover: 'images/bg-default.png',
       banner: '', trailer: '',
       type,
       year: '', rating: '',

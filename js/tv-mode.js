@@ -72,7 +72,8 @@
         const noHover = window.matchMedia('(hover: none)').matches;
         const coarsePointer = window.matchMedia('(pointer: coarse)').matches;
         const largeDisplay = Math.max(window.screen?.width || 0, window.screen?.height || 0) >= 1200;
-        return noHover && coarsePointer && largeDisplay;
+        const touchless = Number(navigator.maxTouchPoints || 0) === 0;
+        return touchless && noHover && coarsePointer && largeDisplay;
       } catch (_) {
         return false;
       }
@@ -1117,7 +1118,7 @@
       : (window.animeDB?.getAnimesByType?.(anime.type) || []).filter((item) => Number(item.id) !== Number(anime.id)).slice(0, 12);
 
     shell.innerHTML = `
-      <div class="tv-details-hero" style="background-image: linear-gradient(90deg, rgba(7,9,18,.76), rgba(7,9,18,.2)), url('${escapeHtml(anime.banner || anime.cover || anime.thumbnail || 'images/bg-default.jpg')}'); background-size: cover; background-position: center;">
+      <div class="tv-details-hero" style="background-image: linear-gradient(90deg, rgba(7,9,18,.76), rgba(7,9,18,.2)), url('${escapeHtml(anime.banner || anime.cover || anime.thumbnail || 'images/bg-default.png')}'); background-size: cover; background-position: center;">
         <div class="tv-details-copy">
           <span class="tv-details-logo">AniVerse TV</span>
           <h2 class="tv-details-title">${escapeHtml(anime.title || anime.name || 'Sem título')}</h2>
@@ -1135,7 +1136,7 @@
           </div>
         </div>
         <div class="tv-details-art">
-          <img src="${escapeHtml(anime.thumbnail || anime.cover || anime.banner || 'images/bg-default.jpg')}" alt="${escapeHtml(anime.title || anime.name || 'Anime')}">
+          <img src="${escapeHtml(anime.thumbnail || anime.cover || anime.banner || 'images/bg-default.png')}" alt="${escapeHtml(anime.title || anime.name || 'Anime')}">
         </div>
       </div>
       <div class="tv-details-sections">
@@ -1150,7 +1151,7 @@
           <div class="tv-episode-strip">
             ${episodes.map((ep, index) => `
               <button class="tv-episode-button tv-focusable" data-tv-action="play" data-season="${season.number}" data-episode="${index}">
-                <img src="${escapeHtml(anime.thumbnail || anime.cover || anime.banner || 'images/bg-default.jpg')}" alt="${escapeHtml(ep.title || `Episódio ${index + 1}`)}">
+                <img src="${escapeHtml(anime.thumbnail || anime.cover || anime.banner || 'images/bg-default.png')}" alt="${escapeHtml(ep.title || `Episódio ${index + 1}`)}">
                 <div class="tv-episode-title">E${index + 1} • ${escapeHtml(ep.title || 'Sem título')}</div>
                 <div class="tv-episode-subtitle">${escapeHtml(ep.duration || 'Duração indisponível')}</div>
               </button>
@@ -1162,7 +1163,7 @@
           <div class="tv-similar-strip">
             ${similar.map((item) => `
               <button class="tv-similar-card tv-focusable" data-tv-similar="${item.id}" data-anime-id="${item.id}">
-                <img src="${escapeHtml(item.thumbnail || item.cover || 'images/bg-default.jpg')}" alt="${escapeHtml(item.title || item.name || 'Anime')}">
+                <img src="${escapeHtml(item.thumbnail || item.cover || 'images/bg-default.png')}" alt="${escapeHtml(item.title || item.name || 'Anime')}">
                 <div class="tv-similar-title">${escapeHtml(item.title || item.name || 'Sem título')}</div>
                 <div class="tv-similar-meta">${escapeHtml((item.type || 'anime').toUpperCase())} • ${escapeHtml(item.year || item.releaseYear || item.ano || 'Sem ano')}</div>
               </button>

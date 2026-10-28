@@ -1,0 +1,42 @@
+/* Compact player: the image and the toolbar occupy separate rows. */
+@media (max-width:1099px) {
+  #video-modal .modal-content { overflow-anchor:none; }
+  #video-player-container #video-info-overlay { display:none; }
+  #video-player-container:not(:fullscreen):not(.is-fullscreen) #custom-video-controls {
+    position:relative; inset:auto; width:100%; box-sizing:border-box;
+    padding:10px 12px; opacity:1 !important; transform:none !important;
+    pointer-events:auto !important; transition:none; border-radius:0;
+    background:#151a27 !important;
+  }
+  #video-player-container:not(:fullscreen):not(.is-fullscreen) #custom-video-controls::before { display:none; }
+  #video-player-container:not(:fullscreen):not(.is-fullscreen) #custom-video-controls .controls-row-secondary {
+    display:flex; justify-content:flex-end !important; flex-wrap:nowrap !important; gap:8px !important;
+  }
+  #video-player-container:not(:fullscreen):not(.is-fullscreen) #custom-video-controls .btn-icon {
+    width:34px; height:34px; min-width:34px; min-height:34px; font-size:.95rem;
+  }
+  #video-player-container:not(:fullscreen):not(.is-fullscreen) #video-tap-zones { bottom:var(--tap-zone-bottom,100px); }
+  #video-player-container:not(:fullscreen):not(.is-fullscreen) .video-loading-overlay { bottom:var(--tap-zone-bottom,100px); }
+  #video-player-container:not(:fullscreen):not(.is-fullscreen).controls-hidden { cursor:auto; }
+}
+@media (max-width:1099px) and (orientation:landscape) {
+  body:not(.tv-mode) #video-modal { padding:6px; }
+  body:not(.tv-mode) #video-modal .modal-content { padding:8px; width:100%; border-radius:12px; }
+  body:not(.tv-mode) #video-modal .episode-media {
+    width:min(100%,calc(82dvh * var(--video-aspect,1.777778) + 44px));
+    max-width:none; padding-right:44px; margin:0 auto; position:relative; box-sizing:border-box;
+  }
+  body:not(.tv-mode) #video-modal .episode-media #video-player-container:not(:fullscreen):not(.is-fullscreen) {
+    width:100%; max-width:100%; margin:0; min-height:0;
+  }
+  body:not(.tv-mode) #video-modal .episode-media #video-player-container:not(:fullscreen):not(.is-fullscreen) #anime-player {
+    height:auto !important; width:100% !important; max-height:none; margin:0;
+  }
+  body:not(.tv-mode) #video-modal .video-banner {
+    height:0 !important; min-height:0; aspect-ratio:auto; background-image:none !important;
+    background-color:transparent; margin:0; padding:0; border:0; overflow:visible;
+  }
+  body:not(.tv-mode) #video-modal .video-banner .video-modal-close {
+    top:0; right:-42px; width:34px; height:34px; z-index:2200;
+  }
+}

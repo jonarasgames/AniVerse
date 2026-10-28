@@ -28,7 +28,6 @@
         btn.className = 'btn btn-secondary';
         btn.title = 'Sugerir anime';
         btn.textContent = 'Sugerir anime';
-        btn.style.marginLeft = '8px';
 
         if (loginBtn && loginBtn.parentNode) {
             loginBtn.parentNode.insertBefore(btn, loginBtn.nextSibling);
@@ -90,7 +89,7 @@
         preview.innerHTML = `
             <div class="avatar-bg" style="background-color: #ff6b6b;">
                 <div class="avatar-layer-bg"></div>
-                <img src="images/bg-default.jpg" alt="Personagem" class="avatar-char" style="object-fit:cover; width:100%; height:100%;">
+                <img src="images/bg-default.png" alt="Personagem" class="avatar-char" style="object-fit:cover; width:100%; height:100%;">
                 <div class="avatar-frame-overlay"></div>
             </div>
             <div>

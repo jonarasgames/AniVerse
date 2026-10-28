@@ -51,7 +51,7 @@
       "id": "days_7",
       "name": "Visitante Frequente",
       "desc": "Abra o AniVerse em 7 dias diferentes.",
-      "icon": "https://cdn-icons-png.flaticon.com/512/3652/3652191.png",
+      "icon": "assets/achievements/streaker.svg",
       "sound": "assets/achievements/sounds/impact_unlock.mp3",
       "type": "days_open_total",
       "goal": 7

@@ -17,51 +17,6 @@
         });
     }
 
-    // Rebind login/profile openers if needed
-    function rebindLoginProfileOpeners() {
-        const loginBtn = document.getElementById('login-btn');
-        const headerAvatar = document.getElementById('header-avatar');
-        
-        if (loginBtn) {
-            // Remove existing listeners and add new one
-            const newLoginBtn = loginBtn.cloneNode(true);
-            loginBtn.parentNode.replaceChild(newLoginBtn, loginBtn);
-            
-            newLoginBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                if (typeof openProfileModal === 'function') {
-                    // Pass active profile data when editing
-                    if (window.profileManager) {
-                        const activeProfile = window.profileManager.getActiveProfile();
-                        openProfileModal(activeProfile);
-                    } else {
-                        openProfileModal();
-                    }
-                } else {
-                    const modal = document.getElementById('profile-modal');
-                    if (modal) modal.style.display = 'block';
-                }
-            });
-        }
-        
-        if (headerAvatar) {
-            headerAvatar.addEventListener('click', function(e) {
-                e.preventDefault();
-                // Avatar click should open profile selection
-                // Fallback chain handles different loading states of profile-multi.js
-                // since scripts load with defer, we need to check function availability
-                if (typeof showProfileSelectionScreen === 'function') {
-                    showProfileSelectionScreen();
-                } else if (typeof openProfileModal === 'function') {
-                    openProfileModal();
-                } else {
-                    const modal = document.getElementById('profile-modal');
-                    if (modal) modal.style.display = 'block';
-                }
-            });
-        }
-    }
-
     // Initialize on DOM ready
     function init() {
         // Wait for animeDB to be loaded
@@ -71,8 +26,7 @@
             window.addEventListener('animeDataLoaded', normalizeThumbnailUrls);
         }
         
-        // Rebind profile openers
-        setTimeout(rebindLoginProfileOpeners, 500);
+        // Profile navigation is owned by profile-multi.js.
     }
 
     if (document.readyState === 'loading') {

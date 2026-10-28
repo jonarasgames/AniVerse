@@ -133,6 +133,7 @@
         };
 
         const recoverFromStall = (reason) => {
+            if (player.paused || player.ended) return;
             const now = Date.now();
             if (stallState.inRecovery) return;
             if (now - stallState.lastAt < 700) return;
@@ -166,7 +167,7 @@
 
             clearRecoveryTimer();
             stallState.timer = setTimeout(() => {
-                player.play().catch(() => {});
+                if (!player.paused && !player.ended) player.play().catch(() => {});
                 stallState.inRecovery = false;
             }, 450);
 
@@ -241,21 +242,10 @@
             }
         });
 
-        // Keep click-to-toggle for non-TV environments only.
-        player.addEventListener('click', function() {
-            if (typeof window.__isTvMode === 'function' && window.__isTvMode()) return;
-            if (player.paused) {
-                player.play().catch(err => {
-                    console.error('Play failed:', err);
-                    showVideoError('Erro ao reproduzir. Tente novamente.');
-                });
-            } else {
-                player.pause();
-            }
-        });
-
         // Keyboard shortcuts for desktop fallback only. TV mode has dedicated remote handling.
         document.addEventListener('keydown', function(e) {
+            if (e.defaultPrevented || e.__aniverseVideoHandled || e.isComposing || e.ctrlKey || e.altKey || e.metaKey) return;
+            if (e.target.closest?.('input, textarea, select, [contenteditable]:not([contenteditable="false"]), #watch-party-panel, .episode-picker')) return;
             if (typeof window.__isTvMode === 'function' && window.__isTvMode()) return;
             const modal = document.getElementById('video-modal');
             if (!modal || (!modal.classList.contains('show') && modal.style.display !== 'flex')) return;

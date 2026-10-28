@@ -2,6 +2,13 @@
 (function(){
   'use strict';
 
+  // Keep a single preview alive, and release it as soon as it leaves the screen.
+  let stopActivePreview = null;
+  const previewObserver = 'IntersectionObserver' in window ? new IntersectionObserver(entries => {
+    if (entries.some(entry => !entry.isIntersecting)) stopActivePreview?.();
+  }) : null;
+  document.addEventListener('visibilitychange', () => { if (document.hidden) stopActivePreview?.(); });
+
   // Helper function to escape HTML and prevent XSS
   function escapeHtml(text) {
     if (!text) return '';
@@ -12,18 +19,18 @@
 
   // Age rating image URLs mapping
   const AGE_RATING_IMAGES = {
-    'L': 'https://raw.githubusercontent.com/jonarasgames/AniVerse/88ff1058f14d494e3f92a4c15108ae348fe7dc5f/images/Livre.svg',
-    '10': 'https://raw.githubusercontent.com/jonarasgames/AniVerse/88ff1058f14d494e3f92a4c15108ae348fe7dc5f/images/10.svg',
-    '12': 'https://raw.githubusercontent.com/jonarasgames/AniVerse/88ff1058f14d494e3f92a4c15108ae348fe7dc5f/images/12.svg',
-    '14': 'https://raw.githubusercontent.com/jonarasgames/AniVerse/88ff1058f14d494e3f92a4c15108ae348fe7dc5f/images/14.svg',
-    '16': 'https://raw.githubusercontent.com/jonarasgames/AniVerse/88ff1058f14d494e3f92a4c15108ae348fe7dc5f/images/16.svg',
-    '18': 'https://raw.githubusercontent.com/jonarasgames/AniVerse/88ff1058f14d494e3f92a4c15108ae348fe7dc5f/images/18.svg'
+    'L': 'images/Livre.svg',
+    '10': 'images/10.svg',
+    '12': 'images/12.svg',
+    '14': 'images/14.svg',
+    '16': 'images/16.svg',
+    '18': 'images/18.svg'
   };
 
   // Helper function to get age rating badge HTML
   function getAgeRatingBadge(ratingAge) {
     if (!ratingAge || !AGE_RATING_IMAGES[ratingAge]) return '';
-    return `<img src="${AGE_RATING_IMAGES[ratingAge]}" alt="Classificação ${ratingAge === 'L' ? 'Livre' : ratingAge + ' anos'}" class="age-rating-badge">`;
+    return `<img src="${AGE_RATING_IMAGES[ratingAge]}" alt="Classificação ${ratingAge === 'L' ? 'Livre' : ratingAge + ' anos'}" class="age-rating-badge" loading="lazy" decoding="async">`;
   }
 
   // Export for use in other files
@@ -50,14 +57,14 @@
   }
 
   // Create an anime card element
-  function createAnimeCard(anime) {
+  function createAnimeCard(anime, priority = false) {
     if (!anime) return null;
     
     const card = document.createElement('div');
     card.className = 'anime-card';
     card.dataset.animeId = anime.id;
     
-    const thumbnail = anime.thumbnail || anime.cover || 'images/bg-default.jpg';
+    const thumbnail = anime.thumbnail || anime.cover || 'images/bg-default.png';
     const title = escapeHtml(anime.title || anime.name || 'Sem título');
     const type = escapeHtml(anime.type || 'anime');
     const ageRatingBadge = getAgeRatingBadge(anime.rating_age);
@@ -67,8 +74,7 @@
 
     card.innerHTML = `
       <div class="anime-thumbnail">
-        <img src="${escapeHtml(thumbnail)}" alt="${title}" loading="lazy" decoding="async">
-        <video class="card-hover-trailer" muted playsinline preload="none" loop style="display:none"></video>
+        <img src="${escapeHtml(thumbnail)}" alt="${title}" loading="${priority ? 'eager' : 'lazy'}" decoding="async" fetchpriority="${priority ? 'high' : 'auto'}">
         <div class="trailer-overlay">
           <i class="fas fa-play"></i>
           <p>Assistir</p>
@@ -81,29 +87,44 @@
       </div>
     `;
 
-    const trailerVideo = card.querySelector('.card-hover-trailer');
+    let trailerVideo = null;
     let hoverTimer = null;
 
+    function stopPreview() {
+      clearTimeout(hoverTimer);
+      if (!trailerVideo) return;
+      previewObserver?.unobserve(card);
+      trailerVideo.pause();
+      trailerVideo.removeAttribute('src');
+      trailerVideo.load();
+      trailerVideo.remove();
+      trailerVideo = null;
+      card.classList.remove('playing-hover-trailer');
+      if (stopActivePreview === stopPreview) stopActivePreview = null;
+    }
+
     card.addEventListener('mouseenter', () => {
-      if (performanceMode || !trailer || !trailerVideo) return;
+      if (performanceMode || !trailer || !matchMedia('(hover: hover) and (pointer: fine)').matches || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
       clearTimeout(hoverTimer);
       hoverTimer = setTimeout(() => {
+        if (!card.isConnected || document.hidden) return;
+        stopActivePreview?.();
+        stopActivePreview = stopPreview;
+        trailerVideo = document.createElement('video');
+        trailerVideo.className = 'card-hover-trailer';
+        trailerVideo.muted = true;
+        trailerVideo.playsInline = true;
+        trailerVideo.loop = true;
+        trailerVideo.preload = 'none';
         trailerVideo.src = trailer;
-        trailerVideo.style.display = 'block';
+        card.querySelector('.anime-thumbnail').appendChild(trailerVideo);
+        previewObserver?.observe(card);
         trailerVideo.play().catch(() => {});
         card.classList.add('playing-hover-trailer');
       }, 5000);
     });
 
-    card.addEventListener('mouseleave', () => {
-      clearTimeout(hoverTimer);
-      if (!trailerVideo) return;
-      trailerVideo.pause();
-      trailerVideo.removeAttribute('src');
-      trailerVideo.load();
-      trailerVideo.style.display = 'none';
-      card.classList.remove('playing-hover-trailer');
-    });
+    card.addEventListener('mouseleave', stopPreview);
 
     // Add click handler to open video modal
     card.style.cursor = 'pointer';
@@ -144,7 +165,7 @@
     card.className = 'anime-card continue-card';
     card.dataset.animeId = anime.id;
     
-    const thumbnail = anime.thumbnail || anime.cover || 'images/bg-default.jpg';
+    const thumbnail = anime.thumbnail || anime.cover || 'images/bg-default.png';
     const title = escapeHtml(anime.title || anime.name || 'Sem título');
     const progress = anime.progress || 0;
     const season = anime.season || 1;
@@ -155,7 +176,7 @@
     
     card.innerHTML = `
       <div class="anime-thumbnail">
-        <img src="${escapeHtml(thumbnail)}" alt="${title}">
+        <img src="${escapeHtml(thumbnail)}" alt="${title}" loading="lazy" decoding="async">
         <div class="continue-progress-track">
           <div class="continue-progress-bar" style="width: ${Math.min(100, Math.max(0, progress))}%;"></div>
         </div>
@@ -207,6 +228,10 @@
   
   // Open anime modal (video player)
   function openAnimeModal(anime, seasonNumber, episodeIndex) {
+    if (window.watchParty?.active && !window.watchParty.isHost) {
+      window.watchParty.canOpenEpisode(anime, seasonNumber || anime.seasons?.[0]?.number || 1, episodeIndex ?? 0);
+      return;
+    }
     const modal = document.getElementById('video-modal');
     if (!modal) {
       console.warn('Video modal not found');
@@ -395,8 +420,8 @@
     grid.innerHTML = '';
     const releases = window.animeDB.getNewReleases(12);
     
-    releases.forEach(anime => {
-      const card = createAnimeCard(anime);
+    releases.forEach((anime, index) => {
+      const card = createAnimeCard(anime, index < 4);
       if (card) grid.appendChild(card);
     });
     
@@ -437,14 +462,14 @@
     card.className = 'collection-card';
     card.dataset.collectionId = collection.id;
     
-    const thumbnail = collection.thumbnail || 'images/bg-default.jpg';
+    const thumbnail = collection.thumbnail || 'images/bg-default.png';
     const name = escapeHtml(collection.name || 'Coleção');
     const description = escapeHtml(collection.description || '');
     const count = collection.animeIds ? collection.animeIds.length : 0;
     
     card.innerHTML = `
       <div class="collection-thumbnail">
-        <img src="${escapeHtml(thumbnail)}" alt="${name}">
+        <img src="${escapeHtml(thumbnail)}" alt="${name}" loading="lazy" decoding="async">
         <div class="collection-count"><i class="fas fa-layer-group"></i> ${count}</div>
       </div>
       <div class="collection-info">
@@ -560,7 +585,7 @@
       const item = document.createElement('div');
       item.className = 'collection-item' + (anime.id === Number(animeId) ? ' active' : '');
       item.innerHTML = `
-        <img src="${escapeHtml(anime.thumbnail || 'images/bg-default.jpg')}" alt="${escapeHtml(anime.title)}">
+        <img src="${escapeHtml(anime.thumbnail || 'images/bg-default.png')}" alt="${escapeHtml(anime.title)}" loading="lazy" decoding="async">
         <span>${escapeHtml(anime.title)}</span>
       `;
       item.style.cursor = 'pointer';
@@ -585,7 +610,9 @@
       const modal = document.getElementById('video-modal');
       if (modal) {
         modal.style.display = 'none';
-        document.body.style.overflow = '';
+        document.title = 'AniVerse - Seu Universo de Animes';
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = typeof window.__videoModalPreviousOverflow === 'string' ? window.__videoModalPreviousOverflow : '';
         document.body.classList.remove('tv-video-open');
         const miniMusicPlayer = document.getElementById('music-mini-player');
         if (miniMusicPlayer) {
@@ -595,6 +622,8 @@
         if (videoContainer) {
           videoContainer.classList.remove('is-fullscreen', 'controls-hidden', 'controls-visible');
         }
+        const previousFocus = window.__videoModalPreviousFocus;
+        if (previousFocus?.isConnected) previousFocus.focus({ preventScroll: true });
         
         // Pause video
         const player = document.getElementById('anime-player');
@@ -637,25 +666,37 @@
     });
   }
 
+  const videoModal = document.getElementById('video-modal');
+  videoModal?.addEventListener('click', event => {
+    if (event.target === videoModal) closeVideoBtn?.click();
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key !== 'Escape' || !videoModal || getComputedStyle(videoModal).display === 'none') return;
+    if (event.target.closest?.('input, textarea, select, [contenteditable="true"]')) return;
+    closeVideoBtn?.click();
+  });
+
   // Store current anime data globally for saving progress
   window.currentAnimeData = null;
 
   // Update openEpisode to track current anime
   const originalOpenEpisode = window.openEpisode;
   if (originalOpenEpisode) {
-    window.openEpisode = function(anime, seasonNumber, episodeIndex) {
+    window.openEpisode = function(anime, seasonNumber, episodeIndex, options) {
       window.currentAnimeData = {
         animeId: anime.id,
         season: seasonNumber,
         episode: episodeIndex
       };
-      originalOpenEpisode(anime, seasonNumber, episodeIndex);
+      originalOpenEpisode(anime, seasonNumber, episodeIndex, options);
     };
   }
 
   // Export openAnimeModal to window for use by other modules (e.g., profile-multi.js)
   window.openAnimeModal = openAnimeModal;
   window.openAnimeFromUrlParams = function() {
+    const profileOverlay = document.getElementById('profile-selection-overlay');
+    if (!window.profileManager?.getActiveProfile?.() || (profileOverlay && getComputedStyle(profileOverlay).display !== 'none')) return;
     const params = new URLSearchParams(window.location.search || '');
     const animeParam = params.get('anime');
     const season = Number(params.get('season')) || 1;

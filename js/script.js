@@ -34,7 +34,7 @@ function ensureMaintenanceOverlay() {
           <img src="https://files.catbox.moe/rv1soq.webp" alt="Forms">
         </a>
       </div>
-      <audio id="maintenance-audio" src="https://files.catbox.moe/z0bun6.mp3" preload="auto" loop></audio>
+      <audio id="maintenance-audio" src="https://files.catbox.moe/z0bun6.mp3" preload="none" loop></audio>
     </div>
   `;
   document.body.prepend(overlay);
@@ -109,69 +109,7 @@ function applyMaintenanceMode() {
 }
 
 
-// Dark mode initialization and handling
-(function() {
-  // Check for saved preference or system preference
-  function initDarkMode() {
-    const savedMode = localStorage.getItem('darkMode');
-    const darkModeToggle = document.getElementById('dark-mode-toggle');
-    
-    if (savedMode === 'enabled') {
-      document.body.classList.add('dark-mode');
-      updateDarkModeIcon(true);
-    } else if (savedMode === 'disabled') {
-      document.body.classList.remove('dark-mode');
-      updateDarkModeIcon(false);
-    } else {
-      // No saved preference, use system preference
-      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        document.body.classList.add('dark-mode');
-        updateDarkModeIcon(true);
-      }
-    }
-    
-    // Listen for system theme changes
-    if (window.matchMedia) {
-      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-        // Only auto-switch if user hasn't manually set a preference
-        if (!localStorage.getItem('darkMode')) {
-          if (e.matches) {
-            document.body.classList.add('dark-mode');
-            updateDarkModeIcon(true);
-          } else {
-            document.body.classList.remove('dark-mode');
-            updateDarkModeIcon(false);
-          }
-        }
-      });
-    }
-    
-    // Toggle button handler
-    if (darkModeToggle) {
-      darkModeToggle.addEventListener('click', () => {
-        const isDark = document.body.classList.toggle('dark-mode');
-        localStorage.setItem('darkMode', isDark ? 'enabled' : 'disabled');
-        updateDarkModeIcon(isDark);
-      });
-    }
-  }
-  
-  function updateDarkModeIcon(isDark) {
-    const toggle = document.getElementById('dark-mode-toggle');
-    if (!toggle) return;
-    const icon = toggle.querySelector('i');
-    if (icon) {
-      icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
-    }
-  }
-  
-  // Initialize immediately (don't wait for DOMContentLoaded to avoid flash)
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initDarkMode);
-  } else {
-    initDarkMode();
-  }
-})();
+// Theme state and its toggle are owned by js/theme.js.
 
 document.addEventListener('DOMContentLoaded', () => {
   applyMaintenanceMode();
@@ -266,7 +204,7 @@ document.addEventListener('DOMContentLoaded', () => {
     card.className = 'anime-card search-result-card';
     card.innerHTML = `
       <div class="anime-thumbnail">
-        <img src="${anime.thumbnail || anime.cover || 'images/bg-default.jpg'}" alt="${anime.title || anime.name || 'Anime'}">
+        <img src="${anime.thumbnail || anime.cover || 'images/bg-default.png'}" alt="${anime.title || anime.name || 'Anime'}">
         <div class="trailer-overlay">
           <i class="fas fa-play"></i>
           <p>Assistir</p>
@@ -354,7 +292,7 @@ document.addEventListener('DOMContentLoaded', () => {
         item.type = 'button';
         item.className = 'search-inline-item';
         item.innerHTML = `
-          <img src="${anime.thumbnail || anime.cover || 'images/bg-default.jpg'}" alt="${anime.title || anime.name || 'Anime'}">
+          <img src="${anime.thumbnail || anime.cover || 'images/bg-default.png'}" alt="${anime.title || anime.name || 'Anime'}">
           <span class="meta">
             <span class="title">${anime.title || anime.name || 'Sem título'}</span>
             <span class="type">${buildAnimeMetaText(anime)}</span>
@@ -394,7 +332,7 @@ document.addEventListener('DOMContentLoaded', () => {
       button.type = 'button';
       button.className = 'search-suggestion-item';
       button.innerHTML = `
-        <img src="${anime.thumbnail || anime.cover || 'images/bg-default.jpg'}" alt="${anime.title || anime.name || 'Anime'}">
+        <img src="${anime.thumbnail || anime.cover || 'images/bg-default.png'}" alt="${anime.title || anime.name || 'Anime'}">
         <span class="title">${anime.title || anime.name || 'Sem título'}</span>
       `;
       button.addEventListener('click', () => {
@@ -515,6 +453,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let newsItems = [];
   let adminEnabled = false;
+  let editingNewsId = null;
+  const newsStatus = document.getElementById('news-editor-status');
+
+  function updateNewsPreview() {
+    document.getElementById('news-preview-title').textContent = newsTitle.value.trim() || 'Título da notícia';
+    document.getElementById('news-preview-message').innerHTML = newsMessage.value.trim()
+      ? formatNewsMessage(newsMessage.value) : 'Sua mensagem aparece aqui enquanto você escreve.';
+  }
+  function resetNewsEditor() {
+    editingNewsId = null;
+    newsForm.reset();
+    document.getElementById('news-editor-title').textContent = 'Criar notícia';
+    document.getElementById('news-submit').textContent = 'Adicionar à lista';
+    updateNewsPreview();
+  }
 
   async function loadNewsItems() {
     try {
@@ -597,8 +550,12 @@ document.addEventListener('DOMContentLoaded', () => {
   function updateFabVisibility(items) {
     const latest = getLatestItem(items);
     const shouldShow = isRecent(latest);
-    newsFab.style.display = shouldShow ? 'flex' : 'none';
-    if (!latest || !newsDot) return;
+    newsFab.style.display = 'flex';
+    if (!latest || !newsDot) {
+      if (newsDot) newsDot.style.display = 'none';
+      updateNewsToast(null, false);
+      return;
+    }
     const lastSeen = localStorage.getItem(NEWS_LAST_SEEN_KEY);
     const hasNew = !lastSeen || new Date(latest.createdAt).getTime() > new Date(lastSeen).getTime();
     newsDot.style.display = shouldShow && hasNew ? 'block' : 'none';
@@ -670,31 +627,34 @@ document.addEventListener('DOMContentLoaded', () => {
         const card = document.createElement('div');
         card.className = 'news-card';
         const createdAt = new Date(item.createdAt);
-        const hasImage = Boolean(item.imageUrl);
+        const hasImage = /^(https?:\/\/|data:image\/)/i.test(item.imageUrl || '');
+        const imageUrl = hasImage ? escapeHtml(item.imageUrl) : '';
+        const title = escapeHtml(item.title || 'Sem título');
         const header = document.createElement('div');
         header.className = 'news-card-header';
         header.innerHTML = `
           <div class="news-card-summary">
-            ${hasImage ? `<img src="${item.imageUrl}" alt="${item.title}" class="news-card-thumb">` : ''}
+            ${hasImage ? `<img src="${imageUrl}" alt="" loading="lazy" class="news-card-thumb">` : '<span class="news-card-placeholder" aria-hidden="true"><i class="far fa-newspaper"></i></span>'}
             <div>
-              <h4>${escapeHtml(item.title)}</h4>
-              <time datetime="${item.createdAt}">${createdAt.toLocaleDateString('pt-BR')}</time>
+              <time>${Number.isNaN(createdAt.getTime()) ? '' : createdAt.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' })}</time>
+              <h4>${title}</h4>
             </div>
           </div>
-          <button type="button" class="news-card-toggle">Ver</button>
+          <button type="button" class="news-card-toggle" aria-expanded="false">Ler notícia <span aria-hidden="true">↓</span></button>
         `;
 
         const body = document.createElement('div');
         body.className = 'news-card-body';
         body.innerHTML = `
           <p>${formatNewsMessage(item.message)}</p>
-          ${hasImage ? `<img src="${item.imageUrl}" alt="${item.title}" class="news-card-image">` : ''}
+          ${hasImage ? `<img src="${imageUrl}" alt="${title}" loading="lazy" class="news-card-image">` : ''}
         `;
 
-        header.addEventListener('click', () => {
+        header.querySelector('.news-card-toggle').addEventListener('click', () => {
           const isOpen = card.classList.toggle('is-open');
           const toggle = header.querySelector('.news-card-toggle');
-          if (toggle) toggle.textContent = isOpen ? 'Fechar' : 'Ver';
+          toggle.textContent = isOpen ? 'Fechar ↑' : 'Ler notícia ↓';
+          toggle.setAttribute('aria-expanded', String(isOpen));
         });
 
         card.appendChild(header);
@@ -703,12 +663,32 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isAdmin()) {
           const actions = document.createElement('div');
           actions.className = 'news-card-actions';
+          const editBtn = document.createElement('button');
+          editBtn.type = 'button';
+          editBtn.className = 'btn btn-secondary';
+          editBtn.textContent = 'Editar';
+          editBtn.addEventListener('click', () => {
+            editingNewsId = item.id;
+            newsTitle.value = item.title || '';
+            newsMessage.value = item.message || '';
+            newsImageUrl.value = (item.imageUrl || '').startsWith('data:') ? '' : (item.imageUrl || '');
+            newsImageFile.value = '';
+            document.getElementById('news-editor-title').textContent = 'Editar notícia';
+            document.getElementById('news-submit').textContent = 'Salvar alterações na lista';
+            newsStatus.textContent = 'Editando notícia. A imagem atual será mantida se você não escolher outra.';
+            updateNewsPreview();
+            newsAdminPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            newsTitle.focus({ preventScroll: true });
+          });
+          actions.appendChild(editBtn);
           const deleteBtn = document.createElement('button');
           deleteBtn.className = 'btn btn-secondary';
           deleteBtn.textContent = 'Apagar';
           deleteBtn.addEventListener('click', () => {
             if (!confirm('Deseja apagar esta notÃ­cia?')) return;
             setNewsItems(newsItems.filter(news => news.id !== item.id));
+            if (editingNewsId === item.id) resetNewsEditor();
+            newsStatus.textContent = 'Notícia removida da lista. Baixe o JSON para aplicar a alteração no site.';
             renderNews();
           });
           actions.appendChild(deleteBtn);
@@ -758,8 +738,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.addEventListener('keydown', (event) => {
     if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === 'a') {
+      event.preventDefault();
       promptAdminAccess();
     }
+    if (event.key === 'Escape' && newsModal.style.display === 'flex') closeModal();
   });
 
   if (newsAdminToggle) {
@@ -771,13 +753,15 @@ document.addEventListener('DOMContentLoaded', () => {
   if (newsAdminLogout) {
     newsAdminLogout.addEventListener('click', () => {
       setAdmin(false);
+      resetNewsEditor();
       renderNews();
     });
   }
 
   if (newsFormClear) {
     newsFormClear.addEventListener('click', () => {
-      newsForm.reset();
+      resetNewsEditor();
+      newsStatus.textContent = '';
     });
   }
 
@@ -803,26 +787,21 @@ document.addEventListener('DOMContentLoaded', () => {
       const message = newsMessage.value.trim();
       if (!title || !message) return;
 
-      let imageUrl = newsImageUrl.value.trim();
+      const previous = newsItems.find(item => item.id === editingNewsId);
+      let imageUrl = newsImageUrl.value.trim() || (previous && (previous.imageUrl || '').startsWith('data:') ? previous.imageUrl : '');
       if (newsImageFile.files && newsImageFile.files[0]) {
         try {
           imageUrl = await readFileAsDataURL(newsImageFile.files[0]);
         } catch (error) {
           alert('Falha ao ler a imagem.');
+          return;
         }
       }
 
-      setNewsItems([
-        {
-          id: `${Date.now()}`,
-          title,
-          message,
-          imageUrl,
-          createdAt: new Date().toISOString()
-        },
-        ...newsItems
-      ]);
-      newsForm.reset();
+      const item = { id: previous ? previous.id : `${Date.now()}`, title, message, imageUrl, createdAt: previous ? previous.createdAt : new Date().toISOString() };
+      setNewsItems(previous ? newsItems.map(news => news.id === editingNewsId ? item : news) : [item, ...newsItems]);
+      resetNewsEditor();
+      newsStatus.textContent = 'Notícia salva na lista local. Baixe o JSON para publicar a alteração.';
       renderNews();
     });
   }
@@ -860,8 +839,12 @@ document.addEventListener('DOMContentLoaded', () => {
           insertAtCursor(newsMessage, '\n');
           break;
       }
+      updateNewsPreview();
     });
   }
+
+  newsTitle.addEventListener('input', updateNewsPreview);
+  newsMessage.addEventListener('input', updateNewsPreview);
 
   if (window.location.hash === '#admin-news') {
     promptAdminAccess();
@@ -880,6 +863,8 @@ function showVideoError(msg){
   if (!el){
     el = document.createElement('div'); el.id = 'video-error-container';
     Object.assign(el.style, { position:'absolute', left:'50%', bottom:'14%', transform:'translateX(-50%)', background:'rgba(0,0,0,0.78)', color:'#fff', padding:'10px 14px', borderRadius:'10px', zIndex:1001, pointerEvents:'none', maxWidth:'min(88%, 460px)', textAlign:'center' });
+    el.setAttribute('role', 'alert');
+    el.setAttribute('aria-live', 'assertive');
     (document.getElementById('video-player-container') || document.body).appendChild(el);
   }
   el.textContent = msg;
@@ -1177,6 +1162,7 @@ function openNativeTvVideo(url, resumeTimeSeconds = 0, onFailure = null){
       updateVideoTimeDisplay(tvNativeVideoState.currentTimeMs, tvNativeVideoState.durationMs);
     },
     onstreamcompleted() {
+      window.dispatchEvent(new CustomEvent('aniverse:episode-completed'));
       const nextBtn = document.getElementById('next-episode-btn');
       if (nextBtn) nextBtn.click();
     },
@@ -1299,7 +1285,7 @@ function onVideoSetSource(player, episode, options = {}){
   };
   player.__adaptivePlayback = state;
 
-  player.preload = state.isTvEnvironment ? 'auto' : 'metadata';
+  player.preload = 'auto';
   player.setAttribute('preload', player.preload);
   player.playsInline = true;
   player.setAttribute('playsinline', '');
@@ -1489,6 +1475,7 @@ function onVideoSetSource(player, episode, options = {}){
 
   const handlePlaying = () => {
     if (player.__adaptivePlayback?.token !== state.token) return;
+    state.playWhenReady = false;
     clearTimers();
     clearVideoError();
     window.setVideoLoadingOverlay?.(false);
@@ -1621,13 +1608,14 @@ function setupVideoLoadingIndicator() {
 
   let phaseTimer = null;
   let showDelayTimer = null;
+  let videoErrorTimer = null;
   let lastShownAt = 0;
   const SHOW_DELAY_MS = 420;
   const MIN_VISIBLE_MS = 220;
 
-  const setLabel = () => {
+  const setLabel = (text = 'Preparando seu episódio…') => {
     const label = overlay.querySelector('.video-loading-text');
-    if (label) label.textContent = '';
+    if (label) label.textContent = text;
   };
 
   const clearPhaseTimer = () => {
@@ -1644,9 +1632,16 @@ function setupVideoLoadingIndicator() {
     }
   };
 
+  const clearVideoErrorTimer = () => {
+    if (videoErrorTimer) {
+      clearTimeout(videoErrorTimer);
+      videoErrorTimer = null;
+    }
+  };
+
   const showNow = () => {
-    setLabel();
     overlay.classList.add('visible');
+    overlay.setAttribute('aria-hidden', 'false');
     lastShownAt = Date.now();
     clearPhaseTimer();
     phaseTimer = setTimeout(() => {
@@ -1671,6 +1666,7 @@ function setupVideoLoadingIndicator() {
   const hideNow = () => {
     clearPhaseTimer();
     overlay.classList.remove('visible');
+    overlay.setAttribute('aria-hidden', 'true');
   };
 
   const hide = () => {
@@ -1686,14 +1682,49 @@ function setupVideoLoadingIndicator() {
     hideNow();
   };
 
-  player.addEventListener('loadstart', () => show(true));
-  player.addEventListener('canplay', hide);
-  player.addEventListener('playing', hide);
+  player.addEventListener('loadstart', () => {
+    clearVideoErrorTimer();
+    setLabel();
+    show(true);
+  });
+  player.addEventListener('canplay', () => { clearVideoErrorTimer(); hide(); });
+  player.addEventListener('playing', () => { clearVideoErrorTimer(); hide(); });
   player.addEventListener('seeked', hide);
+  player.addEventListener('waiting', () => {
+    setLabel('Conectando ao vídeo…');
+    show();
+  });
+  player.addEventListener('stalled', () => {
+    setLabel('A conexão está lenta. Aguarde…');
+    show();
+  });
+  player.addEventListener('loadstart', () => window.clearVideoError?.());
+  player.addEventListener('canplay', () => window.clearVideoError?.());
+  player.addEventListener('error', () => {
+    hideNow();
+    clearVideoErrorTimer();
+    const failedSource = player.currentSrc;
+    videoErrorTimer = setTimeout(() => {
+      videoErrorTimer = null;
+      if (!player.error || player.currentSrc !== failedSource) return;
+      const code = player.error.code;
+      const message = code === 2
+        ? 'A conexão caiu durante o carregamento. Tente novamente.'
+        : code === 3
+          ? 'Não foi possível decodificar este vídeo.'
+          : code === 4
+            ? 'Esta fonte de vídeo não é compatível ou está indisponível.'
+            : 'Não foi possível carregar o episódio. Tente outra fonte.';
+      window.showVideoError?.(message);
+    }, 1500);
+  });
 
   // Simple external hook: explicit show/hide, no sticky lock state.
-  window.setVideoLoadingOverlay = (visible) => {
-    if (visible) show(true);
+  window.setVideoLoadingOverlay = (visible, message) => {
+    if (visible) {
+      if (message) setLabel(message);
+      show(true);
+    }
     else hide();
   };
 
@@ -1701,7 +1732,8 @@ function setupVideoLoadingIndicator() {
 }
 
 // openEpisode helper: set src, resume, banner, opening
-function openEpisode(anime, seasonNumber, episodeIndex){
+function openEpisode(anime, seasonNumber, episodeIndex, options = {}){
+  if (window.watchParty && !window.watchParty.canOpenEpisode(anime, seasonNumber, episodeIndex)) return;
   try {
     // PAUSAR MÚSICA SE ESTIVER TOCANDO
     const musicAudio = document.getElementById('music-playing-audio');
@@ -1710,11 +1742,35 @@ function openEpisode(anime, seasonNumber, episodeIndex){
     }
     
     if (!anime) return;
+
+    const season = (anime.seasons || []).find(s => s.number === seasonNumber);
+    const episode = season && Array.isArray(season.episodes) ? season.episodes[episodeIndex] : null;
+    if (!season || !episode) {
+      console.warn('Não foi possível abrir o episódio: temporada ou episódio não encontrado.', { seasonNumber, episodeIndex });
+      return;
+    }
+    // Update the visible heading from this request before loading a new source.
+    // The previous episode can still emit media events while its source is replaced.
+    const overlayAnimeTitle = document.getElementById('overlay-anime-title');
+    document.title = `${anime.title || 'Anime'} · AniVerse`;
+    const overlayEpisodeTitle = document.getElementById('overlay-episode-info');
+    if (overlayAnimeTitle) overlayAnimeTitle.textContent = anime.title || 'Anime';
+    if (overlayEpisodeTitle) overlayEpisodeTitle.textContent = `${season.name || `Temporada ${seasonNumber}`} • ${episode.title || `Episódio ${episodeIndex + 1}`}`;
+    const episodeUrl = new URL(window.location.href);
+    episodeUrl.searchParams.set('anime', String(anime.slug || anime.id));
+    episodeUrl.searchParams.set('season', String(seasonNumber));
+    episodeUrl.searchParams.set('ep', String(episodeIndex + 1));
+    window.history.replaceState(window.history.state, '', episodeUrl);
     
     // GARANTIR QUE O MODAL DE VÍDEO SEJA EXIBIDO
     const videoModal = document.getElementById('video-modal');
     if (videoModal) {
+        if (videoModal.style.display === 'none' || !videoModal.style.display) {
+            window.__videoModalPreviousOverflow = document.body.style.overflow;
+            window.__videoModalPreviousFocus = document.activeElement;
+        }
         videoModal.style.display = 'flex';
+        videoModal.setAttribute('aria-hidden', 'false');
         document.body.style.overflow = 'hidden';
     }
     document.body.classList.add('tv-video-open');
@@ -1733,11 +1789,22 @@ function openEpisode(anime, seasonNumber, episodeIndex){
         videoContainer.focus({ preventScroll: true });
     }
     
-    const season = (anime.seasons || []).find(s => s.number === seasonNumber);
-    const episode = season && Array.isArray(season.episodes) ? season.episodes[episodeIndex] : null;
     const player = document.getElementById('anime-player'); if (!player) return;
+    const episodeToken = Symbol('episode'); player.__episodeToken = episodeToken;
+    player.pause();
+    window.currentAnime = anime;
+    window.currentAnimeData = { animeId: anime.id, season: seasonNumber, episode: episodeIndex };
+    window.currentWatchingAnime = {
+        id: anime.id,
+        title: anime.title,
+        thumbnail: anime.thumbnail || anime.cover,
+        season: seasonNumber,
+        seasonName: season.name || `Temporada ${seasonNumber}`,
+        episode: episodeIndex + 1
+    };
+    window.dispatchEvent(new Event('aniverse:episode-opened'));
     window.__ANIVERSE_MARATHON_HANDLED = false;
-    const bannerEl = document.querySelector('.video-banner'); const bannerUrl = anime.banner || anime.cover || 'images/bg-default.jpg';
+    const bannerEl = document.querySelector('.video-banner'); const bannerUrl = anime.banner || anime.cover || 'images/bg-default.png';
     if (bannerEl) bannerEl.style.backgroundImage = `url('${bannerUrl}')`;
     const openingData = (episode && episode.opening && typeof episode.opening.start === 'number' && typeof episode.opening.end === 'number')
       ? { start: episode.opening.start, end: episode.opening.end }
@@ -1776,7 +1843,8 @@ function openEpisode(anime, seasonNumber, episodeIndex){
  	 const rating = String(anime.rating_age || '').trim();
 	  // Mapeie para os nomes reais dos seus webms. Ajuste se necessário.
 	  const overlayMap = {
-	    '10': 'GC 10 - superior esquerdo.webm',
+	    '6': 'GC 6 - superior esquerdo.webm',
+	    '10': 'GC 10 - superior esquedo.webm',
 	    '12': 'GC 12 - superior esquerdo.webm',
  	   '14': 'GC 14 - superior esquerdo.webm',
  	   '16': 'GC 16 - superior esquerdo.webm',
@@ -1786,7 +1854,8 @@ function openEpisode(anime, seasonNumber, episodeIndex){
 
   	const filename = overlayMap[rating];
  	 if (filename) {
-  	  const path = `assets/webm/${rating}/${encodeURIComponent(filename)}`;
+	  const directory = rating === 'L' ? 'Livre' : rating;
+	  const path = `assets/webm/${directory}/${encodeURIComponent(filename)}`;
 	
    	 if (overlayEl.getAttribute('src') !== path) {
    	   overlayEl.src = path;
@@ -1801,12 +1870,18 @@ function openEpisode(anime, seasonNumber, episodeIndex){
 	}
         } else {
             ageRatingSection.classList.remove('visible');
+            const overlayEl = document.getElementById('age-rating-overlay');
+            if (overlayEl) {
+                try { overlayEl.pause(); } catch (_) {}
+                overlayEl.removeAttribute('src');
+                overlayEl.load();
+            }
         }
     }
     
     // Try to restore playback position from profile's continue watching
     let resumeTime = 0;
-    if (window.profileManager) {
+    if (window.profileManager && !options.skipResume) {
         const activeProfile = window.profileManager.getActiveProfile();
         if (activeProfile && activeProfile.continueWatching) {
             const savedAnime = activeProfile.continueWatching.find(item => 
@@ -1822,10 +1897,23 @@ function openEpisode(anime, seasonNumber, episodeIndex){
 
     const nativeSources = episode ? normalizeEpisodeSources(episode) : [];
     const nativeSource = pickNativeTvSource(nativeSources);
+    if (!options.deferPlayback && !nativeSources.length) {
+      player.pause();
+      player.removeAttribute('src');
+      player.load();
+      window.setVideoLoadingOverlay?.(false);
+      window.showVideoError?.('Este episódio ainda não tem uma fonte de vídeo cadastrada.');
+    }
     if (episode){
-      const usingNativeTvPlayer = nativeSource && openNativeTvVideo(nativeSource.url, resumeTime, () => onVideoSetSource(player, episode, { forceHtmlFallback: true }));
-      if (!usingNativeTvPlayer) {
-        onVideoSetSource(player, episode, { forceHtmlFallback: true });
+      if (options.deferPlayback) {
+        player.pause();
+        player.removeAttribute('src');
+        player.load();
+      } else if (nativeSources.length) {
+        const usingNativeTvPlayer = nativeSource && openNativeTvVideo(nativeSource.url, resumeTime, () => onVideoSetSource(player, episode, { forceHtmlFallback: true }));
+        if (!usingNativeTvPlayer) {
+          onVideoSetSource(player, episode, { forceHtmlFallback: true });
+        }
       }
     }
     
@@ -1848,17 +1936,6 @@ function openEpisode(anime, seasonNumber, episodeIndex){
     }
     if (elb) elb.textContent = `Episódio ${episodeIndex+1}${episode && episode.title ? ' — '+episode.title : ''}`;
     
-    // Store anime info globally for progress updates and auto-advance
-    window.currentAnime = anime; // Store full anime object for auto-advance
-    window.currentWatchingAnime = {
-        id: anime.id,
-        title: anime.title,
-        thumbnail: anime.thumbnail || anime.cover,
-        season: seasonNumber,
-        seasonName: seasonName,
-        episode: episodeIndex + 1
-    };
-
     syncModalAdminEditorVisibility();
     
     // Update video info overlay
@@ -1893,6 +1970,7 @@ function openEpisode(anime, seasonNumber, episodeIndex){
     // Set resume time after metadata loads
     if (resumeTime > 0) {
         const setResumeTime = () => {
+            if (player.__episodeToken !== episodeToken) return;
             try {
                 player.currentTime = resumeTime;
                 console.log(`▶️ Retomando em ${resumeTime.toFixed(1)}s`);
@@ -1908,7 +1986,7 @@ function openEpisode(anime, seasonNumber, episodeIndex){
         }
     }
 
-    if (!tvNativeVideoState.active && !isTvPlaybackEnvironment()) {
+    if (!options.deferPlayback && nativeSources.length && !tvNativeVideoState.active && !isTvPlaybackEnvironment()) {
       player.play().catch(()=>{});
     }
   } catch(e){ console.error('openEpisode error', e); }
@@ -1959,6 +2037,10 @@ function getNextEpisodeTarget(){
 
 function preloadNextEpisodeIfNeeded(player){
   if (!player || !window.currentWatchingAnime || !window.currentAnime || !Number.isFinite(player.duration) || player.duration <= 0) return;
+  const connection = navigator.connection;
+  if (player.paused || connection?.saveData || /(^|-)2g$/.test(connection?.effectiveType || '')) return;
+  // Do not compete with an episode that is still buffering.
+  if (getBufferedAheadSeconds(player) < Math.min(10, player.duration - player.currentTime)) return;
 
   const remaining = player.duration - player.currentTime;
   if (remaining > 25) return;
@@ -2095,231 +2177,3 @@ if (document.readyState === 'loading') {
 }
 
 window.addEventListener('adminModeChanged', syncModalAdminEditorVisibility);
-
-document.addEventListener('DOMContentLoaded', () => {
-  const fab = document.getElementById('achievements-fab');
-  const dot = fab?.querySelector('.achievements-fab-dot');
-  const count = document.getElementById('achievements-fab-count');
-  const modal = document.getElementById('achievements-modal');
-  const closeBtn = document.getElementById('close-achievements-modal');
-  const list = document.getElementById('achievements-list');
-  const feed = document.getElementById('achievements-unlock-feed');
-  const stats = document.getElementById('achievements-stats');
-  const filterWrap = document.getElementById('achievements-filter');
-  const markSeenBtn = document.getElementById('achievements-mark-seen');
-  const soundToggle = document.getElementById('achievements-sound-toggle');
-  const audio = document.getElementById('achievements-audio');
-  const silentToast = document.getElementById('achievements-silent-toast');
-  const silentToastText = document.getElementById('achievements-silent-toast-text');
-  const silentToastOpen = document.getElementById('achievements-silent-toast-open');
-  const unlockCenter = document.getElementById('achievements-unlock-center');
-  const unlockCenterIcon = document.getElementById('achievements-unlock-center-icon');
-  const unlockCenterTitle = document.getElementById('achievements-unlock-center-title');
-
-  if (!fab || !modal || !list || !window.achievementEngine) return;
-
-  let activeFilter = 'all';
-  let unlockAnimationRunning = false;
-  let unlockQueue = [];
-
-  function filterItems(items) {
-    if (activeFilter === 'unlocked') return items.filter((item) => item.unlocked);
-    if (activeFilter === 'locked') return items.filter((item) => !item.unlocked);
-    return items;
-  }
-
-  function setFilter(filter) {
-    activeFilter = filter;
-    filterWrap?.querySelectorAll('button[data-filter]').forEach((btn) => {
-      btn.classList.toggle('is-active', btn.dataset.filter === filter);
-    });
-    const snapshot = window.achievementEngine.getSnapshot();
-    renderList(snapshot);
-  }
-
-  function updateSilentToast(snapshot) {
-    if (!silentToast) return;
-    const hasUnseen = snapshot && snapshot.unseenCount > 0;
-    const isModalOpen = modal.style.display === 'flex';
-    if (!hasUnseen || isModalOpen) {
-      silentToast.style.display = 'none';
-      return;
-    }
-
-    silentToastText.textContent = `🏆 ${snapshot.unseenCount} conquista(s) nova(s)`;
-    silentToast.style.display = 'flex';
-  }
-
-  function updateFab(snapshot) {
-    fab.style.display = 'flex';
-    const unseen = snapshot?.unseenCount || 0;
-    if (dot) dot.style.display = unseen > 0 ? 'block' : 'none';
-    if (count) {
-      count.textContent = String(unseen);
-      count.style.display = unseen > 0 ? 'inline-flex' : 'none';
-    }
-    updateSilentToast(snapshot);
-  }
-
-  function renderStats(snapshot) {
-    if (!stats || !snapshot?.stats) return;
-    stats.innerHTML = `
-      <div class="stat">🔥 Streak: <strong>${snapshot.stats.streak}</strong></div>
-      <div class="stat">📅 Dias ativos: <strong>${snapshot.stats.daysOpened}</strong></div>
-      <div class="stat">🎬 Episódios: <strong>${snapshot.stats.episodesCompleted}</strong></div>
-      <div class="stat">🧭 Seções: <strong>${snapshot.stats.sectionsVisited}</strong></div>
-    `;
-  }
-
-  function renderList(snapshot) {
-    if (!snapshot) {
-      list.innerHTML = '<p>Conquistas indisponíveis.</p>';
-      return;
-    }
-
-    const ordered = snapshot.items
-      .slice()
-      .sort((a, b) => Number(b.unlocked) - Number(a.unlocked) || b.progressPercent - a.progressPercent);
-
-    const visible = filterItems(ordered);
-    if (!visible.length) {
-      list.innerHTML = '<p>Nenhuma conquista neste filtro.</p>';
-      return;
-    }
-
-    list.innerHTML = visible.map((item) => {
-      const progressText = item.unlocked ? 'Desbloqueada' : `${Math.min(item.progress, item.goal)}/${item.goal}`;
-      return `
-        <article class="achievement-card ${item.unlocked ? 'is-unlocked' : 'is-locked'}">
-          <img src="${item.icon}" alt="${item.name}" loading="lazy">
-          <div class="achievement-info">
-            <h4>${item.name}</h4>
-            <p>${item.desc}</p>
-            <div class="achievement-progress">${progressText}</div>
-            <div class="achievement-progress-bar"><span style="width:${item.progressPercent}%;"></span></div>
-          </div>
-        </article>
-      `;
-    }).join('');
-
-    if (soundToggle) soundToggle.checked = !!snapshot.soundEnabled;
-    renderStats(snapshot);
-  }
-
-  function wait(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
-
-  async function playUnlockAnimationQueue(snapshot) {
-    if (unlockAnimationRunning || !unlockQueue.length) return;
-    unlockAnimationRunning = true;
-
-    while (unlockQueue.length > 0) {
-      const item = unlockQueue.shift();
-
-      if (feed) {
-        feed.textContent = `🏆 Nova conquista: ${item.name}`;
-        feed.style.display = 'block';
-      }
-
-      if (unlockCenter && unlockCenterTitle && unlockCenterIcon) {
-        unlockCenterTitle.textContent = item.name;
-        unlockCenterIcon.src = item.icon;
-        unlockCenterIcon.alt = item.name;
-        unlockCenter.classList.remove('show');
-        void unlockCenter.offsetWidth;
-        unlockCenter.classList.add('show');
-      }
-
-      if (snapshot?.soundEnabled && audio && item.sound) {
-        audio.src = item.sound;
-        audio.currentTime = 0;
-        audio.play().catch(() => {});
-      }
-
-      await wait(1300);
-      unlockCenter?.classList.remove('show');
-      await wait(180);
-    }
-
-    unlockAnimationRunning = false;
-    if (feed) feed.style.display = 'none';
-  }
-
-  function playUnlockFeedback(unlockItems, snapshot) {
-    if (!unlockItems.length) {
-      if (feed) feed.style.display = 'none';
-      return;
-    }
-
-    unlockQueue = unlockQueue.concat(unlockItems);
-    playUnlockAnimationQueue(snapshot);
-  }
-
-  function openAchievementsModal() {
-    modal.style.display = 'flex';
-    document.body.style.overflow = 'hidden';
-
-    const snapshot = window.achievementEngine.getSnapshot();
-    renderList(snapshot);
-    updateFab(snapshot);
-
-    const pending = window.achievementEngine.drainPendingUnlocks();
-    playUnlockFeedback(pending, snapshot);
-
-    if (pending.length > 0) {
-      window.achievementEngine.markAllSeen();
-      const refreshed = window.achievementEngine.getSnapshot();
-      updateFab(refreshed);
-      renderList(refreshed);
-    }
-  }
-
-  function closeAchievementsModal() {
-    modal.style.display = 'none';
-    document.body.style.overflow = '';
-    if (feed) feed.style.display = 'none';
-    unlockCenter?.classList.remove('show');
-    updateSilentToast(window.achievementEngine.getSnapshot());
-  }
-
-  fab.addEventListener('click', openAchievementsModal);
-  closeBtn?.addEventListener('click', closeAchievementsModal);
-  silentToastOpen?.addEventListener('click', openAchievementsModal);
-
-  window.addEventListener('click', (event) => {
-    if (event.target === modal) closeAchievementsModal();
-  });
-
-  markSeenBtn?.addEventListener('click', () => {
-    window.achievementEngine.markAllSeen();
-    const snapshot = window.achievementEngine.getSnapshot();
-    renderList(snapshot);
-    updateFab(snapshot);
-  });
-
-  soundToggle?.addEventListener('change', () => {
-    window.achievementEngine.setSoundEnabled(soundToggle.checked);
-  });
-
-  filterWrap?.addEventListener('click', (event) => {
-    const btn = event.target.closest('button[data-filter]');
-    if (!btn) return;
-    setFilter(btn.dataset.filter || 'all');
-  });
-
-  window.addEventListener('achievements:updated', () => {
-    const snapshot = window.achievementEngine.getSnapshot();
-    updateFab(snapshot);
-    if (modal.style.display === 'flex') renderList(snapshot);
-  });
-
-  window.achievementEngine.loadData()
-    .then(() => window.achievementEngine.refresh({ eventType: 'app_open' }))
-    .then(() => {
-      const snapshot = window.achievementEngine.getSnapshot();
-      setFilter('all');
-      renderList(snapshot);
-      updateFab(snapshot);
-    });
-});

@@ -582,7 +582,8 @@
             if (overlayTitle) overlayTitle.textContent = window.currentWatchingAnime.title || 'Anime';
             if (overlayEpisode) {
                 const seasonText = window.currentWatchingAnime.seasonName || `Temporada ${window.currentWatchingAnime.season}`;
-                overlayEpisode.textContent = `${seasonText} • Episódio ${window.currentWatchingAnime.episode}`;
+                const episode = window.currentAnime?.seasons?.find(s => s.number === window.currentWatchingAnime.season)?.episodes?.[window.currentWatchingAnime.episode - 1];
+                overlayEpisode.textContent = `${seasonText} • ${episode?.title || `Episódio ${window.currentWatchingAnime.episode}`}`;
             }
         }
     }
@@ -603,22 +604,18 @@
     const creditsBtn = document.getElementById('credits-btn');
     const floatingEndingActions = document.getElementById('floating-ending-actions');
     const floatingActionsEl = document.getElementById('video-floating-actions');
-
-    function isLandscapeOverlayViewport() {
-      const isLandscape = window.matchMedia && window.matchMedia('(orientation: landscape)').matches;
-      return (window.innerWidth || 0) <= 900 && !!isLandscape;
-    }
+    let previousLandscape = matchMedia('(orientation: landscape)').matches;
 
     function applyLandscapeOverlayLayout() {
       const container = document.getElementById('video-player-container');
       const controls = document.getElementById('custom-video-controls');
       if (!container) return false;
-      const shouldOverlay = isLandscapeOverlayViewport() && !isInFullscreen();
+      const shouldOverlay = false;
 
       container.classList.toggle('landscape-overlay-active', shouldOverlay);
 
       if (controls) {
-        const controlsHeight = shouldOverlay ? Math.max(80, Math.ceil(controls.getBoundingClientRect().height) + 8) : 112;
+        const controlsHeight = Math.max(60, Math.ceil(controls.getBoundingClientRect().height));
         container.style.setProperty('--tap-zone-bottom', `${controlsHeight}px`);
       }
 
@@ -627,18 +624,19 @@
 
     function syncFloatingActionsLayout() {
       if (!floatingActionsEl) return;
-      const overlayMode = applyLandscapeOverlayLayout();
-      if (isCompactMobileViewport()) {
-        floatingActionsEl.style.left = '8px';
-        floatingActionsEl.style.right = '8px';
-        floatingActionsEl.style.bottom = overlayMode ? 'calc(var(--tap-zone-bottom) + 8px)' : '86px';
-        floatingActionsEl.style.alignItems = overlayMode ? 'flex-start' : 'stretch';
-      } else {
-        floatingActionsEl.style.left = '';
-        floatingActionsEl.style.right = '12px';
-        floatingActionsEl.style.bottom = overlayMode ? 'calc(var(--tap-zone-bottom) + 8px)' : '72px';
-        floatingActionsEl.style.alignItems = 'flex-end';
+      const landscape = matchMedia('(orientation: landscape)').matches;
+      if (landscape !== previousLandscape && matchMedia('(max-width:1099px)').matches && !isInFullscreen()) {
+        const content = document.querySelector('#video-modal .modal-content');
+        requestAnimationFrame(() => { if (content) content.scrollTop = 0; });
       }
+      previousLandscape = landscape;
+      applyLandscapeOverlayLayout();
+      const controls = document.getElementById('custom-video-controls');
+      const height = Math.ceil(controls?.getBoundingClientRect().height || 92);
+      floatingActionsEl.style.left = 'auto';
+      floatingActionsEl.style.right = '16px';
+      floatingActionsEl.style.bottom = `${height + 16}px`;
+      floatingActionsEl.style.alignItems = 'flex-end';
     }
     syncFloatingActionsLayout();
     window.addEventListener('resize', syncFloatingActionsLayout);
@@ -777,6 +775,7 @@
         remaining -= 1;
         if (remaining <= 0) {
           if (source === 'ending') {
+            recordCompletedEpisodeRewards();
             ensureSessionState();
             marathonSessionState.watchedCount += 1;
           }
@@ -789,6 +788,7 @@
     }
 
     function handleEpisodeEndedWithMarathon() {
+      if (window.watchParty?.active && !window.watchParty.isHost) return;
       clearNextEpisodeCountdown();
       const prefs = getMarathonPreferences();
       ensureSessionState();
@@ -803,6 +803,21 @@
 
       startNextEpisodeCountdown('ended');
     }
+
+    function recordCompletedEpisodeRewards() {
+      const completion = {
+        animeId: window.currentWatchingAnime?.id,
+        season: window.currentWatchingAnime?.season,
+        episode: window.currentWatchingAnime?.episode
+      };
+      window.achievementEngine?.refresh({ eventType: 'episode_complete', ...completion });
+      try {
+        window.collectionEngine?.recordEpisode(completion);
+      } catch (_) {
+        window.dispatchEvent(new CustomEvent('collection:error', { detail: { message: 'Não foi possível salvar os pontos. Verifique o espaço de armazenamento do navegador.' } }));
+      }
+    }
+    window.addEventListener('aniverse:episode-completed', recordCompletedEpisodeRewards);
     
     // Next episode button functionality
     const nextEpisodeBtn = safe('next-episode-btn');
@@ -858,172 +873,27 @@
         }
     }
     
-    // Setup tap zones
-    const tapZoneLeft = document.getElementById('tap-zone-left');
-    const tapZoneCenter = document.getElementById('tap-zone-center');
-    const tapZoneRight = document.getElementById('tap-zone-right');
-    
-    // Left zone - double tap to rewind
-    if (tapZoneLeft) {
-        tapZoneLeft.addEventListener('touchend', (e) => {
-            const currentTime = Date.now();
-            if (lastTapZone === 'left' && currentTime - lastTapTime < DOUBLE_TAP_DELAY) {
-                e.preventDefault();
-                handleDoubleTapSeek('left');
-                // Keep lastTapTime updated for consecutive double-taps
-                lastTapTime = currentTime;
-                // Keep lastTapZone as 'left' for next tap
-            } else {
-                lastTapTime = currentTime;
-                lastTapZone = 'left';
-            }
-        });
-        tapZoneLeft.addEventListener('click', (e) => {
-            if (shouldSuppressTapToggle()) {
-                e.preventDefault();
-                return;
-            }
-
-            // Single click - toggle controls visibility
-            setControlsVisibility(!controlsVisible);
-        });
+    // One gesture handler for desktop, mobile and fullscreen.
+    function surfaceTap(zone, event) {
+      event.preventDefault(); event.stopPropagation();
+      if (zone === 'center') {
+        if (window.watchParty?.active && !window.watchParty.isHost) { setControlsVisibility(!controlsVisible); return; }
+        if (player.paused) player.play().catch(() => {}); else player.pause();
+        return;
+      }
+      const now = Date.now();
+      if (lastTapZone === zone && now - lastTapTime < DOUBLE_TAP_DELAY) {
+        if (!window.watchParty?.active || window.watchParty.isHost) handleDoubleTapSeek(zone);
+        lastTapTime = 0; lastTapZone = null;
+      } else {
+        lastTapTime = now; lastTapZone = zone;
+        setControlsVisibility(!controlsVisible);
+      }
     }
-    
-    // Right zone - double tap to forward
-    if (tapZoneRight) {
-        tapZoneRight.addEventListener('touchend', (e) => {
-            const currentTime = Date.now();
-            if (lastTapZone === 'right' && currentTime - lastTapTime < DOUBLE_TAP_DELAY) {
-                e.preventDefault();
-                handleDoubleTapSeek('right');
-                // Keep lastTapTime updated for consecutive double-taps
-                lastTapTime = currentTime;
-                // Keep lastTapZone as 'right' for next tap
-            } else {
-                lastTapTime = currentTime;
-                lastTapZone = 'right';
-            }
-        });
-        tapZoneRight.addEventListener('click', (e) => {
-            if (shouldSuppressTapToggle()) {
-                e.preventDefault();
-                return;
-            }
-
-            // Single click - toggle controls visibility
-            setControlsVisibility(!controlsVisible);
-        });
-    }
-    
-    // Center zone - single click to play/pause
-    if (tapZoneCenter) {
-        tapZoneCenter.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-
-            if (shouldSuppressTapToggle()) {
-                return;
-            }
-
-            if (player.paused) {
-                player.play().catch(() => {});
-            } else {
-                player.pause();
-            }
-        });
-        // Also allow double tap to hide controls
-        tapZoneCenter.addEventListener('touchend', (e) => {
-            const currentTime = Date.now();
-            if (lastTapZone === 'center' && currentTime - lastTapTime < DOUBLE_TAP_DELAY) {
-                // Double tap on center - toggle controls
-                setControlsVisibility(!controlsVisible);
-                lastTapTime = 0;
-                lastTapZone = null;
-            } else {
-                lastTapTime = currentTime;
-                lastTapZone = 'center';
-            }
-        });
-    }
-    
-    // PC: click on video/container to toggle pause/play
-    const videoContainer = document.getElementById('video-player-container');
-    const togglePlayback = () => {
-        if (player.paused) {
-            player.play().catch(() => {});
-        } else {
-            player.pause();
-        }
-    };
-
-    player.addEventListener('click', (e) => {
-        if (e.target !== player) return;
-        togglePlayback();
-    });
-
-    if (videoContainer) {
-        videoContainer.addEventListener('click', (e) => {
-            if (e.target.closest('#custom-video-controls')) return;
-            if (e.target.closest('#video-info-overlay')) return;
-            if (e.target.closest('.video-banner')) return;
-            if (e.target.closest('#video-tap-zones')) return;
-            togglePlayback();
-        });
-    }
-    
-    // Mobile: Double-tap detection on video element for seek
-    let videoLastTapTime = 0;
-    let videoLastTapZone = null;
-    
-    player.addEventListener('touchend', (e) => {
-        const currentTime = Date.now();
-        const touch = e.changedTouches[0];
-        const videoRect = player.getBoundingClientRect();
-        const tapX = touch.clientX - videoRect.left;
-        const videoWidth = videoRect.width;
-        // Larger side zones (37.5% each side, 25% center)
-        const sideZoneWidth = videoWidth * 0.375;
-        
-        // Determine which zone was tapped
-        let zone = 'center';
-        if (tapX < sideZoneWidth) {
-            zone = 'left';
-        } else if (tapX > videoWidth - sideZoneWidth) {
-            zone = 'right';
-        }
-        
-        if (videoLastTapZone === zone && currentTime - videoLastTapTime < DOUBLE_TAP_DELAY) {
-            // Double tap detected in same zone
-            e.preventDefault();
-            if (zone === 'left') {
-                handleDoubleTapSeek('left');
-                // Keep tracking for consecutive double-taps
-                videoLastTapTime = currentTime;
-            } else if (zone === 'right') {
-                handleDoubleTapSeek('right');
-                // Keep tracking for consecutive double-taps
-                videoLastTapTime = currentTime;
-            } else {
-                // Center double tap - toggle play/pause
-                if (player.paused) {
-                    player.play().catch(() => {});
-                } else {
-                    player.pause();
-                }
-                videoLastTapTime = 0;
-                videoLastTapZone = null;
-            }
-        } else {
-            // Single tap - toggle controls
-            videoLastTapTime = currentTime;
-            videoLastTapZone = zone;
-
-            if (shouldSuppressTapToggle()) {
-                return;
-            }
-            
-            setControlsVisibility(!controlsVisible);
-        }
+    for (const zone of ['left', 'center', 'right']) safe(`tap-zone-${zone}`)?.addEventListener('click', event => surfaceTap(zone, event));
+    player.addEventListener('click', event => {
+      const rect = player.getBoundingClientRect(), ratio = (event.clientX - rect.left) / rect.width;
+      surfaceTap(ratio < .375 ? 'left' : ratio > .625 ? 'right' : 'center', event);
     });
 
     const floatingSkipOpeningBtn = safe('floating-skip-opening-btn');
@@ -1057,7 +927,8 @@
       const currentTime = player.currentTime || 0;
       const inEnding = !!(window.currentEndingData && currentTime >= window.currentEndingData.start && currentTime < window.currentEndingData.end);
       const endingNearEpisodeEnd = isEndingNearEpisodeEnd(window.currentEndingData);
-      const shouldShowEndingCountdown = prefs.enabled && prefs.autoNext && inEnding && endingNearEpisodeEnd;
+      const followsHost = window.watchParty?.active && !window.watchParty.isHost;
+      const shouldShowEndingCountdown = !followsHost && prefs.enabled && prefs.autoNext && inEnding && endingNearEpisodeEnd;
 
       if (shouldShowEndingCountdown) {
         startNextEpisodeCountdown('ending');
@@ -1067,17 +938,17 @@
         clearNextEpisodeCountdown();
       }
 
-      if (prefs.enabled && prefs.autoSkipOpening && window.currentOpeningData && currentTime >= window.currentOpeningData.start && currentTime < window.currentOpeningData.end) {
+      if (!followsHost && prefs.enabled && prefs.autoSkipOpening && window.currentOpeningData && currentTime >= window.currentOpeningData.start && currentTime < window.currentOpeningData.end) {
         player.currentTime = window.currentOpeningData.end;
       }
-      if (prefs.enabled && prefs.autoSkipEnding && inEnding && !endingNearEpisodeEnd) {
+      if (!followsHost && prefs.enabled && prefs.autoSkipEnding && inEnding && !endingNearEpisodeEnd) {
         player.currentTime = window.currentEndingData.end;
       }
 
       if (floatingActionsEl) {
         const hasVisibleAction = [floatingNextEpisodeBtn, floatingSkipOpeningBtn, floatingSkipEndingBtn, floatingCreditsBtn]
           .some(el => el && el.style.display !== 'none');
-        const shouldShowFloating = hasVisibleAction && !controlsVisible;
+        const shouldShowFloating = hasVisibleAction;
         floatingActionsEl.style.display = shouldShowFloating ? 'flex' : 'none';
       }
     });
@@ -1129,12 +1000,14 @@
     (function initAgeRatingOverlay(){
       const container = document.getElementById('video-player-container');
       const overlay = document.getElementById('age-rating-overlay');
+      const fallback = document.getElementById('age-rating-fallback');
       if (!container || !overlay) return;
 
       let completedEpisodeKey = null;
       let activeEpisodeKey = null;
       let overlayPlaying = false;
       let hideTimeout = null;
+      let attempt = 0;
 
       function getEpisodeKey(){
         const watching = window.currentWatchingAnime || {};
@@ -1150,10 +1023,12 @@
       }
 
       function resetOverlay(markCompleted = false){
+        attempt++;
         clearFallbackTimeout();
         overlay.classList.remove('visible');
         try { overlay.pause(); } catch (_) {}
         overlay.style.display = 'none';
+        if (fallback) fallback.hidden = true;
         try { overlay.currentTime = 0; } catch (_) {}
         overlayPlaying = false;
         if (markCompleted) completedEpisodeKey = activeEpisodeKey || getEpisodeKey();
@@ -1167,9 +1042,8 @@
       }
 
       function canPlayAgeOverlay(){
-        return isContainerFullscreen() &&
-          container.classList.contains('controls-hidden') &&
-          player &&
+        return isContainerFullscreen() && container.classList.contains('controls-hidden') &&
+          !!overlay.getAttribute('src') && player &&
           !player.paused &&
           !player.ended;
       }
@@ -1178,6 +1052,18 @@
         if (!overlayPlaying) return;
         // If the player chrome/title comes back, do not count the vinheta as watched.
         if (!canPlayAgeOverlay()) resetOverlay(false);
+      }
+
+      function showFallback(){
+        if (!canPlayAgeOverlay()) { resetOverlay(false); return; }
+        const image = document.getElementById('age-rating-image');
+        resetOverlay(false);
+        activeEpisodeKey = getEpisodeKey();
+        if (!fallback || !image || !image.getAttribute('src')) { resetOverlay(true); return; }
+        fallback.src = image.src;
+        fallback.hidden = false;
+        overlayPlaying = true;
+        hideTimeout = setTimeout(() => resetOverlay(true), 5000);
       }
 
       function tryPlayAgeOverlay(){
@@ -1190,15 +1076,16 @@
         activeEpisodeKey = episodeKey;
         resetOverlay(false);
         activeEpisodeKey = episodeKey;
+        if (overlay.error) { showFallback(); return; }
         overlay.style.display = 'block';
         overlay.classList.add('visible');
         overlayPlaying = true;
+        const currentAttempt = attempt;
 
         const playPromise = overlay.play();
         if (playPromise && typeof playPromise.catch === 'function') {
           playPromise.catch(() => {
-            resetOverlay(false);
-            setTimeout(tryPlayAgeOverlay, 250);
+            if (currentAttempt === attempt && overlayPlaying) showFallback();
           });
         }
 
@@ -1207,6 +1094,7 @@
       }
 
       overlay.addEventListener('ended', () => resetOverlay(true));
+      overlay.addEventListener('error', () => { if (overlayPlaying) showFallback(); });
 
       function resetForNewEpisode(){
         const episodeKey = getEpisodeKey();
@@ -1247,6 +1135,9 @@
         const container = document.getElementById('video-player-container');
         return document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || (container && container.classList.contains('is-fullscreen'));
     }
+    function hasDockedMobileControls() {
+      return matchMedia('(max-width:1099px)').matches && !isInFullscreen();
+    }
     
     function showControls() {
         const container = document.getElementById('video-player-container');
@@ -1260,11 +1151,12 @@
         if (controlsHideTimeout) {
             clearTimeout(controlsHideTimeout);
         }
+        if (hasDockedMobileControls()) return;
         
-        // Only auto-hide if in fullscreen and video is playing
-        if (isInFullscreen() && player && !player.paused) {
+        // Hide after inactivity while hovering, including when paused.
+        if (player) {
             controlsHideTimeout = setTimeout(() => {
-                if (isInFullscreen() && !player.paused) {
+                if (!container.querySelector(':focus-visible')) {
                     container.classList.add('controls-hidden');
                     container.classList.remove('controls-visible');
                     controlsVisible = false;
@@ -1275,41 +1167,33 @@
     
     function hideControls(force = false) {
         const container = document.getElementById('video-player-container');
-        if (!container || (!force && !isInFullscreen())) return;
+        if (hasDockedMobileControls()) { showControls(); return; }
+        if (!container || (!force && player.paused)) return;
         
         container.classList.add('controls-hidden');
         container.classList.remove('controls-visible');
         controlsVisible = false;
     }
+    function playbackControls() {
+      const container = document.getElementById('video-player-container');
+      if (matchMedia('(hover: hover)').matches && !container.matches(':hover') && !container.querySelector(':focus-visible')) hideControls(true);
+      else showControls();
+    }
     
     // Mouse movement - show controls (PC)
     const container = document.getElementById('video-player-container');
     if (container) {
-        container.addEventListener('mousemove', () => {
+        container.addEventListener('mousemove', event => {
+            if (event.sourceCapabilities?.firesTouchEvents || event.target.closest?.('#watch-party-panel, .episode-picker')) return;
+            if (event.movementX === 0 && event.movementY === 0) return;
             showControls();
         });
-        
-        // Touch behavior:
-        // - If controls are already visible, keep the auto-hide timer alive.
-        // - If controls are hidden, first touch should only reveal controls (no immediate re-toggle).
-        container.addEventListener('touchstart', () => {
-            if (controlsVisible) {
-                showControls();
-                return;
-            }
-
-            setControlsVisibility(true);
-            suppressTapToggleUntil = Date.now() + 350;
-        }, { passive: true });
+        container.addEventListener('mouseenter', showControls);
         
         // When mouse leaves container, start hide timer
         container.addEventListener('mouseleave', () => {
-            if (isInFullscreen() && player && !player.paused) {
-                if (controlsHideTimeout) {
-                    clearTimeout(controlsHideTimeout);
-                }
-                controlsHideTimeout = setTimeout(hideControls, HIDE_CONTROLS_DELAY);
-            }
+            if (controlsHideTimeout) clearTimeout(controlsHideTimeout);
+            hideControls(true);
         });
     }
 
@@ -1321,24 +1205,24 @@
     
     // Show controls when video is paused
     player.addEventListener('pause', () => {
-      showControls();
+      playbackControls();
       persistContinueWatchingNow(true);
       if (nextEpisodeCountdownSource === 'ending') clearNextEpisodeCountdown();
     });
     
     // Hide controls when video starts playing (after delay)
-    player.addEventListener('play', () => {
-        if (isInFullscreen()) {
-            if (controlsHideTimeout) {
-                clearTimeout(controlsHideTimeout);
-            }
-            controlsHideTimeout = setTimeout(hideControls, HIDE_CONTROLS_DELAY);
-        }
+    player.addEventListener('play', playbackControls);
+    player.addEventListener('loadedmetadata', () => {
+      const modal = safe('video-modal');
+      if (modal && player.videoWidth && player.videoHeight) {
+        modal.style.setProperty('--video-aspect', String(player.videoWidth / player.videoHeight));
+      }
+      playbackControls();
     });
     
     // Show controls when seeking
     player.addEventListener('seeking', () => {
-      showControls();
+      playbackControls();
       persistContinueWatchingDebounced();
     });
 
@@ -1348,14 +1232,7 @@
         e.stopImmediatePropagation();
       }
       persistContinueWatchingNow(true);
-      if (window.achievementEngine && typeof window.achievementEngine.refresh === 'function') {
-        window.achievementEngine.refresh({
-          eventType: 'episode_complete',
-          animeId: window.currentWatchingAnime?.id,
-          season: window.currentWatchingAnime?.season,
-          episode: window.currentWatchingAnime?.episode
-        });
-      }
+      recordCompletedEpisodeRewards();
       handleEpisodeEndedWithMarathon();
     });
     player.addEventListener('play', () => clearNextEpisodeCountdown());
@@ -1375,6 +1252,7 @@
 // Keyboard shortcuts for video player
 function handleVideoHotkeys(e) {
     if (e.__aniverseVideoHandled) return;
+    if (e.defaultPrevented || e.isComposing || e.ctrlKey || e.altKey || e.metaKey) return;
 
     const videoModal = document.getElementById('video-modal');
     const player = document.getElementById('anime-player');
@@ -1387,6 +1265,7 @@ function handleVideoHotkeys(e) {
     if (!isVideoActive) return;
 
     const target = e.target;
+    if (target?.closest?.('#watch-party-panel, .episode-picker')) return;
     const tagName = (target?.tagName || '').toUpperCase();
     const isTypingTarget = target?.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(tagName);
     if (isTypingTarget) return;

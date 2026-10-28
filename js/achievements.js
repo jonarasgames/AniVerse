@@ -192,10 +192,10 @@
     }
 
     async refresh(options = {}) {
+      const profileId = getProfileId();
       await this.loadData();
       if (!this.config) return null;
 
-      const profileId = getProfileId();
       const state = this.ensureState(profileId);
       this.processEvent(state, options);
 

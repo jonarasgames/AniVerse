@@ -2,15 +2,23 @@
 (function() {
     'use strict';
 
-    let currentProfileData = {
+    const DEFAULT_PROFILE_DATA = {
         name: 'Nome',
         pronoun: '-san',
         backgroundColor: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
         backgroundImage: null,
         characterImage: 'images/IMG_20250628_194234.png',
         frame: '',
+        collectionAvatar: null,
         password: null
     };
+    let currentProfileData = { ...DEFAULT_PROFILE_DATA };
+    const VALID_AVATAR_FRAMES = new Set(['glow', 'rainbow', 'pulse', 'spin', 'neon', 'fire', 'electric', 'gold', 'sakura']);
+
+    function normalizeAvatarFrame(frame) {
+        const value = String(frame || '').trim().toLowerCase().replace(/^frame-/, '');
+        return VALID_AVATAR_FRAMES.has(value) ? value : '';
+    }
 
     // Character images list
     const characterImages = [
@@ -112,6 +120,10 @@
                 modal.style.display = 'none';
                 modal.classList.remove('active');
                 document.body.style.overflow = '';
+                if (modal.dataset.returnToProfiles === 'manage') {
+                    delete modal.dataset.returnToProfiles;
+                    window.showManageProfilesScreen?.();
+                }
             });
         }
 
@@ -121,6 +133,10 @@
                 modal.style.display = 'none';
                 modal.classList.remove('active');
                 document.body.style.overflow = '';
+                if (modal.dataset.returnToProfiles === 'manage') {
+                    delete modal.dataset.returnToProfiles;
+                    window.showManageProfilesScreen?.();
+                }
             }
         });
 
@@ -178,9 +194,13 @@
         const frameOptions = document.querySelectorAll('.frame-option');
         frameOptions.forEach(option => {
             option.addEventListener('click', () => {
-                frameOptions.forEach(o => o.classList.remove('selected'));
+                frameOptions.forEach(o => {
+                    o.classList.remove('selected');
+                    o.setAttribute('aria-pressed', 'false');
+                });
                 option.classList.add('selected');
-                currentProfileData.frame = option.dataset.frame || '';
+                option.setAttribute('aria-pressed', 'true');
+                currentProfileData.frame = normalizeAvatarFrame(option.dataset.frame);
                 updatePreview();
             });
         });
@@ -207,7 +227,7 @@
         // Save button
         if (saveBtn) {
             saveBtn.addEventListener('click', () => {
-                saveProfile();
+                if (!window.profileManager) saveProfile();
             });
         }
 
@@ -227,6 +247,8 @@
             if (index === 0) option.classList.add('selected');
             
             const img = document.createElement('img');
+            img.loading = 'lazy';
+            img.decoding = 'async';
             img.src = imgSrc;
             img.alt = `Personagem ${index + 1}`;
             
@@ -235,13 +257,70 @@
                 document.querySelectorAll('.character-option').forEach(o => o.classList.remove('selected'));
                 option.classList.add('selected');
                 currentProfileData.characterImage = imgSrc;
+                currentProfileData.collectionAvatar = null;
                 updatePreview();
             });
             
             characterGrid.appendChild(option);
         });
+        renderCollectionAvatars();
     }
     
+    function renderCollectionAvatars(profileId) {
+        const tab = document.getElementById('tab-characters');
+        if (!tab || !window.collectionEngine) return;
+        const modal = document.getElementById('profile-modal');
+        const targetProfile = profileId || modal?.dataset.editingProfileId || (modal?.dataset.creatingProfile === 'true' ? null : window.profileManager?.getActiveProfile?.()?.id || 'guest');
+        let section = document.getElementById('collection-avatar-rewards');
+        if (!section) {
+            section = document.createElement('section');
+            section.id = 'collection-avatar-rewards';
+            tab.insertBefore(section, document.getElementById('character-grid'));
+        }
+        section.replaceChildren();
+        const heading = document.createElement('h3'); heading.textContent = 'Avatares dos seus álbuns';
+        const hint = document.createElement('p');
+        const avatars = targetProfile === null ? [] : window.collectionEngine.unlockedAvatars(String(targetProfile));
+        hint.textContent = avatars.length ? 'Personagens liberados por álbuns completos. Escolha um para usar neste perfil.' : 'Complete e cole as 24 cartas de um álbum para liberar seus personagens como avatares.';
+        section.append(heading, hint);
+        let groupName = '', grid;
+        avatars.forEach(card => {
+            if (groupName !== card.albumName) {
+                groupName = card.albumName;
+                const label = document.createElement('h4'); label.textContent = card.albumName; section.appendChild(label);
+                grid = document.createElement('div'); grid.className = 'collection-avatar-grid'; section.appendChild(grid);
+            }
+            const display = window.cardStudio?.decorate(card, card.season);
+            const src = display?.image || card.renderSrc;
+            const button = document.createElement('button'); button.type = 'button';
+            button.className = 'character-option collection-avatar-option';
+            button.dataset.collectionAvatar = `${card.season}:${card.id}`;
+            const name = display?.name || card.name;
+            button.setAttribute('aria-label', `Usar avatar ${name}, prêmio de ${card.albumName}`);
+            const image = document.createElement('img'); image.src = src; image.alt = ''; image.loading = 'lazy'; image.decoding = 'async'; image.dataset.noRetry = 'true';
+            image.addEventListener('error', () => { image.hidden = true; button.title = 'Adicione o render deste personagem à pasta do tema.'; });
+            const caption = document.createElement('span'); caption.textContent = name;
+            button.append(image, caption);
+            if (currentProfileData.collectionAvatar?.season === card.season && currentProfileData.collectionAvatar?.cardId === card.id) {
+                document.querySelectorAll('.character-option.selected').forEach(option => option.classList.remove('selected'));
+                button.classList.add('selected');
+            }
+            button.addEventListener('click', () => {
+                document.querySelectorAll('.character-option.selected').forEach(option => option.classList.remove('selected'));
+                button.classList.add('selected');
+                currentProfileData.characterImage = src;
+                currentProfileData.collectionAvatar = { season: card.season, cardId: card.id };
+                updatePreview();
+            });
+            grid.appendChild(button);
+        });
+    }
+    window.refreshCollectionAvatars = renderCollectionAvatars;
+    ['collection:updated', 'card-art:updated'].forEach(type => window.addEventListener(type, () => {
+        const modal = document.getElementById('profile-modal');
+        if (modal && modal.style.display !== 'none') renderCollectionAvatars();
+    }));
+
     function initBackgroundImagesGrid() {
         const bgImagesGrid = document.getElementById('background-images-grid');
         if (!bgImagesGrid) return;
@@ -263,7 +342,7 @@
             </div>
         ` + bgImages.map((src, idx) => `
             <div class="bg-image-option" data-src="${src}">
-                <img src="${src}" alt="Fundo ${idx + 1}">
+                <img src="${src}" alt="Fundo ${idx + 1}" loading="lazy" decoding="async">
             </div>
         `).join('');
         
@@ -286,9 +365,9 @@
 
         if (previewBg) {
             // Reset all background properties first
-            previewBg.style.background = '';
+            previewBg.style.background = 'none';
             previewBg.style.backgroundColor = '';
-            previewBg.style.backgroundImage = '';
+            previewBg.style.backgroundImage = 'none';
             previewBg.style.backgroundSize = '';
             previewBg.style.backgroundPosition = '';
             
@@ -316,14 +395,14 @@
         // Layer 3: Character image (on top of everything via z-index in CSS)
         if (previewChar && currentProfileData.characterImage) {
             previewChar.src = currentProfileData.characterImage;
+            previewChar.style.objectFit = currentProfileData.collectionAvatar ? 'contain' : 'cover';
         }
 
         // Layer 4: Frame (on top via z-index in CSS)
         if (previewFrame) {
             previewFrame.className = 'avatar-frame-layer';
-            if (currentProfileData.frame) {
-                previewFrame.classList.add(currentProfileData.frame);
-            }
+            const frame = normalizeAvatarFrame(currentProfileData.frame);
+            if (frame) previewFrame.classList.add(frame);
         }
 
         if (previewName) {
@@ -426,9 +505,8 @@
         const frameLayer = document.getElementById('header-avatar-frame');
         if (frameLayer && profile.avatar) {
             frameLayer.className = 'avatar-frame-layer';
-            if (profile.avatar.frame) {
-                frameLayer.classList.add(profile.avatar.frame);
-            }
+            const frame = normalizeAvatarFrame(profile.avatar.frame);
+            if (frame) frameLayer.classList.add(frame);
         }
     }
 
@@ -458,6 +536,23 @@
         }, 3000);
     }
 
+    window.resetProfileDraft = () => {
+        currentProfileData = { ...DEFAULT_PROFILE_DATA };
+        renderCollectionAvatars();
+        document.getElementById('selected-pronoun').value = currentProfileData.pronoun;
+        document.querySelectorAll('.pronoun-pill').forEach(pill => pill.classList.toggle('active', pill.dataset.pronoun === currentProfileData.pronoun));
+        updatePreview();
+    };
+
+    window.getProfileAvatarDraft = () => ({
+        backgroundColor: /gradient\(/.test(currentProfileData.backgroundColor || '') ? null : currentProfileData.backgroundColor,
+        gradient: /gradient\(/.test(currentProfileData.backgroundColor || '') ? currentProfileData.backgroundColor : null,
+        backgroundImage: currentProfileData.backgroundImage,
+        characterImage: currentProfileData.characterImage,
+        frame: currentProfileData.frame,
+        collectionAvatar: currentProfileData.collectionAvatar ? { ...currentProfileData.collectionAvatar } : null
+    });
+
     // Make openProfileModal globally available
     window.openProfileModal = function(profileData) {
         const modal = document.getElementById('profile-modal');
@@ -474,6 +569,7 @@
                 backgroundImage: profileData.avatar?.backgroundImage || null,
                 characterImage: profileData.avatar?.characterImage || 'images/IMG_20250628_194234.png',
                 frame: profileData.avatar?.frame || '',
+                collectionAvatar: profileData.avatar?.collectionAvatar || null,
                 password: profileData.password || null
             };
             
@@ -492,6 +588,7 @@
                 }
             });
             
+            renderCollectionAvatars(profileData.id);
             updatePreview();
         }
 

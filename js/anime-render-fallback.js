@@ -2,7 +2,7 @@
 (function(){
   function createCard(a){
     const c = document.createElement('div'); c.className = 'anime-card fallback-card';
-    c.innerHTML = `<div style="height:120px;background-image:url('${a.cover||a.thumbnail||'images/bg-default.jpg'}');background-size:cover;border-radius:6px;"></div><h4>${a.title||a.name||a.id}</h4>`;
+    c.innerHTML = `<div style="height:120px;background-image:url('${a.cover||a.thumbnail||'images/bg-default.png'}');background-size:cover;border-radius:6px;"></div><h4>${a.title||a.name||a.id}</h4>`;
     return c;
   }
   function findTargets(){ 

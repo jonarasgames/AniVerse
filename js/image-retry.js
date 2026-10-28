@@ -2,7 +2,7 @@
 (function() {
   'use strict';
 
-  const MAX_RETRIES = 10;
+  const MAX_RETRIES = 3;
   const RETRY_DELAY = 1500; // 1.5 seconds
   const NON_RETRYABLE_HOSTS = new Set(['example.com', 'www.example.com']);
   const PLACEHOLDER_IMAGE = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100%25" height="100%25" viewBox="0 0 300 400"%3E%3Crect fill="%23333" width="300" height="400"/%3E%3Ctext x="50%25" y="50%25" fill="%23999" font-family="Arial" font-size="18" text-anchor="middle" dominant-baseline="middle"%3EImagem indisponível%3C/text%3E%3C/svg%3E';
@@ -26,7 +26,7 @@
    */
   function setupImageRetry(img) {
     // Skip if already setup or if it's a data URL
-    if (img.dataset.retrySetup === 'true' || img.src.startsWith('data:')) {
+    if (img.dataset.noRetry === 'true' || img.dataset.retrySetup === 'true' || img.src.startsWith('data:')) {
       return;
     }
 
@@ -42,9 +42,17 @@
     if (!img.dataset.originalSrc) {
       img.dataset.originalSrc = img.src;
     }
+    let retryTimer = null;
+    let retrySrc = '';
 
     // Setup error handler
     img.onerror = function() {
+      clearTimeout(retryTimer);
+      // A reused avatar/cover must retry its current source, not the old one.
+      if (img.src !== retrySrc && img.src !== img.dataset.originalSrc) {
+        img.dataset.originalSrc = img.src;
+        img.dataset.retryCount = '0';
+      }
       const retryCount = parseInt(img.dataset.retryCount || '0');
       const originalSrc = img.dataset.originalSrc || img.src;
 
@@ -71,21 +79,26 @@
       console.log(`Retrying image (attempt ${retryCount + 1}/${MAX_RETRIES}):`, originalSrc);
 
       // Wait before retrying
-      setTimeout(() => {
-        // Add cache-busting timestamp to force reload
-        const separator = originalSrc.includes('?') ? '&' : '?';
-        const timestamp = new Date().getTime();
-        img.src = `${originalSrc}${separator}_img_retry_ts=${timestamp}`;
-      }, RETRY_DELAY);
+      const failedSrc = img.src;
+      retryTimer = setTimeout(() => {
+        if (!img.isConnected || img.src !== failedSrc) return;
+        const url = new URL(originalSrc, window.location.href);
+        url.searchParams.set('_img_retry_ts', String(Date.now()));
+        retrySrc = url.href;
+        img.src = retrySrc;
+      }, RETRY_DELAY * Math.pow(2, retryCount));
     };
 
     // Reset retry count on successful load
     img.onload = function() {
+      clearTimeout(retryTimer);
       if (img.dataset.retryCount && parseInt(img.dataset.retryCount) > 0) {
         console.log(`Image loaded successfully after ${img.dataset.retryCount} retries:`, img.dataset.originalSrc);
       }
       img.dataset.retryCount = '0';
     };
+    // The error may have happened before the observer attached the handler.
+    if (img.getAttribute('src') && img.complete && img.naturalWidth === 0) img.onerror();
   }
 
   /**

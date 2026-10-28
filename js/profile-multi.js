@@ -13,7 +13,13 @@
         autoSkipEnding: false,
         countdownSeconds: 8
     };
+    const VALID_AVATAR_FRAMES = new Set(['glow', 'rainbow', 'pulse', 'spin', 'neon', 'fire', 'electric', 'gold', 'sakura']);
     const PASSWORD_HASH_VERSION = 'sha256-v1';
+
+    function normalizeAvatarFrame(frame) {
+        const value = String(frame || '').trim().toLowerCase().replace(/^frame-/, '');
+        return VALID_AVATAR_FRAMES.has(value) ? value : '';
+    }
 
     function bytesToHex(bytes) {
         return Array.from(bytes, (byte) => byte.toString(16).padStart(2, '0')).join('');
@@ -162,6 +168,7 @@
                 if (this.activeProfileId === profileId) {
                     this.activeProfileId = null;
                     storageRemove(ACTIVE_PROFILE_KEY);
+                    window.dispatchEvent(new CustomEvent('aniverse:profile-changed', { detail: { profileId: null } }));
                 }
                 return true;
             }
@@ -181,6 +188,7 @@
             if (profile) {
                 this.activeProfileId = profileId;
                 storageSet(ACTIVE_PROFILE_KEY, profileId);
+                window.dispatchEvent(new CustomEvent('aniverse:profile-changed', { detail: { profileId } }));
                 return profile;
             }
             return null;
@@ -331,6 +339,7 @@
                 profileManager.setActiveProfile(profile.id);
                 hideProfileSelectionScreen();
                 loadProfileData(profile);
+                window.openAnimeFromUrlParams?.();
             });
             profilesGrid.appendChild(profileCard);
         });
@@ -383,7 +392,12 @@
     function createProfileCard(profile, onClick) {
         const card = document.createElement('div');
         card.dataset.tvProfileCard = 'select';
-        card.tabIndex = -1;
+        card.tabIndex = 0;
+        card.setAttribute('role', 'button');
+        card.setAttribute('aria-label', `Assistir como ${profile.name}`);
+        card.addEventListener('keydown', event => {
+            if (!event.defaultPrevented && (event.key === 'Enter' || event.key === ' ')) { event.preventDefault(); card.click(); }
+        });
         card.classList.add('tv-focusable');
         card.style.cssText = `
             cursor: pointer;
@@ -499,13 +513,15 @@
                 object-fit: cover;
                 z-index: 2;
             `;
+            if (profile.avatar?.collectionAvatar) charImg.style.objectFit = 'contain';
             avatarContainer.appendChild(charImg);
         }
 
         // Layer 4: Frame overlay (if frame is set)
-        if (profile.avatar?.frame) {
+        const selectedFrame = normalizeAvatarFrame(profile.avatar?.frame);
+        if (selectedFrame) {
             const frameOverlay = document.createElement('div');
-            frameOverlay.className = 'avatar-frame-layer ' + profile.avatar.frame;
+            frameOverlay.className = 'avatar-frame-layer ' + selectedFrame;
             frameOverlay.style.cssText = `
                 position: absolute;
                 top: 0;
@@ -513,7 +529,6 @@
                 right: 0;
                 bottom: 0;
                 pointer-events: none;
-                border-radius: 8px;
                 z-index: 3;
             `;
             avatarContainer.appendChild(frameOverlay);
@@ -522,6 +537,7 @@
         card.appendChild(avatarContainer);
 
         const nameLabel = document.createElement('div');
+        nameLabel.classList.add('profile-picker-name');
         nameLabel.textContent = profile.name + profile.pronoun;
         nameLabel.style.cssText = `
             color: #808080;
@@ -610,6 +626,7 @@
         card.appendChild(avatarContainer);
 
         const nameLabel = document.createElement('div');
+        nameLabel.classList.add('profile-picker-name');
         nameLabel.textContent = 'Adicionar Perfil';
         nameLabel.style.cssText = `
             color: #808080;
@@ -640,7 +657,11 @@
             
             // Clear editing mode
             delete modal.dataset.editingProfileId;
+            delete modal.dataset.returnToProfiles;
+            modal.dataset.creatingProfile = 'true';
             
+            window.resetProfileDraft?.();
+
             // Reset form
             const nameInput = document.getElementById('profile-name');
             if (nameInput) nameInput.value = '';
@@ -649,9 +670,14 @@
             fillMarathonSettings(DEFAULT_MARATHON_PREFERENCES);
             
             // Clear previous selections
-            document.querySelectorAll('.bg-option, .char-option, .gradient-option, .frame-option').forEach(el => {
+            document.querySelectorAll('.bg-option, .char-option, .gradient-option, .color-option, .character-option, .bg-image-option, .frame-option').forEach(el => {
                 el.classList.remove('selected');
+                if (el.matches('.frame-option')) el.setAttribute('aria-pressed', 'false');
             });
+
+            const noFrameOption = document.querySelector('.frame-option[data-frame=""]');
+            noFrameOption?.classList.add('selected');
+            noFrameOption?.setAttribute('aria-pressed', 'true');
             
             // Set defaults
             const firstBg = document.querySelector('.bg-option');
@@ -661,7 +687,7 @@
             if (firstChar) firstChar.classList.add('selected');
             
             // Reset button text
-            const saveBtn = document.getElementById('save-profile');
+            const saveBtn = document.getElementById('save-profile-btn');
             if (saveBtn) {
                 saveBtn.textContent = 'Salvar Perfil';
             }
@@ -677,12 +703,16 @@
         
         const modal = document.getElementById('profile-modal');
         if (!modal || !profile) return;
+        delete modal.dataset.creatingProfile;
         
         modal.style.display = 'flex';
         document.body.style.overflow = 'hidden';
         
+        window.openProfileModal?.(profile);
+
         // Store current profile being edited
         modal.dataset.editingProfileId = profile.id;
+        modal.dataset.returnToProfiles = 'manage';
         
         // Fill form with profile data
         const nameInput = document.getElementById('profile-name');
@@ -709,6 +739,7 @@
         // Clear all selections first
         document.querySelectorAll('.color-option, .character-option, .bg-image-option, .frame-option').forEach(el => {
             el.classList.remove('selected');
+            if (el.matches('.frame-option')) el.setAttribute('aria-pressed', 'false');
         });
         
         // Select the correct color/gradient option
@@ -746,15 +777,17 @@
         }
         
         // Select the correct frame
-        if (profile.avatar?.frame) {
-            const frameOption = Array.from(document.querySelectorAll('.frame-option')).find(
-                el => el.dataset.frame === profile.avatar.frame
-            );
-            if (frameOption) {
-                frameOption.classList.add('selected');
-            }
+        const savedFrame = normalizeAvatarFrame(profile.avatar?.frame);
+        const frameOption = Array.from(document.querySelectorAll('.frame-option')).find(
+            el => normalizeAvatarFrame(el.dataset.frame) === savedFrame
+        );
+        if (frameOption) {
+            frameOption.classList.add('selected');
+            frameOption.setAttribute('aria-pressed', 'true');
         }
         
+        window.refreshCollectionAvatars?.(profile.id);
+
         // Update preview with profile data
         setTimeout(() => {
             if (window.updatePreview) {
@@ -868,6 +901,7 @@
         container.appendChild(doneButton);
 
         overlay.appendChild(container);
+        overlay.style.display = 'flex';
 
         setTimeout(() => {
             const firstFocusable = overlay.querySelector('[data-tv-profile-card], .tv-focusable');
@@ -935,6 +969,7 @@
                 object-fit: cover;
                 z-index: 2;
             `;
+            if (profile.avatar?.collectionAvatar) charImg.style.objectFit = 'contain';
             avatarContainer.appendChild(charImg);
         }
 
@@ -963,11 +998,30 @@
                 showManageProfilesScreen();
             }
         });
+        deleteBtn.type = 'button';
+        deleteBtn.classList.add('profile-delete-button');
+        deleteBtn.setAttribute('aria-label', `Excluir perfil ${profile.name}`);
         avatarContainer.appendChild(deleteBtn);
+        const editBtn = document.createElement('button');
+        editBtn.type = 'button';
+        editBtn.className = 'profile-edit-button';
+        editBtn.textContent = '✎';
+        editBtn.setAttribute('aria-label', `Editar perfil ${profile.name}`);
+        editBtn.title = 'Editar perfil';
+        editBtn.addEventListener('click', async () => {
+            if (profile.passwordHash || profile.password) {
+                const password = prompt(`Digite a senha de ${profile.name} para editar:`);
+                if (password === null) return;
+                if (!await verifyProfilePassword(profile, password)) { alert('Senha incorreta!'); return; }
+            }
+            openProfileEditModal(profile);
+        });
+        avatarContainer.appendChild(editBtn);
 
         card.appendChild(avatarContainer);
 
         const nameLabel = document.createElement('div');
+        nameLabel.classList.add('profile-picker-name');
         nameLabel.textContent = profile.name + profile.pronoun;
         nameLabel.style.cssText = `
             color: white;
@@ -1025,9 +1079,8 @@
                 frameLayer.style.position = 'absolute';
                 frameLayer.style.inset = '0';
                 frameLayer.style.zIndex = '3';
-                if (profile.avatar?.frame) {
-                    frameLayer.classList.add(profile.avatar.frame);
-                }
+                const frame = normalizeAvatarFrame(profile.avatar?.frame);
+                if (frame) frameLayer.classList.add(frame);
             }
             
             headerAvatar.onclick = () => {
@@ -1038,34 +1091,18 @@
             headerAvatar.title = `${profile.name}${profile.pronoun} - Clique para trocar`;
         }
 
-        // Update welcome message - NOME DO PERFIL → EDIÇÃO
         const welcomeContainer = document.getElementById('user-welcome-container');
         if (welcomeContainer) {
-            welcomeContainer.innerHTML = `
-                <h2 style="color: var(--text-color); margin-bottom: 0.5rem; cursor: pointer; transition: all 0.3s;" 
-                    id="profile-name-edit-btn"
-                    onmouseover="this.style.color='var(--primary-color)'"
-                    onmouseout="this.style.color='var(--text-color)'"
-                    title="Clique para editar seu perfil">
-                    Bem-vindo de volta, ${profile.name}${profile.pronoun}! ✏️
-                </h2>
-            `;
-            
-            const editBtn = document.getElementById('profile-name-edit-btn');
-            if (editBtn) {
-                editBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    
-                    // GARANTIR que não abre seleção no fundo
-                    const selectionScreen = document.getElementById('profile-selection-overlay');
-                    if (selectionScreen) {
-                        selectionScreen.style.display = 'none';
-                    }
-                    
-                    openProfileEditModal(profile);
-                });
-            }
+            welcomeContainer.replaceChildren();
+            const heading = document.createElement('h2');
+            const opener = document.createElement('button');
+            opener.id = 'profile-name-edit-btn';
+            opener.type = 'button';
+            opener.className = 'profile-name-opener';
+            opener.textContent = `Bem-vindo de volta, ${profile.name}${profile.pronoun || ''}!`;
+            opener.title = 'Escolher quem está assistindo';
+            opener.addEventListener('click', showProfileSelectionScreen);
+            heading.appendChild(opener); welcomeContainer.appendChild(heading);
         }
 
         // Load profile's continue watching
@@ -1122,43 +1159,30 @@
             });
         }
 
-        // Show login button as "profile" button with avatar
         const loginBtn = document.getElementById('login-btn');
         if (loginBtn) {
-            // Create avatar HTML
-            const avatarStyle = `
-                width: 32px;
-                height: 32px;
-                border-radius: 50%;
-                background: ${profile.avatar?.backgroundColor || '#ff6b6b'};
-                ${profile.avatar?.gradient ? `background: ${profile.avatar.gradient};` : ''}
-                ${profile.avatar?.backgroundImage ? `background-image: url('${profile.avatar.backgroundImage}');` : ''}
-                background-size: cover;
-                background-position: center;
-                display: inline-block;
-                vertical-align: middle;
-                margin-right: 8px;
-                position: relative;
-            `;
-            
-            let avatarHTML = `<span style="${avatarStyle}">`;
+            loginBtn.replaceChildren();
+            const avatar = document.createElement('span');
+            avatar.className = 'profile-header-avatar';
+            avatar.style.background = profile.avatar?.gradient || profile.avatar?.backgroundColor || '#667eea';
+            if (profile.avatar?.backgroundImage) {
+                avatar.style.backgroundImage = `url('${profile.avatar.backgroundImage}')`;
+            }
             if (profile.avatar?.characterImage) {
-                avatarHTML += `<img src="${profile.avatar.characterImage}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+                const image = document.createElement('img');
+                image.src = profile.avatar.characterImage; image.alt = ''; avatar.appendChild(image);
             }
-            if (profile.avatar?.frame) {
-                avatarHTML += `<span class="avatar-frame-layer ${profile.avatar.frame}" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: 50%; pointer-events: none;"></span>`;
-            }
-            avatarHTML += `</span>`;
-            
-            loginBtn.innerHTML = avatarHTML + profile.name;
-            loginBtn.onclick = () => {
-                // Fechar tela de seleção se estiver aberta
-                const selectionScreen = document.getElementById('profile-selection-overlay');
-                if (selectionScreen) {
-                    selectionScreen.style.display = 'none';
-                }
-                openProfileEditModal(profile);
-            };
+            const frame = document.createElement('span');
+            frame.className = 'avatar-frame-layer';
+            const savedFrame = normalizeAvatarFrame(profile.avatar?.frame);
+            if (savedFrame) frame.classList.add(savedFrame);
+            avatar.appendChild(frame);
+            const name = document.createElement('span'); name.textContent = profile.name;
+            if (profile.avatar?.collectionAvatar && avatar.querySelector('img')) avatar.querySelector('img').style.objectFit = 'contain';
+            loginBtn.append(avatar, name);
+            loginBtn.title = 'Escolher quem está assistindo';
+            loginBtn.setAttribute('aria-label', `Trocar perfil: ${profile.name}`);
+            loginBtn.onclick = showProfileSelectionScreen;
         }
     }
 
@@ -1183,7 +1207,7 @@
                 }
 
                 // Collect avatar data
-                const avatarData = {
+                const avatarData = window.getProfileAvatarDraft?.() || {
                     backgroundColor: null,
                     gradient: null,
                     backgroundImage: null,
@@ -1247,12 +1271,14 @@
                     if (modal) {
                         modal.style.display = 'none';
                         delete modal.dataset.editingProfileId;
+                        delete modal.dataset.returnToProfiles;
                         document.body.style.overflow = '';
                     }
                     
                     // Reload current profile
                     const updatedProfile = profileManager.getProfile(editingProfileId);
-                    loadProfileData(updatedProfile);
+                    if (profileManager.getActiveProfile()?.id === updatedProfile.id) loadProfileData(updatedProfile);
+                    showManageProfilesScreen();
                     alert('Perfil atualizado com sucesso! ✅');
                 } else {
                     // Create new profile
@@ -1270,6 +1296,7 @@
                     
                     // Hide profile selection screen if open
                     hideProfileSelectionScreen();
+                    window.openAnimeFromUrlParams?.();
                     
                     alert('Perfil criado com sucesso! 🎉');
                 }
@@ -1289,22 +1316,9 @@
         // independente de ter um ou mais perfis
         showProfileSelectionScreen();
 
-        // Add profile switch button to header - CLIQUE → EDITAR PERFIL
         const loginBtn = document.getElementById('login-btn');
-        if (loginBtn && profiles.length > 0) {
-            const currentActiveProfile = profileManager.getActiveProfile();
-            if (currentActiveProfile) {
-                loginBtn.innerHTML = `<i class="fas fa-user-circle"></i> ${currentActiveProfile.name}`;
-                loginBtn.onclick = () => {
-                    // Fechar tela de seleção se estiver aberta
-                    const selectionScreen = document.getElementById('profile-selection-overlay');
-                    if (selectionScreen) {
-                        selectionScreen.style.display = 'none';
-                    }
-                    openProfileEditModal(currentActiveProfile);
-                };
-            }
-        }
+        if (loginBtn) loginBtn.onclick = showProfileSelectionScreen;
+        if (activeProfile) loadProfileData(activeProfile);
     }
 
     // Initialize when DOM is ready
@@ -1315,6 +1329,7 @@
     }
 
     // Export functions
+    window.showManageProfilesScreen = showManageProfilesScreen;
     window.showProfileSelectionScreen = showProfileSelectionScreen;
     window.hideProfileSelectionScreen = hideProfileSelectionScreen;
     window.loadProfileData = loadProfileData;

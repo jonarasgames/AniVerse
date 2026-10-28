@@ -4,6 +4,12 @@
   "description": "AniVerse - Seu Universo de Animes",
   "scripts": {
     "test": "playwright test",
+    "test:media": "node --test tests/media-loading.node.cjs",
+    "test:collections": "node --test tests/collection-engine.node.cjs",
+    "test:cards": "node --test tests/card-studio.node.cjs",
+    "test:theme": "node --test tests/theme.node.cjs",
+    "test:watchparty": "node tests/watch-party.integration.cjs",
+    "previews": "node tools/generate-episode-previews.cjs",
     "test:headed": "playwright test --headed",
     "test:ui": "playwright test --ui",
     "test:debug": "playwright test --debug"
@@ -20,6 +26,7 @@
   "author": "jonarasgames",
   "license": "MIT",
   "devDependencies": {
-    "@playwright/test": "^1.40.0"
+    "@playwright/test": "^1.40.0",
+    "ffmpeg-static": "^5.3.0"
   }
 }

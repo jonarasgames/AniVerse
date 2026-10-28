@@ -1,7 +1,7 @@
-const STATIC_CACHE = 'aniverse-static-v25';
-const RUNTIME_CACHE = 'aniverse-runtime-v25';
+const STATIC_CACHE = 'aniverse-static-v56';
+const RUNTIME_CACHE = 'aniverse-runtime-v56';
 const MEDIA_CACHE = 'aniverse-media-v2';
-const IMAGE_CACHE = 'aniverse-images-v7';
+const IMAGE_CACHE = 'aniverse-images-v8';
 const STREAM_PROXY_PATH = '/__anv_stream_proxy__';
 
 const APP_SHELL = [
@@ -10,6 +10,24 @@ const APP_SHELL = [
   './css/style.css',
   './css/dark-mode.css',
   './css/hero-video-rotator.css',
+  './css/achievements-hub.css',
+  './css/card-studio.css',
+  './css/watch-party.css',
+  './css/episode-layout.css',
+  './css/episode-picker.css',
+  './css/mobile-player.css',
+  './js/episode-picker.js',
+  './episode-previews.json',
+  './js/vendor/socket.io.min.js',
+  './js/watch-party-config.js',
+  './js/watch-party.js',
+  './js/card-gif.js',
+  './js/card-studio.js',
+  './card-art.json',
+  './js/achievements.js',
+  './js/collection-engine.js',
+  './js/achievements-hub.js',
+  './achievements-data.json',
   './js/script.js',
   './js/anime-db.js',
   './js/anime-renderer.js',
@@ -18,8 +36,9 @@ const APP_SHELL = [
   './js/download-manager.js',
   './anime-data.json',
   './news-data.json',
-  './images/logo.png',
-  './images/bg-default.jpg'
+  './images/logo.png?v=66d69c6689ec',
+  './assets/fonts/lilita-one/LilitaOne-Regular.ttf',
+  './images/bg-default.png'
 ];
 
 self.addEventListener('install', event => {
@@ -117,33 +136,43 @@ function isCacheableImageResponse(response) {
 async function fetchImageFromNetwork(request) {
   const requestUrl = new URL(request.url);
 
-  // Cross-origin <img> requests should stay in a no-cors flow; forcing CORS here can
-  // trigger wildcard ACAO + credential-mode mismatches on some CDNs.
+  // Ordinary artwork keeps no-cors. Canvas/GIF exports explicitly request CORS
+  // and must retain it so readable responses can be drawn without tainting canvas.
   if (requestUrl.origin !== self.location.origin) {
     const crossOriginImageRequest = new Request(request.url, {
       method: 'GET',
-      mode: 'no-cors',
-      cache: 'no-store',
+      mode: request.mode === 'cors' ? 'cors' : 'no-cors',
+      cache: 'default',
       credentials: 'omit'
     });
     return fetch(crossOriginImageRequest);
   }
 
-  return fetch(new Request(request, { cache: 'no-store' }));
+  const branding = /\/images\/(logo\.png|bg-default\.png)$/.test(requestUrl.pathname);
+  return fetch(new Request(request, { cache: branding ? 'reload' : 'default' }));
 }
 
-async function networkFirstImage(request) {
+async function cachedImage(request, event) {
   const cache = await caches.open(IMAGE_CACHE);
   const requestUrl = new URL(request.url);
   const isCrossOrigin = requestUrl.origin !== self.location.origin;
+  const branding = !isCrossOrigin && /\/images\/(logo\.png|bg-default\.png)$/.test(requestUrl.pathname);
+  const cached = await cache.match(request, { ignoreVary: true }) || (branding ? await caches.match(request) : null);
+  if (cached && !(isCrossOrigin && cached.type === 'opaque') && !branding) {
+    // Show cached artwork immediately; refresh local images in the background.
+    event.waitUntil(fetchImageFromNetwork(request).then(fresh => {
+      if (isCacheableImageResponse(fresh)) return cache.put(request, fresh);
+    }).catch(() => {}));
+    return cached;
+  }
   try {
     const fresh = await fetchImageFromNetwork(request);
+    if (branding && !fresh.ok && cached) return cached;
     if (isCacheableImageResponse(fresh)) {
-      cache.put(request, fresh.clone()).catch(() => {});
+      event.waitUntil(cache.put(request, fresh.clone()).catch(() => {}));
     }
     return fresh;
   } catch (_) {
-    const cached = await cache.match(request, { ignoreVary: true });
     // For cross-origin, don't serve opaque cache as "success", otherwise
     // temporary host placeholder responses may persist forever.
     if (cached && !(isCrossOrigin && cached.type === 'opaque')) return cached;
@@ -174,7 +203,7 @@ self.addEventListener('fetch', event => {
 
   if (isImageRequest(event.request)) {
     event.respondWith(
-      networkFirstImage(event.request).catch(() => imageFailureResponse())
+      cachedImage(event.request, event).catch(() => imageFailureResponse())
     );
     return;
   }

@@ -1,0 +1,35 @@
+/* Informações e sala fora da imagem; em tela cheia, o painel retorna ao player. */
+.episode-sidebar { min-width:0; }
+#video-modal .episode-sidebar #age-rating-content { color:#dce3ef; }
+#party-dock:empty { display:none; }
+#party-dock #watch-party-panel { position:relative; inset:auto; width:100%; max-height:none; overflow:visible; border:1px solid #ffffff20; border-radius:14px; margin-bottom:18px; }
+#party-dock #watch-party-panel h3 { font-size:21px; }
+#party-dock #party-members { max-height:150px; overflow:auto; }
+#party-dock #party-chat { height:180px; }
+.party-network { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:8px 10px; border:1px solid #ffffff18; border-radius:8px; font-size:12px; color:#b8c5d8; }
+#party-online::before { content:''; display:inline-block; width:7px; height:7px; margin-right:7px; border-radius:50%; background:#8d96a5; }
+.party-network[data-state="online"] #party-online::before { background:#67dfad; box-shadow:0 0 8px #67dfad55; }
+.party-network[data-state="connecting"] #party-online::before { background:#ffd27a; }
+#party-latency { font-variant-numeric:tabular-nums; white-space:nowrap; }
+#video-player-container:not(:fullscreen):not(.is-fullscreen) #anime-player { aspect-ratio:var(--video-aspect, 1.777778); }
+@media (min-width:1100px) {
+  body:not(.tv-mode) #video-modal { padding:20px; }
+  body:not(.tv-mode) #video-modal .modal-content {
+    display:grid; grid-template-columns:minmax(0,1fr) minmax(320px,380px); gap:24px;
+    width:min(1660px,96vw); max-width:1660px; height:94dvh; max-height:94dvh;
+    padding:22px; overflow:hidden; align-items:start; scrollbar-gutter:auto;
+  }
+  body:not(.tv-mode) #video-modal .episode-media { width:min(100%,calc(62dvh * var(--video-aspect,1.777778))); max-width:none; margin:auto; }
+  body:not(.tv-mode) #video-modal .episode-sidebar { height:100%; max-height:calc(94dvh - 44px); overflow:auto; overscroll-behavior:contain; padding-right:8px; scrollbar-width:thin; }
+  body:not(.tv-mode) #video-modal .episode-media #video-player-container:not(.is-fullscreen):not(:fullscreen) { width:100%; }
+  body:not(.tv-mode) #video-modal .video-info { padding:14px 0; }
+  body:not(.tv-mode) #video-modal .video-details-heading { display:block; }
+  body:not(.tv-mode) #video-modal .video-episode-badges { margin-top:12px; }
+  body:not(.tv-mode) #video-modal #video-description { display:block; -webkit-line-clamp:unset; max-height:none; }
+  body:not(.tv-mode) #video-modal .episode-selector { grid-template-columns:1fr; }
+  body:not(.tv-mode) #video-modal #age-rating-section { margin-top:0; }
+}
+@media (max-width:1099px) {
+  #video-modal .episode-sidebar { padding:12px; }
+  #party-dock #watch-party-panel { padding:16px; }
+}

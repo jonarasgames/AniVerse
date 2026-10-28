@@ -28,3 +28,4 @@ Thumbs.db
 tmp/
 temp/
 *.tmp
+images/episode-previews/**/*.tmp.png

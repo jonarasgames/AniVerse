@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
-    <meta name="aniverse-build" content="20260405-android-fix1">
+    <meta name="aniverse-build" content="20261027-ui-fix1">
     <meta property="og:type" content="video.tv_show">
     <meta property="og:title" content="AniVerse - Seu Universo de Animes">
     <meta property="og:description" content="Assista aos melhores animes no AniVerse.">
-    <meta property="og:image" content="images/logo.png">
+    <meta property="og:image" content="images/logo.png?v=66d69c6689ec">
     <meta property="og:url" content="">
     <title>AniVerse - Seu Universo de Animes</title>
     <script>
@@ -42,33 +42,35 @@
         })();
     </script>
     <script>
-        (function() {
-            var BUILD_ID = '20260405-android-fix1';
-            var PARAM_KEY = 'anv_build';
+        // Build bookkeeping stays internal. Clean old shared links without reloading.
+        (function () {
+            try { localStorage.setItem('aniverse_build_id', '20261027-ui-fix1'); } catch (_) {}
             try {
-                var savedBuild = localStorage.getItem('aniverse_build_id');
-                if (savedBuild !== BUILD_ID) {
-                    localStorage.setItem('aniverse_build_id', BUILD_ID);
-                    var nextUrl = new URL(window.location.href);
-                    if (nextUrl.searchParams.get(PARAM_KEY) !== BUILD_ID) {
-                        nextUrl.searchParams.set(PARAM_KEY, BUILD_ID);
-                        window.location.replace(nextUrl.toString());
-                    }
+                var url = new URL(window.location.href);
+                if (url.searchParams.has('anv_build')) {
+                    url.searchParams.delete('anv_build');
+                    window.history.replaceState(window.history.state, '', url.pathname + url.search + url.hash);
                 }
             } catch (_) {}
         })();
     </script>
-    <link rel="stylesheet" href="css/style.css?v=20260326-2">
-    <link rel="stylesheet" href="css/profile-enhancements.css?v=20260326-2">
-    <link rel="stylesheet" href="css/profile-modal-modern.css?v=20260326-2">
+    <link rel="stylesheet" href="css/style.css?v=20261028-fullscreen-rating1">
+    <link rel="stylesheet" href="css/profile-enhancements.css?v=20261027-player-bounds4">
+    <link rel="stylesheet" href="css/profile-modal-modern.css?v=20261027-frame-refresh3">
     <link rel="stylesheet" href="css/hero-video-rotator.css?v=20260326-2">
-    <link rel="stylesheet" href="css/dark-mode.css?v=20260326-2" id="dark-mode-style">
+    <link rel="stylesheet" href="css/dark-mode.css?v=20261027-rewards1" id="dark-mode-style">
     <link rel="stylesheet" href="css/tv-mode.css?v=20260326-2">
+    <link rel="stylesheet" href="css/achievements-hub.css?v=20261027-banner1">
+    <link rel="stylesheet" href="css/card-studio.css?v=20261027-2">
+    <link rel="stylesheet" href="css/watch-party.css?v=20261028-1">
+    <link rel="stylesheet" href="css/episode-layout.css?v=20261028-party-sync4">
+    <link rel="stylesheet" href="css/episode-picker.css?v=20261028-party-sync4">
+    <link rel="stylesheet" href="css/mobile-player.css?v=20261028-mobile6">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="icon" href="images/logo.png" type="image/png">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap" rel="stylesheet">
+    <link rel="icon" href="images/logo.png?v=66d69c6689ec" type="image/png">
+    <link rel="preconnect" href="https://files.catbox.moe">
+    <link rel="preconnect" href="https://raw.githubusercontent.com">
+    <link rel="preload" href="assets/fonts/lilita-one/LilitaOne-Regular.ttf" as="font" type="font/ttf" crossorigin>
     <script>
         (function () {
             var params = new URLSearchParams(window.location.search || '');
@@ -81,9 +83,10 @@
                     return slug === String(animeSlug).toLowerCase();
                 });
                 if (!found) return;
+                if (new URLSearchParams(window.location.search).get('anime') !== animeSlug) return;
                 var title = found.title || found.name || 'Anime';
                 var desc = found.description || 'Assista agora no AniVerse.';
-                var image = found.thumbnail || found.cover || 'images/logo.png';
+                var image = found.thumbnail || found.cover || 'images/logo.png?v=66d69c6689ec';
                 var t = document.querySelector('meta[property="og:title"]');
                 var d = document.querySelector('meta[property="og:description"]');
                 var i = document.querySelector('meta[property="og:image"]');
@@ -92,7 +95,7 @@
                 if (d) d.setAttribute('content', desc);
                 if (i) i.setAttribute('content', image);
                 if (u) u.setAttribute('content', window.location.href);
-                document.title = title + ' • AniVerse';
+                document.title = title + ' · AniVerse';
             }).catch(function () {});
         })();
     </script>
@@ -114,14 +117,14 @@
                     <img src="https://files.catbox.moe/rv1soq.webp" alt="Forms">
                 </a>
             </div>
-            <audio id="maintenance-audio" src="https://files.catbox.moe/z0bun6.mp3" preload="auto" loop></audio>
+            <audio id="maintenance-audio" src="https://files.catbox.moe/z0bun6.mp3" preload="none" loop></audio>
         </div>
     </div>
 
     <header>
         <div class="container">
             <div class="logo-container">
-                <img src="images/logo.png" alt="AniVerse Logo" class="logo">
+                <img src="images/logo.png?v=66d69c6689ec" alt="AniVerse Logo" class="logo">
                 <h1>AniVerse</h1>
             </div>
             <nav>
@@ -141,11 +144,6 @@
                     <i class="fas fa-moon"></i>
                 </button>
                 <div class="user-profile">
-                    <div class="user-avatar" id="header-avatar">
-                        <div class="avatar-bg-layer" id="header-avatar-bg"></div>
-                        <img src="" alt="Avatar" class="avatar-char-layer">
-                        <div class="avatar-frame-layer" id="header-avatar-frame"></div>
-                    </div>
                     <button class="btn btn-secondary" id="open-anime-editor-btn" style="display:none;" aria-hidden="true"><i class="fas fa-code"></i> Editor Anime</button>
                     <button class="btn btn-primary" id="login-btn"><i class="fas fa-user"></i> Entrar</button>
                 </div>
@@ -271,7 +269,7 @@
     </main>
 
     <button id="news-fab" class="news-fab" aria-label="Novidades">
-        <i class="fas fa-bullhorn"></i>
+        <i class="far fa-newspaper" aria-hidden="true"></i>
         <span class="news-fab-dot" aria-hidden="true"></span>
     </button>
 
@@ -282,63 +280,63 @@
         <span class="achievements-fab-count" id="achievements-fab-count">0</span>
     </button>
 
-    <div id="achievements-modal" class="modal">
-        <div class="modal-content achievements-modal-content">
-            <span class="close-modal" id="close-achievements-modal">&times;</span>
-            <div class="news-modal-header">
-                <div>
-                    <h2>Achievements</h2>
-                    <p class="news-modal-subtitle">Seu progresso fica salvo localmente por perfil.</p>
+    <div id="achievements-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="hub-title" tabindex="-1">
+        <div class="modal-content achievements-modal-content collector-hub">
+            <header class="hub-topbar">
+                <a class="hub-brand" href="#" id="hub-home"><span class="hub-brand-icon">✦</span><span>ANIVERSE <small>CLUBE DE CONQUISTAS</small></span></a>
+                <div class="hub-topbar-actions">
+                    <label class="achievements-sound-toggle"><input type="checkbox" id="achievements-sound-toggle" checked><span>Som</span></label>
+                    <button type="button" class="hub-icon-button" id="close-achievements-modal" aria-label="Fechar conquistas">✕</button>
                 </div>
-                <div class="achievements-actions">
-                    <label class="achievements-sound-toggle">
-                        <input type="checkbox" id="achievements-sound-toggle" checked>
-                        <span>Som</span>
-                    </label>
-                    <button type="button" class="btn btn-secondary" id="achievements-mark-seen">Marcar vistas</button>
+            </header>
+            <div class="hub-intro"><div><span class="hub-eyebrow">SUA JORNADA MERECE SER CELEBRADA</span><h2 id="hub-title">Cada play.<br>Uma nova conquista<span>.</span></h2><p>Assista, descubra e transforme suas histórias favoritas em uma coleção só sua.</p></div><div id="hub-collector-badge" class="hub-collector-badge"></div></div>
+            <nav class="hub-tabs" role="tablist" aria-label="Clube de conquistas">
+                <button id="hub-tab-achievements" type="button" role="tab" aria-selected="true" aria-controls="hub-panel-achievements" data-hub-tab="achievements">✦ Conquistas</button>
+                <button id="hub-tab-album" type="button" role="tab" aria-selected="false" aria-controls="hub-panel-album" tabindex="-1" data-hub-tab="album">▧ Álbum sazonal <span id="hub-pack-count" class="hub-count" hidden>0</span></button>
+                <button id="hub-tab-rewards" type="button" role="tab" aria-selected="false" aria-controls="hub-panel-rewards" tabindex="-1" data-hub-tab="rewards">♜ Sala de prêmios</button>
+            </nav>
+            <div id="hub-notice" class="hub-notice" role="status" aria-live="polite" hidden></div>
+            <div id="achievements-unlock-feed" class="achievements-unlock-feed" role="status"></div>
+            <section id="hub-panel-achievements" role="tabpanel" aria-labelledby="hub-tab-achievements">
+                <div id="achievements-stats" class="hub-stats"></div>
+                <div class="hub-dashboard">
+                    <div><div class="hub-section-heading"><div><span class="hub-eyebrow">UM OBJETIVO DE CADA VEZ</span><h3>Sua coleção de conquistas</h3></div><button type="button" id="achievements-mark-seen" class="hub-text-button">Marcar vistas ✓</button></div>
+                    <div class="achievements-filter" id="achievements-filter"><button type="button" data-filter="all" class="is-active">Todas</button><button type="button" data-filter="locked">Em progresso</button><button type="button" data-filter="unlocked">Desbloqueadas</button></div>
+                    <div id="achievements-list" class="achievements-list" aria-live="polite"></div></div>
+                    <aside class="hub-sidebar"><div id="hub-next-goal"></div><div id="hub-season-preview"></div></aside>
                 </div>
-            </div>
-            <div id="achievements-unlock-feed" class="achievements-unlock-feed"></div>
-            <div id="achievements-unlock-center" class="achievements-unlock-center" aria-hidden="true">
-                <img id="achievements-unlock-center-icon" src="" alt="">
-                <div class="text">
-                    <small>Conquista desbloqueada</small>
-                    <strong id="achievements-unlock-center-title"></strong>
-                </div>
-            </div>
-            <div id="achievements-stats" class="achievements-stats"></div>
-            <div class="achievements-filter" id="achievements-filter">
-                <button type="button" data-filter="all" class="is-active">Todas</button>
-                <button type="button" data-filter="unlocked">Desbloqueadas</button>
-                <button type="button" data-filter="locked">Em progresso</button>
-            </div>
-            <div id="achievements-list" class="achievements-list"></div>
-            <audio id="achievements-audio" preload="auto"></audio>
+            </section>
+            <section id="hub-panel-album" role="tabpanel" aria-labelledby="hub-tab-album" hidden><div id="hub-album"></div></section>
+            <section id="hub-panel-rewards" role="tabpanel" aria-labelledby="hub-tab-rewards" hidden><div id="hub-rewards"></div></section>
+            <footer class="hub-footer"><span>FEITO DE HISTÓRIAS. GUARDADO POR VOCÊ.</span><span>Progresso salvo neste navegador, por perfil.</span></footer>
+            <audio id="achievements-audio" preload="none"></audio>
         </div>
     </div>
+    <dialog id="hub-pack-dialog" class="hub-pack-dialog" aria-labelledby="hub-pack-title"><button type="button" id="hub-pack-close" class="hub-icon-button" aria-label="Fechar pacote">✕</button><span class="hub-eyebrow">UM NOVO CAPÍTULO DA SUA COLEÇÃO</span><h2 id="hub-pack-title">O que o destino trouxe?</h2><p>Toque em cada carta para revelar. Suas cartas já estão guardadas.</p><div id="hub-pack-cards" class="hub-pack-cards"></div><div class="hub-pack-actions"><button type="button" id="hub-reveal-all" class="hub-button secondary">Revelar todas</button><button type="button" id="hub-paste-pack" class="hub-button">Colar novas cartas →</button></div><p id="hub-pack-status" role="status" aria-live="polite"></p></dialog>
 
     <div id="achievements-silent-toast" class="achievements-silent-toast" role="status" aria-live="polite">
         <span id="achievements-silent-toast-text">Novas conquistas disponíveis.</span>
         <button type="button" id="achievements-silent-toast-open">Ver</button>
     </div>
 
-    <div id="news-modal" class="modal">
+    <div id="news-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="news-heading">
         <div class="modal-content news-modal-content">
-            <span class="close-modal" id="close-news-modal">&times;</span>
+            <button type="button" class="close-modal" id="close-news-modal" aria-label="Fechar novidades">&times;</button>
             <div class="news-modal-header">
                 <div>
-                    <h2>Novidades &amp; Anúncios</h2>
-                    <p class="news-modal-subtitle">Fique por dentro das atualizações mais recentes.</p>
+                    <h2 id="news-heading">Novidades</h2>
+                    <p class="news-modal-subtitle">Atualizações, anúncios e novidades do seu universo de animes.</p>
                 </div>
                 <div class="news-admin-actions" id="news-admin-actions">
-                    <button class="btn btn-secondary" id="news-admin-toggle">Modo admin</button>
                     <button class="btn btn-secondary" id="news-admin-logout">Sair</button>
                 </div>
             </div>
+            <div class="news-section-heading"><h3>Últimas notícias</h3><span>Mais recentes primeiro</span></div>
             <div id="news-list" class="news-list"></div>
 
             <div id="news-admin-panel" class="news-admin-panel">
-                <h3>Publicar nova notícia</h3>
+                <div class="news-editor-heading"><div><span class="news-eyebrow">ÁREA DE EDIÇÃO</span><h3 id="news-editor-title">Criar notícia</h3><p>Escreva, confira a prévia e adicione à lista.</p></div></div>
+                <p class="news-editor-notice">As alterações são locais. Para publicar no site, baixe o JSON e substitua <strong>news-data.json</strong> no repositório.</p>
                 <div class="news-formatting">
                     <button type="button" class="btn btn-secondary" data-format="bold"><strong>B</strong></button>
                     <button type="button" class="btn btn-secondary" data-format="italic"><em>I</em></button>
@@ -353,7 +351,7 @@
                     </label>
                     <label>
                         Mensagem
-                        <textarea id="news-message" rows="4" placeholder="Escreva a atualização..." required></textarea>
+                        <textarea id="news-message" rows="7" placeholder="Conte a novidade para a comunidade..." required></textarea>
                     </label>
                     <label>
                         URL da imagem (opcional)
@@ -364,13 +362,15 @@
                         <input type="file" id="news-image-file" accept="image/*">
                     </label>
                     <div class="news-form-actions">
-                        <button type="submit" class="btn btn-primary">Publicar</button>
+                        <button type="submit" class="btn btn-primary" id="news-submit">Adicionar à lista</button>
                         <button type="button" class="btn btn-secondary" id="news-form-clear">Limpar</button>
                         <button type="button" class="btn btn-secondary" id="news-download-json">Baixar JSON</button>
                     </div>
                 </form>
+                <div class="news-preview"><span class="news-eyebrow">PRÉVIA DO TEXTO</span><h4 id="news-preview-title">Título da notícia</h4><div id="news-preview-message">Sua mensagem aparece aqui enquanto você escreve.</div></div>
+                <p id="news-editor-status" class="news-editor-status" role="status" aria-live="polite"></p>
                 <p class="news-admin-hint">
-                    Atalho para ativar o modo admin local: <strong>Ctrl + Shift + A</strong>. Um token de sessão é solicitado em tempo de execução (não persistido). Depois de editar, baixe o JSON e substitua o arquivo <strong>news-data.json</strong>.
+                    Acesso ao editor: <strong>Ctrl + Shift + A</strong> e PIN. O acesso dura até recarregar a página.
                 </p>
             </div>
         </div>
@@ -413,9 +413,12 @@
         </div>
     </div>
 
-    <div id="video-modal" class="modal">
+    <div id="video-modal" class="modal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="video-title" aria-describedby="video-description">
         <div class="modal-content">
-            <span class="close-modal" id="close-video">&times;</span>
+            <div class="episode-media">
+            <div class="video-banner">
+                <button type="button" class="close-modal video-modal-close" id="close-video" aria-label="Fechar episódio"><i class="fas fa-xmark" aria-hidden="true"></i></button>
+            </div>
             <div id="video-player-container">
                 <!-- Anime info overlay (top) -->
                 <div id="video-info-overlay" class="video-info-overlay">
@@ -424,7 +427,6 @@
                 </div>
                 
                 <!-- Banner above video -->
-                <div class="video-banner" style="background-image: url('https://files.catbox.moe/fhnk72.jpg');"></div>
                 
                 <!-- Video element (hidden native controls) -->
                 <video id="anime-player" playsinline="" webkit-playsinline="true" preload="auto" style="width: 100%; display: block;">
@@ -439,9 +441,10 @@
                        webkit-playsinline
                        style="display:none; pointer-events:none;"
                        aria-hidden="true"></video>
+                <img id="age-rating-fallback" class="age-rating-fallback" alt="" aria-hidden="true" hidden>
                 <div id="video-loading-overlay" class="video-loading-overlay" aria-hidden="true">
                     <div class="video-loading-orb"></div>
-                    <div class="video-loading-text" aria-hidden="true"></div>
+                    <div class="video-loading-text">Preparando seu episódio…</div>
                 </div>
                 
                 <!-- Double-tap seek zones (mobile) -->
@@ -488,6 +491,7 @@
                         <button id="pip-btn" class="btn-icon" title="Picture-in-Picture">
                             <i class="fas fa-tv"></i>
                         </button>
+                        <button type="button" id="watch-party-toggle" class="btn-icon" title="Assistir junto" aria-label="Assistir junto" aria-expanded="false" aria-controls="watch-party-panel"><i class="fas fa-user-friends" aria-hidden="true"></i></button>
                         <button id="fullscreen-btn" class="btn-icon" title="Tela Cheia">
                             <i class="fas fa-expand"></i>
                         </button>
@@ -504,23 +508,35 @@
                 </div>
             </div>
             <!-- Age Rating Section -->
+            </div>
+            <aside class="episode-sidebar" aria-label="Informações do episódio e sala">
+            <div id="party-dock"></div>
             <div id="age-rating-section" class="age-rating-section">
                 <img id="age-rating-image" src="" alt="Classificação Indicativa" class="age-rating-image">
                 <span id="age-rating-content" class="age-rating-content"></span>
             </div>
             <div class="video-info">
-                <h2 id="video-title">Título do Anime</h2>
-                <p id="video-description">Descrição do anime...</p>
-                <div style="margin: 10px 0;">
-                    <span id="current-season-label">Temporada 1</span> • 
-                    <span id="current-episode-label">Episódio 1</span>
+                <div class="video-details-heading">
+                    <div class="video-details-title-group">
+                        <h2 id="video-title">Título do Anime</h2>
+                    </div>
                 </div>
+                <p id="video-description">Descrição do anime...</p>
                 <!-- Collection indicator in player -->
                 <div id="collection-indicator" class="collection-indicator" style="display: none;">
                     <i class="fas fa-layer-group"></i>
                     <span id="collection-name">Coleção</span>
                     <div id="collection-items" class="collection-items"></div>
                 </div>
+                <div class="episode-selector">
+                    <label class="episode-select-field"><span>Temporada</span><select id="season-select" aria-label="Selecionar temporada">
+                        <option>Temporada 1</option>
+                    </select></label>
+                    <label class="episode-select-field"><span>Episódio</span><select id="episode-select" aria-label="Selecionar episódio">
+                        <option>Episódio 1</option>
+                    </select></label>
+                </div>
+                <h3 class="episode-download-heading">Download</h3>
                 <div class="download-actions compact-download-actions" style="margin: 10px 0;">
                     <button id="download-episode-btn" class="btn btn-primary" title="Baixar episódio"><i class="fas fa-download"></i> Episódio</button>
                     <button id="download-season-btn" class="btn btn-secondary" title="Baixar temporada"><i class="fas fa-layer-group"></i> Temporada</button>
@@ -528,23 +544,14 @@
                     <button id="download-collection-btn" class="btn btn-secondary" title="Baixar coleção"><i class="fas fa-box-open"></i> Coleção</button>
                     <span id="download-episode-status" class="download-status-inline"></span>
                 </div>
-                <div class="episode-selector">
-                    <select id="season-select">
-                        <option>Temporada 1</option>
-                    </select>
-                    <select id="episode-select">
-                        <option>Episódio 1</option>
-                    </select>
-                </div>
             </div>
+            </aside>
         </div>
     </div>
 
     <div id="profile-modal" class="modal">
         <div class="modal-content profile-modal-modern">
-            <button type="button" class="close-modal-btn" id="close-profile-modal">
-                <i class="fas fa-times"></i>
-            </button>
+            <button type="button" class="close-modal-btn" id="close-profile-modal" aria-label="Fechar edição do perfil">×</button>
             
             <h2 class="profile-modal-title">Personalizar Perfil</h2>
             
@@ -635,38 +642,16 @@
                     <!-- Tab Content: Molduras -->
                     <div class="tab-content" id="tab-frames">
                         <div class="frame-grid">
-                            <div class="frame-option selected" data-frame="">
-                                <div class="frame-preview-none">✕</div>
-                                <span>Sem moldura</span>
-                            </div>
-                            <div class="frame-option" data-frame="glow">
-                                <div class="frame-preview frame-glow-preview"></div>
-                                <span>Brilho</span>
-                            </div>
-                            <div class="frame-option" data-frame="rainbow">
-                                <div class="frame-preview frame-rainbow-preview"></div>
-                                <span>Arco-íris</span>
-                            </div>
-                            <div class="frame-option" data-frame="pulse">
-                                <div class="frame-preview frame-pulse-preview"></div>
-                                <span>Pulse</span>
-                            </div>
-                            <div class="frame-option" data-frame="spin">
-                                <div class="frame-preview frame-spin-preview"></div>
-                                <span>Spin</span>
-                            </div>
-                            <div class="frame-option" data-frame="neon">
-                                <div class="frame-preview frame-neon-preview"></div>
-                                <span>Neon</span>
-                            </div>
-                            <div class="frame-option" data-frame="fire">
-                                <div class="frame-preview frame-fire-preview"></div>
-                                <span>Fogo</span>
-                            </div>
-                            <div class="frame-option" data-frame="electric">
-                                <div class="frame-preview frame-electric-preview"></div>
-                                <span>Elétrico</span>
-                            </div>
+                            <button type="button" class="frame-option selected" data-frame="" aria-pressed="true"><span class="frame-option-preview"><span class="frame-swatch-avatar"><span class="frame-swatch-glyph">A</span><span class="avatar-frame-layer"></span></span></span><span class="frame-option-label">Original</span><small>Sem moldura</small></button>
+                            <button type="button" class="frame-option" data-frame="glow" aria-pressed="false"><span class="frame-option-preview"><span class="frame-swatch-avatar"><span class="frame-swatch-glyph">A</span><span class="avatar-frame-layer glow"></span></span></span><span class="frame-option-label">Brilho</span><small>Halo suave</small></button>
+                            <button type="button" class="frame-option" data-frame="rainbow" aria-pressed="false"><span class="frame-option-preview"><span class="frame-swatch-avatar"><span class="frame-swatch-glyph">A</span><span class="avatar-frame-layer rainbow"></span></span></span><span class="frame-option-label">Arco-íris</span><small>Cor em movimento</small></button>
+                            <button type="button" class="frame-option" data-frame="pulse" aria-pressed="false"><span class="frame-option-preview"><span class="frame-swatch-avatar"><span class="frame-swatch-glyph">A</span><span class="avatar-frame-layer pulse"></span></span></span><span class="frame-option-label">Pulso</span><small>Brilho pulsante</small></button>
+                            <button type="button" class="frame-option" data-frame="spin" aria-pressed="false"><span class="frame-option-preview"><span class="frame-swatch-avatar"><span class="frame-swatch-glyph">A</span><span class="avatar-frame-layer spin"></span></span></span><span class="frame-option-label">Prisma</span><small>Espectro de luz</small></button>
+                            <button type="button" class="frame-option" data-frame="neon" aria-pressed="false"><span class="frame-option-preview"><span class="frame-swatch-avatar"><span class="frame-swatch-glyph">A</span><span class="avatar-frame-layer neon"></span></span></span><span class="frame-option-label">Neon</span><small>Ciano elétrico</small></button>
+                            <button type="button" class="frame-option" data-frame="fire" aria-pressed="false"><span class="frame-option-preview"><span class="frame-swatch-avatar"><span class="frame-swatch-glyph">A</span><span class="avatar-frame-layer fire"></span></span></span><span class="frame-option-label">Chama</span><small>Âmbar vivo</small></button>
+                            <button type="button" class="frame-option" data-frame="electric" aria-pressed="false"><span class="frame-option-preview"><span class="frame-swatch-avatar"><span class="frame-swatch-glyph">A</span><span class="avatar-frame-layer electric"></span></span></span><span class="frame-option-label">Elétrico</span><small>Energia azul</small></button>
+                            <button type="button" class="frame-option" data-frame="gold" aria-pressed="false"><span class="frame-option-preview"><span class="frame-swatch-avatar"><span class="frame-swatch-glyph">A</span><span class="avatar-frame-layer gold"></span></span></span><span class="frame-option-label">Dourado</span><small>Metal polido</small></button>
+                            <button type="button" class="frame-option" data-frame="sakura" aria-pressed="false"><span class="frame-option-preview"><span class="frame-swatch-avatar"><span class="frame-swatch-glyph">A</span><span class="avatar-frame-layer sakura"></span></span></span><span class="frame-option-label">Sakura</span><small>Rosa delicado</small></button>
                         </div>
                     </div>
 
@@ -813,38 +798,46 @@
     </footer>
 
     <!-- Theme must load first, without defer -->
-    <script src="js/theme.js?v=20260326-2"></script>
+    <script src="js/theme.js?v=20261027-ui1"></script>
     
     <!-- Image retry system - loads early to catch all images -->
     <script src="js/image-retry.js?v=20260326-2"></script>
     
     <!-- Core scripts with defer -->
-    <script src="js/anime-db.js?v=20260326-2" defer></script>
-    <script src="js/anime-renderer.js?v=20260326-2" defer></script>
+    <script src="js/anime-db.js?v=20261027-launch1" defer></script>
+    <script src="js/anime-renderer.js?v=20261028-party-picker3" defer></script>
     <script src="js/anime-render-fallback.js?v=20260326-2" defer></script>
     <script src="js/hero-video-rotator.js?v=20260326-2" defer></script>
     <script src="js/profile-modal-bindings.js?v=20260326-2" defer></script>
-    <script src="js/music.js?v=20260326-2" defer></script>
-    <script src="js/music-player.js?v=20260326-2" defer></script>
+    <script src="js/music.js?v=20261027-mobile-links1" defer></script>
+    <script src="js/music-player.js?v=20261027-rewards1" defer></script>
     <script src="js/achievements.js?v=20260326-3" defer></script>
-    <script src="js/video-player.js?v=20260326-2" defer></script>
-    <script src="js/player-fixes.js?v=20260326-2" defer></script>
-    <script src="js/download-manager.js?v=20260326-2" defer></script>
-    <script src="js/script.js?v=20260326-2" defer></script>
+    <script src="js/collection-engine.js?v=20261027-banner1" defer></script>
+    <script src="js/card-gif.js?v=20261027-1" defer></script>
+    <script src="js/card-studio.js?v=20261027-launch1" defer></script>
+    <script src="js/achievements-hub.js?v=20261027-banner1" defer></script>
+    <script src="js/video-player.js?v=20261028-mobile5" defer></script>
+    <script src="js/vendor/socket.io.min.js" defer></script>
+    <script src="js/watch-party-config.js?v=20261028-online1" defer></script>
+    <script src="js/watch-party.js?v=20261028-party-sync4" defer></script>
+    <script src="js/episode-picker.js?v=20261028-preview-png7" defer></script>
+    <script src="js/player-fixes.js?v=20261028-party-picker3" defer></script>
+    <script src="js/download-manager.js?v=20261027-episode-remake1" defer></script>
+    <script src="js/script.js?v=20261028-party-sync4" defer></script>
     <script src="js/info-section.js?v=20260326-2" defer></script>
-    <script src="js/fixes.js?v=20260326-2" defer></script>
-    <script src="js/profile-enhancements.js?v=20260326-2" defer></script>
-    <script src="js/profile-multi.js?v=20260326-2" defer></script>
-    <script src="js/profile-modal-new.js?v=20260326-2" defer></script>
+    <script src="js/fixes.js?v=20261027-ui1" defer></script>
+    <script src="js/profile-enhancements.js?v=20261027-header2" defer></script>
+    <script src="js/profile-multi.js?v=20261027-mobile-links1" defer></script>
+    <script src="js/profile-modal-new.js?v=20261027-frame-refresh1" defer></script>
     <script src="js/music-player-new.js?v=20260326-2" defer></script>
     <script src="js/inplace-admin.js?v=20260326-2" defer></script>
-    <script src="js/tv-mode.js?v=20260326-2" defer></script>
+    <script src="js/tv-mode.js?v=20261028-mobile6" defer></script>
     
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', async () => {
           try {
-            const registration = await navigator.serviceWorker.register('/sw.js?v=20260405-android-fix3', { scope: '/', updateViaCache: 'none' });
+            const registration = await navigator.serviceWorker.register('/sw.js?v=20261027-upscale-samples2', { scope: '/', updateViaCache: 'none' });
             const tryUpdate = () => registration.update().catch(() => {});
             let refreshing = false;
 
