@@ -63,7 +63,7 @@
     <link rel="stylesheet" href="css/achievements-hub.css?v=20261027-banner1">
     <link rel="stylesheet" href="css/card-studio.css?v=20261027-2">
     <link rel="stylesheet" href="css/watch-party.css?v=20261028-wait1">
-    <link rel="stylesheet" href="css/episode-layout.css?v=20261028-party-sync4">
+    <link rel="stylesheet" href="css/episode-layout.css?v=20261028-collection-online1">
     <link rel="stylesheet" href="css/episode-picker.css?v=20261028-party-sync4">
     <link rel="stylesheet" href="css/mobile-player.css?v=20261028-mobile6">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -523,11 +523,10 @@
                 </div>
                 <p id="video-description">Descrição do anime...</p>
                 <!-- Collection indicator in player -->
-                <div id="collection-indicator" class="collection-indicator" style="display: none;">
-                    <i class="fas fa-layer-group"></i>
-                    <span id="collection-name">Coleção</span>
-                    <div id="collection-items" class="collection-items"></div>
-                </div>
+                <details id="collection-indicator" class="collection-indicator" style="display: none;">
+                    <summary class="collection-picker-trigger"><span class="collection-picker-label"><i class="fas fa-layer-group" aria-hidden="true"></i> Coleção</span><span id="collection-name">Coleção</span><i class="fas fa-chevron-down collection-picker-chevron" aria-hidden="true"></i></summary>
+                    <div id="collection-items" class="collection-items" role="group" aria-label="Animes desta coleção"></div>
+                </details>
                 <div class="episode-selector">
                     <label class="episode-select-field"><span>Temporada</span><select id="season-select" aria-label="Selecionar temporada">
                         <option>Temporada 1</option>
@@ -805,7 +804,7 @@
     
     <!-- Core scripts with defer -->
     <script src="js/anime-db.js?v=20261027-launch1" defer></script>
-    <script src="js/anime-renderer.js?v=20261028-party-picker3" defer></script>
+    <script src="js/anime-renderer.js?v=20261028-collection-online1" defer></script>
     <script src="js/anime-render-fallback.js?v=20260326-2" defer></script>
     <script src="js/hero-video-rotator.js?v=20260326-2" defer></script>
     <script src="js/profile-modal-bindings.js?v=20260326-2" defer></script>
@@ -816,13 +815,13 @@
     <script src="js/card-gif.js?v=20261027-1" defer></script>
     <script src="js/card-studio.js?v=20261027-launch1" defer></script>
     <script src="js/achievements-hub.js?v=20261027-banner1" defer></script>
-    <script src="js/video-player.js?v=20261028-mobile5" defer></script>
+    <script src="js/video-player.js?v=20261028-collection-online1" defer></script>
     <script src="js/vendor/socket.io.min.js" defer></script>
-    <script src="js/watch-party-config.js?v=20261028-online1" defer></script>
+    <script src="js/watch-party-config.js?v=20261028-collection-online1" defer></script>
     <script src="js/watch-party-connection.js?v=20261028-warmup1" defer></script>
     <script src="js/watch-party.js?v=20261028-warmup1" defer></script>
     <script src="js/episode-picker.js?v=20261028-preview-png7" defer></script>
-    <script src="js/player-fixes.js?v=20261028-party-picker3" defer></script>
+    <script src="js/player-fixes.js?v=20261028-collection-online1" defer></script>
     <script src="js/download-manager.js?v=20261027-episode-remake1" defer></script>
     <script src="js/script.js?v=20261028-party-sync4" defer></script>
     <script src="js/info-section.js?v=20260326-2" defer></script>
@@ -838,7 +837,10 @@
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', async () => {
           try {
-            const registration = await navigator.serviceWorker.register('/sw.js?v=20261027-upscale-samples2', { scope: '/', updateViaCache: 'none' });
+            const appBase = new URL('./', window.location.href);
+            const hadController = !!navigator.serviceWorker.controller;
+            const workerUrl = new URL('sw.js?v=20261028-collection-online1', appBase);
+            const registration = await navigator.serviceWorker.register(workerUrl.href, { scope: appBase.pathname, updateViaCache: 'none' });
             const tryUpdate = () => registration.update().catch(() => {});
             let refreshing = false;
 
@@ -871,20 +873,12 @@
             });
 
             navigator.serviceWorker.addEventListener('controllerchange', () => {
-              if (refreshing) return;
+              if (refreshing || !hadController) return;
               refreshing = true;
               try {
                 localStorage.setItem('aniverse_sw_updated_at', String(Date.now()));
               } catch (_) {}
-              try {
-                const alreadyReloaded = sessionStorage.getItem('aniverse_sw_autoreload_done');
-                if (!alreadyReloaded) {
-                  sessionStorage.setItem('aniverse_sw_autoreload_done', '1');
-                  window.location.reload();
-                  return;
-                }
-              } catch (_) {}
-              console.log('AniVerse: nova versão do Service Worker ativada.');
+              window.location.reload();
             });
           } catch (_) {}
         });

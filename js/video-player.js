@@ -1265,7 +1265,7 @@ function handleVideoHotkeys(e) {
     if (!isVideoActive) return;
 
     const target = e.target;
-    if (target?.closest?.('#watch-party-panel, .episode-picker')) return;
+    if (target?.closest?.('#watch-party-panel, .episode-picker, #collection-indicator')) return;
     const tagName = (target?.tagName || '').toUpperCase();
     const isTypingTarget = target?.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(tagName);
     if (isTypingTarget) return;

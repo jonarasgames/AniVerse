@@ -570,11 +570,15 @@
     
     if (!collection) {
       indicator.style.display = 'none';
+      indicator.open = false;
+      itemsEl.replaceChildren();
       return;
     }
     
     // Show collection indicator
     indicator.style.display = 'block';
+    if (indicator.dataset.collection !== String(collection.id)) indicator.open = false;
+    indicator.dataset.collection = String(collection.id);
     nameEl.textContent = collection.name;
     
     // Populate collection items
@@ -582,20 +586,26 @@
     itemsEl.innerHTML = '';
     
     animes.forEach(anime => {
-      const item = document.createElement('div');
-      item.className = 'collection-item' + (anime.id === Number(animeId) ? ' active' : '');
-      item.innerHTML = `
-        <img src="${escapeHtml(anime.thumbnail || 'images/bg-default.png')}" alt="${escapeHtml(anime.title)}" loading="lazy" decoding="async">
-        <span>${escapeHtml(anime.title)}</span>
-      `;
-      item.style.cursor = 'pointer';
+      const item = document.createElement('button'); item.type = 'button';
+      const active = String(anime.id) === String(animeId);
+      item.className = 'collection-item' + (active ? ' active' : '');
+      item.dataset.animeId = anime.id;
+      if (active) item.setAttribute('aria-current','true');
+      const image = document.createElement('img'); image.src = anime.thumbnail || 'images/bg-default.png'; image.alt = ''; image.loading = 'lazy'; image.decoding = 'async';
+      const text = document.createElement('span'), title = document.createElement('strong'), hint = document.createElement('small');
+      title.textContent = anime.title;
+      hint.textContent = active ? 'Assistindo agora' : window.watchParty?.active && !window.watchParty.isHost ? 'Sugerir para a sala' : 'Assistir';
+      text.append(title,hint); item.append(image,text);
       item.addEventListener('click', (e) => {
         e.stopPropagation();
-        if (anime.id !== Number(animeId)) {
+        if (!active) {
+          indicator.open = false;
+          const season = anime.seasons?.find(season => season.episodes?.length);
+          if (!season) return;
           if (typeof window.openAnimeModal === 'function') {
-            window.openAnimeModal(anime);
+            window.openAnimeModal(anime, season.number, 0);
           } else {
-            openAnimeModal(anime);
+            openAnimeModal(anime, season.number, 0);
           }
         }
       });
@@ -604,6 +614,13 @@
   };
 
   // Close video modal handler
+  const collectionPicker = document.getElementById('collection-indicator');
+  collectionPicker?.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && collectionPicker.open) {
+      event.preventDefault(); event.stopPropagation(); collectionPicker.open = false;
+      collectionPicker.querySelector('summary')?.focus({ preventScroll:true });
+    }
+  });
   const closeVideoBtn = document.getElementById('close-video');
   if (closeVideoBtn) {
     closeVideoBtn.addEventListener('click', () => {

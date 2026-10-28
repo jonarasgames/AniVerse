@@ -1,5 +1,5 @@
-const STATIC_CACHE = 'aniverse-static-v58';
-const RUNTIME_CACHE = 'aniverse-runtime-v58';
+const STATIC_CACHE = 'aniverse-static-v60';
+const RUNTIME_CACHE = 'aniverse-runtime-v60';
 const MEDIA_CACHE = 'aniverse-media-v2';
 const IMAGE_CACHE = 'aniverse-images-v8';
 const STREAM_PROXY_PATH = '/__anv_stream_proxy__';
@@ -66,7 +66,7 @@ self.addEventListener('activate', event => {
 function shouldNetworkFirst(request) {
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return false;
-  return /\.(html|css|js|json)$/.test(url.pathname) || url.pathname === '/' || url.pathname.endsWith('/index.html');
+  return request.mode === 'navigate' || /\.(html|css|js|json)$/.test(url.pathname) || url.pathname.endsWith('/');
 }
 
 async function networkFirst(request) {

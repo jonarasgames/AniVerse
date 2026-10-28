@@ -245,7 +245,7 @@
         // Keyboard shortcuts for desktop fallback only. TV mode has dedicated remote handling.
         document.addEventListener('keydown', function(e) {
             if (e.defaultPrevented || e.__aniverseVideoHandled || e.isComposing || e.ctrlKey || e.altKey || e.metaKey) return;
-            if (e.target.closest?.('input, textarea, select, [contenteditable]:not([contenteditable="false"]), #watch-party-panel, .episode-picker')) return;
+            if (e.target.closest?.('input, textarea, select, [contenteditable]:not([contenteditable="false"]), #watch-party-panel, .episode-picker, #collection-indicator')) return;
             if (typeof window.__isTvMode === 'function' && window.__isTvMode()) return;
             const modal = document.getElementById('video-modal');
             if (!modal || (!modal.classList.contains('show') && modal.style.display !== 'flex')) return;
