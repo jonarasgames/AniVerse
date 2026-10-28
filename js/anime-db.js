@@ -312,7 +312,7 @@ class AnimeDatabase {
         if (!anime) return;
 
         let duration = 1200; // Default 20 minutes
-        const season = anime.seasons[seasonNumber - 1];
+        const season = anime.seasons.find(season => season.number === seasonNumber);
         if (season && season.episodes[episodeNumber - 1]) {
             duration = season.episodes[episodeNumber - 1].duration || duration;
         }
@@ -329,7 +329,8 @@ class AnimeDatabase {
                     thumbnail: anime.thumbnail,
                     season: seasonNumber,
                     episode: episodeNumber,
-                    progress: progress
+                    progress: progress,
+                    currentTime: currentTime
                 });
                 return; // Don't save to old storage
             }
@@ -340,6 +341,7 @@ class AnimeDatabase {
             season: seasonNumber,
             episode: episodeNumber,
             progress: progress,
+            currentTime: currentTime,
             timestamp: new Date().getTime()
         };
 

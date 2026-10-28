@@ -35,9 +35,36 @@ document.addEventListener('DOMContentLoaded', () => {
   let browsing = false;
   let lastSeekAt = 0, alignedRevision = -1;
   let joinNeedsSource = false;
+  let hostBuffering = false;
   let connectionTask = null, connectionAbort = null, lastOperation = null;
   let warmupStarted = false, warmupQueued = false;
   const warmupAbort = new AbortController();
+  const serverBadge = document.createElement('div');
+  serverBadge.id = 'party-server-badge'; serverBadge.setAttribute('role','status');
+  serverBadge.setAttribute('aria-live','polite'); serverBadge.hidden = !window.ANIVERSE_WATCH_SERVER;
+  document.body.appendChild(serverBadge);
+  let serverProbe;
+  function serverState(state) {
+    if (navigator.onLine === false) state = 'offline';
+    else if (serverProbe?.connected) state = 'online';
+    serverBadge.dataset.state = state;
+    serverBadge.textContent = state === 'online' ? 'Servidor online' : state === 'starting' ? 'Servidor iniciando…' : 'Servidor indisponível';
+  }
+  serverState(navigator.onLine === false ? 'offline' : 'starting');
+  function checkServer() {
+    serverState('starting');
+    window.warmPartyServer(window.ANIVERSE_WATCH_SERVER,{signal:warmupAbort.signal});
+    // Keep a lightweight connection without joining a room. Socket.IO retries until the server returns.
+    serverProbe = io(window.ANIVERSE_WATCH_SERVER,{autoConnect:false,reconnection:true,reconnectionAttempts:Infinity,reconnectionDelay:2000,reconnectionDelayMax:15000,timeout:15000});
+    serverProbe.on('connect',()=>serverState('online'));
+    serverProbe.on('connect_error',()=>serverState('starting'));
+    serverProbe.on('disconnect',reason=>{
+      if (warmupAbort.signal.aborted) return;
+      serverState('starting');
+      if (reason === 'io server disconnect' && navigator.onLine !== false) serverProbe.connect();
+    });
+    serverProbe.connect();
+  }
   function scheduleWarmup() {
     if (warmupStarted || warmupQueued || !window.ANIVERSE_WATCH_SERVER || navigator.onLine === false || document.hidden) return;
     warmupQueued = true;
@@ -45,12 +72,17 @@ document.addEventListener('DOMContentLoaded', () => {
       warmupQueued = false;
       if (warmupStarted || warmupAbort.signal.aborted || navigator.onLine === false || document.hidden) return;
       warmupStarted = true;
-      window.removeEventListener('online',scheduleWarmup); document.removeEventListener('visibilitychange',scheduleWarmup);
-      window.warmPartyServer(window.ANIVERSE_WATCH_SERVER,{signal:warmupAbort.signal});
+      document.removeEventListener('visibilitychange',scheduleWarmup);
+      checkServer();
     };
     if (window.requestIdleCallback) requestIdleCallback(start,{timeout:1500}); else setTimeout(start,300);
   }
-  window.addEventListener('online',scheduleWarmup);
+  function resumeServer() {
+    scheduleWarmup();
+    if (serverProbe && !serverProbe.connected && !warmupAbort.signal.aborted) { serverState('starting'); serverProbe.connect(); }
+  }
+  window.addEventListener('online',resumeServer);
+  window.addEventListener('offline',()=>{serverProbe?.disconnect();serverState('offline');});
   document.addEventListener('visibilitychange',scheduleWarmup);
   const sessionBar = document.createElement('div');
   sessionBar.className = 'party-session-bar'; sessionBar.hidden = true;
@@ -75,6 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (value) (el('party-close').hidden ? el('party-message') : el('party-close')).focus({ preventScroll: true });
   }
   function network(state, milliseconds) {
+    if (state !== 'offline') serverState(state === 'online' ? 'online' : 'starting');
     el('party-network').dataset.state = state;
     el('party-online').textContent = state === 'online' ? 'Online' : state === 'connecting' ? 'Conectando…' : 'Desconectado';
     el('party-latency').textContent = Number.isFinite(milliseconds) ? `${Math.round(milliseconds)} ms` : '— ms';
@@ -131,11 +164,12 @@ document.addEventListener('DOMContentLoaded', () => {
       socket.on('chat:message', message => { if (room) { room.messages.push(message); room.messages = room.messages.slice(-50); renderChat(); } });
       socket.on('disconnect', reason => {
         network('offline');
+        if (reason !== 'io client disconnect') serverState(room ? 'starting' : 'offline');
         if (room) { ignoreUntil = Date.now() + 1000; player.pause(); player.playbackRate = 1; status('Conexão perdida. Reprodução pausada; tentando voltar à sala…'); }
         if (room && reason !== 'io client disconnect' && !connectionTask) connect().catch(error => { if (!error.silent) status(error.message); });
       });
       socket.on('connect', () => { network('online'); if (room && wantedRoom && !joining) enter(wantedRoom).catch(error => { status(error.message); clearRoom(); }); });
-      socket.on('connect_error', () => { if (connectionTask) network('connecting'); else network('offline'); });
+      socket.on('connect_error', () => { if (connectionTask) network('connecting'); else { network('offline'); serverState('offline'); } });
     }
     if (socket.connected) return;
     if (connectionTask) return connectionTask;
@@ -145,6 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
       signal:connectionAbort.signal,
       onProgress:progress => connectionNotice('pending',progress.elapsedSeconds)
     }).then(() => connectionNotice('connected')).catch(error => {
+      if (error.code !== 'CONNECTION_CANCELLED') serverState('offline');
       network('offline'); connectionNotice(error.silent ? 'hidden' : error.code === 'CONNECTION_CANCELLED' ? 'cancelled' : 'failed'); throw error;
     }).finally(() => { connectionTask = null; connectionAbort = null; });
     requestAnimationFrame(() => { if (!el('party-server-wait').hidden && !browsing) el('party-server-wait').scrollIntoView({block:'nearest',behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth'}); });
@@ -216,22 +251,27 @@ document.addEventListener('DOMContentLoaded', () => {
       try { window.openEpisode(anime, state.season, state.episode - 1, { skipResume: true }); } finally { openingRemote = false; }
       return;
     }
-    if (player.readyState < 1 || changing) return;
     // Joining members never reposition or pause the host's local player.
     if (host()) return;
+    if (!state.playing || !ready() || player.seeking || player.readyState < 2) {
+      player.pause(); player.playbackRate = 1;
+    }
+    if (player.readyState < 1 || changing) return;
     const target = state.position + (state.playing ? Math.max(0, (Date.now() + offset - state.updatedAt) / 1000) : 0);
     const end = Number.isFinite(player.duration) ? Math.max(0, player.duration - .1) : target;
     const difference = Math.min(target, end) - player.currentTime;
     ignoreUntil = Date.now() + 1000;
     if (Math.abs(difference) > 1.5 || (!state.playing && Math.abs(difference) > .05)) {
       const destination = Math.max(0, Math.min(target, end));
-      let canSeek = false;
-      for (let i = 0; i < player.seekable.length; i++) if (destination >= player.seekable.start(i) && destination <= player.seekable.end(i)) canSeek = true;
-      if (canSeek && !player.seeking && player.readyState >= 2 && (force || alignedRevision !== state.revision || Date.now() - lastSeekAt > 8000)) {
+      // currentTime may request an uncached range. Waiting for it to be seekable first
+      // left guests playing the old scene while the host was already elsewhere.
+      if (!player.seeking && (alignedRevision !== state.revision || Date.now() - lastSeekAt > 8000)) {
+        player.pause();
         lastSeekAt = Date.now(); alignedRevision = state.revision;
-        player.currentTime = destination;
+        try { player.currentTime = destination; }
+        catch (_) { el('party-video-status').hidden = false; el('party-video-status').textContent = 'Não foi possível avançar até o ponto da sala nesta fonte. Tentaremos sincronizar novamente.'; }
       }
-      else if (!canSeek && Math.abs(difference) > 1.5) { el('party-video-status').hidden = false; el('party-video-status').textContent = 'A fonte ainda não permite avançar até o ponto da sala. Aguarde o carregamento; se continuar, será necessária outra fonte para sincronizar.'; }
+      if (player.seeking || Math.abs(player.currentTime - destination) > 1.5) { player.pause(); player.playbackRate = 1; return; }
     }
     if (!ready()) { player.pause(); player.playbackRate = 1; return; }
     player.playbackRate = state.playing && player.readyState >= 3 && Math.abs(difference) > .35 && Math.abs(difference) <= 1.5 ? (difference > 0 ? 1.02 : .98) : 1;
@@ -316,14 +356,19 @@ document.addEventListener('DOMContentLoaded', () => {
   }));
   el('party-leave').addEventListener('click', () => action(async () => { try { await request('room:leave'); } finally { clearRoom(); status('Você saiu da sala.'); } }));
   el('party-chat-form').addEventListener('submit', event => { event.preventDefault(); action(async () => { const input = el('party-message'); await request('chat:send', { message: input.value }); input.value = ''; }); });
-  function localChange() {
+  function localChange(event) {
     if (!room || openingRemote || browsing) return;
     if (!socket?.connected || !ready()) { ignoreUntil = Date.now() + 500; if (!player.paused) player.pause(); return; }
     if (!host()) { if (Date.now() >= ignoreUntil) sync(true); return; }
-    if (changing || !matches(room.state) || player.readyState < 2 || player.seeking || player.__adaptivePlayback?.recoverInFlight) return;
-    request('playback:update', { position: player.currentTime, playing: !player.paused && !player.ended }).catch(error => status(error.message));
+    if (changing || !matches(room.state) || player.readyState < 1) return;
+    if (event?.type === 'waiting') hostBuffering = !player.paused;
+    if (event?.type === 'playing' || event?.type === 'pause' || event?.type === 'seeked') hostBuffering = false;
+    // Publish pause and the new timestamp even while seeking/buffering; never
+    // let the other players keep running at the previous position.
+    request('playback:update', { position: player.currentTime, playing: !player.paused && !player.ended && !player.seeking && !hostBuffering && player.readyState >= 3 }).catch(error => status(error.message));
   }
-  for (const event of ['play', 'pause', 'seeked']) player.addEventListener(event, localChange);
+  for (const event of ['play', 'playing', 'pause', 'seeking', 'seeked', 'waiting', 'ended']) player.addEventListener(event, localChange);
+  player.addEventListener('seeked', () => { if (room && !host()) sync(true); });
   player.addEventListener('loadedmetadata', () => sync(true));
   player.addEventListener('loadeddata', () => sync());
   player.addEventListener('canplay', () => sync());
@@ -331,10 +376,11 @@ document.addEventListener('DOMContentLoaded', () => {
   player.addEventListener('canplay', () => { el('party-video-status').hidden = true; });
   window.addEventListener('aniverse:episode-opened', () => {
     if (!room || openingRemote || !host()) return;
-    changing = true;
+    changing = true; hostBuffering = false;
     request('playback:episode', selection()).then(result => update(result.room)).catch(error => status(error.message)).finally(() => { changing = false; sync(true); });
   });
   setInterval(() => { if (room && socket?.connected && !changing) request('room:get').then(result => update(result.room)).catch(error => status(error.message)); }, 5000);
+  setInterval(() => { if (room && host() && !browsing && !changing) localChange(); }, 3000);
   async function suggest(anime, season, index) {
     try { await request('room:suggest', { anime: String(anime.id), season, episode: index + 1 }); status(`Sugestão enviada: ${anime.title}. O anfitrião decide quando trocar.`); }
     catch (error) { status(error.message); }
@@ -353,7 +399,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function tryInvite() { if (!inviteJoined && !joining && /^[a-f0-9]{24}$/.test(pending || '') && profile() && window.animeDB?.animes.length) { inviteJoined = true; action(() => enter(pending)); } }
   window.addEventListener('animeDataLoaded', tryInvite);
   window.addEventListener('aniverse:profile-changed', () => { if (room && profile()?.id !== profileId) { socket?.disconnect(); clearRoom(); } setTimeout(tryInvite, 0); });
-  window.addEventListener('pagehide', () => { warmupAbort.abort(); window.removeEventListener('online',scheduleWarmup); document.removeEventListener('visibilitychange',scheduleWarmup); socket?.disconnect(); });
+  window.addEventListener('pagehide', () => { warmupAbort.abort(); serverProbe?.disconnect(); window.removeEventListener('online',resumeServer); document.removeEventListener('visibilitychange',scheduleWarmup); socket?.disconnect(); });
   tryInvite();
   scheduleWarmup();
 });

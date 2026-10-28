@@ -646,26 +646,30 @@
         const player = document.getElementById('anime-player');
         if (player) {
           try {
-            if (typeof player.__adaptiveCleanup === 'function') {
-              player.__adaptiveCleanup();
-            }
-            player.pause();
-            // Save progress if animeDB is available
-            if (window.animeDB && window.currentAnimeData) {
-              const currentTime = player.currentTime || 0;
+            const saved = window.saveCurrentEpisodeProgress?.();
+            if (!saved && window.animeDB && window.currentAnimeData && player.getAttribute('src') && player.readyState >= 1) {
               window.animeDB.saveContinueWatching(
                 window.currentAnimeData.animeId,
                 window.currentAnimeData.season,
                 window.currentAnimeData.episode + 1,
-                currentTime
+                player.currentTime || 0
               );
             }
+            if (typeof player.__adaptiveCleanup === 'function') {
+              player.__adaptiveCleanup();
+            }
+            player.pause();
             player.removeAttribute('src');
             while (player.firstChild) player.removeChild(player.firstChild);
             player.load();
           } catch (e) {
             console.warn('Error saving progress:', e);
           }
+        }
+        if (window.animeDB && window.renderContinueWatchingGrid) {
+          const entries = window.animeDB.getContinueWatching();
+          window.renderContinueWatchingGrid(entries, 'continue-watching-grid');
+          window.renderContinueWatchingGrid(entries, 'continue-grid');
         }
         if (window.getNativeTvVideoControls) {
           try { window.getNativeTvVideoControls().stop(); } catch (_) {}

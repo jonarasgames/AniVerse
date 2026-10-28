@@ -194,11 +194,11 @@
     const PROGRESS_BUCKET_SIZE = 2;
 
     const persistContinueWatchingNow = (force = false) => {
-      if (!window.currentWatchingAnime || !window.profileManager || !window.profileManager.getActiveProfile) return;
-      if (!player.duration || Number.isNaN(player.duration) || player.duration <= 0) return;
+      if (!window.currentWatchingAnime || !window.profileManager || !window.profileManager.getActiveProfile) return false;
+      if (!Number.isFinite(player.duration) || player.duration <= 0 || !player.getAttribute('src')) return false;
 
       const activeProfile = window.profileManager.getActiveProfile();
-      if (!activeProfile) return;
+      if (!activeProfile) return false;
 
       const currentSecond = Math.floor(player.currentTime || 0);
       const progress = Math.min(100, Math.max(0, (player.currentTime / player.duration) * 100));
@@ -222,7 +222,9 @@
       lastPersistedSecond = currentSecond;
       lastPersistedProgressBucket = progressBucket;
       lastPersistedAt = now;
+      return true;
     };
+    window.saveCurrentEpisodeProgress = () => persistContinueWatchingNow(true);
     const persistContinueWatchingDebounced = debounce(() => persistContinueWatchingNow(false), 800);
     
     // Custom controls
@@ -1237,6 +1239,7 @@
     });
     player.addEventListener('play', () => clearNextEpisodeCountdown());
     window.addEventListener('beforeunload', () => persistContinueWatchingNow(true));
+    window.addEventListener('pagehide', () => persistContinueWatchingNow(true));
     
     // Update overlay when episode info changes
     window.updateVideoOverlay = updateVideoOverlay;

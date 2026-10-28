@@ -1659,6 +1659,7 @@ function setupVideoLoadingIndicator() {
     }
     showDelayTimer = setTimeout(() => {
       showDelayTimer = null;
+      if (player.error || (!player.seeking && (player.paused || player.readyState >= 3))) return;
       showNow();
     }, SHOW_DELAY_MS);
   };
@@ -1695,6 +1696,7 @@ function setupVideoLoadingIndicator() {
     show();
   });
   player.addEventListener('stalled', () => {
+    if (player.paused || player.readyState >= 3) return;
     setLabel('A conexão está lenta. Aguarde…');
     show();
   });
@@ -1728,7 +1730,8 @@ function setupVideoLoadingIndicator() {
     else hide();
   };
 
-  player.addEventListener('pause', hideNow);
+  player.addEventListener('pause', () => { clearShowDelay(); hideNow(); });
+  player.addEventListener('timeupdate', () => { if (!player.paused && !player.seeking && player.readyState >= 3) hide(); });
 }
 
 // openEpisode helper: set src, resume, banner, opening

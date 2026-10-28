@@ -63,7 +63,7 @@
     <link rel="stylesheet" href="css/achievements-hub.css?v=20261027-banner1">
     <link rel="stylesheet" href="css/card-studio.css?v=20261027-2">
     <link rel="stylesheet" href="css/watch-party.css?v=20261028-wait1">
-    <link rel="stylesheet" href="css/episode-layout.css?v=20261028-collection-online1">
+    <link rel="stylesheet" href="css/episode-layout.css?v=20261028-player-status1">
     <link rel="stylesheet" href="css/episode-picker.css?v=20261028-party-sync4">
     <link rel="stylesheet" href="css/mobile-player.css?v=20261028-mobile6">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -803,8 +803,8 @@
     <script src="js/image-retry.js?v=20260326-2"></script>
     
     <!-- Core scripts with defer -->
-    <script src="js/anime-db.js?v=20261027-launch1" defer></script>
-    <script src="js/anime-renderer.js?v=20261028-collection-online1" defer></script>
+    <script src="js/anime-db.js?v=20261028-resume-close1" defer></script>
+    <script src="js/anime-renderer.js?v=20261028-resume-close1" defer></script>
     <script src="js/anime-render-fallback.js?v=20260326-2" defer></script>
     <script src="js/hero-video-rotator.js?v=20260326-2" defer></script>
     <script src="js/profile-modal-bindings.js?v=20260326-2" defer></script>
@@ -815,15 +815,15 @@
     <script src="js/card-gif.js?v=20261027-1" defer></script>
     <script src="js/card-studio.js?v=20261027-launch1" defer></script>
     <script src="js/achievements-hub.js?v=20261027-banner1" defer></script>
-    <script src="js/video-player.js?v=20261028-collection-online1" defer></script>
+    <script src="js/video-player.js?v=20261028-resume-close1" defer></script>
     <script src="js/vendor/socket.io.min.js" defer></script>
     <script src="js/watch-party-config.js?v=20261028-collection-online1" defer></script>
     <script src="js/watch-party-connection.js?v=20261028-warmup1" defer></script>
-    <script src="js/watch-party.js?v=20261028-warmup1" defer></script>
+    <script src="js/watch-party.js?v=20261028-room-playback1" defer></script>
     <script src="js/episode-picker.js?v=20261028-preview-png7" defer></script>
-    <script src="js/player-fixes.js?v=20261028-collection-online1" defer></script>
+    <script src="js/player-fixes.js?v=20261028-room-playback1" defer></script>
     <script src="js/download-manager.js?v=20261027-episode-remake1" defer></script>
-    <script src="js/script.js?v=20261028-party-sync4" defer></script>
+    <script src="js/script.js?v=20261028-room-playback1" defer></script>
     <script src="js/info-section.js?v=20260326-2" defer></script>
     <script src="js/fixes.js?v=20261027-ui1" defer></script>
     <script src="js/profile-enhancements.js?v=20261027-header2" defer></script>
@@ -838,11 +838,9 @@
         window.addEventListener('load', async () => {
           try {
             const appBase = new URL('./', window.location.href);
-            const hadController = !!navigator.serviceWorker.controller;
-            const workerUrl = new URL('sw.js?v=20261028-collection-online1', appBase);
+            const workerUrl = new URL('sw.js?v=20261028-no-auto-reload1', appBase);
             const registration = await navigator.serviceWorker.register(workerUrl.href, { scope: appBase.pathname, updateViaCache: 'none' });
             const tryUpdate = () => registration.update().catch(() => {});
-            let refreshing = false;
 
             const activateWaitingWorker = (worker) => {
               if (worker) worker.postMessage({ type: 'SKIP_WAITING' });
@@ -873,12 +871,11 @@
             });
 
             navigator.serviceWorker.addEventListener('controllerchange', () => {
-              if (refreshing || !hadController) return;
-              refreshing = true;
               try {
                 localStorage.setItem('aniverse_sw_updated_at', String(Date.now()));
               } catch (_) {}
-              window.location.reload();
+              // Prepare updates without interrupting playback, rooms or profile editing.
+              // The open page keeps its current scripts until the user navigates or reloads.
             });
           } catch (_) {}
         });

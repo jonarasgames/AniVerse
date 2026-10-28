@@ -134,6 +134,9 @@
 
         const recoverFromStall = (reason) => {
             if (player.paused || player.ended) return;
+            // In a room, seeking backwards to recover a buffer creates extra
+            // playback commands and fights the host's shared timestamp.
+            if (window.watchParty?.active) return;
             const now = Date.now();
             if (stallState.inRecovery) return;
             if (now - stallState.lastAt < 700) return;

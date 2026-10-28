@@ -16,11 +16,17 @@ async function registration(href,controlled) {
 }
 test('GitHub Pages registers its worker inside the repository path',async()=>{
   const result=await registration('https://jonarasgames.github.io/AniVerse/?anime=36',true);
-  assert.equal(new URL(result.registered.url).pathname,'/AniVerse/sw.js');assert.equal(result.registered.options.scope,'/AniVerse/');assert.equal(result.reloads,1);
+  assert.equal(new URL(result.registered.url).pathname,'/AniVerse/sw.js');assert.equal(result.registered.options.scope,'/AniVerse/');assert.equal(result.reloads,0);
 });
-test('local root and first installation do not produce reload loops',async()=>{
+test('first installation does not reload the page',async()=>{
   const result=await registration('http://localhost:8000/',false);
   assert.equal(new URL(result.registered.url).pathname,'/sw.js');assert.equal(result.registered.options.scope,'/');assert.equal(result.reloads,0);
+});
+
+test('updates never reload an already open page, including repeated worker changes',async()=>{
+  for(const href of ['http://localhost:8000/?anime=36&room=example','https://jonarasgames.github.io/AniVerse/?anime=10']) {
+    assert.equal((await registration(href,true)).reloads,0);
+  }
 });
 test('project homepage navigation checks the network before old cache',()=>{
   const context=vm.createContext({URL,self:{location:{origin:'https://jonarasgames.github.io'},addEventListener(){}}});
