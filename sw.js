@@ -1,5 +1,5 @@
-const STATIC_CACHE = 'aniverse-static-v56';
-const RUNTIME_CACHE = 'aniverse-runtime-v56';
+const STATIC_CACHE = 'aniverse-static-v58';
+const RUNTIME_CACHE = 'aniverse-runtime-v58';
 const MEDIA_CACHE = 'aniverse-media-v2';
 const IMAGE_CACHE = 'aniverse-images-v8';
 const STREAM_PROXY_PATH = '/__anv_stream_proxy__';
@@ -20,6 +20,7 @@ const APP_SHELL = [
   './episode-previews.json',
   './js/vendor/socket.io.min.js',
   './js/watch-party-config.js',
+  './js/watch-party-connection.js',
   './js/watch-party.js',
   './js/card-gif.js',
   './js/card-studio.js',

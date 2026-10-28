@@ -3,11 +3,13 @@ const { chromium } = require('playwright');
 const { createWatchServer } = require('../watch-party-server/server');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
+const { ensureStaticSite } = require('./static-site-helper.cjs');
 
 (async () => {
   const { server, io } = createWatchServer();
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
   const browser = await chromium.launch({ channel: 'chrome', headless: true });
+  const staticSite = await ensureStaticSite();
   try {
     const data = JSON.parse(fs.readFileSync('anime-data.json', 'utf8'));
     const anime = (data.animes || data).find(anime => anime.id === 36);
@@ -17,6 +19,7 @@ const fs = require('node:fs');
     other.seasons[0].episodes[0].videoUrl = video;
     other.seasons.push({ number: 99, name: 'Temporada de teste', episodes: [{ title: 'Outro episódio', videoUrl: video, thumbnail: 'images/logo.png' }] });
     const pages = [];
+    const warmups = [0,0];
     const errors = [];
     for (let index = 0; index < 2; index++) {
       const context = await browser.newContext({ serviceWorkers: 'block', viewport: { width: 1280, height: 900 }, hasTouch: index === 1 });
@@ -38,11 +41,26 @@ const fs = require('node:fs');
         return route.fulfill({ status: 206, body: buffer.subarray(start, end + 1), contentType: 'video/webm', headers: { 'accept-ranges': 'bytes', 'content-range': `bytes ${start}-${end}/${buffer.length}` } });
       });
       await context.route('https://**/*', route => route.abort());
+      if (!index) {
+        let failures=0;
+        await context.route('**/socket.io/**', route => {
+          if(failures++ < 2) return route.fulfill({status:503,body:'Servidor iniciando',headers:{'Access-Control-Allow-Origin':'http://localhost:8000'}});
+          return route.continue();
+        });
+      }
       const page = await context.newPage();
+      page.on('request',request=>{if(request.url()===`http://127.0.0.1:${server.address().port}/health`)warmups[index]++;});
       page.on('pageerror', error => { errors.push(error.message); console.error('Erro no navegador:', error.message); }); pages.push(page);
     }
     const [host, guest] = pages;
+    await host.bringToFront();
+    const warmRequest = host.waitForRequest(request=>request.url()===`http://127.0.0.1:${server.address().port}/health`);
     await host.goto('http://localhost:8000', { waitUntil: 'domcontentloaded' });
+    await warmRequest;
+    await host.evaluate(()=>{window.dispatchEvent(new Event('online'));document.dispatchEvent(new Event('visibilitychange'));});
+    await host.waitForTimeout(200);
+    assert.equal(warmups[0],1);assert.equal(await host.locator('#video-modal').isVisible(),false);
+    assert.equal((await fetch(`http://127.0.0.1:${server.address().port}/health`).then(response=>response.json())).rooms,0);
     await host.waitForFunction(() => window.watchParty && window.animeDB?.animes.length && window.profileManager);
     await host.evaluate(() => { document.getElementById('profile-selection-overlay')?.remove(); window.openEpisode(window.animeDB.animes.find(a => a.id === 36), 1, 0); });
     await host.waitForFunction(() => document.getElementById('anime-player').readyState >= 2);
@@ -61,7 +79,15 @@ const fs = require('node:fs');
     assert.equal(await host.locator('#video-player-container').evaluate(node => node.classList.contains('controls-hidden')), false);
     await host.locator('#watch-party-toggle').click();
     await host.locator('#party-create button').click();
+    await host.waitForFunction(() => document.getElementById('party-server-wait').dataset.state === 'pending');
+    await host.locator('#party-wait-cancel').click();
+    await host.waitForFunction(() => document.getElementById('party-server-wait').dataset.state === 'cancelled');
+    assert.equal(await host.locator('#party-session').evaluate(node=>node.hidden),true);
+    assert.equal((await fetch(`http://127.0.0.1:${server.address().port}/health`).then(response=>response.json())).rooms,0);
+    await host.locator('#party-wait-retry').click();
     await host.waitForFunction(() => !document.getElementById('party-session').hidden);
+    assert.equal(await host.locator('#party-server-wait').evaluate(node=>node.hidden),true);
+    assert.equal((await fetch(`http://127.0.0.1:${server.address().port}/health`).then(response=>response.json())).rooms,1);
     await host.waitForFunction(() => document.getElementById('anime-player').readyState >= 2);
     assert.equal(await host.locator('#watch-party-panel').evaluate(node => node.parentElement.id), 'party-dock');
     const layout = await host.evaluate(() => {
@@ -180,5 +206,5 @@ const fs = require('node:fs');
     assert.equal(await guest.locator('#video-player-container').evaluate(node => node.classList.contains('controls-hidden')), hiddenBefore);
     assert.equal(errors.length, 0, errors.join('\n'));
     console.log('PASSOU: controles externos no celular, banner vertical, horizontal ampliada sem banner com X lateral, sala persistente, entrada no tempo atual, sugestões, seletor em tela cheia, prévias, gestos e sincronização.');
-  } finally { await browser.close(); await new Promise(resolve => io.close(resolve)); }
+  } finally { await browser.close(); await new Promise(resolve => io.close(resolve)); if(staticSite) {staticSite.closeAllConnections();await new Promise(resolve=>staticSite.close(resolve));} }
 })().catch(error => { console.error(error); process.exitCode = 1; });

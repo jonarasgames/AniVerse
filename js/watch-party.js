@@ -10,6 +10,12 @@ document.addEventListener('DOMContentLoaded', () => {
   panel.setAttribute('aria-label', 'Assistir junto');
   panel.innerHTML = `<header class="party-heading"><div><span class="party-eyebrow">SESSÃO COM AMIGOS</span><h3>Assistir junto</h3></div><button type="button" id="party-close" aria-label="Fechar painel">×</button></header>
     <div id="party-network" class="party-network" data-state="offline" role="status"><span id="party-online">Desconectado</span><span id="party-latency" title="Tempo de ida e volta até o servidor da sala">— ms</span></div>
+    <section id="party-server-wait" class="party-server-wait" hidden aria-labelledby="party-wait-title">
+      <div class="party-wait-heading"><span class="party-wait-spinner" aria-hidden="true"></span><strong id="party-wait-title" role="status" aria-live="polite">Conectando ao servidor…</strong></div>
+      <p id="party-wait-message">O servidor pode estar iniciando. Aguarde um pouco; vamos tentar conectar automaticamente.</p>
+      <p id="party-wait-elapsed" aria-live="off"></p>
+      <button type="button" id="party-wait-cancel" class="party-secondary">Cancelar conexão</button><button type="button" id="party-wait-retry" hidden>Tentar novamente</button>
+    </section>
     <p id="party-status" role="status" aria-live="polite">Crie uma sala para este episódio ou entre pelo convite de um amigo.</p>
     <p id="party-video-status" class="party-help" hidden></p>
     <div id="party-entry"><form id="party-create"><label>Nome da sala<input id="party-name" maxlength="60" placeholder="Uma sessão de anime"></label><button type="submit">Criar sala deste episódio</button></form>
@@ -29,6 +35,23 @@ document.addEventListener('DOMContentLoaded', () => {
   let browsing = false;
   let lastSeekAt = 0, alignedRevision = -1;
   let joinNeedsSource = false;
+  let connectionTask = null, connectionAbort = null, lastOperation = null;
+  let warmupStarted = false, warmupQueued = false;
+  const warmupAbort = new AbortController();
+  function scheduleWarmup() {
+    if (warmupStarted || warmupQueued || !window.ANIVERSE_WATCH_SERVER || navigator.onLine === false || document.hidden) return;
+    warmupQueued = true;
+    const start = () => {
+      warmupQueued = false;
+      if (warmupStarted || warmupAbort.signal.aborted || navigator.onLine === false || document.hidden) return;
+      warmupStarted = true;
+      window.removeEventListener('online',scheduleWarmup); document.removeEventListener('visibilitychange',scheduleWarmup);
+      window.warmPartyServer(window.ANIVERSE_WATCH_SERVER,{signal:warmupAbort.signal});
+    };
+    if (window.requestIdleCallback) requestIdleCallback(start,{timeout:1500}); else setTimeout(start,300);
+  }
+  window.addEventListener('online',scheduleWarmup);
+  document.addEventListener('visibilitychange',scheduleWarmup);
   const sessionBar = document.createElement('div');
   sessionBar.className = 'party-session-bar'; sessionBar.hidden = true;
   sessionBar.innerHTML = '<span id="party-bar-title"></span><span id="party-bar-status" role="status"></span><button type="button" id="party-return">Voltar à sala</button><button type="button" id="party-browse">Escolher anime</button><button type="button" id="party-bar-leave">Sair</button>';
@@ -56,6 +79,31 @@ document.addEventListener('DOMContentLoaded', () => {
     el('party-online').textContent = state === 'online' ? 'Online' : state === 'connecting' ? 'Conectando…' : 'Desconectado';
     el('party-latency').textContent = Number.isFinite(milliseconds) ? `${Math.round(milliseconds)} ms` : '— ms';
   }
+  function connectionNotice(state, elapsedSeconds = 0) {
+    const card = el('party-server-wait'); card.hidden = state === 'connected' || state === 'hidden'; card.dataset.state = state;
+    const pending = state === 'pending';
+    el('party-wait-cancel').hidden = !pending; el('party-wait-retry').hidden = pending;
+    el('party-wait-elapsed').textContent = pending ? `Aguardando há ${elapsedSeconds}s · conexão automática` : '';
+    for (const button of el('party-entry').querySelectorAll('button')) button.disabled = pending;
+    if (state === 'pending') {
+      const offline = navigator.onLine === false;
+      const title = offline ? 'Você está sem conexão' : elapsedSeconds >= 10 ? 'Aguardando o servidor iniciar…' : 'Conectando ao servidor…';
+      if (el('party-wait-title').textContent !== title) el('party-wait-title').textContent = title;
+      el('party-wait-message').textContent = offline ? 'Verifique sua internet. Continuaremos tentando enquanto você aguarda.' : elapsedSeconds >= 60 ? 'Ainda não recebemos resposta. Você pode aguardar mais um pouco ou cancelar.' : 'O servidor gratuito pode estar iniciando. Isso pode levar cerca de um minuto. Vamos conectar automaticamente assim que ele responder.';
+    } else if (state === 'cancelled') {
+      el('party-wait-title').textContent = 'Conexão cancelada'; el('party-wait-message').textContent = 'Você pode continuar assistindo ou tentar entrar na sala novamente.';
+    } else if (state === 'failed') {
+      el('party-wait-title').textContent = 'Não foi possível conectar agora'; el('party-wait-message').textContent = 'O servidor pode estar indisponível ou sua conexão pode ter falhado. Tente novamente em alguns instantes.';
+    }
+  }
+  function revealConnection() {
+    const modal = el('video-modal');
+    if (getComputedStyle(modal).display === 'none') {
+      window.__videoModalPreviousOverflow = document.body.style.overflow; window.__videoModalPreviousFocus = document.activeElement;
+      modal.style.display = 'flex'; modal.setAttribute('aria-hidden','false'); document.body.style.overflow = 'hidden';
+    }
+    show(true);
+  }
   document.addEventListener('fullscreenchange', layoutPanel);
   document.addEventListener('webkitfullscreenchange', layoutPanel);
   desktop.addEventListener('change', layoutPanel);
@@ -81,17 +129,26 @@ document.addEventListener('DOMContentLoaded', () => {
       socket = io(endpoint, { autoConnect: false, reconnectionDelay: 1000, reconnectionDelayMax: 5000 });
       socket.on('room:state', update);
       socket.on('chat:message', message => { if (room) { room.messages.push(message); room.messages = room.messages.slice(-50); renderChat(); } });
-      socket.on('disconnect', () => { network('offline'); if (room) { ignoreUntil = Date.now() + 1000; player.pause(); player.playbackRate = 1; status('Conexão perdida. Reprodução pausada; tentando voltar à sala…'); } });
+      socket.on('disconnect', reason => {
+        network('offline');
+        if (room) { ignoreUntil = Date.now() + 1000; player.pause(); player.playbackRate = 1; status('Conexão perdida. Reprodução pausada; tentando voltar à sala…'); }
+        if (room && reason !== 'io client disconnect' && !connectionTask) connect().catch(error => { if (!error.silent) status(error.message); });
+      });
       socket.on('connect', () => { network('online'); if (room && wantedRoom && !joining) enter(wantedRoom).catch(error => { status(error.message); clearRoom(); }); });
-      socket.on('connect_error', () => { network('offline'); status('Não foi possível conectar. Confira se o servidor está ligado e permite o endereço deste site.'); });
+      socket.on('connect_error', () => { if (connectionTask) network('connecting'); else network('offline'); });
     }
     if (socket.connected) return;
-    await new Promise((resolve, reject) => {
-      const done = () => { cleanup(); resolve(); }, fail = () => { cleanup(); reject(new Error('Não foi possível conectar ao servidor de salas.')); };
-      const timeout = setTimeout(fail, 7000);
-      function cleanup() { clearTimeout(timeout); socket.off('connect', done); socket.off('connect_error', fail); }
-      network('connecting'); socket.once('connect', done); socket.once('connect_error', fail); socket.connect();
-    });
+    if (connectionTask) return connectionTask;
+    connectionAbort = new AbortController();
+    network('connecting'); if (!browsing) revealConnection();
+    connectionTask = window.waitForPartyConnection(socket, {
+      signal:connectionAbort.signal,
+      onProgress:progress => connectionNotice('pending',progress.elapsedSeconds)
+    }).then(() => connectionNotice('connected')).catch(error => {
+      network('offline'); connectionNotice(error.silent ? 'hidden' : error.code === 'CONNECTION_CANCELLED' ? 'cancelled' : 'failed'); throw error;
+    }).finally(() => { connectionTask = null; connectionAbort = null; });
+    requestAnimationFrame(() => { if (!el('party-server-wait').hidden && !browsing) el('party-server-wait').scrollIntoView({block:'nearest',behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth'}); });
+    return connectionTask;
   }
   function renderChat() {
     const chat = el('party-chat'), nearBottom = chat.scrollHeight - chat.scrollTop - chat.clientHeight < 60;
@@ -182,7 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!state.playing && !player.paused) player.pause();
   }
   function saveInvite(id) { const url = new URL(location.href); if (id) url.searchParams.set('room', id); else url.searchParams.delete('room'); history.replaceState(history.state, '', url); }
-  function clearRoom() { room = null; browsing = false; wantedRoom = ''; profileId = null; player.playbackRate = 1; saveInvite(''); render(); }
+  function clearRoom() { connectionAbort?.abort('silent'); connectionNotice('hidden'); room = null; browsing = false; wantedRoom = ''; profileId = null; player.playbackRate = 1; saveInvite(''); render(); }
   async function enter(id) {
     if (!profile()) throw new Error('Escolha seu perfil para entrar na sala.');
     joining = true; joinNeedsSource = true;
@@ -194,7 +251,9 @@ document.addEventListener('DOMContentLoaded', () => {
       status('Você entrou no ponto atual da sala. Clique em “Estou pronto” para acompanhar a reprodução.');
     } finally { joining = false; }
   }
-  async function action(task) { if (busy) return; busy = true; try { await task(); } catch (error) { status(error.message); } finally { busy = false; } }
+  async function action(task) { if (busy) return; busy = true; lastOperation = task; try { await task(); } catch (error) { if (!error.silent) status(error.message); } finally { busy = false; } }
+  el('party-wait-cancel').addEventListener('click', () => connectionAbort?.abort());
+  el('party-wait-retry').addEventListener('click', () => action(room ? () => connect() : lastOperation || (() => connect())));
   toggle.addEventListener('click', () => show(panel.hidden)); el('party-close').addEventListener('click', () => { show(false); toggle.focus(); });
   container.addEventListener('click', event => {
     if (!room || host() || panel.contains(event.target)) return;
@@ -203,7 +262,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }, true);
   el('close-video')?.addEventListener('click', () => {
-    if (!room) return;
+    if (!room) { connectionAbort?.abort('silent'); return; }
     browsing = true;
     if (host() && socket?.connected) request('playback:update', { position: player.currentTime || 0, playing: false }).catch(error => status(error.message));
     status(host() ? 'Escolha outro anime no catálogo. A sala continua aberta.' : 'Você pode sugerir um anime ao anfitrião.'); render();
@@ -294,6 +353,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function tryInvite() { if (!inviteJoined && !joining && /^[a-f0-9]{24}$/.test(pending || '') && profile() && window.animeDB?.animes.length) { inviteJoined = true; action(() => enter(pending)); } }
   window.addEventListener('animeDataLoaded', tryInvite);
   window.addEventListener('aniverse:profile-changed', () => { if (room && profile()?.id !== profileId) { socket?.disconnect(); clearRoom(); } setTimeout(tryInvite, 0); });
-  window.addEventListener('pagehide', () => socket?.disconnect());
+  window.addEventListener('pagehide', () => { warmupAbort.abort(); window.removeEventListener('online',scheduleWarmup); document.removeEventListener('visibilitychange',scheduleWarmup); socket?.disconnect(); });
   tryInvite();
+  scheduleWarmup();
 });

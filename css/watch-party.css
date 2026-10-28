@@ -29,3 +29,12 @@
 .party-sr-only { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); }
 #video-player-container #watch-party-toggle.party-connected { color:#ffadba; box-shadow:0 0 0 1px #ff738a; }
 @media(max-height:450px) { #watch-party-panel { padding:12px; } #watch-party-panel h3 { font-size:20px; } }
+.party-server-wait { margin:14px 0; padding:16px; border:1px solid #ff8b9c40; border-radius:13px; background:linear-gradient(130deg,#e9385414,#ffffff04); }
+.party-wait-heading { display:flex; align-items:center; gap:10px; color:#f5e9ed; }
+.party-server-wait p { margin:10px 0; color:#c2cde0; font-size:13px; line-height:1.6; }
+#party-wait-elapsed { font-variant-numeric:tabular-nums; color:#97a9c4; font-size:12px; }
+.party-wait-spinner { flex:none; width:18px; height:18px; border:2px solid #ffffff25; border-top-color:#ff8399; border-radius:50%; animation:party-wait-turn .85s linear infinite; }
+.party-server-wait:not([data-state="pending"]) .party-wait-spinner { display:none; }
+#watch-party-panel button:disabled { opacity:.5; cursor:wait; }
+@keyframes party-wait-turn { to { transform:rotate(360deg); } }
+@media(prefers-reduced-motion:reduce) { .party-wait-spinner { animation:none; border-color:#ff8399; } }
