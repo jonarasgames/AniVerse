@@ -1105,59 +1105,8 @@
             heading.appendChild(opener); welcomeContainer.appendChild(heading);
         }
 
-        // Load profile's continue watching
-        if (profile.continueWatching && profile.continueWatching.length > 0) {
-            // Helper function to create continue watching card
-            function createContinueWatchingCard(item) {
-                const card = document.createElement('div');
-                card.className = 'anime-card';
-                card.style.cursor = 'pointer';
-                card.innerHTML = `
-                    <div class="anime-thumbnail">
-                        <img src="${item.thumbnail}" alt="${item.title}">
-                        ${item.progress ? `<div class="progress-bar" style="width: ${item.progress}%"></div>` : ''}
-                    </div>
-                    <div class="anime-info">
-                        <h3 class="anime-title">${item.title}</h3>
-                        <p>T${item.season} E${item.episode}</p>
-                    </div>
-                `;
-                
-                card.addEventListener('click', () => {
-                    const anime = window.animeDB?.animes.find(a => a.id === item.animeId);
-                    if (anime && window.openAnimeModal) {
-                        // Use openAnimeModal to properly populate season/episode selectors
-                        window.openAnimeModal(anime, item.season, item.episode - 1);
-                    } else if (anime && window.openEpisode) {
-                        // Fallback to openEpisode if openAnimeModal not available
-                        window.openEpisode(anime, item.season, item.episode - 1);
-                    }
-                });
-                
-                return card;
-            }
-            
-            // Populate both continue watching grids
-            const grids = ['continue-watching-grid', 'continue-grid'];
-            grids.forEach(gridId => {
-                const grid = document.getElementById(gridId);
-                if (grid) {
-                    grid.innerHTML = '';
-                    profile.continueWatching.forEach(item => {
-                        grid.appendChild(createContinueWatchingCard(item));
-                    });
-                }
-            });
-        } else {
-            // If no history, clear grids
-            const grids = ['continue-watching-grid', 'continue-grid'];
-            grids.forEach(gridId => {
-                const grid = document.getElementById(gridId);
-                if (grid) {
-                    grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #666;">Nenhum anime em progresso ainda.</p>';
-                }
-            });
-        }
+        // Use the same cards on profile activation, first load and player close.
+        window.loadContinueWatching?.();
 
         const loginBtn = document.getElementById('login-btn');
         if (loginBtn) {

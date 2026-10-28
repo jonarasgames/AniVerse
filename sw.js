@@ -1,5 +1,5 @@
-const STATIC_CACHE = 'aniverse-static-v65';
-const RUNTIME_CACHE = 'aniverse-runtime-v65';
+const STATIC_CACHE = 'aniverse-static-v66';
+const RUNTIME_CACHE = 'aniverse-runtime-v66';
 const MEDIA_CACHE = 'aniverse-media-v2';
 const IMAGE_CACHE = 'aniverse-images-v8';
 const STREAM_PROXY_PATH = '/__anv_stream_proxy__';

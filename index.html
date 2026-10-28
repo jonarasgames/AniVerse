@@ -804,7 +804,7 @@
     
     <!-- Core scripts with defer -->
     <script src="js/anime-db.js?v=20261028-resume-close1" defer></script>
-    <script src="js/anime-renderer.js?v=20261028-resume-close1" defer></script>
+    <script src="js/anime-renderer.js?v=20261028-continue-layout1" defer></script>
     <script src="js/anime-render-fallback.js?v=20260326-2" defer></script>
     <script src="js/hero-video-rotator.js?v=20260326-2" defer></script>
     <script src="js/profile-modal-bindings.js?v=20260326-2" defer></script>
@@ -827,7 +827,7 @@
     <script src="js/info-section.js?v=20260326-2" defer></script>
     <script src="js/fixes.js?v=20261027-ui1" defer></script>
     <script src="js/profile-enhancements.js?v=20261027-header2" defer></script>
-    <script src="js/profile-multi.js?v=20261027-mobile-links1" defer></script>
+    <script src="js/profile-multi.js?v=20261028-continue-layout1" defer></script>
     <script src="js/profile-modal-new.js?v=20261027-frame-refresh1" defer></script>
     <script src="js/music-player-new.js?v=20260326-2" defer></script>
     <script src="js/inplace-admin.js?v=20260326-2" defer></script>
@@ -838,7 +838,7 @@
         window.addEventListener('load', async () => {
           try {
             const appBase = new URL('./', window.location.href);
-            const workerUrl = new URL('sw.js?v=20261028-no-auto-reload1', appBase);
+            const workerUrl = new URL('sw.js?v=20261028-continue-layout1', appBase);
             const registration = await navigator.serviceWorker.register(workerUrl.href, { scope: appBase.pathname, updateViaCache: 'none' });
             const tryUpdate = () => registration.update().catch(() => {});
 

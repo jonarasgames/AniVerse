@@ -29,7 +29,7 @@ const { ensureStaticSite } = require('./static-site-helper.cjs');
       const context = await browser.newContext({ serviceWorkers: 'block', viewport: { width: 1280, height: 900 }, hasTouch: index === 1 });
       await context.addInitScript(({ endpoint, index }) => {
         window.ANIVERSE_WATCH_SERVER = endpoint;
-        localStorage.setItem('aniverse_profiles', JSON.stringify([{ id: `party-test-${index}`, name: index ? 'Amigo' : 'Anfitrião', avatar: {}, continueWatching: index ? [{ animeId:36, season:1, episode:1, currentTime:.1 }] : [] }]));
+        localStorage.setItem('aniverse_profiles', JSON.stringify([{ id: `party-test-${index}`, name: index ? 'Amigo' : 'Anfitrião', avatar: {}, continueWatching: [{ animeId:36, season:1, episode:1, currentTime:.1,progress:10 }] }]));
         if (!index) localStorage.setItem('aniverse_active_profile', `party-test-${index}`);
       }, { endpoint: `http://127.0.0.1:${server.address().port}`, index });
       await context.route('**/anime-data.json', route => route.fulfill({ json: data }));
@@ -69,6 +69,9 @@ const { ensureStaticSite } = require('./static-site-helper.cjs');
     assert.equal(warmups[0],1);assert.equal(await host.locator('#video-modal').isVisible(),false);
     assert.equal((await fetch(`http://127.0.0.1:${server.address().port}/health`).then(response=>response.json())).rooms,0);
     await host.waitForFunction(() => window.watchParty && window.animeDB?.animes.length && window.profileManager);
+    await host.waitForFunction(()=>document.getElementById('user-welcome-container').textContent.includes('Anfitrião'));
+    assert.equal(await host.locator('#continue-watching-grid .continue-card .continue-resume-btn').count(),1);
+    assert.equal(await host.locator('#continue-grid .continue-card .continue-resume-btn').count(),1);
     await host.evaluate(() => { document.getElementById('profile-selection-overlay')?.remove(); window.openEpisode(window.animeDB.animes.find(a => a.id === 36), 1, 0); });
     await host.waitForFunction(() => document.getElementById('anime-player').readyState >= 2);
     await host.evaluate(()=>{const p=document.getElementById('anime-player');p.pause();p.currentTime=1.75;});
