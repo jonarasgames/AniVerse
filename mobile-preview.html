@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AniVerse · Prévia no celular</title>
+<style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+        min-height: 100vh;
+        background: #14101c radial-gradient(ellipse 80% 500px at 50% -100px, rgba(230,57,70,.25), transparent 70%);
+        color: #fff;
+        font-family: 'Segoe UI', Tahoma, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 22px 12px 34px;
+        gap: 16px;
+    }
+    h1 { font-size: 1.25rem; font-weight: 700; text-align: center; }
+    h1 small { display: block; font-size: .78rem; font-weight: 400; opacity: .75; margin-top: 6px; }
+    .sizes { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+    .sizes button, .back {
+        border: 1px solid rgba(255,255,255,.35);
+        background: rgba(255,255,255,.08);
+        color: #fff;
+        border-radius: 999px;
+        padding: 8px 14px;
+        font-size: .82rem;
+        cursor: pointer;
+        text-decoration: none;
+    }
+    .sizes button.active { background: #e63946; border-color: #e63946; }
+    .phone {
+        width: 390px;
+        max-width: 96vw;
+        height: min(844px, calc(100vh - 190px));
+        min-height: 480px;
+        border: 10px solid #000;
+        border-radius: 44px;
+        overflow: hidden;
+        box-shadow: 0 30px 80px rgba(0,0,0,.6), 0 0 0 2px #333;
+        background: #000;
+        transition: width .25s ease;
+    }
+    .phone iframe { width: 100%; height: 100%; border: 0; display: block; }
+    .hint { font-size: .8rem; opacity: .7; text-align: center; max-width: 430px; line-height: 1.6; }
+</style>
+</head>
+<body>
+    <h1>📱 AniVerse no celular
+        <small>É o site de verdade rodando numa tela de celular — rola e clica aí dentro!</small>
+    </h1>
+    <div class="sizes" role="group" aria-label="Tamanho do celular">
+        <button type="button" data-width="360">360px</button>
+        <button type="button" data-width="390" class="active">390px</button>
+        <button type="button" data-width="430">430px</button>
+    </div>
+    <div class="phone" id="phone">
+        <iframe src="index.html" title="AniVerse em tela de celular"></iframe>
+    </div>
+    <p class="hint">Para voltar, usa o botão “Voltar ao site normal” aqui embaixo ou o voltar do navegador.</p>
+    <a class="back" href="index.html">← Voltar ao site normal</a>
+    <script>
+        var phone = document.getElementById('phone');
+        document.querySelectorAll('[data-width]').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                document.querySelectorAll('[data-width]').forEach(function (b) { b.classList.remove('active'); });
+                btn.classList.add('active');
+                phone.style.width = btn.dataset.width + 'px';
+            });
+        });
+    </script>
+</body>
+</html>

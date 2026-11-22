@@ -1,0 +1,63 @@
+/* Hero: faixa 16/9 rolando no fundo (50% de transparência sobre azul).
+   A rolagem é movida via JS (transform no .hero-bg-track), sem depender
+   de @keyframes — assim não congela com o modo desempenho. */
+
+.hero {
+    background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 55%, #581c87 100%);
+    background-size: cover;
+    background-position: center;
+    min-height: 400px;
+}
+
+.hero::before {
+    /* Azul em 50% sobre as imagens rolando */
+    background: linear-gradient(135deg, rgba(30, 58, 138, 0.5), rgba(88, 28, 135, 0.5));
+    z-index: 1;
+}
+
+.hero::after {
+    /* Leve escurecimento para legibilidade do texto */
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.28);
+    z-index: 1;
+    pointer-events: none;
+}
+
+.hero-bg-marquee {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    opacity: 0.5;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.hero-bg-track {
+    display: flex;
+    height: 100%;
+    width: max-content;
+    will-change: transform;
+}
+
+.hero-bg-track img {
+    height: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    flex-shrink: 0;
+    display: block;
+    border: 0;
+    /* Desfoque leve; a escala esconde as emendas entre as capas */
+    filter: blur(2px) brightness(0.92);
+    transform: scale(1.05);
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    padding: 60px 20px;
+    text-align: center;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}

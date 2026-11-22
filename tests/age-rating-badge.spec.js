@@ -70,7 +70,8 @@ test.describe('Age Rating Badge Visibility', () => {
       expect(badgePosition.position).toBe('absolute');
       expect(badgePosition.bottom).toBe('8px');
       expect(badgePosition.right).toBe('8px');
-      expect(parseInt(badgePosition.zIndex)).toBe(10);
+      // Badge fica atrás do texto (.anime-info z-index 20, overlay i/p z-index 6)
+      expect(parseInt(badgePosition.zIndex)).toBe(3);
       
       // Check badge is inside trailer-overlay
       const badgeParent = await ageRatingBadge.evaluate(el => {
