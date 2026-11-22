@@ -29,6 +29,90 @@
     let packResult = null, packProfile = null, noticeTimer, monthTimer;
     const dialog = $('hub-pack-dialog');
 
+    // Música em loop enquanto o pacote está sendo aberto +
+    // efeitos sonoros com "ducking": quando um efeito toca, o volume
+    // da música abaixa; quando o efeito acaba, a música volta ao normal.
+    const PACK_MUSIC_URL = 'https://media.ffycdn.net/eu/supercell/MMEcCXnkjEpz8g353kee.wav?width=1024&format=mp3';
+    const PACK_SFX_URLS = {
+      incoming: 'https://media.ffycdn.net/eu/supercell/Rp2VDXmsQBAmWWuawcKG.ogg?width=1024&format=mp3',
+      common: 'https://media.ffycdn.net/eu/supercell/c7t6bnYarrkqtkr77uon.ogg?width=1024&format=mp3',
+      rare: 'https://media.ffycdn.net/eu/supercell/oXFZGhPEUvyLeX6btdJT.ogg?width=1024&format=mp3',
+      epic: 'https://media.ffycdn.net/eu/supercell/zPzLedKz3SEzVbMhQ9ZT.ogg?width=1024&format=mp3',
+      legendary: 'https://media.ffycdn.net/eu/supercell/dctGTKKJtb6QHvzisadV.ogg?width=1024&format=mp3'
+    };
+    const MUSIC_BASE_VOLUME = 0.45;
+    const MUSIC_DUCK_VOLUME = 0.12;
+    let packAudio = null;
+    let activeSfxCount = 0;
+    let activeSfxAudios = [];
+    let musicRampTimer = null;
+
+    function soundOn() {
+      return achievements.getSnapshot?.()?.soundEnabled !== false;
+    }
+    function rampMusicVolume(target, durationMs = 300) {
+      if (!packAudio) return;
+      const audio = packAudio;
+      const from = audio.volume;
+      const steps = Math.max(1, Math.round(durationMs / 30));
+      let step = 0;
+      clearInterval(musicRampTimer);
+      musicRampTimer = setInterval(() => {
+        step++;
+        const t = step / steps;
+        try { audio.volume = Math.min(1, Math.max(0, from + (target - from) * t)); } catch (_) {}
+        if (step >= steps) clearInterval(musicRampTimer);
+      }, 30);
+    }
+    function playPackMusic() {
+      try {
+        if (!soundOn()) return;
+        if (!packAudio) {
+          packAudio = new Audio(PACK_MUSIC_URL);
+          packAudio.preload = 'auto';
+        }
+        packAudio.loop = true; // música sempre em loop
+        packAudio.volume = MUSIC_BASE_VOLUME;
+        packAudio.currentTime = 0;
+        packAudio.play().catch(() => {});
+      } catch (_) {}
+    }
+    function stopPackMusic() {
+      // Para os efeitos que estiverem tocando e a música
+      activeSfxAudios.forEach(audio => { try { audio.pause(); } catch (_) {} });
+      activeSfxAudios = [];
+      activeSfxCount = 0;
+      clearInterval(musicRampTimer);
+      if (!packAudio) return;
+      try { packAudio.pause(); packAudio.currentTime = 0; } catch (_) {}
+    }
+    function playSfx(url) {
+      if (!url) return;
+      try {
+        if (!soundOn()) return;
+        const sfx = new Audio(url);
+        sfx.volume = 0.9;
+        sfx.preload = 'auto';
+        activeSfxCount++;
+        activeSfxAudios.push(sfx);
+        rampMusicVolume(MUSIC_DUCK_VOLUME, 160); // música abaixa para o efeito brilhar
+        let finished = false;
+        const finish = () => {
+          if (finished) return;
+          finished = true;
+          activeSfxCount = Math.max(0, activeSfxCount - 1);
+          activeSfxAudios = activeSfxAudios.filter(a => a !== sfx);
+          if (activeSfxCount === 0) {
+            rampMusicVolume(MUSIC_BASE_VOLUME, 450); // efeito acabou: música volta ao normal
+          }
+        };
+        sfx.addEventListener('ended', finish, { once: true });
+        sfx.addEventListener('error', finish, { once: true });
+        const promise = sfx.play();
+        if (promise && typeof promise.catch === 'function') promise.catch(finish);
+      } catch (_) {}
+    }
+
     // Artwork belongs to the monthly edition, including archived albums.
     function seasonHero(collection, content) {
       return `<section class="hub-season-showcase" aria-label="${esc(collection.name)}"><div class="hub-season-artwork" hidden><img class="hub-season-background" src="${esc(collection.bannerSrc)}" alt="" width="1920" height="720" decoding="async" data-no-retry="true"><img class="hub-season-logo" src="${esc(collection.logoSrc)}" alt="${esc(collection.name)}" width="640" height="320" decoding="async" data-no-retry="true" hidden></div><div class="hub-season-hero" style="--season:${collection.color}">${content}</div></section>`;
@@ -82,20 +166,21 @@
       if (!snapshot) { $('achievements-list').innerHTML = '<div class="hub-empty">As conquistas não carregaram. <button type="button" data-action="retry-achievements">Tentar novamente</button></div>'; return; }
       const unlocked = snapshot.items.filter(item => item.unlocked).length;
       $('achievements-stats').innerHTML = `
-        <div><span class="hub-stat-icon mint">✦</span><span><strong>${unlocked}<small> / ${snapshot.items.length}</small></strong><span>Conquistas desbloqueadas</span></span></div>
-        <div><span class="hub-stat-icon peach">▶</span><span><strong>${snapshot.stats.episodesCompleted}</strong><span>Episódios completos</span></span></div>
-        <div><span class="hub-stat-icon lavender">↗</span><span><strong>${snapshot.stats.streak}<small> dias</small></strong><span>Sua sequência atual</span></span></div>`;
+        <div class="club-stat"><span class="club-stat-icon">✦</span><span class="club-stat-text"><strong>${unlocked}<small>/${snapshot.items.length}</small></strong><span>Conquistas</span></span></div>
+        <div class="club-stat"><span class="club-stat-icon alt">▶</span><span class="club-stat-text"><strong>${snapshot.stats.episodesCompleted}</strong><span>Episódios completos</span></span></div>
+        <div class="club-stat"><span class="club-stat-icon alt2">🔥</span><span class="club-stat-text"><strong>${snapshot.stats.streak}<small> dias</small></strong><span>Sequência atual</span></span></div>`;
       const ordered = [...snapshot.items].sort((a, b) => Number(a.unlocked) - Number(b.unlocked) || b.progressPercent - a.progressPercent);
       const visible = ordered.filter(item => filter === 'all' || (filter === 'unlocked' ? item.unlocked : !item.unlocked));
       $('achievements-list').innerHTML = visible.map((item, index) => `<article class="achievement-card ${item.unlocked ? 'is-unlocked' : 'is-locked'}" style="--entry:${Math.min(index, 8)}">
-        <div class="hub-medallion ${item.unlocked ? 'earned' : ''}"><img src="${esc(item.icon)}" alt="" loading="lazy" decoding="async">${item.unlocked ? '<span>✓</span>' : ''}</div>
-        <div class="achievement-info"><div class="hub-achievement-top"><span>${item.unlocked ? 'CONQUISTADA' : item.progressPercent >= 50 ? 'QUASE LÁ' : 'SUA PRÓXIMA HISTÓRIA'}</span><span>${item.unlocked ? '✦' : `${item.progressPercent}%`}</span></div><h4>${esc(item.name)}</h4><p>${esc(item.desc)}</p>${progress(item.progress, item.goal, item.name)}<div class="achievement-progress">${item.unlocked ? 'Uma história para se orgulhar.' : `${item.progress} de ${item.goal} · Continue sua jornada`}</div></div></article>`).join('') || '<div class="hub-empty">Nenhuma conquista por aqui ainda. Seu próximo play pode mudar isso.</div>';
+        <div class="club-card-top"><div class="hub-medallion ${item.unlocked ? 'earned' : ''}"><img src="${esc(item.icon)}" alt="" loading="lazy" decoding="async"></div><span class="club-chip ${item.unlocked ? 'done' : item.progressPercent >= 50 ? 'close' : ''}">${item.unlocked ? '✓ Desbloqueada' : item.progressPercent >= 50 ? 'Quase lá!' : `${item.progressPercent}%`}</span></div>
+        <h4>${esc(item.name)}</h4><p>${esc(item.desc)}</p>
+        <div class="club-card-foot">${progress(item.progress, item.goal, item.name)}<div class="achievement-progress">${item.unlocked ? 'Conquista guardada no seu perfil ✦' : `${item.progress} de ${item.goal} · faltam ${Math.max(0, item.goal - item.progress)}`}</div></div></article>`).join('') || '<div class="hub-empty">Nenhuma conquista por aqui ainda. Seu próximo play pode mudar isso.</div>';
       $('achievements-sound-toggle').checked = snapshot.soundEnabled;
       const next = ordered.find(item => !item.unlocked);
-      $('hub-next-goal').innerHTML = `<div class="hub-next-card"><span class="hub-eyebrow">${next ? 'TÃO PERTO DE CONSEGUIR' : 'VOCÊ CHEGOU LÁ'}</span>${art('trophy')}<h3>${esc(next?.name || 'Todas as conquistas!')}</h3><p>${esc(next?.desc || 'Agora tem um álbum inteiro esperando pela sua próxima aventura.')}</p>${next ? progress(next.progress, next.goal, next.name) : ''}<span class="hub-tiny">${next ? `${Math.max(0, next.goal - next.progress)} para alcançar seu próximo objetivo` : 'Sua jornada continua no álbum sazonal.'}</span></div>`;
-      $('hub-season-preview').innerHTML = `<button type="button" class="hub-season-mini" data-action="go-album" style="--season:${collection.color}"><span class="hub-eyebrow">${collection.comingSoon ? 'ESTREIA EM NOVEMBRO' : 'ÁLBUM DO MÊS · ' + esc(collection.label)}</span>${art(collection.icon)}<h3>${esc(collection.name)}</h3><p>24 cartas. Novas descobertas.<br>Uma aventura para chamar de sua.</p><span class="hub-text-link">${collection.comingSoon ? 'Conhecer a novidade ↗' : 'Explorar meu álbum ↗'}</span></button>`;
+      $('hub-next-goal').innerHTML = `<div class="club-next"><span class="club-next-icon">${art('trophy')}</span><div class="club-next-copy"><span class="hub-eyebrow">${next ? '🎯 PRÓXIMO OBJETIVO' : '🎉 VOCÊ COMPLETOU TUDO'}</span><h3>${esc(next?.name || 'Todas as conquistas!')}</h3><p>${esc(next?.desc || 'Agora tem uma galeria inteira esperando pela sua próxima aventura.')}</p>${next ? progress(next.progress, next.goal, next.name) : ''}</div><strong class="club-next-pct">${next ? `${next.progressPercent}%` : '100%'}</strong></div>`;
+      $('hub-season-preview').innerHTML = `<button type="button" class="club-season-banner" data-action="go-album" style="--season:${collection.color}"><span class="club-season-banner-icon">${art(collection.icon)}</span><span class="club-season-banner-copy"><span class="hub-eyebrow">${collection.comingSoon ? 'ESTREIA EM NOVEMBRO' : 'GALERIA DO MÊS · ' + esc(collection.label)}</span><strong>${esc(collection.name)}</strong><small>24 figurinhas para colecionar, colar e mostrar para todo mundo.</small></span><span class="club-season-banner-cta">${collection.comingSoon ? 'Conhecer ↗' : 'Abrir galeria ↗'}</span></button>`;
     }
-    function packArt() { return `<div class="hub-pack-illustration" aria-hidden="true"><div class="hub-pack-shadow"></div><div class="hub-pack-object"><span>ANIVERSE COLLECTION</span>${art('compass')}<strong>THE<br>ADVENTURE<br>IS YOURS.</strong><small>3 CARTAS · 1 NOVA HISTÓRIA</small></div><span class="hub-pack-spark spark-a">✦</span><span class="hub-pack-spark spark-b">✧</span></div>`; }
+    function packArt() { return `<div class="hub-pack-illustration" aria-hidden="true"><div class="hub-pack-shadow"></div><div class="hub-pack-object"><span>ANIVERSE · FIGURINHAS</span>${art('compass')}<strong>SEU<br>PACOTE<br>✦</strong><small>3 CARTAS NOVAS</small></div><span class="hub-pack-spark spark-a">✦</span><span class="hub-pack-spark spark-b">✧</span></div>`; }
     function cardMarkup(card, { reveal = false } = {}) {
       card = window.cardStudio.decorate(card, book().key);
       const rarity = rarities[card.rarity];
@@ -109,11 +194,11 @@
       const cards = collection.cards.filter(card => card.page === page).map(card => window.cardStudio.decorate(card, collection.key));
       const category = Math.floor(page / 2), pasted = collection.pasted.length;
       const days = Math.max(0, Math.ceil((new Date(collection.endsAt) - new Date()) / 86400000));
-      $('hub-album').innerHTML = `<div class="hub-album-toolbar"><div><span class="hub-eyebrow">SUA ESTANTE DE HISTÓRIAS</span><h3>Um mês. Um novo universo.</h3></div><label class="hub-season-select">Temporada<select id="hub-season-select" aria-label="Selecionar temporada">${collection.archive.map(key => `<option value="${key}" ${key === collection.key ? 'selected' : ''}>${esc(engine.snapshot(key).label)}${key === collection.currentKey ? ' · Atual' : ' · Arquivado'}</option>`).join('')}</select></label></div>
+      $('hub-album').innerHTML = `<div class="hub-album-toolbar"><div><span class="hub-eyebrow">🖼 GALERIA DE FIGURINHAS</span><h3>Coleção deste mês</h3></div><label class="hub-season-select">Temporada<select id="hub-season-select" aria-label="Selecionar temporada">${collection.archive.map(key => `<option value="${key}" ${key === collection.key ? 'selected' : ''}>${esc(engine.snapshot(key).label)}${key === collection.currentKey ? ' · Atual' : ' · Arquivado'}</option>`).join('')}</select></label></div>
         <div class="card-studio-toolbar"><button type="button" class="hub-button secondary" data-action="export-gif" ${collection.owned.length ? '' : 'disabled'}>Exportar coleção em GIF ↗</button><span>Comum fosca · Rara brilhante · Épica holográfica · Lendária metálica</span></div>
         ${seasonHero(collection, `<div class="hub-season-copy"><span class="hub-season-tag"><span></span>${collection.isCurrent ? `TEMPORADA ATUAL · ${days} DIAS RESTANTES` : 'ÁLBUM ARQUIVADO · SUA HISTÓRIA CONTINUA AQUI'}</span><h3>${esc(collection.name)}</h3><p>${esc(collection.tag)}<br>Colecione os encontros dessa aventura.</p><div class="hub-album-meter"><strong>${pasted}<small> / 24 cartas coladas</small></strong><span>${Math.round(pasted / 24 * 100)}%</span></div>${progress(pasted, 24, 'Álbum completo')}<span class="hub-tiny">${collection.owned.length - pasted} carta(s) esperando para colar</span></div><div class="hub-season-emblem">${art(collection.icon)}<span>EDIÇÃO ${esc(collection.key.replace('-', '.'))}</span></div>`)}
-        <div class="hub-pack-station">${packArt()}<div><span class="hub-eyebrow">SEU PRÓXIMO MOMENTO “UAU”</span><h3>${collection.packs ? `${collection.packs} pacote${collection.packs > 1 ? 's' : ''} para abrir!` : collection.isCurrent ? 'O próximo pacote está chegando.' : 'Uma aventura para guardar.'}</h3><p>${collection.isCurrent ? 'Cada episódio inédito concluído vale 100 pontos.<br>Junte 300 pontos para receber 3 cartas.' : 'Abra os pacotes guardados ou use fragmentos para completar as cartas que faltam.'}</p>${collection.isCurrent ? `${progress(collection.progress, 300, 'Pontos para o próximo pacote')}<span class="hub-tiny">${collection.progress}/300 pontos · Faltam ${300 - collection.progress} para o próximo pacote</span>` : ''}<button type="button" class="hub-button" data-action="open-pack" ${collection.packs ? '' : 'disabled'}>${collection.packs ? 'Abrir um pacote ✦' : 'Continue assistindo para ganhar'}</button></div><div class="hub-fragment-balance">${art('gem')}<strong>${collection.fragments}</strong><span>Fragmentos</span><small>Cartas repetidas viram<br>novas possibilidades.</small></div></div>
-        <div class="hub-book-heading"><div><span class="hub-eyebrow">COLECIONE. COLE. COMPLETE.</span><h3 id="album-page-title" tabindex="-1">${esc(collection.groups[category][0])} <small>Página ${page + 1} de 6</small></h3></div><div class="hub-page-controls"><button type="button" class="hub-icon-button" data-action="prev-page" aria-label="Página anterior" ${page === 0 ? 'disabled' : ''}>←</button><button type="button" class="hub-icon-button" data-action="next-page" aria-label="Próxima página" ${page === 5 ? 'disabled' : ''}>→</button></div></div>
+        <div class="hub-pack-station">${packArt()}<div><span class="hub-eyebrow">🎁 PACOTES</span><h3>${collection.packs ? `${collection.packs} pacote${collection.packs > 1 ? 's' : ''} para abrir!` : collection.isCurrent ? 'O próximo pacote está chegando.' : 'Uma aventura para guardar.'}</h3><p>${collection.isCurrent ? 'Cada episódio inédito concluído vale 100 pontos.<br>Junte 300 pontos para receber 3 cartas.' : 'Abra os pacotes guardados ou use fragmentos para completar as cartas que faltam.'}</p>${collection.isCurrent ? `${progress(collection.progress, 300, 'Pontos para o próximo pacote')}<span class="hub-tiny">${collection.progress}/300 pontos · Faltam ${300 - collection.progress} para o próximo pacote</span>` : ''}<button type="button" class="hub-button" data-action="open-pack" ${collection.packs ? '' : 'disabled'}>${collection.packs ? 'Abrir um pacote ✦' : 'Continue assistindo para ganhar'}</button></div><div class="hub-fragment-balance">${art('gem')}<strong>${collection.fragments}</strong><span>Fragmentos</span><small>Cartas repetidas viram<br>novas possibilidades.</small></div></div>
+        <div class="hub-book-heading"><div><span class="hub-eyebrow">COLECIONE · COLE · COMPLETE</span><h3 id="album-page-title" tabindex="-1">${esc(collection.groups[category][0])} <small>Página ${page + 1} de 6</small></h3></div><div class="hub-page-controls"><button type="button" class="hub-icon-button" data-action="prev-page" aria-label="Página anterior" ${page === 0 ? 'disabled' : ''}>←</button><button type="button" class="hub-icon-button" data-action="next-page" aria-label="Próxima página" ${page === 5 ? 'disabled' : ''}>→</button></div></div>
         <div class="hub-category-nav">${collection.groups.map(([name], i) => `<button type="button" data-action="category" data-id="${i}" aria-pressed="${category === i}" class="${category === i ? 'is-active' : ''}">${esc(name)}<span>${collection.cards.filter(c => c.category === i && c.pasted).length}/8</span></button>`).join('')}</div>
         <div class="hub-album-page">${cards.map(card => `<article class="hub-sticker-slot ${card.owned ? 'is-owned' : 'is-missing'}" data-card="${card.id}">${card.owned ? cardMarkup(card) : `<div class="sticker-placeholder rarity-${card.rarity}"><span class="sticker-slot-number">${String(card.number).padStart(2, '0')}</span><span class="sticker-scene-mark" aria-hidden="true">▧</span><strong>${esc(card.name)}</strong><span class="sticker-rarity">${rarities[card.rarity].name}</span></div>`}<div class="hub-sticker-action">${card.pasted ? '<span class="hub-pasted-label">✓ Faz parte da sua história</span>' : card.owned ? `<button type="button" class="hub-button" data-action="paste" data-id="${card.id}">Colar no álbum +</button>` : `<button type="button" class="hub-craft-button" data-action="craft" data-id="${card.id}" ${collection.fragments < rarities[card.rarity].cost ? 'disabled' : ''}>Criar · ${rarities[card.rarity].cost} fragmentos</button>`}</div></article>`).join('')}</div>
         <div class="hub-page-reward">${art('trophy')}<div><strong>${cards.every(c => c.pasted) ? 'Uma página completa. Uma história conquistada.' : 'Quatro cartas. Um prêmio esperando por você.'}</strong><p>Complete esta página para resgatar um selo e 30 fragmentos.</p></div><button type="button" class="hub-text-button" data-action="go-rewards">Ver prêmio ↗</button></div>
@@ -121,7 +206,7 @@
     }
     function renderRewards(collection) {
       if (collection.comingSoon) { $('hub-rewards').innerHTML = launchPreview(collection); return; }
-      $('hub-rewards').innerHTML = `<div class="hub-rewards-intro">${art('trophy')}<span class="hub-eyebrow">NÃO É SÓ COMPLETAR. É CONQUISTAR.</span><h3>Sua sala de prêmios</h3><p>Cada página conta uma história. Cada coleção completa merece um lugar especial.</p></div><div class="hub-reward-season"><h4>${esc(collection.name)}</h4><span>${esc(collection.label)} · ${collection.rewards.filter(r => r.claimed).length}/10 prêmios</span></div><div class="hub-rewards-grid">${collection.rewards.map(reward => `<article class="hub-reward ${reward.claimed ? 'is-claimed' : reward.ready ? 'is-ready' : ''}"><span class="hub-reward-kind">${esc(reward.kind)}</span><div class="hub-reward-medal">${art(reward.icon)}</div><h4>${esc(reward.name)}</h4><p>+${reward.fragments} fragmentos${reward.id === 'album' ? '<br><strong class="hub-avatar-prize">24 avatares de personagens</strong><br><small>' + (reward.ready ? 'Liberados no editor deste perfil ✓' : 'Liberados ao colar a última carta') + '</small>' : ''}</p>${reward.claimed ? `<button type="button" class="hub-button secondary" data-action="equip" data-id="${reward.id}" ${collection.equipped?.id === reward.id && collection.equipped?.season === collection.key ? 'disabled' : ''}>${collection.equipped?.id === reward.id && collection.equipped?.season === collection.key ? 'Em destaque ✓' : 'Usar no meu clube'}</button>` : `<button type="button" class="hub-button" data-action="claim" data-id="${reward.id}" ${reward.ready ? '' : 'disabled'}>${reward.ready ? 'Resgatar prêmio ✦' : reward.id === 'album' ? 'Complete o álbum' : reward.id.startsWith('page') ? 'Complete a página' : 'Complete a categoria'}</button>`}</article>`).join('')}</div><div class="hub-showcase"><h3>Histórias que ficam</h3><p>Seus prêmios de todas as temporadas.</p><div>${collection.showcase.map(reward => `<button type="button" class="hub-showcase-badge" data-action="equip-archive" data-id="${reward.id}" data-season="${reward.season}">${art(reward.icon)}<strong>${esc(reward.name)}</strong><small>${esc(reward.season)}</small></button>`).join('') || '<span class="hub-empty">Seu primeiro prêmio vai morar aqui. Complete uma página para começar.</span>'}</div></div>`;
+      $('hub-rewards').innerHTML = `<div class="hub-rewards-intro">${art('trophy')}<span class="hub-eyebrow">NÃO É SÓ COMPLETAR. É CONQUISTAR.</span><h3>Seus prêmios</h3><p>Complete páginas e categorias para encher sua estante de troféus.</p></div><div class="hub-reward-season"><h4>${esc(collection.name)}</h4><span>${esc(collection.label)} · ${collection.rewards.filter(r => r.claimed).length}/10 prêmios</span></div><div class="hub-rewards-grid">${collection.rewards.map(reward => `<article class="hub-reward ${reward.claimed ? 'is-claimed' : reward.ready ? 'is-ready' : ''}"><span class="hub-reward-kind">${esc(reward.kind)}</span><div class="hub-reward-medal">${art(reward.icon)}</div><h4>${esc(reward.name)}</h4><p>+${reward.fragments} fragmentos${reward.id === 'album' ? '<br><strong class="hub-avatar-prize">24 avatares de personagens</strong><br><small>' + (reward.ready ? 'Liberados no editor deste perfil ✓' : 'Liberados ao colar a última carta') + '</small>' : ''}</p>${reward.claimed ? `<button type="button" class="hub-button secondary" data-action="equip" data-id="${reward.id}" ${collection.equipped?.id === reward.id && collection.equipped?.season === collection.key ? 'disabled' : ''}>${collection.equipped?.id === reward.id && collection.equipped?.season === collection.key ? 'Em destaque ✓' : 'Usar no meu clube'}</button>` : `<button type="button" class="hub-button" data-action="claim" data-id="${reward.id}" ${reward.ready ? '' : 'disabled'}>${reward.ready ? 'Resgatar prêmio ✦' : reward.id === 'album' ? 'Complete o álbum' : reward.id.startsWith('page') ? 'Complete a página' : 'Complete a categoria'}</button>`}</article>`).join('')}</div><div class="hub-showcase"><h3>Histórias que ficam</h3><p>Seus prêmios de todas as temporadas.</p><div>${collection.showcase.map(reward => `<button type="button" class="hub-showcase-badge" data-action="equip-archive" data-id="${reward.id}" data-season="${reward.season}">${art(reward.icon)}<strong>${esc(reward.name)}</strong><small>${esc(reward.season)}</small></button>`).join('') || '<span class="hub-empty">Seu primeiro prêmio vai morar aqui. Complete uma página para começar.</span>'}</div></div>`;
     }
     function render() {
       updateFab();
@@ -163,17 +248,76 @@
       if (!draws) return;
       packResult = { key: collection.key, draws }; packProfile = collection.profileId;
       $('hub-pack-cards').innerHTML = draws.map((card, i) => `<button type="button" class="hub-reveal-card" data-reveal="${i}" aria-label="Revelar carta ${i + 1}" style="--entry:${i}"><span class="hub-card-back">${art('compass')}<strong>ANIVERSE</strong><small>TOQUE PARA DESCOBRIR</small></span><span class="hub-card-front">${cardMarkup(card, { reveal: true })}<span class="hub-draw-note">${card.duplicate ? `Repetida · +${card.fragments} fragmentos` : 'NOVA NA SUA COLEÇÃO ✦'}</span></span></button>`).join('');
-      $('hub-pack-status').textContent = '3 cartas guardadas. Revele para descobrir.';
-      $('hub-paste-pack').disabled = true; $('hub-reveal-all').disabled = false;
+      const cardsEl = $('hub-pack-cards');
+      cardsEl.classList.add('is-sealed'); cardsEl.classList.remove('is-open');
+      const sealedPack = $('hub-pack-open');
+      sealedPack.hidden = false; sealedPack.classList.remove('is-burst');
+      if (sealedPack.getAnimations) sealedPack.getAnimations().forEach(a => a.cancel());
+      $('hub-pack-status').textContent = 'Seu pacote está selado. Toque nele para abrir!';
+      $('hub-paste-pack').disabled = true; $('hub-reveal-all').disabled = true;
       dialog.style.setProperty('--season', collection.color); dialog.showModal();
     }
+    function burstPack() {
+      const sealedPack = $('hub-pack-open');
+      const cardsEl = $('hub-pack-cards');
+      if (!packResult || !sealedPack || sealedPack.classList.contains('is-burst')) return;
+      sealedPack.classList.add('is-burst');
+      playPackMusic();
+
+      // Explosão de faíscas saindo do pacote
+      const stage = $('hub-pack-stage');
+      if (stage) {
+        for (let i = 0; i < 18; i++) {
+          const spark = document.createElement('span');
+          spark.className = 'pack-spark-particle';
+          const angle = (Math.PI * 2 * i) / 18 + Math.random() * 0.5;
+          const dist = 90 + Math.random() * 140;
+          spark.style.setProperty('--tx', `${Math.cos(angle) * dist}px`);
+          spark.style.setProperty('--ty', `${Math.sin(angle) * dist - 40}px`);
+          spark.style.setProperty('--rot', `${Math.random() * 260 - 130}deg`);
+          stage.appendChild(spark);
+          setTimeout(() => spark.remove(), 1100);
+        }
+      }
+
+      // O pacote incha, treme e explode
+      if (sealedPack.animate) {
+        sealedPack.animate([
+          { transform: 'rotateX(8deg) rotateY(-12deg) scale(1)' },
+          { transform: 'rotateX(0deg) rotateY(0deg) scale(1.18) rotate(2deg)', offset: 0.35 },
+          { transform: 'scale(1.6) rotate(-4deg)', opacity: 1, offset: 0.7 },
+          { transform: 'scale(2.15) rotate(3deg)', opacity: 0 }
+        ], { duration: 620, easing: 'cubic-bezier(.2,.7,.3,1)', fill: 'forwards' });
+      }
+
+      // As cartas voam para fora em 3D, uma de cada vez
+      setTimeout(() => {
+        sealedPack.hidden = true;
+        playSfx(PACK_SFX_URLS.incoming); // efeito das cartas vindo
+        cardsEl.classList.remove('is-sealed'); cardsEl.classList.add('is-open');
+        cardsEl.querySelectorAll('[data-reveal]').forEach((cardEl, i) => {
+          if (!cardEl.animate) return;
+          cardEl.animate([
+            { transform: 'translateY(52px) scale(.5) rotateY(75deg) rotateX(16deg)', opacity: 0 },
+            { transform: 'translateY(-12px) scale(1.05) rotateY(-9deg)', opacity: 1, offset: 0.65 },
+            { transform: 'translateY(0) scale(1) rotateY(0deg) rotateX(0deg)', opacity: 1 }
+          ], { duration: 760, delay: i * 160, easing: 'cubic-bezier(.2,.7,.25,1)', fill: 'backwards' });
+        });
+        $('hub-reveal-all').disabled = false;
+        $('hub-pack-status').textContent = '💥 O pacote abriu! Toque em cada carta para revelar.';
+      }, 480);
+    }
     function revealAll() {
-      dialog.querySelectorAll('[data-reveal]').forEach(reveal);
+      // Uma de cada vez, para cada som de raridade tocar limpo
+      dialog.querySelectorAll('[data-reveal]:not(.is-revealed)').forEach((button, i) => {
+        setTimeout(() => reveal(button), i * 240);
+      });
     }
     function reveal(button) {
       if (!packResult || button.classList.contains('is-revealed')) return;
       const card = packResult.draws[Number(button.dataset.reveal)];
       button.classList.add('is-revealed');
+      playSfx(PACK_SFX_URLS[card.rarity]); // som da raridade da carta
       button.setAttribute('aria-label', `${card.name}, ${rarities[card.rarity].name}, ${card.duplicate ? `repetida: ${card.fragments} fragmentos` : 'nova carta'}`);
       const all = [...dialog.querySelectorAll('[data-reveal]')].every(b => b.classList.contains('is-revealed'));
       if (all) {
@@ -252,7 +396,8 @@
     $('achievements-mark-seen').addEventListener('click', () => achievements.markAllSeen());
     $('achievements-sound-toggle').addEventListener('change', event => achievements.setSoundEnabled(event.target.checked));
     $('hub-pack-close').addEventListener('click', () => dialog.close());
-    dialog.addEventListener('close', () => { packResult = null; packProfile = null; if (modal.style.display === 'flex') modal.querySelector('[data-action="open-pack"]')?.focus(); });
+    $('hub-pack-open').addEventListener('click', burstPack);
+    dialog.addEventListener('close', () => { stopPackMusic(); packResult = null; packProfile = null; if (modal.style.display === 'flex') modal.querySelector('[data-action="open-pack"]')?.focus(); });
     dialog.addEventListener('click', event => { const button = event.target.closest('[data-reveal]'); if (button) reveal(button); });
     $('hub-reveal-all').addEventListener('click', revealAll);
     $('hub-paste-pack').addEventListener('click', () => {

@@ -57,11 +57,12 @@
     <link rel="stylesheet" href="css/style.css?v=20261028-fullscreen-rating1">
     <link rel="stylesheet" href="css/profile-enhancements.css?v=20261027-player-bounds4">
     <link rel="stylesheet" href="css/profile-modal-modern.css?v=20261027-frame-refresh3">
-    <link rel="stylesheet" href="css/hero-video-rotator.css?v=20260326-2">
+    <link rel="stylesheet" href="css/hero-bg-marquee.css?v=20261122-marquee4">
     <link rel="stylesheet" href="css/dark-mode.css?v=20261027-rewards1" id="dark-mode-style">
     <link rel="stylesheet" href="css/tv-mode.css?v=20260326-2">
     <link rel="stylesheet" href="css/achievements-hub.css?v=20261027-banner1">
     <link rel="stylesheet" href="css/card-studio.css?v=20261027-2">
+    <link rel="stylesheet" href="css/achievements-club.css?v=20261122-club2-remake">
     <link rel="stylesheet" href="css/watch-party.css?v=20261028-wait1">
     <link rel="stylesheet" href="css/episode-layout.css?v=20261028-player-status1">
     <link rel="stylesheet" href="css/episode-picker.css?v=20261028-party-sync4">
@@ -282,29 +283,37 @@
 
     <div id="achievements-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="hub-title" tabindex="-1">
         <div class="modal-content achievements-modal-content collector-hub">
-            <header class="hub-topbar">
-                <a class="hub-brand" href="#" id="hub-home"><span class="hub-brand-icon">✦</span><span>ANIVERSE <small>CLUBE DE CONQUISTAS</small></span></a>
-                <div class="hub-topbar-actions">
-                    <label class="achievements-sound-toggle"><input type="checkbox" id="achievements-sound-toggle" checked><span>Som</span></label>
-                    <button type="button" class="hub-icon-button" id="close-achievements-modal" aria-label="Fechar conquistas">✕</button>
+            <header class="club-hero">
+                <div class="club-hero-top">
+                    <a class="hub-brand" href="#" id="hub-home"><span class="hub-brand-icon">✦</span><span>ANIVERSE <small>CLUBE DE CONQUISTAS</small></span></a>
+                    <div class="hub-topbar-actions">
+                        <label class="achievements-sound-toggle"><input type="checkbox" id="achievements-sound-toggle" checked><span>Som</span></label>
+                        <button type="button" class="hub-icon-button" id="close-achievements-modal" aria-label="Fechar conquistas">✕</button>
+                    </div>
+                </div>
+                <div class="club-hero-main">
+                    <div class="club-hero-copy">
+                        <span class="club-hero-kicker">🏆 CENTRAL DO JOGADOR</span>
+                        <h2 id="hub-title">Suas conquistas, sua história</h2>
+                        <p>Cada episódio assistido vira progresso, pacote e figurinha para a sua coleção.</p>
+                    </div>
+                    <div id="hub-collector-badge" class="hub-collector-badge"></div>
                 </div>
             </header>
-            <div class="hub-intro"><div><span class="hub-eyebrow">SUA JORNADA MERECE SER CELEBRADA</span><h2 id="hub-title">Cada play.<br>Uma nova conquista<span>.</span></h2><p>Assista, descubra e transforme suas histórias favoritas em uma coleção só sua.</p></div><div id="hub-collector-badge" class="hub-collector-badge"></div></div>
             <nav class="hub-tabs" role="tablist" aria-label="Clube de conquistas">
                 <button id="hub-tab-achievements" type="button" role="tab" aria-selected="true" aria-controls="hub-panel-achievements" data-hub-tab="achievements">✦ Conquistas</button>
-                <button id="hub-tab-album" type="button" role="tab" aria-selected="false" aria-controls="hub-panel-album" tabindex="-1" data-hub-tab="album">▧ Álbum sazonal <span id="hub-pack-count" class="hub-count" hidden>0</span></button>
-                <button id="hub-tab-rewards" type="button" role="tab" aria-selected="false" aria-controls="hub-panel-rewards" tabindex="-1" data-hub-tab="rewards">♜ Sala de prêmios</button>
+                <button id="hub-tab-album" type="button" role="tab" aria-selected="false" aria-controls="hub-panel-album" tabindex="-1" data-hub-tab="album">🖼 Galeria de figurinhas <span id="hub-pack-count" class="hub-count" hidden>0</span></button>
+                <button id="hub-tab-rewards" type="button" role="tab" aria-selected="false" aria-controls="hub-panel-rewards" tabindex="-1" data-hub-tab="rewards">🏅 Prêmios</button>
             </nav>
             <div id="hub-notice" class="hub-notice" role="status" aria-live="polite" hidden></div>
             <div id="achievements-unlock-feed" class="achievements-unlock-feed" role="status"></div>
             <section id="hub-panel-achievements" role="tabpanel" aria-labelledby="hub-tab-achievements">
                 <div id="achievements-stats" class="hub-stats"></div>
-                <div class="hub-dashboard">
-                    <div><div class="hub-section-heading"><div><span class="hub-eyebrow">UM OBJETIVO DE CADA VEZ</span><h3>Sua coleção de conquistas</h3></div><button type="button" id="achievements-mark-seen" class="hub-text-button">Marcar vistas ✓</button></div>
-                    <div class="achievements-filter" id="achievements-filter"><button type="button" data-filter="all" class="is-active">Todas</button><button type="button" data-filter="locked">Em progresso</button><button type="button" data-filter="unlocked">Desbloqueadas</button></div>
-                    <div id="achievements-list" class="achievements-list" aria-live="polite"></div></div>
-                    <aside class="hub-sidebar"><div id="hub-next-goal"></div><div id="hub-season-preview"></div></aside>
-                </div>
+                <div id="hub-next-goal"></div>
+                <div class="hub-section-heading"><div><span class="hub-eyebrow">UM OBJETIVO DE CADA VEZ</span><h3>Quadro de conquistas</h3></div><button type="button" id="achievements-mark-seen" class="hub-text-button">Marcar vistas ✓</button></div>
+                <div class="achievements-filter" id="achievements-filter"><button type="button" data-filter="all" class="is-active">Todas</button><button type="button" data-filter="locked">Em progresso</button><button type="button" data-filter="unlocked">Desbloqueadas</button></div>
+                <div id="achievements-list" class="achievements-list" aria-live="polite"></div>
+                <div id="hub-season-preview"></div>
             </section>
             <section id="hub-panel-album" role="tabpanel" aria-labelledby="hub-tab-album" hidden><div id="hub-album"></div></section>
             <section id="hub-panel-rewards" role="tabpanel" aria-labelledby="hub-tab-rewards" hidden><div id="hub-rewards"></div></section>
@@ -312,7 +321,26 @@
             <audio id="achievements-audio" preload="none"></audio>
         </div>
     </div>
-    <dialog id="hub-pack-dialog" class="hub-pack-dialog" aria-labelledby="hub-pack-title"><button type="button" id="hub-pack-close" class="hub-icon-button" aria-label="Fechar pacote">✕</button><span class="hub-eyebrow">UM NOVO CAPÍTULO DA SUA COLEÇÃO</span><h2 id="hub-pack-title">O que o destino trouxe?</h2><p>Toque em cada carta para revelar. Suas cartas já estão guardadas.</p><div id="hub-pack-cards" class="hub-pack-cards"></div><div class="hub-pack-actions"><button type="button" id="hub-reveal-all" class="hub-button secondary">Revelar todas</button><button type="button" id="hub-paste-pack" class="hub-button">Colar novas cartas →</button></div><p id="hub-pack-status" role="status" aria-live="polite"></p></dialog>
+    <dialog id="hub-pack-dialog" class="hub-pack-dialog" aria-labelledby="hub-pack-title">
+        <button type="button" id="hub-pack-close" class="hub-icon-button" aria-label="Fechar pacote">✕</button>
+        <span class="hub-eyebrow">🎁 ABERTURA DE PACOTE</span>
+        <h2 id="hub-pack-title">Um pacote novinho para você!</h2>
+        <p>Toque no pacote para explodir a abertura — depois vire cada carta para revelar.</p>
+        <div class="pack-stage" id="hub-pack-stage">
+            <div class="pack-stage-glow" aria-hidden="true"></div>
+            <button type="button" id="hub-pack-open" class="pack-sealed" aria-label="Abrir o pacote">
+                <span class="pack-sealed-shine" aria-hidden="true"></span>
+                <span class="pack-sealed-top">ANIVERSE</span>
+                <span class="pack-sealed-icon">✦</span>
+                <span class="pack-sealed-name">PACOTE DE<br>FIGURINHAS</span>
+                <span class="pack-sealed-bottom">3 CARTAS · TOQUE PARA ABRIR</span>
+            </button>
+            <div id="hub-pack-cards" class="hub-pack-cards is-sealed"></div>
+            <div class="pack-stage-floor" aria-hidden="true"></div>
+        </div>
+        <div class="hub-pack-actions"><button type="button" id="hub-reveal-all" class="hub-button secondary" disabled>Revelar todas</button><button type="button" id="hub-paste-pack" class="hub-button" disabled>Colar novas cartas →</button></div>
+        <p id="hub-pack-status" role="status" aria-live="polite">Seu pacote está selado…</p>
+    </dialog>
 
     <div id="achievements-silent-toast" class="achievements-silent-toast" role="status" aria-live="polite">
         <span id="achievements-silent-toast-text">Novas conquistas disponíveis.</span>
@@ -792,6 +820,7 @@
                 <a href="#" class="footer-link terms-link">Termos de Serviço</a>
                 <a href="#" class="footer-link privacy-link">Política de Privacidade</a>
                 <a href="#" class="footer-link news-link">Novidades</a>
+                <a href="mobile-preview.html" class="footer-link">📱 Ver como no celular</a>
             </div>
         </div>
     </footer>
@@ -806,7 +835,8 @@
     <script src="js/anime-db.js?v=20261028-resume-close1" defer></script>
     <script src="js/anime-renderer.js?v=20261028-continue-layout1" defer></script>
     <script src="js/anime-render-fallback.js?v=20260326-2" defer></script>
-    <script src="js/hero-video-rotator.js?v=20260326-2" defer></script>
+    <script src="js/hero-bg-marquee.js?v=20261122-marquee4" defer></script>
+    <script src="js/header-sticky.js?v=20261122-header1" defer></script>
     <script src="js/profile-modal-bindings.js?v=20260326-2" defer></script>
     <script src="js/music.js?v=20261027-mobile-links1" defer></script>
     <script src="js/music-player.js?v=20261027-rewards1" defer></script>
@@ -814,7 +844,7 @@
     <script src="js/collection-engine.js?v=20261027-banner1" defer></script>
     <script src="js/card-gif.js?v=20261027-1" defer></script>
     <script src="js/card-studio.js?v=20261027-launch1" defer></script>
-    <script src="js/achievements-hub.js?v=20261027-banner1" defer></script>
+    <script src="js/achievements-hub.js?v=20261122-packmusic2" defer></script>
     <script src="js/video-player.js?v=20261028-resume-close1" defer></script>
     <script src="js/vendor/socket.io.min.js" defer></script>
     <script src="js/watch-party-config.js?v=20261028-collection-online1" defer></script>

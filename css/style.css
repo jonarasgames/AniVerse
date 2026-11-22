@@ -674,7 +674,7 @@ body:not(.tv-mode) .anime-grid > .anime-card {
 .trailer-overlay i,
 .trailer-overlay p {
     position: relative;
-    z-index: 4;
+    z-index: 6;
 }
 
 .trailer-overlay {
@@ -713,6 +713,7 @@ body:not(.tv-mode) .anime-grid > .anime-card {
     transform: translateY(100%);
     transition: var(--transition);
     opacity: 0;
+    z-index: 20;
 }
 
 .anime-card:hover .anime-info {
@@ -780,17 +781,7 @@ body:not(.tv-mode) .anime-grid > .anime-card {
     transition: width 0.25s ease;
 }
 
-.continue-resume-btn {
-    margin-top: 8px;
-    width: 100%;
-    border: 0;
-    border-radius: 8px;
-    padding: 8px 10px;
-    font-weight: 700;
-    color: #fff;
-    background: var(--primary-color);
-    cursor: pointer;
-}
+/* Botão "Retomar" removido: o card inteiro já retoma ao clicar. */
 
 .category-tabs {
     display: flex;
@@ -4001,7 +3992,7 @@ html.theme-dark select {
     right: 8px;
     width: 32px;  /* Tamanho pequeno mas visível */
     height: 32px;
-    z-index: 10;  /* Maior que o overlay para ficar por cima */
+    z-index: 3;  /* Abaixo do texto (.anime-info z-index 20, overlay i/p z-index 6) */
     opacity: 0;   /* ESCONDIDA por padrão */
     transition: opacity 0.3s ease, transform 0.3s ease;
     pointer-events: none; /* Não interfere com cliques */
@@ -6365,4 +6356,128 @@ body.performance-mode video[autoplay] {
   height: auto;
   pointer-events: none;
   filter: drop-shadow(0 2px 5px rgba(0,0,0,.65));
+}
+
+/* ============================================
+   Ajustes 2026-11-22: header mobile compacto + cards mobile limpos
+   ============================================ */
+
+/* Header grudado no topo ao rolar (sticky já existe; reforça sombra) */
+header.is-stuck {
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+}
+
+/* Celular: logo esquerda, tema no meio, perfil + sugerir à direita, nav compacta */
+@media (max-width: 768px) {
+    /* overflow-x: clip preserva o position: sticky do header */
+    html, body {
+        overflow-x: clip;
+    }
+
+    header {
+        padding: 6px 0;
+    }
+
+    header .container {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        grid-template-areas:
+            "logo theme profile"
+            "nav nav nav";
+        align-items: center;
+        column-gap: 8px;
+        row-gap: 6px;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .logo-container {
+        grid-area: logo;
+        justify-content: flex-start;
+        gap: 6px;
+    }
+
+    .logo {
+        height: 28px;
+    }
+
+    .logo-container h1,
+    header h1 {
+        font-size: 1.15rem;
+    }
+
+    .user-controls {
+        display: contents;
+    }
+
+    #dark-mode-toggle {
+        grid-area: theme;
+        justify-self: center;
+        font-size: 1rem;
+        padding: 4px;
+    }
+
+    .user-profile {
+        grid-area: profile;
+        justify-self: end;
+        gap: 6px;
+    }
+
+    #login-btn,
+    #suggest-anime-btn {
+        padding: 5px 8px;
+        font-size: 0.72rem;
+        white-space: nowrap;
+    }
+
+    #login-btn .avatar-img,
+    #login-btn img {
+        width: 18px;
+        height: 18px;
+    }
+
+    nav {
+        grid-area: nav;
+        width: 100%;
+        min-width: 0;
+    }
+
+    nav ul {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        gap: 4px;
+        padding: 2px 0 4px;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+    nav ul::-webkit-scrollbar {
+        display: none;
+    }
+
+    nav a {
+        font-size: 0.72rem;
+        padding: 4px 7px;
+        white-space: nowrap;
+    }
+
+    /* Cards no celular: sem overlay de informações (menos poluído) */
+    .anime-card .anime-info,
+    .anime-card:hover .anime-info,
+    .anime-card .trailer-overlay,
+    .anime-card:hover .trailer-overlay,
+    .anime-card .age-rating-badge,
+    .anime-card:hover .age-rating-badge {
+        display: none !important;
+    }
+
+    .anime-card:hover {
+        transform: none;
+    }
+
+    .anime-card:hover .anime-thumbnail img {
+        opacity: 1;
+        transform: none;
+    }
 }

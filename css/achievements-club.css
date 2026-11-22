@@ -1,0 +1,788 @@
+/* ============================================
+   CLUBE DE CONQUISTAS — REMAKE (2026-11-22)
+   Tema escuro animado + 3D: vidro, neon vermelho,
+   palco de pacotes com explosão e cartas voadoras.
+   ============================================ */
+
+#achievements-modal {
+    --club-red: #e63946;
+    --club-red-dark: #a11f2d;
+    --club-gold: #ffd166;
+    --club-ink: #f4f2ff;
+    --club-muted: #a7a7c9;
+    --club-line: rgba(255, 255, 255, 0.10);
+    --club-glass: rgba(255, 255, 255, 0.045);
+    --season: #e63946;
+    padding: 22px 14px;
+    background: rgba(3, 3, 10, 0.72);
+    backdrop-filter: blur(12px);
+    color: var(--club-ink);
+}
+
+#achievements-modal .collector-hub {
+    position: relative;
+    width: min(1080px, 100%);
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 26px 10px;
+    background: linear-gradient(180deg, #101020, #0a0a16 420px) !important;
+    color: var(--club-ink) !important;
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 24px;
+    box-shadow: 0 40px 110px rgba(0, 0, 0, 0.75), 0 0 70px rgba(230, 57, 70, 0.10);
+    overflow: hidden;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Aurora animada de fundo */
+#achievements-modal .collector-hub::before {
+    content: '';
+    position: absolute; inset: -22%;
+    background:
+        radial-gradient(circle 340px at 18% 8%, rgba(230, 57, 70, 0.20), transparent 65%),
+        radial-gradient(circle 300px at 84% 16%, rgba(120, 80, 255, 0.16), transparent 65%),
+        radial-gradient(circle 380px at 55% 88%, rgba(255, 90, 90, 0.10), transparent 65%);
+    animation: clubAurora 16s ease-in-out infinite alternate;
+    pointer-events: none;
+}
+#achievements-modal .collector-hub > * { position: relative; z-index: 1; }
+@keyframes clubAurora {
+    from { transform: translate3d(-2.5%, -1.5%, 0) scale(1); }
+    to { transform: translate3d(2.5%, 2%, 0) scale(1.07); }
+}
+
+#achievements-modal :is(h2, h3, h4), #hub-pack-dialog h2 {
+    font-family: 'Lilita One', 'Segoe UI', sans-serif !important;
+    font-weight: 400;
+    color: #fff !important;
+    letter-spacing: 0.3px;
+}
+#achievements-modal p, #hub-pack-dialog p { color: var(--club-muted) !important; }
+#achievements-modal label { color: var(--club-muted) !important; }
+.collector-hub *, .hub-pack-dialog * { box-sizing: border-box; }
+.collector-hub :is(button, a, select, summary):focus-visible,
+.hub-pack-dialog button:focus-visible { outline: 3px solid #ff8fa3; outline-offset: 3px; }
+#achievements-modal button:disabled, .hub-pack-dialog button:disabled { opacity: 0.4; cursor: default; }
+#achievements-modal [hidden], .hub-pack-dialog [hidden] { display: none !important; }
+.hub-art { width: 60px; height: 60px; flex: none; }
+.hub-eyebrow {
+    font-size: 10px; font-weight: 800; letter-spacing: 2px;
+    color: #ff8fa3; text-transform: uppercase;
+}
+.hub-tiny { display: block; font-size: 10px; color: var(--club-muted); line-height: 1.6; margin-top: 8px; }
+.hub-empty {
+    grid-column: 1 / -1; text-align: center; padding: 34px 18px;
+    border: 2px dashed rgba(255, 255, 255, 0.16); border-radius: 16px;
+    color: var(--club-muted); font-size: 13px; line-height: 1.7; background: var(--club-glass);
+}
+
+/* ---------- Botões neon ---------- */
+#achievements-modal .hub-button, .hub-pack-dialog .hub-button {
+    display: inline-flex; justify-content: center; align-items: center; gap: 8px;
+    min-height: 42px; padding: 11px 20px;
+    background: linear-gradient(120deg, #ff4757, var(--club-red) 55%, var(--club-red-dark));
+    color: #fff; border: 1px solid rgba(255, 255, 255, 0.22); border-radius: 999px;
+    font-size: 12px !important; font-weight: 800 !important; letter-spacing: 0.3px;
+    box-shadow: 0 10px 26px rgba(230, 57, 70, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+    transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+}
+#achievements-modal .hub-button:not(:disabled):hover, .hub-pack-dialog .hub-button:not(:disabled):hover {
+    transform: translateY(-2px) scale(1.02); filter: brightness(1.1);
+    box-shadow: 0 16px 34px rgba(230, 57, 70, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+#achievements-modal .hub-button.secondary, .hub-pack-dialog .hub-button.secondary {
+    background: rgba(255, 255, 255, 0.07); color: #ffd9dd; box-shadow: none;
+    border-color: rgba(255, 255, 255, 0.2);
+}
+#achievements-modal .hub-text-button, #achievements-modal .hub-text-link {
+    background: none; border: 0; color: #ff8fa3;
+    font-size: 12px; font-weight: 800; cursor: pointer; padding: 6px 2px;
+}
+#achievements-modal .hub-text-button:hover, #achievements-modal .hub-text-link:hover { text-decoration: underline; }
+
+/* ---------- Hero ---------- */
+.club-hero {
+    margin: 0 -26px 20px;
+    padding: 18px 26px 24px;
+    background: linear-gradient(180deg, rgba(230, 57, 70, 0.16), rgba(230, 57, 70, 0.02) 78%, transparent);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+.club-hero-top { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+#achievements-modal .hub-brand {
+    display: flex; align-items: center; gap: 10px;
+    color: #fff; text-decoration: none; font-weight: 900; letter-spacing: 2px; font-size: 14px;
+}
+#achievements-modal .hub-brand small {
+    display: block; font-size: 8px; letter-spacing: 2.4px; color: var(--club-muted); margin-top: 3px;
+}
+#achievements-modal .hub-brand-icon {
+    display: grid; place-items: center; width: 38px; height: 38px;
+    background: linear-gradient(140deg, #ff4757, var(--club-red-dark)); color: #fff;
+    border-radius: 12px; font-size: 17px;
+    box-shadow: 0 8px 22px rgba(230, 57, 70, 0.55);
+    animation: clubPulseGlow 2.6s ease-in-out infinite;
+}
+@keyframes clubPulseGlow {
+    0%, 100% { box-shadow: 0 8px 22px rgba(230, 57, 70, 0.45); }
+    50% { box-shadow: 0 8px 30px rgba(230, 57, 70, 0.85); }
+}
+.hub-topbar-actions { display: flex; align-items: center; gap: 10px; }
+#achievements-modal .achievements-sound-toggle {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.16);
+    color: #ffd9dd !important; border-radius: 999px; padding: 7px 12px; font-size: 11px; font-weight: 700;
+    cursor: pointer;
+}
+#achievements-modal .achievements-sound-toggle input { accent-color: var(--club-red); }
+#achievements-modal .hub-icon-button, .hub-pack-dialog .hub-icon-button {
+    width: 38px; height: 38px; display: inline-grid; place-items: center;
+    border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.07); color: #ffd9dd; font-size: 15px;
+    transition: transform 0.18s ease, background 0.18s ease;
+}
+#achievements-modal .hub-icon-button:hover:not(:disabled), .hub-pack-dialog .hub-icon-button:hover:not(:disabled) {
+    background: var(--club-red); color: #fff; transform: translateY(-2px) rotate(90deg);
+}
+.club-hero-main {
+    display: flex; align-items: flex-end; justify-content: space-between; gap: 22px; margin-top: 24px;
+}
+.club-hero-kicker {
+    display: inline-block; font-size: 10px; font-weight: 900; letter-spacing: 2.4px; color: #ffd9dd;
+    background: rgba(230, 57, 70, 0.22); border: 1px solid rgba(255, 143, 163, 0.5);
+    padding: 6px 11px; border-radius: 999px;
+    box-shadow: 0 0 18px rgba(230, 57, 70, 0.35);
+}
+#achievements-modal .club-hero-copy h2 {
+    font-size: clamp(28px, 4.6vw, 42px); line-height: 1.06; margin: 13px 0 9px;
+    background: linear-gradient(92deg, #fff 20%, #ffb3ab 55%, #ff8fa3);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 4px 14px rgba(230, 57, 70, 0.35));
+}
+#achievements-modal .club-hero-copy p { font-size: 13px; max-width: 480px; line-height: 1.65; }
+#achievements-modal .hub-collector-badge {
+    display: flex; align-items: center; gap: 13px; max-width: 320px; flex: none;
+    background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 16px; padding: 14px 16px; color: #fff;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 18px 34px rgba(0, 0, 0, 0.4);
+    transform: perspective(700px) rotateY(-7deg);
+    transition: transform 0.35s ease;
+}
+#achievements-modal .hub-collector-badge:hover { transform: perspective(700px) rotateY(0deg) translateY(-3px); }
+#achievements-modal .hub-collector-badge > .hub-art { width: 46px; height: 46px; color: var(--club-gold); }
+#achievements-modal .hub-collector-badge > span { font-size: 8px; letter-spacing: 1.8px; color: var(--club-muted); }
+#achievements-modal .hub-collector-badge strong {
+    display: block; color: #fff; font-family: 'Lilita One', sans-serif; font-weight: 400;
+    font-size: 16px; letter-spacing: 0.3px; margin: 4px 0;
+}
+#achievements-modal .hub-collector-badge small { color: var(--club-muted); font-size: 10px; line-height: 1.5; }
+
+/* ---------- Abas ---------- */
+#achievements-modal .hub-tabs {
+    position: sticky; top: 10px; z-index: 20;
+    display: flex; gap: 6px; padding: 6px;
+    background: rgba(13, 13, 28, 0.85); border: 1px solid rgba(255, 255, 255, 0.10); border-radius: 999px;
+    box-shadow: 0 16px 34px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+    margin-bottom: 22px;
+}
+#achievements-modal .hub-tabs > button {
+    flex: 1; border: 0; border-radius: 999px; background: transparent;
+    padding: 11px 8px; font-size: 12px; font-weight: 800; color: var(--club-muted);
+    white-space: nowrap; transition: all 0.2s ease;
+}
+#achievements-modal .hub-tabs > button[aria-selected="true"] {
+    background: linear-gradient(120deg, #ff4757, var(--club-red-dark)); color: #fff;
+    box-shadow: 0 8px 22px rgba(230, 57, 70, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+#achievements-modal .hub-count {
+    background: #fff; color: var(--club-red-dark); border-radius: 999px;
+    padding: 1px 7px; font-size: 10px; margin-left: 5px;
+}
+
+/* ---------- Aviso ---------- */
+#achievements-modal .hub-notice {
+    margin-bottom: 18px; padding: 13px 18px; border-radius: 12px;
+    background: rgba(230, 57, 70, 0.14); border: 1px solid rgba(255, 143, 163, 0.45);
+    color: #ffd9dd; font-size: 12px; line-height: 1.6;
+}
+#achievements-modal .hub-notice.is-error { background: rgba(255, 60, 60, 0.16); border-color: #e88; color: #ffc9c9; }
+
+/* ---------- Estatísticas 3D ---------- */
+#achievements-modal .hub-stats {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 16px;
+    perspective: 1100px;
+}
+.club-stat {
+    display: flex; align-items: center; gap: 14px;
+    background: var(--club-glass); border: 1px solid var(--club-line); border-radius: 16px;
+    padding: 16px 18px; backdrop-filter: blur(8px);
+    transition: transform 0.3s cubic-bezier(0.2, 0.7, 0.25, 1), box-shadow 0.3s ease;
+    transform-style: preserve-3d;
+}
+.club-stat:hover { transform: translateY(-5px) rotateX(5deg) rotateY(-5deg); box-shadow: 0 20px 36px rgba(0, 0, 0, 0.45); }
+.club-stat-icon {
+    display: grid; place-items: center; width: 46px; height: 46px; flex: none;
+    border-radius: 14px; background: linear-gradient(140deg, #ff4757, var(--club-red-dark)); color: #fff; font-size: 20px;
+    box-shadow: 0 10px 22px rgba(230, 57, 70, 0.5);
+    transform: translateZ(22px);
+}
+.club-stat-icon.alt { background: linear-gradient(140deg, #ff9a5a, #e05e2b); box-shadow: 0 10px 22px rgba(255, 122, 89, 0.45); }
+.club-stat-icon.alt2 { background: linear-gradient(140deg, #ffd166, #e09f00); box-shadow: 0 10px 22px rgba(255, 183, 3, 0.4); }
+.club-stat-text strong { display: block; font-size: 24px; line-height: 1.1; color: #fff; }
+.club-stat-text strong small { font-size: 13px; color: var(--club-muted); font-weight: 600; }
+.club-stat-text span { font-size: 11px; color: var(--club-muted); }
+
+/* ---------- Próximo objetivo ---------- */
+.club-next {
+    display: flex; align-items: center; gap: 18px;
+    background: linear-gradient(120deg, rgba(230, 57, 70, 0.20), rgba(255, 255, 255, 0.04) 65%);
+    border: 1px solid rgba(255, 143, 163, 0.4); border-radius: 18px;
+    padding: 18px 20px; margin-bottom: 26px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 34px rgba(230, 57, 70, 0.14);
+}
+.club-next-icon {
+    display: grid; place-items: center; width: 64px; height: 64px; flex: none;
+    background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.16); border-radius: 50%;
+    animation: clubFloatY 4.5s ease-in-out infinite;
+}
+@keyframes clubFloatY { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+.club-next-icon .hub-art { width: 40px; height: 40px; color: var(--club-gold); }
+.club-next-copy { flex: 1; min-width: 0; }
+.club-next-copy h3 { font-size: 20px; margin: 5px 0 4px; }
+.club-next-copy p { font-size: 12px; line-height: 1.6; margin-bottom: 10px; }
+.club-next-pct {
+    font-family: 'Lilita One', sans-serif; font-size: 32px; color: #ff8fa3;
+    text-shadow: 0 0 22px rgba(230, 57, 70, 0.65);
+}
+#achievements-modal .hub-progress {
+    height: 8px; border-radius: 99px; background: rgba(255, 255, 255, 0.10); overflow: hidden; width: 100%;
+}
+#achievements-modal .hub-progress > span {
+    display: block; height: 100%; border-radius: inherit;
+    background: linear-gradient(90deg, var(--club-red), #ff8fa3, var(--club-red));
+    background-size: 200% 100%;
+    animation: clubShimmer 2.2s linear infinite;
+    transition: width 0.5s ease;
+}
+@keyframes clubShimmer { from { background-position: 0% 0; } to { background-position: -200% 0; } }
+
+/* ---------- Quadro de conquistas 3D ---------- */
+#achievements-modal .hub-section-heading {
+    display: flex; align-items: flex-end; justify-content: space-between; gap: 14px; margin-bottom: 12px;
+}
+#achievements-modal .hub-section-heading h3 { font-size: 22px; margin-top: 5px; }
+#achievements-modal .achievements-filter { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+#achievements-modal .achievements-filter button {
+    border: 1px solid var(--club-line); background: rgba(255, 255, 255, 0.05); color: var(--club-muted);
+    border-radius: 999px; padding: 8px 15px; font-size: 11px; font-weight: 800; cursor: pointer;
+    transition: all 0.18s ease;
+}
+#achievements-modal .achievements-filter button.is-active { background: #fff; border-color: #fff; color: #191224; }
+#achievements-modal .achievements-list {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+    perspective: 1300px;
+}
+#achievements-modal .achievement-card {
+    position: relative; overflow: hidden;
+    display: flex; flex-direction: column; gap: 8px;
+    background: var(--club-glass); border: 1px solid var(--club-line); border-radius: 18px;
+    padding: 18px; backdrop-filter: blur(8px);
+    animation: clubIn 0.5s cubic-bezier(0.2, 0.7, 0.25, 1) both; animation-delay: calc(var(--entry, 0) * 45ms);
+    transition: transform 0.3s cubic-bezier(0.2, 0.7, 0.25, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+    transform-style: preserve-3d;
+}
+#achievements-modal .achievement-card::after { /* brilho que atravessa o card */
+    content: ''; position: absolute; inset: -80%;
+    background: linear-gradient(115deg, transparent 42%, rgba(255, 255, 255, 0.13) 50%, transparent 58%);
+    transform: translateX(-60%); pointer-events: none;
+}
+#achievements-modal .achievement-card:hover {
+    transform: translateY(-7px) rotateX(5deg) rotateY(-5deg);
+    border-color: rgba(255, 143, 163, 0.55);
+    box-shadow: 0 26px 44px rgba(0, 0, 0, 0.55), 0 0 26px rgba(230, 57, 70, 0.16);
+}
+#achievements-modal .achievement-card:hover::after { transform: translateX(60%); transition: transform 0.9s ease; }
+#achievements-modal .achievement-card.is-unlocked {
+    border-color: rgba(255, 209, 102, 0.5);
+    background: linear-gradient(160deg, rgba(255, 209, 102, 0.10), rgba(255, 255, 255, 0.04) 60%);
+}
+.club-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+#achievements-modal .hub-medallion {
+    position: relative; width: 56px; height: 56px; flex: none;
+    display: grid; place-items: center; border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06); border: 2px solid rgba(255, 255, 255, 0.14);
+    transform: translateZ(26px);
+}
+#achievements-modal .hub-medallion img { width: 34px; height: 34px; object-fit: contain; filter: grayscale(0.8) opacity(0.55); }
+#achievements-modal .hub-medallion.earned {
+    background: radial-gradient(circle at 35% 30%, rgba(255, 209, 102, 0.35), rgba(230, 57, 70, 0.25));
+    border-color: var(--club-gold);
+    box-shadow: 0 0 22px rgba(255, 209, 102, 0.35);
+}
+#achievements-modal .hub-medallion.earned img { filter: none; }
+.club-chip {
+    font-size: 9px; font-weight: 900; letter-spacing: 0.6px; text-transform: uppercase;
+    background: rgba(255, 255, 255, 0.08); color: var(--club-muted); border-radius: 999px; padding: 5px 9px; white-space: nowrap;
+}
+.club-chip.done { background: linear-gradient(120deg, #ff4757, var(--club-red-dark)); color: #fff; box-shadow: 0 6px 16px rgba(230, 57, 70, 0.5); }
+.club-chip.close { background: rgba(255, 209, 102, 0.2); color: var(--club-gold); }
+#achievements-modal .achievement-card h4 { font-size: 16px; line-height: 1.3; }
+#achievements-modal .achievement-card p { font-size: 11.5px; line-height: 1.65; flex: 1; }
+.club-card-foot { margin-top: 4px; }
+.achievement-progress { font-size: 10px; color: var(--club-muted); margin-top: 7px; }
+.achievement-card.is-unlocked .achievement-progress { color: var(--club-gold); font-weight: 700; }
+
+/* ---------- Banner da temporada ---------- */
+.club-season-banner {
+    display: flex; align-items: center; gap: 18px; width: 100%; text-align: left;
+    margin-top: 22px; padding: 20px;
+    background: var(--club-glass); border: 1px solid var(--club-line); border-left: 6px solid var(--season, var(--club-red));
+    border-radius: 18px; cursor: pointer; backdrop-filter: blur(8px);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.club-season-banner:hover { transform: translateY(-4px) scale(1.01); box-shadow: 0 22px 40px rgba(0, 0, 0, 0.5); }
+.club-season-banner-icon .hub-art { width: 58px; height: 58px; color: var(--season, var(--club-red)); }
+.club-season-banner-copy { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.club-season-banner-copy strong { font-family: 'Lilita One', sans-serif; font-weight: 400; font-size: 19px; color: #fff; }
+.club-season-banner-copy small { font-size: 11.5px; color: var(--club-muted); line-height: 1.55; }
+.club-season-banner-cta { font-size: 12px; font-weight: 900; color: #ff8fa3; white-space: nowrap; }
+
+/* ---------- Galeria 3D ---------- */
+#achievements-modal .hub-album-toolbar {
+    display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 18px;
+}
+#achievements-modal .hub-album-toolbar h3 { font-size: 22px; margin-top: 5px; }
+#achievements-modal .hub-season-select { display: flex; align-items: center; gap: 9px; font-size: 10px; font-weight: 800; letter-spacing: 1px; }
+#achievements-modal .hub-season-select select {
+    padding: 10px 12px; max-width: 240px; border: 1px solid var(--club-line);
+    border-radius: 10px; background: #151528; color: #fff; font-size: 12px;
+}
+#achievements-modal .card-studio-toolbar > span { color: var(--club-muted); }
+
+#achievements-modal .hub-season-showcase { margin-bottom: 18px; }
+#achievements-modal .hub-season-artwork { border-radius: 18px 18px 0 0; overflow: hidden; }
+#achievements-modal .hub-season-background { display: block; width: 100%; height: auto; }
+#achievements-modal .hub-season-hero {
+    display: flex; align-items: center; gap: 26px;
+    padding: 24px 26px; border: 1px solid var(--club-line); border-radius: 18px;
+    background: linear-gradient(120deg, rgba(230, 57, 70, 0.16), rgba(255, 255, 255, 0.03));
+    position: relative; overflow: hidden;
+}
+#achievements-modal .has-season-banner .hub-season-hero { border-radius: 0 0 18px 18px; }
+#achievements-modal .hub-season-copy { flex: 1; position: relative; z-index: 1; min-width: 0; }
+#achievements-modal .hub-season-copy h3 { font-size: 24px; margin: 8px 0; }
+#achievements-modal .hub-season-copy p { font-size: 12px; line-height: 1.7; }
+#achievements-modal .hub-season-tag {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 9px; font-weight: 900; letter-spacing: 1.6px; color: #ff8fa3;
+}
+#achievements-modal .hub-season-tag > span {
+    width: 7px; height: 7px; border-radius: 50%; background: var(--club-red);
+    box-shadow: 0 0 12px var(--club-red); flex: none;
+    animation: clubPulseGlow 2s ease-in-out infinite;
+}
+#achievements-modal .hub-album-meter { display: flex; align-items: baseline; gap: 10px; margin: 14px 0 8px; }
+#achievements-modal .hub-album-meter strong { font-family: 'Lilita One', sans-serif; font-weight: 400; font-size: 28px; color: #fff; }
+#achievements-modal .hub-album-meter strong small { font-size: 13px; color: var(--club-muted); }
+#achievements-modal .hub-album-meter > span { margin-left: auto; font-weight: 900; color: #ff8fa3; }
+#achievements-modal .hub-season-emblem {
+    width: 150px; flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px;
+    color: var(--season, var(--club-red)); text-align: center;
+}
+#achievements-modal .hub-season-emblem > .hub-art { width: 104px; height: 104px; animation: clubFloatY 6s ease-in-out infinite; }
+#achievements-modal .hub-season-emblem > span { font-size: 8px; letter-spacing: 2.6px; color: var(--club-muted); }
+
+/* Estação de pacotes */
+#achievements-modal .hub-pack-station {
+    display: grid; grid-template-columns: 150px minmax(0, 1fr) 140px;
+    gap: 24px; align-items: center;
+    padding: 22px; margin: 0 0 26px;
+    background: var(--club-glass); border: 1px solid var(--club-line); border-radius: 18px;
+    backdrop-filter: blur(8px);
+}
+#achievements-modal .hub-pack-station h3 { font-size: 21px; margin: 7px 0 9px; }
+#achievements-modal .hub-pack-station p { font-size: 12px; line-height: 1.7; margin-bottom: 12px; }
+#achievements-modal .hub-pack-station .hub-button { margin-top: 14px; }
+.hub-pack-illustration { position: relative; display: grid; place-items: center; perspective: 700px; }
+.hub-pack-object {
+    width: 118px; height: 168px; padding: 15px 11px; text-align: center; color: #fff;
+    background: linear-gradient(150deg, #ff4757, var(--club-red-dark));
+    border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 14px;
+    box-shadow: 0 24px 38px rgba(0, 0, 0, 0.55), 0 0 30px rgba(230, 57, 70, 0.35);
+    display: flex; flex-direction: column; align-items: center; justify-content: space-between; gap: 6px;
+    animation: clubPackFloat 5s ease-in-out infinite;
+}
+@keyframes clubPackFloat {
+    0%, 100% { transform: rotate(-5deg) rotateY(-11deg) translateY(0); }
+    50% { transform: rotate(-3deg) rotateY(-4deg) translateY(-8px); }
+}
+.hub-pack-object > span { font-size: 7px; letter-spacing: 1.6px; opacity: 0.85; }
+.hub-pack-object > .hub-art { width: 44px; height: 44px; color: #fff; }
+.hub-pack-object > strong { font-family: 'Lilita One', sans-serif; font-weight: 400; font-size: 15px; line-height: 1.25; }
+.hub-pack-object > small { font-size: 7.5px; letter-spacing: 1.2px; opacity: 0.85; }
+.hub-pack-shadow {
+    position: absolute; bottom: -10px; width: 92px; height: 14px;
+    background: radial-gradient(ellipse, rgba(0, 0, 0, 0.55), transparent 70%);
+}
+.hub-pack-spark { position: absolute; color: var(--club-gold); font-size: 15px; animation: clubFloatY 3.4s ease-in-out infinite; }
+.hub-pack-spark.spark-a { top: 2px; right: 12px; }
+.hub-pack-spark.spark-b { bottom: 8px; left: 8px; font-size: 11px; opacity: 0.75; animation-delay: 0.8s; }
+#achievements-modal .hub-fragment-balance {
+    text-align: center; border-left: 1px solid var(--club-line); padding-left: 18px; color: #ff8fa3;
+}
+#achievements-modal .hub-fragment-balance > .hub-art { width: 34px; height: 34px; display: block; margin: 0 auto 8px; color: var(--club-gold); }
+#achievements-modal .hub-fragment-balance > strong { display: block; font-family: 'Lilita One', sans-serif; font-weight: 400; font-size: 30px; color: #fff; }
+#achievements-modal .hub-fragment-balance > span { display: block; font-size: 10px; font-weight: 800; margin: 5px 0 9px; }
+#achievements-modal .hub-fragment-balance > small { font-size: 9px; line-height: 1.6; color: var(--club-muted); }
+
+#achievements-modal .hub-book-heading {
+    display: flex; align-items: flex-end; justify-content: space-between; gap: 14px; margin-bottom: 12px;
+}
+#achievements-modal .hub-book-heading h3 { font-size: 21px; margin-top: 5px; }
+#achievements-modal .hub-book-heading h3 small { font-size: 12px; color: var(--club-muted); font-family: 'Segoe UI', sans-serif; }
+.hub-page-controls { display: flex; gap: 8px; }
+#achievements-modal .hub-category-nav { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+#achievements-modal .hub-category-nav > button {
+    display: inline-flex; align-items: center; gap: 9px;
+    border: 1px solid var(--club-line); background: rgba(255, 255, 255, 0.05); color: var(--club-muted);
+    border-radius: 999px; padding: 8px 14px; font-size: 11px; font-weight: 800; cursor: pointer;
+    transition: all 0.18s ease;
+}
+#achievements-modal .hub-category-nav > button > span { font-size: 9px; color: #c98a94; }
+#achievements-modal .hub-category-nav > button.is-active {
+    background: linear-gradient(120deg, #ff4757, var(--club-red-dark)); border-color: transparent; color: #fff;
+    box-shadow: 0 8px 20px rgba(230, 57, 70, 0.45);
+}
+#achievements-modal .hub-category-nav > button.is-active > span { color: #ffd9dd; }
+
+/* Salão 3D escuro: parede curva, holofotes e piso */
+#achievements-modal .hub-album-page {
+    position: relative;
+    display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px;
+    padding: 28px 24px 24px; border: 1px solid rgba(255, 255, 255, 0.10); border-radius: 18px;
+    background:
+        radial-gradient(ellipse 34% 46% at 14% 0%, rgba(255, 236, 190, 0.13), transparent 70%),
+        radial-gradient(ellipse 34% 46% at 50% 0%, rgba(255, 236, 190, 0.16), transparent 70%),
+        radial-gradient(ellipse 34% 46% at 86% 0%, rgba(255, 236, 190, 0.13), transparent 70%),
+        linear-gradient(180deg, #171731 0%, #101024 64%, #0a0a18 64.2%, #060612 100%);
+    box-shadow: inset 0 0 55px rgba(0, 0, 0, 0.6), inset 0 -30px 40px rgba(0, 0, 0, 0.55);
+    perspective: 1500px; perspective-origin: 50% 36%;
+}
+#achievements-modal .hub-sticker-slot {
+    min-width: 0; display: flex; flex-direction: column;
+    transform-style: preserve-3d;
+    transition: transform 0.45s cubic-bezier(0.2, 0.7, 0.25, 1);
+}
+#achievements-modal .hub-sticker-slot:nth-child(4n+1) { transform: rotateY(-7deg); }
+#achievements-modal .hub-sticker-slot:nth-child(4n+2) { transform: rotateY(-2.4deg); }
+#achievements-modal .hub-sticker-slot:nth-child(4n+3) { transform: rotateY(2.4deg); }
+#achievements-modal .hub-sticker-slot:nth-child(4n+4) { transform: rotateY(7deg); }
+#achievements-modal .hub-sticker-slot:hover,
+#achievements-modal .hub-sticker-slot:focus-within {
+    transform: rotateY(0deg) translateZ(52px);
+    z-index: 5;
+}
+#achievements-modal .hub-sticker-slot .sticker-art,
+#achievements-modal .hub-sticker-slot .sticker-placeholder {
+    flex: 1; border: 2px solid rgba(255, 255, 255, 0.20); border-radius: 10px;
+    box-shadow: 0 20px 34px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(0, 0, 0, 0.6), 0 0 22px rgba(230, 57, 70, 0.10);
+}
+#achievements-modal .sticker-placeholder {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+    text-align: center; padding: 18px 12px; color: var(--club-muted);
+    background: repeating-linear-gradient(45deg, #14142a, #14142a 10px, #101022 10px, #101022 20px);
+    aspect-ratio: 0.68;
+}
+.sticker-slot-number { font-family: 'Lilita One', sans-serif; font-size: 22px; color: rgba(255, 255, 255, 0.22); }
+#achievements-modal .sticker-placeholder strong { font-size: 12px; color: var(--club-muted); line-height: 1.45; }
+.sticker-rarity { font-size: 9px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: var(--rarity, var(--club-muted)); }
+#achievements-modal .hub-sticker-action {
+    margin-top: 12px; padding: 9px 10px; text-align: center;
+    background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px; backdrop-filter: blur(6px);
+}
+#achievements-modal .hub-pasted-label { font-size: 10.5px; font-weight: 800; color: var(--club-gold); }
+#achievements-modal .hub-craft-button {
+    border: 1px dashed rgba(255, 143, 163, 0.55); background: transparent; color: #ff8fa3;
+    border-radius: 999px; padding: 9px 13px; font-size: 10.5px; font-weight: 800; cursor: pointer; width: 100%;
+    transition: background 0.18s ease;
+}
+#achievements-modal .hub-craft-button:not(:disabled):hover { background: rgba(230, 57, 70, 0.16); }
+#achievements-modal .hub-sticker-action > .hub-button { width: 100%; }
+
+#achievements-modal .hub-page-reward {
+    display: flex; align-items: center; gap: 16px;
+    padding: 17px 20px; margin-top: 16px;
+    background: rgba(255, 209, 102, 0.08); border: 1px solid rgba(255, 209, 102, 0.4); border-radius: 14px;
+}
+#achievements-modal .hub-page-reward > .hub-art { width: 38px; height: 38px; color: var(--club-gold); }
+#achievements-modal .hub-page-reward > div { flex: 1; }
+#achievements-modal .hub-page-reward strong { font-size: 12px; color: #fff; }
+#achievements-modal .hub-page-reward p { font-size: 10.5px; margin-top: 4px; }
+#achievements-modal .hub-rules { margin-top: 18px; font-size: 11px; line-height: 1.75; color: var(--club-muted); }
+#achievements-modal .hub-rules summary { font-weight: 800; color: #ff8fa3; cursor: pointer; }
+#achievements-modal .hub-rules p { margin-top: 8px; }
+
+/* ---------- Prêmios ---------- */
+#achievements-modal .hub-rewards-intro { text-align: center; padding: 8px 0 4px; }
+#achievements-modal .hub-rewards-intro > .hub-art {
+    width: 58px; height: 58px; color: var(--club-gold); display: block; margin: 0 auto 8px;
+    animation: clubFloatY 5s ease-in-out infinite;
+    filter: drop-shadow(0 0 18px rgba(255, 209, 102, 0.4));
+}
+#achievements-modal .hub-rewards-intro h3 { font-size: 25px; margin: 6px 0; }
+#achievements-modal .hub-rewards-intro p { font-size: 12px; }
+#achievements-modal .hub-reward-season {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+    padding: 16px 0; border-bottom: 1px solid var(--club-line); margin-bottom: 18px;
+}
+#achievements-modal .hub-reward-season h4 { font-size: 18px; }
+#achievements-modal .hub-reward-season > span { font-size: 11px; font-weight: 800; color: #ff8fa3; }
+#achievements-modal .hub-rewards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; perspective: 1200px; }
+#achievements-modal .hub-reward {
+    text-align: center; padding: 22px 16px;
+    background: var(--club-glass); border: 1px solid var(--club-line); border-radius: 18px;
+    backdrop-filter: blur(8px);
+    transition: transform 0.3s cubic-bezier(0.2, 0.7, 0.25, 1), box-shadow 0.3s ease;
+    transform-style: preserve-3d;
+}
+#achievements-modal .hub-reward:hover { transform: translateY(-6px) rotateX(4deg); box-shadow: 0 24px 40px rgba(0, 0, 0, 0.5); }
+.hub-reward-kind { font-size: 8.5px; font-weight: 900; letter-spacing: 1.4px; text-transform: uppercase; color: #c98a94; }
+#achievements-modal .hub-reward-medal {
+    display: grid; place-items: center; width: 82px; height: 82px; margin: 16px auto;
+    border-radius: 50%; border: 2px solid rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.05); color: rgba(255, 255, 255, 0.4); opacity: 0.8;
+    transform: translateZ(24px);
+}
+#achievements-modal .hub-reward-medal > .hub-art { width: 50px; height: 50px; }
+#achievements-modal .hub-reward:is(.is-ready, .is-claimed) .hub-reward-medal {
+    opacity: 1; color: var(--club-gold); border-color: var(--club-gold);
+    background: radial-gradient(circle at 35% 30%, rgba(255, 209, 102, 0.3), rgba(230, 57, 70, 0.18));
+    box-shadow: 0 0 28px rgba(255, 209, 102, 0.35);
+    animation: clubPulseGlow 2.8s ease-in-out infinite;
+}
+#achievements-modal .hub-reward.is-ready { border-color: rgba(255, 209, 102, 0.55); }
+#achievements-modal .hub-reward h4 { font-size: 15px; margin-bottom: 6px; }
+#achievements-modal .hub-reward p { font-size: 10.5px; line-height: 1.65; margin-bottom: 16px; }
+.hub-avatar-prize { color: var(--club-gold); }
+#achievements-modal .hub-showcase { margin-top: 28px; }
+#achievements-modal .hub-showcase h3 { font-size: 19px; }
+#achievements-modal .hub-showcase > p { font-size: 11px; margin: 6px 0 14px; }
+#achievements-modal .hub-showcase > div { display: flex; flex-wrap: wrap; gap: 10px; }
+#achievements-modal .hub-showcase-badge {
+    display: inline-flex; align-items: center; gap: 9px;
+    background: rgba(255, 209, 102, 0.10); border: 1px solid rgba(255, 209, 102, 0.45); color: #fff;
+    border-radius: 999px; padding: 8px 14px 8px 9px; font-size: 11px; cursor: pointer;
+}
+#achievements-modal .hub-showcase-badge .hub-art { width: 26px; height: 26px; color: var(--club-gold); }
+#achievements-modal .hub-showcase-badge small { color: var(--club-muted); }
+
+#achievements-modal .hub-footer {
+    display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+    padding: 18px 0 14px; margin-top: 24px; border-top: 1px solid var(--club-line);
+    font-size: 9px; letter-spacing: 1.6px; color: #6d6d94; background: transparent;
+}
+
+/* ============================================
+   ABERTURA DE PACOTE — palco 3D com música
+   ============================================ */
+.hub-pack-dialog {
+    --club-red: #e63946; --club-red-dark: #a11f2d; --club-gold: #ffd166;
+    --club-muted: #a7a7c9; --club-line: rgba(255, 255, 255, 0.10);
+    width: min(860px, calc(100% - 28px));
+    max-height: calc(100dvh - 30px);
+    margin: auto; padding: 36px 34px 28px;
+    color: #f4f2ff; text-align: center; overflow: auto;
+    border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 24px;
+    background:
+        radial-gradient(ellipse 65% 300px at 50% -70px, rgba(230, 57, 70, 0.32), transparent 70%),
+        linear-gradient(180deg, #12122a, #08081a);
+    box-shadow: 0 44px 120px rgba(0, 0, 0, 0.85), 0 0 80px rgba(230, 57, 70, 0.16);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+.hub-pack-dialog::backdrop { background: rgba(2, 2, 9, 0.78); backdrop-filter: blur(12px); }
+.hub-pack-dialog > #hub-pack-close { position: absolute; top: 14px; right: 14px; }
+.hub-pack-dialog > h2 {
+    font-size: 33px; margin: 12px 0 8px;
+    background: linear-gradient(92deg, #fff 25%, #ffb3ab 60%, #ff8fa3);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+}
+.hub-pack-dialog > p { font-size: 12px; line-height: 1.7; }
+.hub-pack-dialog .hub-eyebrow { color: #ff8fa3; }
+
+.pack-stage {
+    position: relative;
+    perspective: 1500px; perspective-origin: 50% 34%;
+    padding: 14px 0 8px;
+}
+.pack-stage-glow {
+    position: absolute; left: 50%; top: 42%;
+    width: 340px; height: 340px; border-radius: 50%;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle, rgba(230, 57, 70, 0.4), rgba(230, 57, 70, 0.10) 45%, transparent 70%);
+    animation: packGlowPulse 2.4s ease-in-out infinite;
+    pointer-events: none;
+}
+@keyframes packGlowPulse {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.85; }
+    50% { transform: translate(-50%, -50%) scale(1.14); opacity: 1; }
+}
+.pack-stage-floor {
+    height: 26px; margin-top: 6px;
+    background: radial-gradient(ellipse 55% 100% at 50% 0%, rgba(0, 0, 0, 0.6), transparent 70%);
+    pointer-events: none;
+}
+
+/* O pacote selado, flutuando em 3D no centro do palco */
+.pack-sealed {
+    position: absolute; left: 50%; top: 44%; z-index: 6;
+    width: 186px; height: 264px;
+    margin: 0; padding: 20px 16px;
+    display: flex; flex-direction: column; align-items: center; justify-content: space-between;
+    color: #fff; cursor: pointer;
+    background: linear-gradient(155deg, #ff5a68, var(--club-red) 45%, #7d1420);
+    border: 2px solid rgba(255, 255, 255, 0.4); border-radius: 18px;
+    box-shadow: 0 34px 60px rgba(0, 0, 0, 0.7), 0 0 55px rgba(230, 57, 70, 0.55), inset 0 2px 0 rgba(255, 255, 255, 0.5);
+    transform: translate(-50%, -50%) rotateX(8deg) rotateY(-12deg);
+    animation: packFloat 3.6s ease-in-out infinite;
+    overflow: hidden;
+}
+@keyframes packFloat {
+    0%, 100% { margin-top: 0; }
+    50% { margin-top: -13px; }
+}
+.pack-sealed:hover { filter: brightness(1.12); }
+.pack-sealed-shine {
+    position: absolute; inset: -90%;
+    background: linear-gradient(115deg, transparent 42%, rgba(255, 255, 255, 0.35) 50%, transparent 58%);
+    animation: packShineMove 2.8s ease-in-out infinite;
+    pointer-events: none;
+}
+@keyframes packShineMove {
+    0% { transform: translateX(-55%); } 55%, 100% { transform: translateX(55%); }
+}
+.pack-sealed-top { font-size: 9px; font-weight: 900; letter-spacing: 4px; opacity: 0.9; }
+.pack-sealed-icon {
+    font-size: 58px; line-height: 1; color: #ffe9ec;
+    text-shadow: 0 0 26px rgba(255, 255, 255, 0.75);
+    animation: clubFloatY 3s ease-in-out infinite;
+}
+.pack-sealed-name { font-family: 'Lilita One', sans-serif; font-size: 19px; line-height: 1.3; letter-spacing: 0.6px; text-align: center; }
+.pack-sealed-bottom { font-size: 8px; font-weight: 800; letter-spacing: 1.8px; opacity: 0.85; text-align: center; line-height: 1.7; }
+
+/* Faíscas da explosão */
+.pack-spark-particle {
+    position: absolute; left: 50%; top: 44%; z-index: 7;
+    width: 10px; height: 10px; border-radius: 3px;
+    background: linear-gradient(140deg, var(--club-gold), #ff8fa3);
+    box-shadow: 0 0 14px rgba(255, 209, 102, 0.8);
+    animation: packSparkFly 0.95s cubic-bezier(0.15, 0.7, 0.3, 1) forwards;
+    pointer-events: none;
+}
+@keyframes packSparkFly {
+    0% { transform: translate(-50%, -50%) rotate(0deg) scale(1); opacity: 1; }
+    100% { transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) rotate(var(--rot)) scale(0.15); opacity: 0; }
+}
+
+.hub-pack-cards {
+    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px;
+    padding: 24px 8px 30px;
+    perspective: 1400px;
+}
+.hub-pack-cards.is-sealed { visibility: hidden; }
+.hub-reveal-card {
+    position: relative; aspect-ratio: 0.65; padding: 0; border: 0; background: none;
+    transform-style: preserve-3d; cursor: pointer;
+    transition: transform 0.7s cubic-bezier(0.2, 0.65, 0.25, 1);
+}
+.hub-reveal-card::after {
+    content: ''; position: absolute; left: 4%; right: 4%; bottom: -18px; height: 14px;
+    background: radial-gradient(ellipse, rgba(0, 0, 0, 0.65), transparent 70%);
+    pointer-events: none;
+}
+.hub-reveal-card:not(.is-revealed):hover { transform: translateY(-9px) rotateY(-10deg); }
+.hub-reveal-card.is-revealed { transform: rotateY(180deg); }
+.hub-card-back, .hub-card-front {
+    position: absolute; inset: 0; display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 14px;
+}
+.hub-card-back {
+    background:
+        repeating-linear-gradient(45deg, transparent 0 16px, rgba(255, 255, 255, 0.05) 16px 17px),
+        linear-gradient(150deg, #2b0f1c, #4d1220 55%, #20060f);
+    border: 2px solid rgba(255, 143, 163, 0.75);
+    box-shadow: inset 0 0 0 6px rgba(255, 255, 255, 0.05), inset 0 0 0 7px rgba(255, 143, 163, 0.3), 0 18px 34px rgba(0, 0, 0, 0.65);
+    color: #ffd9dd;
+}
+.hub-card-back > .hub-art { width: 88px; height: 88px; color: #ff8fa3; }
+.hub-card-back > strong { font-family: 'Lilita One', sans-serif; font-weight: 400; font-size: 14px; letter-spacing: 3px; margin-top: 16px; }
+.hub-card-back > small { font-size: 7.5px; letter-spacing: 1.4px; margin-top: 12px; color: #c98a94; }
+.hub-card-front { transform: rotateY(180deg); justify-content: flex-start; }
+.hub-card-front .sticker-art { aspect-ratio: 0.72; height: calc(100% - 26px); flex: none; width: 100%; }
+.hub-draw-note { font-size: 8.5px; line-height: 1.5; letter-spacing: 0.5px; margin-top: 9px; color: var(--club-gold); font-weight: 700; }
+.hub-pack-actions { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+.hub-pack-dialog > #hub-pack-status { min-height: 22px; margin: 18px 0 0; font-size: 12px; font-weight: 700; color: #ffd9dd; }
+
+/* ---------- FAB e toast ---------- */
+.achievements-fab {
+    background: linear-gradient(140deg, #ff4757, #a11f2d) !important; color: #fff !important;
+    box-shadow: 0 12px 28px rgba(230, 57, 70, 0.55) !important;
+}
+.achievements-fab-count { background: #fff !important; color: #c12737 !important; }
+.achievements-fab-dot { background: #ffd166 !important; }
+.achievements-silent-toast {
+    background: #171731 !important; color: #f4f2ff !important;
+    border: 1px solid rgba(255, 255, 255, 0.14); box-shadow: 0 16px 36px rgba(0, 0, 0, 0.55);
+}
+.achievements-silent-toast button { color: #ff8fa3; font-weight: 800; }
+
+@keyframes clubIn { from { opacity: 0; transform: translateY(16px) rotateX(7deg); } to { opacity: 1; transform: none; } }
+
+/* ---------- Responsivo ---------- */
+@media (max-width: 900px) {
+    #achievements-modal .achievements-list { grid-template-columns: repeat(2, 1fr); }
+    #achievements-modal .hub-album-page { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    #achievements-modal .hub-pack-station { grid-template-columns: 120px minmax(0, 1fr); }
+    #achievements-modal .hub-fragment-balance { grid-column: 1 / -1; border-left: 0; border-top: 1px solid var(--club-line); padding: 14px 0 0; }
+}
+@media (max-width: 680px) {
+    #achievements-modal { padding: 10px 6px; }
+    #achievements-modal .collector-hub { padding: 0 14px 6px; border-radius: 18px; }
+    .club-hero { margin: 0 -14px 14px; padding: 14px 14px 18px; }
+    .club-hero-main { flex-direction: column; align-items: stretch; }
+    #achievements-modal .hub-collector-badge { max-width: none; transform: none; }
+    #achievements-modal .hub-tabs { gap: 4px; }
+    #achievements-modal .hub-tabs > button { font-size: 10.5px; padding: 10px 4px; }
+    #achievements-modal .hub-stats { grid-template-columns: 1fr; gap: 9px; }
+    .club-stat { padding: 12px 14px; }
+    .club-next { flex-direction: column; text-align: center; }
+    .club-next-copy { width: 100%; }
+    #achievements-modal .achievements-list { grid-template-columns: 1fr; }
+    #achievements-modal .hub-rewards-grid { grid-template-columns: 1fr; }
+    #achievements-modal .hub-album-page { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; padding: 16px 12px; }
+    #achievements-modal .hub-sticker-slot:nth-child(n) { transform: none; }
+    #achievements-modal .hub-sticker-slot:hover,
+    #achievements-modal .hub-sticker-slot:focus-within { transform: translateZ(20px); }
+    #achievements-modal .hub-season-hero { flex-direction: column; text-align: center; padding: 20px 16px; }
+    #achievements-modal .hub-season-tag { justify-content: center; }
+    #achievements-modal .hub-pack-station { grid-template-columns: 1fr; justify-items: center; text-align: center; }
+    .hub-pack-cards { gap: 10px; padding-left: 0; padding-right: 0; }
+    .hub-pack-dialog { padding: 30px 16px 22px; }
+    .hub-pack-dialog > h2 { font-size: 25px; }
+    .pack-sealed { width: 150px; height: 214px; }
+    .pack-stage-glow { width: 250px; height: 250px; }
+    .club-season-banner { flex-direction: column; text-align: center; }
+    .club-season-banner-copy { align-items: center; }
+}
+@media (prefers-reduced-motion: reduce) {
+    #achievements-modal .collector-hub::before,
+    #achievements-modal .achievement-card,
+    .club-next-icon, .hub-pack-object, .pack-sealed, .pack-sealed-shine, .pack-stage-glow {
+        animation: none !important;
+    }
+    #achievements-modal .achievement-card,
+    #achievements-modal .hub-sticker-slot,
+    .hub-reveal-card { transition: none; }
+}

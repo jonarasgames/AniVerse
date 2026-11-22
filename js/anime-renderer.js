@@ -171,9 +171,8 @@
     const season = anime.season || 1;
     const episode = anime.episode || 1;
     const remainingLabel = formatRemainingTime(anime.remainingTotalSeconds);
-    const showResumeButton = options.showResumeButton !== false;
     const ageRatingBadge = getAgeRatingBadge(anime.rating_age);
-    
+
     card.innerHTML = `
       <div class="anime-thumbnail">
         <img src="${escapeHtml(thumbnail)}" alt="${title}" loading="lazy" decoding="async">
@@ -182,7 +181,6 @@
         </div>
         <div class="trailer-overlay">
           <i class="fas fa-play"></i>
-          <p>Continuar</p>
           ${ageRatingBadge}
         </div>
       </div>
@@ -190,10 +188,9 @@
         <h3 class="anime-title">${title}</h3>
         <p class="anime-meta">Atual: T${season} • EP${episode}</p>
         <p class="anime-meta">${Math.round(progress)}% • ${remainingLabel}</p>
-        ${showResumeButton ? '<button type="button" class="continue-resume-btn">Retomar</button>' : ''}
       </div>
     `;
-    
+
     card.style.cursor = 'pointer';
     card.addEventListener('click', async () => {
       if (!navigator.onLine && typeof window.playDownloadedEpisodeFromContinue === 'function') {
@@ -202,17 +199,6 @@
       }
       resumeAnime(anime, season, episode);
     });
-
-    if (showResumeButton) {
-      const resumeBtn = card.querySelector('.continue-resume-btn');
-      if (resumeBtn) {
-        resumeBtn.addEventListener('click', (event) => {
-          event.preventDefault();
-          event.stopPropagation();
-          resumeAnime(anime, season, episode);
-        });
-      }
-    }
     
     return card;
   }
@@ -402,7 +388,7 @@
     }
     
     continueWatching.forEach(anime => {
-      const card = createContinueWatchingCard(anime, { showResumeButton: true });
+      const card = createContinueWatchingCard(anime);
       if (card) grid.appendChild(card);
     });
     
