@@ -59,10 +59,10 @@
         player.setAttribute('webkit-playsinline', 'true');
         if (isTvPlaybackEnvironment()) {
             player.setAttribute('crossorigin', 'anonymous');
+            player.preload = 'auto';
         } else {
             player.removeAttribute('crossorigin');
         }
-        player.preload = 'auto';
 
         const stallState = {
             attempts: 0,
@@ -133,7 +133,7 @@
         };
 
         const recoverFromStall = (reason) => {
-            if (player.paused || player.ended) return;
+            if (player.paused || player.ended || player.seeking || player.readyState < 2 || player.src.startsWith('blob:')) return;
             // In a room, seeking backwards to recover a buffer creates extra
             // playback commands and fights the host's shared timestamp.
             if (window.watchParty?.active) return;

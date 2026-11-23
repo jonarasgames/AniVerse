@@ -4,7 +4,7 @@
 .episode-picker h2 { margin:5px 0 18px; color:#fff; font-size:clamp(20px,3vw,28px); }
 .picker-eyebrow { font-size:10px; letter-spacing:.14em; color:#ffa4b3; }
 .episode-picker button { font-family:inherit; cursor:pointer; color:inherit; }
-#picker-close { border:0; border-radius:50%; background:#ffffff15; font-size:25px; width:36px; height:36px; }
+#picker-close { display:grid; place-items:center; flex:none; padding:0; border:0; border-radius:50%; background:#ffffff15; width:36px; height:36px; }
 .episode-picker nav { display:flex; gap:8px; margin-bottom:18px; }
 .episode-picker nav button { background:#ffffff0c; padding:9px 16px; border:1px solid #ffffff20; border-radius:99px; }
 .episode-picker nav [aria-pressed="true"] { background:#e93854; border-color:#e93854; }
@@ -45,6 +45,6 @@
 #party-catalog-list { display:grid; gap:6px; max-height:250px; overflow:auto; margin-top:10px; }
 #watch-party-panel #party-catalog-list button { text-align:left; background:#ffffff08; }
 #video-player-container #custom-video-controls .btn-icon,#video-player-container #video-floating-actions .btn { backdrop-filter:none !important; -webkit-backdrop-filter:none !important; }
-#video-player-container #custom-video-controls #volume-btn { display:inline-flex; }
+#video-player-container #custom-video-controls #volume-btn { display:inline-grid; place-items:center; }
 #video-player-container .volume-container { margin-right:6px; }
 @media(max-width:600px) { #video-player-container .volume-container { width:44px; min-width:32px; } #video-player-container #custom-video-controls .controls-row-secondary { gap:6px !important; } }

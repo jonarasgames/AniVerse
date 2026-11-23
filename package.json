@@ -10,6 +10,7 @@
     "test:theme": "node --test tests/theme.node.cjs",
     "test:watchparty": "node tests/watch-party.integration.cjs",
     "previews": "node tools/generate-episode-previews.cjs",
+    "music:analyse": "node tools/generate-music-motion.cjs",
     "test:headed": "playwright test --headed",
     "test:ui": "playwright test --ui",
     "test:debug": "playwright test --debug"

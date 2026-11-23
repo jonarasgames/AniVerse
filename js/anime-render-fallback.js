@@ -22,6 +22,7 @@
       
       targets.forEach(t => {
         // Only inject if the grid is empty
+        if (!t.closest('.content-section.active')) return;
         if(t.querySelector('.anime-card') || t.childElementCount>0) return;
         
         const wrap=document.createElement('div'); 

@@ -113,6 +113,18 @@ function applyMaintenanceMode() {
 
 document.addEventListener('DOMContentLoaded', () => {
   applyMaintenanceMode();
+  document.querySelectorAll('[data-policy-dialog]').forEach(button => {
+    const dialog = document.getElementById(button.dataset.policyDialog);
+    button.addEventListener('click', () => {
+      if (dialog.open) return;
+      dialog.showModal();
+      dialog.querySelector('.site-policy-copy').scrollTop = 0;
+    });
+    dialog.addEventListener('click', event => {
+      if (event.target === dialog) dialog.close();
+    });
+  });
+
   setupVideoLoadingIndicator();
   const perfToggle = document.getElementById('performance-mode-toggle');
   const updatePerfLabel = () => {
@@ -231,17 +243,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   async function ensureSearchDatasetLoaded() {
-    const current = getSearchDataset();
-    if (current.length) return current;
-
-    try {
-      const response = await fetch('anime-data.json', { cache: 'no-store' });
-      const data = await response.json();
-      window.__searchCacheAnimes = Array.isArray(data?.animes) ? data.animes : [];
-    } catch (error) {
-      window.__searchCacheAnimes = [];
-    }
-
+    await window.animeDB?.ready;
     return getSearchDataset();
   }
 
@@ -701,9 +703,16 @@ document.addEventListener('DOMContentLoaded', () => {
     updateFabVisibility(newsItems);
   }
 
+  let newsOpener;
+  let previousNewsOverflow;
+
   function openNewsModal() {
+    if (newsModal.style.display === 'flex') return;
+    newsOpener = document.activeElement;
+    previousNewsOverflow = document.body.style.overflow;
     newsModal.style.display = 'flex';
     document.body.style.overflow = 'hidden';
+    closeNewsModal?.focus({ preventScroll: true });
     const latest = getLatestItem(newsItems);
     if (latest) {
       localStorage.setItem(NEWS_LAST_SEEN_KEY, latest.createdAt);
@@ -714,18 +723,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function closeModal() {
     newsModal.style.display = 'none';
-    document.body.style.overflow = '';
+    document.body.style.overflow = previousNewsOverflow;
+    newsOpener?.focus({ preventScroll: true });
   }
 
   if (newsFab) {
     newsFab.addEventListener('click', openNewsModal);
   }
-  if (newsLink) {
-    newsLink.addEventListener('click', (event) => {
-      event.preventDefault();
-      openNewsModal();
-    });
-  }
+  newsLink?.addEventListener('click', openNewsModal);
   if (closeNewsModal) {
     closeNewsModal.addEventListener('click', closeModal);
   }
@@ -858,8 +863,9 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Video error helpers
-function showVideoError(msg){
+function showVideoError(msg, retry){
   let el = document.getElementById('video-error-container');
+  if (!retry && el?.querySelector('button')) return;
   if (!el){
     el = document.createElement('div'); el.id = 'video-error-container';
     Object.assign(el.style, { position:'absolute', left:'50%', bottom:'14%', transform:'translateX(-50%)', background:'rgba(0,0,0,0.78)', color:'#fff', padding:'10px 14px', borderRadius:'10px', zIndex:1001, pointerEvents:'none', maxWidth:'min(88%, 460px)', textAlign:'center' });
@@ -868,6 +874,15 @@ function showVideoError(msg){
     (document.getElementById('video-player-container') || document.body).appendChild(el);
   }
   el.textContent = msg;
+  if (retry) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'btn btn-secondary';
+    button.textContent = 'Tentar novamente';
+    Object.assign(button.style, { display:'block', pointerEvents:'auto', margin:'8px auto 0' });
+    button.addEventListener('click', retry, { once: true });
+    el.appendChild(button);
+  }
 }
 function clearVideoError(){ const el=document.getElementById('video-error-container'); if(el) el.remove(); }
 
@@ -1272,7 +1287,7 @@ function onVideoSetSource(player, episode, options = {}){
     currentIndex: 0,
     retriesInSource: 0,
     maxRetriesPerSource: isTvPlaybackEnvironment() ? 3 : 3,
-    loadTimeoutMs: isTvPlaybackEnvironment() ? 40000 : 15000,
+    loadTimeoutMs: isTvPlaybackEnvironment() ? 40000 : 45000,
     loadTimeoutId: null,
     retryTimeoutId: null,
     waitingRecoveryId: null,
@@ -1330,7 +1345,7 @@ function onVideoSetSource(player, episode, options = {}){
     let nextUrl = source.url;
     if (state.isTvEnvironment && isLikelyCorsBlockedTvHost(nextUrl)) {
       nextUrl = buildTvStreamProxyUrl(nextUrl);
-    } else if (options.cacheBust) {
+    } else if (options.cacheBust && new URL(nextUrl, location.href).origin === location.origin) {
       nextUrl = addCacheBust(nextUrl);
     }
 
@@ -1362,13 +1377,9 @@ function onVideoSetSource(player, episode, options = {}){
       return;
     }
 
-    const sourceEl = document.createElement('source');
-    sourceEl.src = nextUrl;
-    const sourceType = inferVideoMimeType(nextUrl);
-    if (sourceType) sourceEl.type = sourceType;
-    player.appendChild(sourceEl);
+    // Keep the original URL and let the browser request byte ranges directly.
+    player.removeAttribute('crossorigin');
     player.src = nextUrl;
-    player.load();
 
     if (preserveTime > 0) {
       player.addEventListener('loadedmetadata', () => {
@@ -1429,7 +1440,7 @@ function onVideoSetSource(player, episode, options = {}){
       probe.addEventListener('canplay', success, { once: true });
       probe.addEventListener('error', fail, { once: true });
       setTimeout(fail, 6000);
-      probe.src = addCacheBust(target.url);
+      probe.src = target.url;
       probe.load();
     }, 30000);
   };
@@ -1442,9 +1453,10 @@ function onVideoSetSource(player, episode, options = {}){
 
     const timeSnapshot = player.currentTime || 0;
 
-    if (state.retriesInSource < state.maxRetriesPerSource) {
+    const retryLimit = player.error?.code === 4 ? 1 : state.maxRetriesPerSource;
+    if (state.retriesInSource < retryLimit) {
       state.retriesInSource += 1;
-      showVideoError(`Reconectando vídeo (${state.retriesInSource}/${state.maxRetriesPerSource})...`);
+      showVideoError(`Reconectando vídeo (${state.retriesInSource}/${retryLimit})...`);
       state.retryTimeoutId = setTimeout(() => {
         state.recoverInFlight = false;
         setSource(state.currentIndex, { preserveTime: timeSnapshot, autoPlay: true, cacheBust: true });
@@ -1469,7 +1481,14 @@ function onVideoSetSource(player, episode, options = {}){
     const reasonLabel = reason === 'timeout'
       ? 'carregamento excedeu o tempo limite'
       : 'houve falha na reprodução';
-    showVideoError(`Não foi possível reproduzir agora (${reasonLabel}). Tente novamente em alguns instantes.`);
+    window.setVideoLoadingOverlay?.(false);
+    showVideoError(`Não foi possível reproduzir o vídeo (${reasonLabel}).`, () => {
+      if (player.__adaptivePlayback?.token !== state.token) return;
+      state.retriesInSource = 0;
+      state.fallbackInUse = false;
+      window.setVideoLoadingOverlay?.(true, 'Conectando ao vídeo…');
+      setSource(0, { preserveTime: timeSnapshot, autoPlay: true });
+    });
     state.recoverInFlight = false;
   };
 
@@ -1752,6 +1771,12 @@ function openEpisode(anime, seasonNumber, episodeIndex, options = {}){
       console.warn('Não foi possível abrir o episódio: temporada ou episódio não encontrado.', { seasonNumber, episodeIndex });
       return;
     }
+    if (!options.deferPlayback && !navigator.onLine && window.playDownloadedEpisodeFromContinue) {
+      window.playDownloadedEpisodeFromContinue({ animeId: anime.id, season: seasonNumber, episode: episodeIndex + 1 })
+        .then(played => { if (!played) alert('Este episódio não está disponível offline.'); })
+        .catch(() => alert('Não foi possível abrir o arquivo offline.'));
+      return;
+    }
     // Update the visible heading from this request before loading a new source.
     // The previous episode can still emit media events while its source is replaced.
     const overlayAnimeTitle = document.getElementById('overlay-anime-title');
@@ -1909,8 +1934,13 @@ function openEpisode(anime, seasonNumber, episodeIndex, options = {}){
     }
     if (episode){
       if (options.deferPlayback) {
+        player.__adaptiveCleanup?.();
+        player.__adaptiveCleanup = null;
+        player.__adaptivePlayback = null;
         player.pause();
+        player.removeAttribute('crossorigin');
         player.removeAttribute('src');
+        player.replaceChildren();
         player.load();
       } else if (nativeSources.length) {
         const usingNativeTvPlayer = nativeSource && openNativeTvVideo(nativeSource.url, resumeTime, () => onVideoSetSource(player, episode, { forceHtmlFallback: true }));
@@ -2063,7 +2093,7 @@ function preloadNextEpisodeIfNeeded(player){
     preloader = document.createElement('video');
     preloader.id = 'next-episode-preloader';
     preloader.muted = true;
-    preloader.preload = 'auto';
+    preloader.preload = 'metadata';
     preloader.playsInline = true;
     preloader.style.display = 'none';
     document.body.appendChild(preloader);
@@ -2166,11 +2196,14 @@ window.addEventListener('animeDataLoaded', () => {
   if (typeof window.openAnimeFromUrlParams === 'function') {
     setTimeout(() => window.openAnimeFromUrlParams(), 0);
   }
-  try { if (typeof loadAnimeSection === 'function') loadAnimeSection('anime'); } catch(e){}
   preloadTvModeContent();
-  try { if (window.animeDB && typeof renderContinueWatchingGrid === 'function') renderContinueWatchingGrid(animeDB.getContinueWatching(),'continue-watching-grid'); } catch(e){}
+  if (!window.__isTvMode?.() && window.__ANIVERSE_FORCE_TV_MODE__ !== true) {
+    const sectionId = document.querySelector('.content-section.active')?.id;
+    const type = { 'animes-section': 'anime', 'movies-section': 'movie', 'ovas-section': 'ova' }[sectionId];
+    if (type) window.loadAnimeSection?.(type);
+    if (sectionId === 'collections-section') window.loadCollections?.();
+  }
   try { if (typeof bindProfileModalControls === 'function') bindProfileModalControls(); } catch(e){}
-  try { if (typeof renderMusicLibrary === 'function' && window.animeDB) renderMusicLibrary(window.animeDB.musicLibrary); } catch(e){}
 });
 
 if (document.readyState === 'loading') {

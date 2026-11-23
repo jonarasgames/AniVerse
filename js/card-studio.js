@@ -44,12 +44,12 @@
     return loadPromise;
   }
   function photo(card) {
-    return `<div class="card-photo ${card.image ? 'has-photo' : ''}" style="--photo-x:${card.imageX}%;--photo-y:${card.imageY}%"><span class="card-photo-fallback"><span>▧</span><small>${card.image ? 'Carregando imagem…' : 'Personagem'}</small></span>${card.image ? `<img src="${esc(card.image)}" alt="${esc(card.name)}" loading="lazy" decoding="async" data-no-retry="true">` : ''}</div>`;
+    return `<div class="card-photo ${card.image ? 'has-photo' : ''}" style="--photo-x:${card.imageX}%;--photo-y:${card.imageY}%"><span class="card-photo-fallback"><span>▧</span><small>${card.image ? 'Carregando imagem…' : 'Personagem'}</small></span>${card.image ? `<img src="${esc(card.image)}" alt="${esc(card.name)}" loading="lazy" decoding="async" draggable="false" data-no-retry="true">` : ''}</div>`;
   }
   function mount() {
     if ($('card-export-dialog')) return;
     const host = document.createElement('div');
-    host.innerHTML = `<dialog id="card-export-dialog" class="card-studio-dialog" aria-labelledby="card-export-title"><button type="button" class="hub-icon-button studio-close" data-studio-close aria-label="Fechar exportação">✕</button><span class="hub-eyebrow">SUA COLEÇÃO EM MOVIMENTO</span><h2 id="card-export-title">Um GIF para guardar.</h2><p>Escolha até 6 cartas adquiridas deste álbum. O GIF mostra cada uma girando em perspectiva, com o acabamento da raridade.</p><div id="card-export-options" class="card-export-options"></div><div class="studio-actions"><button type="button" id="card-export-start" class="hub-button">Gerar GIF 3D</button><button type="button" id="card-export-cancel" class="hub-button secondary" hidden>Cancelar</button></div><p id="card-export-status" role="status" aria-live="polite"></p><progress id="card-export-progress" max="100" value="0" hidden aria-label="Progresso da exportação"></progress><div id="card-export-result"></div></dialog>`;
+    host.innerHTML = `<dialog id="card-export-dialog" class="card-studio-dialog" aria-labelledby="card-export-title"><button type="button" class="hub-icon-button studio-close" data-studio-close aria-label="Fechar exportação">✕</button><h2 id="card-export-title">Exportar GIF</h2><p>Selecione até 6 cartas.</p><div id="card-export-options" class="card-export-options"></div><div class="studio-actions"><button type="button" id="card-export-start" class="hub-button">Gerar GIF 3D</button><button type="button" id="card-export-cancel" class="hub-button secondary" hidden>Cancelar</button></div><p id="card-export-status" role="status" aria-live="polite"></p><progress id="card-export-progress" max="100" value="0" hidden aria-label="Progresso da exportação"></progress><div id="card-export-result"></div></dialog>`;
     document.body.appendChild(host);
     host.querySelectorAll('[data-studio-close]').forEach(button => button.addEventListener('click', () => button.closest('dialog').close()));
     $('card-export-start').addEventListener('click', exportGif);
@@ -80,12 +80,12 @@
   function drawFace(card, image) {
     const canvas = document.createElement('canvas'); canvas.width = 300; canvas.height = 420;
     const ctx = canvas.getContext('2d'), color = COLORS[card.rarity];
-    const bg = ctx.createLinearGradient(0, 0, 300, 420); bg.addColorStop(0, '#30433f'); bg.addColorStop(1, '#142522'); ctx.fillStyle = bg; ctx.fillRect(0, 0, 300, 420);
+    const bg = ctx.createLinearGradient(0, 0, 300, 420); bg.addColorStop(0, '#24262e'); bg.addColorStop(1, '#15171e'); ctx.fillStyle = bg; ctx.fillRect(0, 0, 300, 420);
     ctx.strokeStyle = color; ctx.lineWidth = 3; ctx.strokeRect(2, 2, 296, 416); ctx.globalAlpha = .4; ctx.strokeRect(8, 8, 284, 404); ctx.globalAlpha = 1;
     ctx.fillStyle = color; ctx.font = '10px Arial'; ctx.fillText(`ANV / ${String(card.number).padStart(2, '0')}`, 18, 28);
     if (image) drawRender(ctx, image, 18, 44, 264, card.imageX, card.imageY);
-    else { ctx.fillStyle = '#3a514a'; ctx.fillRect(18, 44, 264, 264); ctx.fillStyle = '#c6d2c5'; ctx.textAlign = 'center'; ctx.font = '15px Arial'; ctx.fillText('Render do personagem', 150, 180); }
-    ctx.textAlign = 'center'; ctx.fillStyle = '#f4f0df'; ctx.font = '20px Georgia';
+    else { ctx.fillStyle = '#282a34'; ctx.fillRect(18, 44, 264, 264); ctx.fillStyle = '#b9bcc9'; ctx.textAlign = 'center'; ctx.font = '15px Arial'; ctx.fillText('Render do personagem', 150, 180); }
+    ctx.textAlign = 'center'; ctx.fillStyle = '#f4f0df'; ctx.font = '600 20px Arial';
     const words = card.name.split(' '); let line = '', lines = [];
     words.forEach(word => { const next = line ? `${line} ${word}` : word; if (ctx.measureText(next).width > 260 && line) { lines.push(line); line = word; } else line = next; }); lines.push(line);
     lines.slice(0, 2).forEach((text, i) => ctx.fillText(text, 150, 338 + i * 24));
@@ -184,27 +184,33 @@
     finally { generation = null; $('card-export-start').disabled = false; $('card-export-cancel').hidden = true; }
   }
 
-  let tiltFrame = 0, activeCard = null;
-  const hover = matchMedia('(hover: hover) and (pointer: fine)'), reduced = matchMedia('(prefers-reduced-motion: reduce)');
+  let tiltFrame = 0, activeCard = null, pointerX = 0, pointerY = 0;
   function resetTilt() {
     if (!activeCard) return;
     activeCard.style.removeProperty('--tilt-x'); activeCard.style.removeProperty('--tilt-y'); activeCard.classList.remove('is-tilting'); activeCard = null;
     cancelAnimationFrame(tiltFrame);
+    tiltFrame = 0;
   }
   document.addEventListener('pointermove', event => {
     const card = event.target.closest('[data-card-tilt]');
-    if (!card || !hover.matches || reduced.matches || document.body.classList.contains('performance-mode')) { resetTilt(); return; }
+    if (!card || (document.body.classList.contains('performance-mode') && !card.closest('#achievements-modal, #hub-pack-dialog, #hub-card-viewer'))) { resetTilt(); return; }
     if (activeCard !== card) { resetTilt(); activeCard = card; }
-    const rect = card.closest('.hub-sticker-slot, .hub-reveal-card, .card-editor-preview')?.getBoundingClientRect() || card.getBoundingClientRect();
-    const x = Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width)), y = Math.max(0, Math.min(1, (event.clientY - rect.top) / rect.height));
-    cancelAnimationFrame(tiltFrame); tiltFrame = requestAnimationFrame(() => {
+    pointerX = event.clientX;
+    pointerY = event.clientY;
+    if (tiltFrame) return;
+    tiltFrame = requestAnimationFrame(() => {
+      tiltFrame = 0;
+      if (!card.isConnected) return;
+      const rect = card.closest('.hub-sticker-slot, .hub-reveal-card, .card-editor-preview')?.getBoundingClientRect() || card.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+      const x = Math.max(0, Math.min(1, (pointerX - rect.left) / rect.width));
+      const y = Math.max(0, Math.min(1, (pointerY - rect.top) / rect.height));
       card.style.setProperty('--tilt-x', `${(0.5 - y) * 22}deg`); card.style.setProperty('--tilt-y', `${(x - .5) * 28}deg`);
       card.style.setProperty('--shine-x', `${x * 100}%`); card.style.setProperty('--shine-y', `${y * 100}%`); card.classList.add('is-tilting');
     });
   }, { passive: true });
   document.addEventListener('pointerout', event => { if (activeCard && !activeCard.contains(event.relatedTarget)) resetTilt(); });
   document.addEventListener('visibilitychange', () => { if (document.hidden) resetTilt(); });
-  reduced.addEventListener('change', resetTilt);
   document.addEventListener('load', event => { if (event.target.matches?.('.card-photo img')) event.target.parentElement.classList.add('is-ready'); }, true);
   document.addEventListener('error', event => {
     if (!event.target.matches?.('.card-photo img')) return;

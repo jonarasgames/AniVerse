@@ -6,7 +6,7 @@
       "id": "watch_1",
       "name": "Primeiro Episódio",
       "desc": "Complete 1 episódio.",
-      "icon": "assets/achievements/first-steps.svg",
+      "icon": "assets/achievements/first-steps.svg?v=20261122-icons2",
       "sound": "assets/achievements/sounds/impact_unlock.mp3",
       "type": "episodes_completed_total",
       "goal": 1
@@ -15,7 +15,7 @@
       "id": "watch_10",
       "name": "Maratonista",
       "desc": "Complete 10 episódios.",
-      "icon": "assets/achievements/binge-watcher.svg",
+      "icon": "assets/achievements/binge-watcher.svg?v=20261122-icons2",
       "sound": "assets/achievements/sounds/impact_unlock.mp3",
       "type": "episodes_completed_total",
       "goal": 10
@@ -24,7 +24,7 @@
       "id": "watch_50",
       "name": "Lenda do Play",
       "desc": "Complete 50 episódios.",
-      "icon": "assets/achievements/binge-watcher.svg",
+      "icon": "assets/achievements/legendary-play.svg?v=20261122-icons2",
       "sound": "assets/achievements/sounds/impact_unlock.mp3",
       "type": "episodes_completed_total",
       "goal": 50
@@ -33,7 +33,7 @@
       "id": "streak_3",
       "name": "Presença Diária",
       "desc": "Abra o AniVerse por 3 dias seguidos.",
-      "icon": "assets/achievements/streaker.svg",
+      "icon": "assets/achievements/streaker.svg?v=20261122-icons2",
       "sound": "assets/achievements/sounds/impact_unlock.mp3",
       "type": "daily_streak",
       "goal": 3
@@ -42,7 +42,7 @@
       "id": "streak_7",
       "name": "Semana Fechada",
       "desc": "Abra o AniVerse por 7 dias seguidos.",
-      "icon": "assets/achievements/streaker.svg",
+      "icon": "assets/achievements/streak-week.svg?v=20261122-icons2",
       "sound": "assets/achievements/sounds/impact_unlock.mp3",
       "type": "daily_streak",
       "goal": 7
@@ -51,7 +51,7 @@
       "id": "days_7",
       "name": "Visitante Frequente",
       "desc": "Abra o AniVerse em 7 dias diferentes.",
-      "icon": "assets/achievements/streaker.svg",
+      "icon": "assets/achievements/calendar-check.svg?v=20261122-icons2",
       "sound": "assets/achievements/sounds/impact_unlock.mp3",
       "type": "days_open_total",
       "goal": 7
@@ -60,7 +60,7 @@
       "id": "anime_5",
       "name": "Explorador de Catálogo",
       "desc": "Comece 5 animes diferentes.",
-      "icon": "assets/achievements/critic.svg",
+      "icon": "assets/achievements/critic.svg?v=20261122-icons2",
       "sound": "assets/achievements/sounds/impact_unlock.mp3",
       "type": "anime_started_total",
       "goal": 5
@@ -69,7 +69,7 @@
       "id": "continue_5",
       "name": "Fila de Continua",
       "desc": "Tenha 5 itens no Continuar Assistindo.",
-      "icon": "assets/achievements/first-steps.svg",
+      "icon": "assets/achievements/continue-list.svg?v=20261122-icons2",
       "sound": "assets/achievements/sounds/impact_unlock.mp3",
       "type": "continue_entries",
       "goal": 5
@@ -78,7 +78,7 @@
       "id": "sections_4",
       "name": "Turista do Site",
       "desc": "Visite 4 seções diferentes do AniVerse.",
-      "icon": "assets/achievements/critic.svg",
+      "icon": "assets/achievements/site-map.svg?v=20261122-icons2",
       "sound": "assets/achievements/sounds/impact_unlock.mp3",
       "type": "sections_visited_total",
       "goal": 4

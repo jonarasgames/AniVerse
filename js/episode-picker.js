@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
   button.innerHTML = '<i class="fas fa-list" aria-hidden="true"></i>';
   document.getElementById('fullscreen-btn').before(button);
   const dialog = document.createElement('dialog'); dialog.className = 'episode-picker'; dialog.id = 'episode-picker'; dialog.setAttribute('aria-labelledby', 'episode-picker-title');
-  dialog.innerHTML = `<header><h2 id="episode-picker-title">Temporadas e episódios</h2><button type="button" id="picker-close" aria-label="Fechar lista">×</button></header><label>Temporada<select id="picker-season"></select></label><p id="picker-hint"></p><div id="picker-list"></div>`;
+  dialog.innerHTML = `<header><h2 id="episode-picker-title">Temporadas e episódios</h2><button type="button" id="picker-close" aria-label="Fechar lista"><svg width="18" height="18" aria-hidden="true" focusable="false"><use href="#control-close"/></svg></button></header><label>Temporada<select id="picker-season"></select></label><p id="picker-hint"></p><div id="picker-list"></div>`;
   document.body.appendChild(dialog);
   const el = id => dialog.querySelector(`#${id}`);
   let manifest = { entries:{} }, manifestRequest = null;

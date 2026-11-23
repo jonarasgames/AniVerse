@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  var INITIAL_IMAGES = 14;
+  var MAX_IMAGES = 14;
   var SPEED_PX_PER_SEC = 115; // velocidade da rolagem
 
   function shuffle(list) {
@@ -47,7 +47,10 @@
     var queue = []; // capas embaralhadas esperando para entrar
     var offset = 0;
     var lastTime = null;
-    var heroVisible = true;
+    var heroVisible = !('IntersectionObserver' in window);
+    var frame = 0;
+    var cardWidth = 0;
+    var imageCount = 0;
     var started = false;
     var modal = document.getElementById('video-modal');
 
@@ -75,16 +78,17 @@
       var src = nextSrc();
       if (!src) return;
       var img = document.createElement('img');
-      img.src = src;
       img.alt = '';
       img.loading = 'eager';
+      img.fetchPriority = 'low';
+      img.src = src;
       img.decoding = 'async';
       img.draggable = false;
       track.appendChild(img);
     }
 
     function fillTrack() {
-      while (track.children.length < INITIAL_IMAGES) appendImage();
+      while (track.children.length < imageCount) appendImage();
     }
 
     function isModalOpen() {
@@ -94,66 +98,64 @@
     }
 
     function shouldPause() {
-      return document.hidden || !heroVisible || isModalOpen();
+      return document.hidden || !heroVisible;
+    }
+
+    function syncAnimation() {
+      if (!started || shouldPause() || isModalOpen()) {
+        if (frame) window.cancelAnimationFrame(frame);
+        frame = 0;
+        lastTime = null;
+        return;
+      }
+      if (!frame) {
+        fillTrack();
+        frame = window.requestAnimationFrame(step);
+      }
+    }
+
+    function resizeTrack() {
+      cardWidth = hero.clientHeight * 16 / 9;
+      imageCount = cardWidth ? Math.min(MAX_IMAGES, Math.ceil(hero.clientWidth / cardWidth) + 2) : 0;
+      while (track.children.length > imageCount) track.lastElementChild.remove();
+      syncAnimation();
     }
 
     function step(now) {
-      window.requestAnimationFrame(step);
-      if (lastTime === null) lastTime = now;
-      var dt = Math.min((now - lastTime) / 1000, 0.05);
+      frame = 0;
+      if (shouldPause() || !cardWidth) { lastTime = null; return; }
+      var dt = lastTime === null ? 0 : Math.min((now - lastTime) / 1000, 0.05);
       lastTime = now;
-
-      if (!started || shouldPause()) return;
-
       offset += SPEED_PX_PER_SEC * dt;
-
-      // Capa saiu por completo pela esquerda? Remove e entra outra nova.
-      var first = track.firstElementChild;
-      while (first && first.offsetWidth > 0 && offset >= first.offsetWidth) {
-        offset -= first.offsetWidth;
-        track.removeChild(first);
+      while (offset >= cardWidth && track.firstElementChild) {
+        offset -= cardWidth;
+        track.firstElementChild.remove();
         appendImage();
-        first = track.firstElementChild;
       }
-      fillTrack();
       track.style.transform = 'translate3d(' + (-offset) + 'px, 0, 0)';
-    }
-
-    function start(poolUrls) {
-      if (!poolUrls.length || started) return;
-      pool = poolUrls;
-      started = true;
-      fillTrack();
+      frame = window.requestAnimationFrame(step);
     }
 
     function loadPool() {
-      if (window.animeDB && Array.isArray(window.animeDB.animes) && window.animeDB.animes.length) {
-        start(extractPool(window.animeDB.animes));
-        return;
-      }
-      fetch('anime-data.json', { cache: 'no-store' })
-        .then(function (res) { return res.json(); })
-        .then(function (data) { start(extractPool(data)); })
-        .catch(function () {});
+      if (started) return;
+      pool = extractPool(window.animeDB?.animes);
+      if (!pool.length) return;
+      started = true;
+      resizeTrack();
     }
 
     if ('IntersectionObserver' in window) {
       new IntersectionObserver(function (entries) {
         heroVisible = entries[0].isIntersecting;
+        syncAnimation();
       }, { threshold: 0.02 }).observe(hero);
     }
-
-    window.requestAnimationFrame(step);
-
+    if ('ResizeObserver' in window) new ResizeObserver(resizeTrack).observe(hero);
+    else window.addEventListener('resize', resizeTrack);
+    if (modal) new MutationObserver(syncAnimation).observe(modal, { attributes: true, attributeFilter: ['style', 'aria-hidden'] });
+    document.addEventListener('visibilitychange', syncAnimation);
     window.addEventListener('animeDataLoaded', loadPool);
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', loadPool);
-    } else {
-      loadPool();
-    }
-    // Fallbacks caso o evento animeDataLoaded já tenha passado
-    setTimeout(loadPool, 1500);
-    setTimeout(loadPool, 4000);
+    loadPool();
   }
 
   if (document.readyState === 'loading') {

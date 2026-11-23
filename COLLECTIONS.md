@@ -7,16 +7,18 @@ A interface fica no botão de troféu e reúne conquistas, álbum sazonal e sala
 - Cada episódio concluído pela primeira vez no sistema gera 100 pontos. Reassistir não gera pontos, mesmo em outra temporada mensal. Episódios anteriores à introdução da coleção não recebem pontos retroativos.
 - Cada 300 pontos da temporada gera um pacote de três cartas. Abrir o pacote salva as cartas imediatamente; fechar a animação não as perde. É necessário colá-las para completar as páginas.
 - As duas primeiras cartas têm probabilidades de 60% comum, 28% rara, 10% épica e 2% lendária. A terceira é rara (70%), épica (25%) ou lendária (5%). Pode haver repetidas no mesmo pacote.
+- Pacotes atuais podem trazer no máximo uma carta de temporada anterior, na primeira posição. Os pesos do primeiro ao décimo segundo mês após a temporada são 40, 35, 30, 25, 20, 15, 10, 8, 6, 4, 2 e 1. Até uma soma de 100, os pesos correspondem às porcentagens e o restante fica com a temporada atual. Acima disso, cada peso é dividido pela soma. A partir do 13º mês, o álbum sai do sorteio. Duas cartas, incluindo a rara ou melhor, são sempre atuais. Só entram temporadas desde novembro de 2026; nunca há cartas futuras.
+- Cada carta de pacote informa sua temporada de origem. Aquisição, repetidas, visualizador e colagem usam esse álbum; IDs iguais em meses diferentes são cartas distintas. Pacotes antigos guardados continuam exclusivos do próprio álbum.
 - Repetidas viram 10/20/40/80 fragmentos, conforme a raridade. Criar uma carta específica custa 30/60/120/240 fragmentos. Cartas criadas também precisam ser coladas.
 - Cada página completa libera um selo e 30 fragmentos; cada categoria, um título e 80 fragmentos; o álbum completo, um troféu e 200 fragmentos. Cada prêmio só pode ser resgatado uma vez por álbum. Os cosméticos podem ser usados como destaque no clube.
-- Há 24 cartas por álbum, três categorias e duas páginas de quatro cartas por categoria.
+- Há 24 cartas por álbum e três categorias. A galeria mostra as oito cartas de cada categoria juntas; os selos das duas páginas de quatro cartas continuam preservados.
 - Colar as 24 cartas de um álbum libera automaticamente seus renders como avatares em **Gerenciar perfis → lápis → Personagens**, junto da biblioteca normal. O resgate do troféu é separado. Os avatares ficam disponíveis apenas no perfil que completou o álbum e continuam liberados depois da virada do mês.
 
 ## Temporadas
 
-A coleção estreia em 1º de novembro de 2026. Antes disso, não concede pontos nem permite abrir pacotes. Dados de testes anteriores à estreia não aparecem na estante oficial. A virada acontece no primeiro dia do mês, conforme o relógio local. Novembro de 2026 começa com Piratas; seguem Cosmos, Espíritos, Dragões, Neon e Expedição Selvagem, em um ciclo de seis temas. Cada mês tem seu próprio álbum, mesmo quando o tema volta.
+A coleção estreia em 1º de novembro de 2026. Antes disso, não concede pontos nem permite abrir pacotes. Dados de testes anteriores à estreia não aparecem na estante oficial. A virada acontece no primeiro dia do mês, conforme o relógio local. Novembro de 2026 começa com Piratas. Dezembro de 2026 recebe a edição especial Em família. Essa edição substitui apenas dezembro de 2026; os demais meses mantêm o ciclo de Cosmos, Espíritos, Dragões, Neon e Expedição Selvagem. Cada mês tem seu próprio álbum, mesmo quando o tema volta.
 
-Pontos parciais não passam para o próximo mês. Pacotes já conquistados continuam no álbum de origem. Cartas, prêmios e fragmentos são preservados. Álbuns anteriores podem ser completados com os pacotes guardados ou com cartas criadas usando fragmentos.
+Pontos parciais não passam para o próximo mês. Pacotes já conquistados continuam no álbum de origem. Cartas, prêmios e fragmentos são preservados. Álbuns anteriores podem ser completados com cartas antigas encontradas nos pacotes atuais, com pacotes guardados ou com cartas criadas usando fragmentos.
 
 ## Manutenção e validação
 
@@ -25,8 +27,8 @@ Cada edição mensal pode ter um banner com os personagens à direita e uma logo
 Para substituir os ícones das cartas por renders individuais, ajustar os acabamentos e exportar GIFs, veja [CARD_IMAGES.md](CARD_IMAGES.md).
 
 - `js/collection-engine.js`: regras, catálogo dos temas e persistência em `aniverse:collection:v1:<perfil>`.
-- `js/achievements-hub.js`: interface e interação; `css/achievements-hub.css`: apresentação e animações.
+- `js/achievements-hub.js`: interface e interação; `css/achievements-club.css`: apresentação, tema claro/escuro e animações 3D.
 - `js/video-player.js`: conclusão normal ou avanço automático durante os créditos; `js/script.js`: conclusão do player nativo de TV. Todos usam a mesma deduplicação.
-- `npm run test:collections`: nove testes independentes de navegador sobre a economia, persistência, virada mensal e isolamento de perfis.
+- `npm run test:collections`: testes independentes de navegador sobre economia, persistência, virada mensal, sorteio de cartas antigas e isolamento de perfis.
 
 O relógio, o progresso e os sorteios são locais. A coleção é cosmética; para competições ou recompensas com valor externo, a validação precisaria passar por um servidor.

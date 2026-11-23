@@ -1,6 +1,6 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const { CollectionEngine, catalog } = require('../js/collection-engine.js');
+const { CollectionEngine, catalog, legacyDropRates } = require('../js/collection-engine.js');
 
 function fixture(random = () => 0) {
   const data = new Map();
@@ -64,7 +64,7 @@ test('month rollover preserves old packs, changes theme and resets monthly point
   episodes(f.engine, 4);
   assert.equal(f.engine.snapshot().id, 'pirates');
   f.nextMonth();
-  assert.equal(f.engine.snapshot().id, 'cosmos');
+  assert.equal(f.engine.snapshot().id, 'family');
   assert.equal(f.engine.snapshot().points, 0);
   assert.equal(f.engine.snapshot('2026-11').packs, 1);
   episodes(f.engine, 4);
@@ -133,7 +133,7 @@ test('theme render paths follow the visible card order from 1.png through 24.png
   pirates.cards.forEach((card, index) => {
     assert.equal(card.renderSrc, `images/cards/Piratas/${index + 1}.png`);
   });
-  assert.equal(catalog('2026-12').cards[0].renderSrc, 'images/cards/Cosmos/1.png');
+  assert.equal(catalog('2026-12').cards[0].renderSrc, 'images/cards/Familia/1.png');
   assert.equal(catalog('2027-05').cards[0].renderSrc, 'images/cards/Piratas/1.png');
 });
 
@@ -198,4 +198,104 @@ test('prelaunch test albums stay stored but are excluded from the official archi
   assert.equal(engine.unlockedAvatars().length, 0);
   assert.throws(() => engine.openPack('2026-10'), /não está disponível/);
   assert.equal(engine.read().albums['2026-10'].points, 900);
+});
+
+
+test('December family edition keeps the November catalog and other monthly themes intact', () => {
+  const november = catalog('2026-11');
+  const december = catalog('2026-12');
+  assert.equal(december.id, 'family');
+  assert.equal(december.cards.length, 24);
+  assert.equal(new Set(december.cards.map(card => card.id)).size, 24);
+  assert.ok(december.cards.every(card => card.renderSrc.startsWith('images/cards/Familia/')));
+  assert.deepEqual(december.groups.map(group => group[0]), ['Em casa', 'Irmãos', 'Laços']);
+  assert.deepEqual(catalog('2026-11'), november);
+  assert.equal(catalog('2027-12').id, 'cosmos');
+});
+
+test('opening the family season preserves saved pirate cards, rewards, points and fragments', () => {
+  const { engine, storage, nextMonth } = fixture();
+  episodes(engine, 6);
+  engine.openPack('2026-11');
+  engine.pasteCard('2026-11', '0-0');
+  const before = engine.read();
+  const stored = storage.getItem('aniverse:collection:v1:alice');
+  nextMonth();
+  assert.equal(engine.snapshot().id, 'family');
+  assert.equal(storage.getItem('aniverse:collection:v1:alice'), stored, 'viewing metadata does not rewrite the collection');
+  episodes(engine, 3, 10);
+  engine.openPack('2026-12');
+  const after = engine.read();
+  assert.deepEqual(after.albums['2026-11'], before.albums['2026-11']);
+  assert.ok(after.fragments >= before.fragments);
+  assert.equal(after.version, 1);
+  assert.ok(after.episodes.includes(before.episodes[0]));
+});
+
+
+test('legacy chances follow the monthly weights, scale above 100 and expire after month 12', () => {
+  assert.deepEqual(legacyDropRates('2026-11'), []);
+  assert.deepEqual(legacyDropRates('2026-12'), [{key:'2026-11',monthsAgo:1,chance:.40}]);
+  assert.deepEqual(legacyDropRates('2027-01').map(rate=>rate.chance), [.40,.35]);
+  assert.deepEqual(legacyDropRates('2027-02').map(rate=>rate.chance), [40/105,35/105,30/105]);
+  const weights = [40,35,30,25,20,15,10,8,6,4,2,1];
+  const rates = legacyDropRates('2027-11');
+  assert.deepEqual(rates.map(rate=>rate.chance), weights.map(weight=>weight/196));
+  assert.equal(rates.at(-1).key, '2026-11');
+  assert.equal(legacyDropRates('2027-12').at(-1).key, '2026-12');
+});
+
+test('only one slot can draw from the past and the rare guarantee remains in the current season', () => {
+  for (const [month,roll,expected] of [[2,.05,'2027-02'],[2,.40,'2027-01'],[2,.70,'2026-12'],[2,.90,'2026-11'],[0,.90,'2027-01']]) {
+    const {engine}=fixture(); engine.now=()=>new Date(2027,month,2);
+    const values=[roll,0,0,0,0,0,0];engine.random=()=>values.shift()??0;
+    episodes(engine,3);
+    const pack=engine.openPack();
+    assert.equal(pack[0].season,expected);
+    const current = engine.snapshot().key;
+    assert.equal(pack[0].legacy,expected!==current);
+    assert.ok(pack.slice(1).every(card=>card.season===current));
+    assert.notEqual(pack[2].rarity,'common');
+    assert.equal(pack.length,3);
+    assert.equal(engine.snapshot().packs,0);
+  }
+});
+
+test('duplicate detection, fragments and pasting use the card origin rather than matching IDs in another album', () => {
+  const {engine,storage,nextMonth}=fixture();nextMonth();
+  const state=engine.read(),current=engine.album(state,'2026-12');current.points=600;current.owned=['0-0','0-2'];
+  storage.setItem('aniverse:collection:v1:alice',JSON.stringify(state));
+  const pack=engine.openPack();
+  assert.equal(pack[0].season,'2026-11');assert.equal(pack[0].id,'0-0');assert.equal(pack[0].duplicate,false);
+  assert.equal(pack[1].season,'2026-12');assert.equal(pack[1].duplicate,true);
+  assert.equal(engine.snapshot().fragments,30);
+  assert.equal(engine.pasteCard(pack[0].season,pack[0].id),true);
+  assert.deepEqual(engine.snapshot('2026-11').pasted,['0-0']);
+  assert.deepEqual(engine.snapshot('2026-12').pasted,[]);
+  assert.equal(engine.snapshot('2026-11').packs,0);
+  assert.equal(engine.snapshot('2026-12').packs,1);
+  assert.equal(engine.openPack()[0].duplicate,true);
+  assert.equal(engine.snapshot().fragments,70);
+  const restored=new CollectionEngine({storage,now:()=>new Date(2026,11,2)});restored.profileId=()=> 'alice';
+  assert.ok(restored.snapshot('2026-11').owned.includes('0-0'));
+  assert.deepEqual(restored.snapshot('2026-11').pasted,['0-0']);
+  assert.equal(restored.snapshot(undefined,'bob').fragments,0);
+});
+
+test('saved packs from an expired season remain exclusively from their original album', () => {
+  const {engine,nextMonth}=fixture();episodes(engine,3);nextMonth();
+  const pack=engine.openPack('2026-11');
+  assert.ok(pack.every(card=>card.season==='2026-11'&&!card.legacy));
+  assert.equal(engine.snapshot('2026-11').packs,0);
+  assert.equal(engine.snapshot('2026-12').owned.length,0);
+});
+
+test('a failed mixed-pack save does not lose a pack or persist old cards halfway', () => {
+  const {engine,storage,nextMonth}=fixture();nextMonth();episodes(engine,3);
+  const before=storage.getItem('aniverse:collection:v1:alice');
+  storage.setItem=()=>{throw new Error('storage full');};
+  assert.throws(()=>engine.openPack(),/storage full/);
+  assert.equal(storage.getItem('aniverse:collection:v1:alice'),before);
+  assert.equal(engine.snapshot().packs,1);
+  assert.equal(engine.snapshot('2026-11').owned.length,0);
 });

@@ -49,6 +49,19 @@ test('cached images display without waiting for a slow network refresh', async (
   assert.equal(w.puts.length, 1);
 });
 
+test('activating a new worker preserves user downloads and unrelated caches', async () => {
+  const deleted = [];
+  const { context, handlers } = worker(null, async () => { throw new Error('offline'); });
+  const current = vm.runInContext('STATIC_CACHE', context);
+  context.self.clients = { claim: async () => {} };
+  context.caches.keys = async () => [current, 'aniverse-static-v1', 'aniverse-offline-v4', 'another-app'];
+  context.caches.delete = async key => deleted.push(key);
+  let activation;
+  handlers.activate({ waitUntil: task => { activation = task; } });
+  await activation;
+  assert.deepEqual(deleted, ['aniverse-static-v1']);
+});
+
 test('external images retain no-cors mode and can reuse the HTTP cache', async () => {
   const w = worker(undefined, async () => new Response('image', { headers: { 'content-type': 'image/png' } }));
   w.context.request = new Request('https://files.catbox.moe/cover.png', { mode: 'no-cors' });

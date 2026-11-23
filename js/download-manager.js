@@ -22,6 +22,7 @@
   let activeDownload = null;
   let mediaPlaybackToken = 0;
   let activeObjectUrl = null;
+  let activeMusicObjectUrl = null;
 
   function itemIdentity(item) {
     if (!item) return '';
@@ -49,11 +50,7 @@
         status: [STATUS.QUEUED, STATUS.DOWNLOADING, STATUS.PAUSED, STATUS.COMPLETED, STATUS.ERROR].includes(item?.status)
           ? item.status
           : STATUS.COMPLETED
-      })).map(item => (
-        item.status === STATUS.DOWNLOADING || item.status === STATUS.QUEUED
-          ? { ...item, status: STATUS.PAUSED }
-          : item
-      ));
+      }));
       if (JSON.stringify(raw) !== JSON.stringify(cleaned)) saveDownloads(cleaned);
       return cleaned;
     } catch (_) {
@@ -64,7 +61,7 @@
   function saveDownloads(list) {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(dedupeDownloads(list)));
-    } catch (error) { if (signal?.aborted || error?.name === 'AbortError') throw error; }
+    } catch (error) { console.warn('Não foi possível salvar a fila de downloads.', error); }
   }
 
   function upsertDownload(item) {
@@ -174,79 +171,47 @@
     await cache.delete(url);
   }
 
-  function xhrDownload(url, onProgress, signal) {
-    return new Promise((resolve, reject) => {
-      if (signal?.aborted) return reject(new DOMException('Aborted', 'AbortError'));
-      const xhr = new XMLHttpRequest();
-      xhr.open('GET', url, true);
-      xhr.responseType = 'blob';
-      if (signal) {
-        signal.addEventListener('abort', () => {
-          xhr.abort();
-          reject(new DOMException('Aborted', 'AbortError'));
-        }, { once: true });
-      }
-      xhr.onprogress = e => {
-        if (e.lengthComputable) {
-          const pct = Math.max(1, Math.min(99, Math.round((e.loaded / e.total) * 100)));
-          onProgress(pct);
-        }
-      };
-      xhr.onload = () => {
-        if (xhr.status >= 200 && xhr.status < 300) return resolve(xhr.response);
-        reject(new Error(String(xhr.status)));
-      };
-      xhr.onerror = () => reject(new Error('network'));
-      xhr.send();
-    });
-  }
-
-  async function fetchWithProgress(url, onProgress, signal) {
-    const response = await fetch(url, { mode: 'cors', credentials: 'omit', signal });
-    if (!response.ok) throw new Error(`http-${response.status}`);
-    const total = Number(response.headers.get('content-length')) || 0;
-    if (!response.body || !total) {
-      onProgress(90);
-      return await response.blob();
-    }
-
-    const reader = response.body.getReader();
-    const chunks = [];
-    let loaded = 0;
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      chunks.push(value);
-      loaded += value.length;
-      const pct = Math.max(1, Math.min(99, Math.round((loaded / total) * 100)));
-      onProgress(pct);
-    }
-    return new Blob(chunks);
-  }
-
   async function downloadToCache(url, key, signal) {
-    let lastRenderAt = 0;
-    const pushProgress = pct => {
-      progressState.set(key, pct);
-      const now = Date.now();
-      if (now - lastRenderAt >= 350) { lastRenderAt = now; renderDownloadsSection(); }
-    };
-
+    let response;
     try {
-      const blob = await xhrDownload(url, pushProgress, signal);
-      await cacheBlob(url, blob);
-      progressState.set(key, 100);
-      return;
-    } catch (_) {}
-
-    try {
-      const blob = await fetchWithProgress(url, pushProgress, signal);
-      await cacheBlob(url, blob);
-      progressState.set(key, 100);
-      return;
+      response = await fetch(url, { mode: 'cors', credentials: 'omit', cache: 'no-store', signal });
     } catch (error) {
-      if (signal?.aborted || error?.name === 'AbortError') throw error;
-      throw new Error('Não foi possível baixar este arquivo. O servidor pode bloquear downloads offline (CORS) ou estar indisponível.');
+      signal.throwIfAborted();
+      throw new Error('A fonte não permitiu o download pelo site ou está indisponível.');
+    }
+    if (response.status !== 200) throw new Error('A fonte não entregou o arquivo completo (HTTP ' + response.status + ').');
+    const type = response.headers.get('content-type') || '';
+    if (!response.body || /(?:text\/|json|mpegurl|dash\+xml)/i.test(type)) {
+      await response.body?.cancel();
+      throw new Error('A fonte não retornou um arquivo de vídeo ou áudio.');
+    }
+
+    const total = Number(response.headers.get('content-length')) || 0;
+    let bytes = 0;
+    let lastRenderAt = 0;
+    const meter = new TransformStream({
+      transform(chunk, stream) {
+        bytes += chunk.byteLength;
+        stream.enqueue(chunk);
+        const now = Date.now();
+        if (total && now - lastRenderAt >= 350) {
+          lastRenderAt = now;
+          progressState.set(key, Math.min(99, Math.floor(bytes / total * 100)));
+          renderDownloadsSection();
+        }
+      },
+      flush() {
+        if (!bytes) throw new Error('O arquivo recebido está vazio.');
+      }
+    });
+    const stream = response.body.pipeThrough(meter, { signal });
+    const cache = await caches.open(CACHE_NAME);
+    try {
+      await cache.put(url, new Response(stream, { headers: { 'Content-Type': type || 'application/octet-stream' } }));
+    } catch (error) {
+      signal.throwIfAborted();
+      if (error.name === 'QuotaExceededError') throw new Error('Espaço insuficiente para salvar este download.');
+      throw error;
     }
   }
 
@@ -365,7 +330,7 @@
         return false;
       }
       progressState.set(item.key, 100);
-      updateItemStatus(item, STATUS.COMPLETED);
+      updateItemStatus(item, STATUS.COMPLETED, { errorMessage: '' });
       return true;
     } catch (err) {
       const stillCurrent = downloadGenerations.get(id) === generation && readDownloads().some(entry => itemIdentity(entry) === id);
@@ -501,6 +466,7 @@
     const { epMap, musicUrls } = getOfflineMaps();
 
     if (!window.__aniverseOriginalData) {
+      if (!window.animeDB.animes?.length) return;
       window.__aniverseOriginalData = {
         animes: JSON.parse(JSON.stringify(window.animeDB.animes || [])),
         musicLibrary: JSON.parse(JSON.stringify(window.animeDB.musicLibrary || { themes: [], osts: {} })),
@@ -515,9 +481,7 @@
       const seasons = (anime.seasons || []).map(season => {
         const epsSet = seasonsMap.get(season.number);
         if (!epsSet) return null;
-        const episodes = (season.episodes || []).filter((_, idx) => epsSet.has(idx + 1));
-        if (!episodes.length) return null;
-        return { ...season, episodes };
+        return season;
       }).filter(Boolean);
 
       if (!seasons.length) return null;
@@ -548,36 +512,45 @@
   async function playItem(item) {
     const token = ++mediaPlaybackToken;
     if (item.type === 'music') {
-      const audio = document.getElementById('music-playing-audio');
+      let audio = document.getElementById('music-playing-audio');
       const blobUrl = await getCachedBlobUrl(item.sourceUrl);
       if (token !== mediaPlaybackToken) { if (blobUrl) URL.revokeObjectURL(blobUrl); return; }
-      if (audio) {
-        if (activeObjectUrl) URL.revokeObjectURL(activeObjectUrl);
-        activeObjectUrl = blobUrl;
-        audio.src = blobUrl || item.sourceUrl;
-        audio.play().catch(() => {});
+      if (!blobUrl) throw new Error('Arquivo offline indisponível.');
+      if (!audio) {
+        audio = document.createElement('audio');
+        audio.id = 'music-playing-audio';
+        document.body.appendChild(audio);
       }
+      if (activeMusicObjectUrl) URL.revokeObjectURL(activeMusicObjectUrl);
+      activeMusicObjectUrl = blobUrl;
+      audio.removeAttribute('crossorigin');
+      audio.src = blobUrl;
+      await audio.play();
       return;
     }
 
     const anime = window.animeDB?.getAnimeById?.(item.animeId);
-    if (!anime) return;
-    window.openEpisode?.(anime, item.season, item.episode - 1, { deferPlayback: true });
-
+    if (!anime) return false;
     const player = document.getElementById('anime-player');
     const blobUrl = await getCachedBlobUrl(item.sourceUrl);
     if (token !== mediaPlaybackToken) { if (blobUrl) URL.revokeObjectURL(blobUrl); return; }
-    if (!blobUrl && !navigator.onLine) {
+    if (!blobUrl) {
       setStatus('download-episode-status', 'Arquivo offline indisponível');
-      return;
+      renderDownloadsSection();
+      return false;
     }
-    if (player) {
+    window.openEpisode?.(anime, item.season, item.episode - 1, { deferPlayback: true });
+    const watching = window.currentWatchingAnime;
+    if (player && String(watching?.id) === String(item.animeId) && watching.season === item.season && watching.episode === item.episode) {
       if (activeObjectUrl) URL.revokeObjectURL(activeObjectUrl);
       activeObjectUrl = blobUrl;
-      player.src = blobUrl || item.sourceUrl;
+      player.src = blobUrl;
       player.load();
-      player.play().catch(() => {});
+      player.play().catch(error => { if (error.name === 'NotSupportedError') window.showVideoError?.('O navegador não conseguiu reproduzir o arquivo baixado.'); });
+      return true;
     }
+    URL.revokeObjectURL(blobUrl);
+    return false;
   }
 
   async function playDownloadedEpisodeFromContinue(item) {
@@ -589,8 +562,7 @@
       Number(d.episode) === Number(item.episode)
     ));
     if (!match || !(await isCached(match.sourceUrl))) return false;
-    await playItem(match);
-    return true;
+    return playItem(match);
   }
 
   async function requestSwMediaStats() {
@@ -649,6 +621,7 @@
       const cached = await isCached(item.sourceUrl);
       if (renderGeneration !== downloadsRenderGeneration || !grid.isConnected) return;
       const pct = Math.max(0, Math.min(100, progressState.get(item.key) ?? (cached ? 100 : 0)));
+      const canPause = item.status === STATUS.DOWNLOADING || item.status === STATUS.QUEUED;
       const card = document.createElement('div');
       card.className = 'download-card';
       card.innerHTML = `
@@ -660,7 +633,7 @@
           <small class="download-state"></small>
         </div>
         <div class="download-actions">
-          <button class="btn btn-secondary dl-toggle" aria-label="${item.status === STATUS.PAUSED || item.status === STATUS.ERROR || !cached ? 'Retomar download' : 'Pausar download'}">${item.status === STATUS.PAUSED || item.status === STATUS.ERROR || !cached ? '▶' : '⏸'}</button>
+          <button class="btn btn-secondary dl-toggle" aria-label="${canPause ? 'Pausar download' : 'Retomar download'}">${canPause ? '⏸' : '▶'}</button>
           <button class="btn btn-primary dl-play" aria-label="Reproduzir download">▶</button>
           <button class="btn btn-secondary dl-remove" aria-label="Remover download">✕</button>
         </div>
@@ -674,17 +647,60 @@
       pill.className = `download-status-pill dl-pill ${item.status === STATUS.COMPLETED || cached ? 'done' : ''} status-${item.status || STATUS.QUEUED}`;
       pill.textContent = statusLabel(cached ? STATUS.COMPLETED : item.status || STATUS.QUEUED);
       card.querySelector('.download-subtitle').textContent = item.type === 'music' ? (item.label || 'Música') : `T${item.season} • E${item.episode}`;
-      card.querySelector('.download-state').textContent = cached ? 'Arquivo offline disponível' : statusLabel(item.status || STATUS.QUEUED);
+      card.querySelector('.download-state').textContent = cached ? 'Arquivo offline disponível' : item.errorMessage || (item.status === STATUS.COMPLETED ? 'Arquivo ausente. Baixe novamente.' : statusLabel(item.status || STATUS.QUEUED));
 
       const toggleBtn = card.querySelector('.dl-toggle');
       const playBtn = card.querySelector('.dl-play');
       playBtn.disabled = !cached;
       toggleBtn.disabled = cached && item.status === STATUS.COMPLETED;
       toggleBtn.addEventListener('click', () => {
-        if (item.status === STATUS.PAUSED || item.status === STATUS.ERROR || !cached) resumeDownload(item);
-        else pauseDownload(item);
+        if (canPause) pauseDownload(item);
+        else resumeDownload(item);
       });
-      playBtn.addEventListener('click', () => playItem(item));
+      playBtn.addEventListener('click', () => playItem(item).catch(error => {
+        card.querySelector('.download-state').textContent = error.message;
+      }));
+      if (!cached && [STATUS.ERROR, STATUS.COMPLETED].includes(item.status)) {
+        const source = document.createElement('a');
+        source.className = 'btn btn-secondary';
+        source.href = item.sourceUrl;
+        source.target = '_blank';
+        source.rel = 'noopener noreferrer';
+        source.textContent = 'Abrir fonte';
+        const picker = document.createElement('input');
+        picker.type = 'file';
+        picker.accept = item.type === 'music' ? 'audio/*' : 'video/*,.mp4,.webm,.m4v,.mov';
+        picker.hidden = true;
+        const importButton = document.createElement('button');
+        importButton.type = 'button';
+        importButton.className = 'btn btn-secondary';
+        importButton.textContent = 'Usar arquivo';
+        importButton.addEventListener('click', () => picker.click());
+        picker.addEventListener('change', async () => {
+          const file = picker.files[0];
+          if (!file) return;
+          if (file.type && !/^(audio\/|video\/|application\/octet-stream$)/i.test(file.type)) {
+            card.querySelector('.download-state').textContent = 'Escolha um arquivo de vídeo ou áudio.';
+            return;
+          }
+          importButton.disabled = true;
+          toggleBtn.disabled = true;
+          try {
+            await cacheBlob(item.sourceUrl, file);
+            if (!readDownloads().some(entry => itemIdentity(entry) === itemIdentity(item))) {
+              await removeCachedUrl(item.sourceUrl);
+              return;
+            }
+            updateItemStatus(item, STATUS.COMPLETED, { errorMessage: '' });
+            renderDownloadsSection();
+          } catch (error) {
+            card.querySelector('.download-state').textContent = error.message;
+            importButton.disabled = false;
+            toggleBtn.disabled = false;
+          }
+        });
+        card.querySelector('.download-actions').append(source, importButton, picker);
+      }
       card.querySelector('.dl-remove').addEventListener('click', async () => {
         const id = itemIdentity(item);
         downloadGenerations.set(id, (downloadGenerations.get(id) || 0) + 1);
@@ -821,6 +837,11 @@
       if (!navigator.onLine) refreshOfflineViews();
     });
 
+    for (const item of readDownloads()) {
+      if (item.status === STATUS.QUEUED || item.status === STATUS.DOWNLOADING) {
+        resumeDownload(item);
+      }
+    }
     applyOfflineModeFilters();
     renderDownloadsSection();
     processQueue();

@@ -234,7 +234,6 @@
     const timeDisplay = safe('time-display');
     const volumeBtn = safe('volume-btn');
     const volumeContainer = document.querySelector('.volume-container');
-    const volumeProgress = safe('volume-progress');
     
     // Play/Pause button
     if (playPauseBtn) {
@@ -425,26 +424,9 @@
     if (volumeBtn) {
       volumeBtn.addEventListener('click', () => {
         player.muted = !player.muted;
-        updateVolumeIcon();
-        if (volumeProgress) {
-          volumeProgress.style.width = player.muted ? '0%' : (player.volume * 100) + '%';
-        }
         // Save video mute preference
         localStorage.setItem('videoMuted', player.muted.toString());
       });
-    }
-    
-    function updateVolumeIcon() {
-      if (!volumeBtn) return;
-      const icon = volumeBtn.querySelector('i');
-      if (!icon) return;
-      if (player.muted || player.volume === 0) {
-        icon.className = 'fas fa-volume-mute';
-      } else if (player.volume < 0.5) {
-        icon.className = 'fas fa-volume-down';
-      } else {
-        icon.className = 'fas fa-volume-up';
-      }
     }
     
     // Volume slider
@@ -458,10 +440,6 @@
         const percent = (clientX - rect.left) / rect.width;
         player.volume = Math.max(0, Math.min(1, percent));
         player.muted = false;
-        if (volumeProgress) {
-          volumeProgress.style.width = (player.volume * 100) + '%';
-        }
-        updateVolumeIcon();
         localStorage.setItem('videoVolume', player.volume.toString());
       };
 
@@ -539,9 +517,6 @@
       // Validate volume is within range [0, 1]
       if (!isNaN(volume) && volume >= 0 && volume <= 1) {
         player.volume = volume;
-        if (volumeProgress) {
-          volumeProgress.style.width = (player.volume * 100) + '%';
-        }
       }
     }
     
@@ -551,8 +526,8 @@
       player.muted = savedVideoMuted === 'true';
     }
     
-    // Update volume icon once after restoration
-    updateVolumeIcon();
+    player.addEventListener('volumechange', updateVideoVolumeIcon);
+    updateVideoVolumeIcon();
     
     // Controls visibility state for click-to-pause
     let controlsVisible = true;
@@ -1306,17 +1281,14 @@ function handleVideoHotkeys(e) {
         case 'arrowup':
             player.volume = Math.min(1, player.volume + 0.1);
             player.muted = false;
-            updateVideoVolumeIcon();
             localStorage.setItem('videoVolume', player.volume.toString());
             break;
         case 'arrowdown':
             player.volume = Math.max(0, player.volume - 0.1);
-            updateVideoVolumeIcon();
             localStorage.setItem('videoVolume', player.volume.toString());
             break;
         case 'm':
             player.muted = !player.muted;
-            updateVideoVolumeIcon();
             localStorage.setItem('videoMuted', player.muted.toString());
             break;
         case 'f':
@@ -1349,16 +1321,9 @@ function updateVideoVolumeIcon() {
     const volumeBtn = document.getElementById('volume-btn');
     if (!player || !volumeBtn) return;
     
-    const icon = volumeBtn.querySelector('i');
-    if (icon) {
-        if (player.muted || player.volume === 0) {
-            icon.className = 'fas fa-volume-mute';
-        } else if (player.volume < 0.5) {
-            icon.className = 'fas fa-volume-down';
-        } else {
-            icon.className = 'fas fa-volume-up';
-        }
-    }
+    const level = player.muted || player.volume === 0 ? 'muted' : player.volume < 0.5 ? 'low' : 'high';
+    volumeBtn.querySelector('use')?.setAttribute('href', `#control-volume-${level}`);
+    volumeBtn.setAttribute('aria-pressed', String(player.muted));
     
     // Update volume progress bar
     const volumeProgress = document.getElementById('volume-progress');

@@ -1,5 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
-  <rect width="120" height="120" rx="16" fill="#1a1a2e"/>
-  <rect x="18" y="24" width="84" height="50" rx="8" fill="#e63946"/>
-  <rect x="30" y="86" width="60" height="10" rx="5" fill="#f1faee"/>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><title>Maratonista</title><defs><linearGradient id="ink" x2=".8" y2="1"><stop stop-color="#ff9aaa"/><stop offset="1" stop-color="#ed334b"/></linearGradient></defs><rect x="1" y="1" width="62" height="62" rx="16" fill="#ed334b" fill-opacity=".07"/><g fill="none" stroke="url(#ink)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13h29a4 4 0 0 1 4 4v23M14 19h29a4 4 0 0 1 4 4v23" opacity=".45"/><rect x="9" y="25" width="32" height="24" rx="5"/><path d="m21 32 9 5-9 5Z" fill="url(#ink)" stroke="none"/><path d="M16 55h18"/></g></svg>

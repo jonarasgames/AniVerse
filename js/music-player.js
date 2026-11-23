@@ -43,28 +43,8 @@
     };
   }
 
-  async function probeMusicUrl(url){
-    const diagnostics = diagnoseMusicUrl(url);
-    if (!diagnostics.ok) return diagnostics;
-    if (diagnostics.url.startsWith('blob:') || diagnostics.url.startsWith('data:')) return diagnostics;
-    try {
-      const response = await fetch(diagnostics.url, {
-        method: 'HEAD',
-        mode: diagnostics.isCrossOrigin ? 'cors' : 'same-origin',
-        cache: 'no-store',
-        credentials: 'omit'
-      });
-      if (response.status === 404) return { ...diagnostics, ok:false, reason:'http_404', userMessage:'Arquivo de áudio não encontrado (HTTP 404).' };
-      if (!response.ok) return { ...diagnostics, ok:false, reason:'http_error', userMessage:`Servidor retornou erro HTTP ${response.status} ao verificar o áudio.` };
-      return diagnostics;
-    } catch(_) {
-      return { ...diagnostics, reason:'head_blocked' };
-    }
-  }
-
   function getPlaybackMessage(error, diagnostics){
     if (error?.name === 'NotAllowedError') return 'Reprodução bloqueada pelo navegador. Toque no player para iniciar.';
-    if (diagnostics?.reason === 'http_404') return 'Arquivo de áudio não encontrado (HTTP 404).';
     if (!diagnostics?.ok) return diagnostics?.userMessage || 'URL da música inválida.';
     if (diagnostics?.likelyHtmlPage || (!diagnostics?.isLikelyDirectAudio && error?.name === 'NotSupportedError')) {
       return 'Esse link não parece ser um arquivo de áudio direto (.mp3, .m4a, etc).';
@@ -92,7 +72,7 @@
   async function playMusicUrl(url){
     if (!url) return;
     const audio = getMusicAudio();
-    const diagnostics = await probeMusicUrl(url);
+    const diagnostics = diagnoseMusicUrl(url);
     if (!diagnostics.ok) {
       showMusicError(diagnostics.userMessage || 'URL da música inválida.');
       return;
@@ -102,8 +82,7 @@
     }
 
     try { audio.pause(); } catch(e){}
-    audio.src = url;
-    audio.load();
+    audio.src = diagnostics.url;
 
     musicLoadTimeout && clearTimeout(musicLoadTimeout);
     musicLoadTimeout = setTimeout(()=> {

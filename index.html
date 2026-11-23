@@ -54,18 +54,17 @@
             } catch (_) {}
         })();
     </script>
-    <link rel="stylesheet" href="css/style.css?v=20261028-fullscreen-rating1">
+    <link rel="stylesheet" href="css/style.css?v=music-cover1">
     <link rel="stylesheet" href="css/profile-enhancements.css?v=20261027-player-bounds4">
-    <link rel="stylesheet" href="css/profile-modal-modern.css?v=20261027-frame-refresh3">
+    <link rel="stylesheet" href="css/profile-modal-modern.css?v=media-perf5">
     <link rel="stylesheet" href="css/hero-bg-marquee.css?v=20261122-marquee4">
     <link rel="stylesheet" href="css/dark-mode.css?v=20261027-rewards1" id="dark-mode-style">
     <link rel="stylesheet" href="css/tv-mode.css?v=20260326-2">
-    <link rel="stylesheet" href="css/achievements-hub.css?v=20261027-banner1">
-    <link rel="stylesheet" href="css/card-studio.css?v=20261027-2">
-    <link rel="stylesheet" href="css/achievements-club.css?v=20261122-club2-remake">
+    <link rel="stylesheet" href="css/card-studio.css?v=media-perf4">
+    <link rel="stylesheet" href="css/achievements-club.css?v=20261122-preview-logo2">
     <link rel="stylesheet" href="css/watch-party.css?v=20261028-wait1">
     <link rel="stylesheet" href="css/episode-layout.css?v=20261028-player-status1">
-    <link rel="stylesheet" href="css/episode-picker.css?v=20261028-party-sync4">
+    <link rel="stylesheet" href="css/episode-picker.css?v=volume-center1">
     <link rel="stylesheet" href="css/mobile-player.css?v=20261028-mobile6">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="icon" href="images/logo.png?v=66d69c6689ec" type="image/png">
@@ -77,8 +76,8 @@
             var params = new URLSearchParams(window.location.search || '');
             var animeSlug = params.get('anime');
             if (!animeSlug) return;
-            fetch('anime-data.json').then(function (res) { return res.json(); }).then(function (raw) {
-                var list = Array.isArray(raw) ? raw : (raw && raw.animes) || [];
+            window.addEventListener('animeDataLoaded', function () {
+                var list = window.animeDB?.animes || [];
                 var found = list.find(function (a) {
                     var slug = String(a.slug || a.id || '').toLowerCase();
                     return slug === String(animeSlug).toLowerCase();
@@ -97,11 +96,54 @@
                 if (i) i.setAttribute('content', image);
                 if (u) u.setAttribute('content', window.location.href);
                 document.title = title + ' · AniVerse';
-            }).catch(function () {});
+            });
         })();
     </script>
 </head>
 <body>
+    <svg width="0" height="0" class="control-icon-defs" aria-hidden="true" focusable="false">
+        <symbol id="control-close" viewBox="0 0 24 24">
+            <path d="m6 6 12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </symbol>
+        <symbol id="control-reset" viewBox="0 0 24 24">
+            <path d="M4 10a8 8 0 1 1 1 7M4 5v5h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </symbol>
+        <symbol id="control-fullscreen" viewBox="0 0 24 24">
+            <path d="M9 4H4v5m11-5h5v5M4 15v5h5m11-5v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </symbol>
+        <symbol id="control-volume-high" viewBox="0 0 24 24">
+            <path d="M4 9h3l5-4v14l-5-4H4z" fill="currentColor"/>
+            <path d="M15 8q4 4 0 8m2-11q6 7 0 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </symbol>
+        <symbol id="control-volume-low" viewBox="0 0 24 24">
+            <path d="M5 9h3l5-4v14l-5-4H5z" fill="currentColor"/>
+            <path d="M17 8q4 4 0 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </symbol>
+        <symbol id="control-volume-muted" viewBox="0 0 24 24">
+            <path d="M4 9h3l5-4v14l-5-4H4z" fill="currentColor"/>
+            <path d="m16 10 4 4m0-4-4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </symbol>
+        <symbol id="control-chevron-down" viewBox="0 0 24 24">
+            <path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </symbol>
+        <symbol id="control-play" viewBox="0 0 24 24">
+            <path d="M7.5 5.5a1 1 0 0 1 1.5-.8l10 6.5a1 1 0 0 1 0 1.6l-10 6.5a1 1 0 0 1-1.5-.8Z" fill="currentColor"/>
+        </symbol>
+        <symbol id="control-pause" viewBox="0 0 24 24">
+            <rect x="6" y="5" width="4" height="14" rx="1" fill="currentColor"/>
+            <rect x="14" y="5" width="4" height="14" rx="1" fill="currentColor"/>
+        </symbol>
+        <symbol id="control-next-track" viewBox="0 0 24 24">
+            <path d="M6 6.5a1 1 0 0 1 1.6-.8l8 5.5a1 1 0 0 1 0 1.6l-8 5.5a1 1 0 0 1-1.6-.8Z" fill="currentColor"/>
+            <path d="M18 6v12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </symbol>
+        <symbol id="control-prev-track" viewBox="0 0 24 24">
+            <use href="#control-next-track" transform="translate(24) scale(-1 1)"/>
+        </symbol>
+        <symbol id="control-download" viewBox="0 0 24 24">
+            <path d="M12 4v10m-4-4 4 4 4-4M5 16v3a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </symbol>
+    </svg>
 
     <div id="maintenance-overlay" aria-hidden="true">
         <div class="maintenance-content">
@@ -282,65 +324,76 @@
     </button>
 
     <div id="achievements-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="hub-title" tabindex="-1">
-        <div class="modal-content achievements-modal-content collector-hub">
-            <header class="club-hero">
-                <div class="club-hero-top">
-                    <a class="hub-brand" href="#" id="hub-home"><span class="hub-brand-icon">✦</span><span>ANIVERSE <small>CLUBE DE CONQUISTAS</small></span></a>
-                    <div class="hub-topbar-actions">
-                        <label class="achievements-sound-toggle"><input type="checkbox" id="achievements-sound-toggle" checked><span>Som</span></label>
-                        <button type="button" class="hub-icon-button" id="close-achievements-modal" aria-label="Fechar conquistas">✕</button>
-                    </div>
-                </div>
-                <div class="club-hero-main">
-                    <div class="club-hero-copy">
-                        <span class="club-hero-kicker">🏆 CENTRAL DO JOGADOR</span>
-                        <h2 id="hub-title">Suas conquistas, sua história</h2>
-                        <p>Cada episódio assistido vira progresso, pacote e figurinha para a sua coleção.</p>
-                    </div>
-                    <div id="hub-collector-badge" class="hub-collector-badge"></div>
+        <div class="modal-content ac-shell">
+            <header class="ac-topbar">
+                <a class="ac-brand" href="#" id="hub-home"><h2 id="hub-title">Clube de Conquistas</h2></a>
+                <div class="ac-topbar-actions">
+                    <label class="ac-sound"><input type="checkbox" id="achievements-sound-toggle" checked><span class="ac-sound-track" aria-hidden="true"><span class="ac-sound-thumb"></span></span><span>Som</span></label>
+                    <button type="button" class="ac-icon-button" id="close-achievements-modal" aria-label="Fechar conquistas"><svg width="16" height="16" aria-hidden="true" focusable="false"><use href="#control-close"/></svg></button>
                 </div>
             </header>
-            <nav class="hub-tabs" role="tablist" aria-label="Clube de conquistas">
-                <button id="hub-tab-achievements" type="button" role="tab" aria-selected="true" aria-controls="hub-panel-achievements" data-hub-tab="achievements">✦ Conquistas</button>
-                <button id="hub-tab-album" type="button" role="tab" aria-selected="false" aria-controls="hub-panel-album" tabindex="-1" data-hub-tab="album">🖼 Galeria de figurinhas <span id="hub-pack-count" class="hub-count" hidden>0</span></button>
-                <button id="hub-tab-rewards" type="button" role="tab" aria-selected="false" aria-controls="hub-panel-rewards" tabindex="-1" data-hub-tab="rewards">🏅 Prêmios</button>
+            <nav class="ac-tabs" role="tablist" aria-label="Clube de conquistas" data-active="achievements">
+                <button id="hub-tab-achievements" type="button" role="tab" aria-selected="true" aria-controls="hub-panel-achievements" data-hub-tab="achievements">Conquistas</button>
+                <button id="hub-tab-album" type="button" role="tab" aria-selected="false" aria-controls="hub-panel-album" tabindex="-1" data-hub-tab="album">Galeria <span id="hub-pack-count" class="hub-count" hidden>0</span></button>
+                <button id="hub-tab-rewards" type="button" role="tab" aria-selected="false" aria-controls="hub-panel-rewards" tabindex="-1" data-hub-tab="rewards">Prêmios</button>
             </nav>
-            <div id="hub-notice" class="hub-notice" role="status" aria-live="polite" hidden></div>
+            <div id="hub-notice" class="ac-notice" role="status" aria-live="polite" hidden></div>
             <div id="achievements-unlock-feed" class="achievements-unlock-feed" role="status"></div>
             <section id="hub-panel-achievements" role="tabpanel" aria-labelledby="hub-tab-achievements">
-                <div id="achievements-stats" class="hub-stats"></div>
-                <div id="hub-next-goal"></div>
-                <div class="hub-section-heading"><div><span class="hub-eyebrow">UM OBJETIVO DE CADA VEZ</span><h3>Quadro de conquistas</h3></div><button type="button" id="achievements-mark-seen" class="hub-text-button">Marcar vistas ✓</button></div>
-                <div class="achievements-filter" id="achievements-filter"><button type="button" data-filter="all" class="is-active">Todas</button><button type="button" data-filter="locked">Em progresso</button><button type="button" data-filter="unlocked">Desbloqueadas</button></div>
-                <div id="achievements-list" class="achievements-list" aria-live="polite"></div>
+                <div id="achievements-stats" class="ac-stats"></div>
+                <div class="ac-section-head">
+                    <div class="ac-filter achievements-filter" id="achievements-filter"><button type="button" data-filter="all" class="is-active" aria-pressed="true">Todas</button><button type="button" data-filter="locked" aria-pressed="false">Em progresso</button><button type="button" data-filter="unlocked" aria-pressed="false">Desbloqueadas</button></div>
+                    <button type="button" id="achievements-mark-seen" class="ac-text-button">Marcar vistas ✓</button>
+                </div>
+                <div id="achievements-list" class="ac-achievements" aria-live="polite"></div>
                 <div id="hub-season-preview"></div>
             </section>
             <section id="hub-panel-album" role="tabpanel" aria-labelledby="hub-tab-album" hidden><div id="hub-album"></div></section>
             <section id="hub-panel-rewards" role="tabpanel" aria-labelledby="hub-tab-rewards" hidden><div id="hub-rewards"></div></section>
-            <footer class="hub-footer"><span>FEITO DE HISTÓRIAS. GUARDADO POR VOCÊ.</span><span>Progresso salvo neste navegador, por perfil.</span></footer>
             <audio id="achievements-audio" preload="none"></audio>
         </div>
     </div>
-    <dialog id="hub-pack-dialog" class="hub-pack-dialog" aria-labelledby="hub-pack-title">
-        <button type="button" id="hub-pack-close" class="hub-icon-button" aria-label="Fechar pacote">✕</button>
-        <span class="hub-eyebrow">🎁 ABERTURA DE PACOTE</span>
-        <h2 id="hub-pack-title">Um pacote novinho para você!</h2>
-        <p>Toque no pacote para explodir a abertura — depois vire cada carta para revelar.</p>
-        <div class="pack-stage" id="hub-pack-stage">
-            <div class="pack-stage-glow" aria-hidden="true"></div>
-            <button type="button" id="hub-pack-open" class="pack-sealed" aria-label="Abrir o pacote">
-                <span class="pack-sealed-shine" aria-hidden="true"></span>
-                <span class="pack-sealed-top">ANIVERSE</span>
-                <span class="pack-sealed-icon">✦</span>
-                <span class="pack-sealed-name">PACOTE DE<br>FIGURINHAS</span>
-                <span class="pack-sealed-bottom">3 CARTAS · TOQUE PARA ABRIR</span>
-            </button>
-            <div id="hub-pack-cards" class="hub-pack-cards is-sealed"></div>
-            <div class="pack-stage-floor" aria-hidden="true"></div>
+
+    <dialog id="hub-pack-dialog" class="ac-pack-dialog" aria-labelledby="hub-pack-title">
+        <button type="button" id="hub-pack-close" class="hub-icon-button ac-pack-close" aria-label="Fechar pacote"><svg width="16" height="16" aria-hidden="true" focusable="false"><use href="#control-close"/></svg></button>
+        <div class="ac-pack-head">
+            <h2 id="hub-pack-title">Seu pacote</h2>
+            <p id="hub-pack-subtitle">Toque no pacote para abrir.</p>
         </div>
-        <div class="hub-pack-actions"><button type="button" id="hub-reveal-all" class="hub-button secondary" disabled>Revelar todas</button><button type="button" id="hub-paste-pack" class="hub-button" disabled>Colar novas cartas →</button></div>
+        <div class="ac-stage" id="hub-pack-stage">
+            <div class="ac-stage-glow" aria-hidden="true"></div>
+            <div class="ac-stage-ring" aria-hidden="true"></div>
+            <div class="ac-stage-floor" aria-hidden="true"></div>
+            <button type="button" id="hub-pack-open" class="ac-sealed" aria-label="Abrir o pacote">
+                <span class="ac-sealed-shine" aria-hidden="true"></span>
+                <span class="ac-sealed-tear" aria-hidden="true"></span>
+                <span class="ac-sealed-brand">ANIVERSE</span>
+                <span class="ac-sealed-emblem" aria-hidden="true">✦</span>
+                <span class="ac-sealed-title">FIGURINHAS</span>
+                <span class="ac-sealed-hint">3 CARTAS</span>
+            </button>
+            <div id="hub-pack-cards" class="ac-cards is-sealed"></div>
+            <div class="ac-boom" aria-hidden="true"></div>
+        </div>
+        <div class="ac-pack-actions"><button type="button" id="hub-reveal-all" class="hub-button secondary" disabled>Revelar todas</button><button type="button" id="hub-paste-pack" class="hub-button" disabled>Colar novas cartas</button></div>
         <p id="hub-pack-status" role="status" aria-live="polite">Seu pacote está selado…</p>
     </dialog>
+
+    <div id="hub-card-viewer" class="ac-viewer" role="dialog" aria-modal="true" aria-label="Visualizador de carta" hidden aria-hidden="true">
+        <div class="ac-viewer-backdrop" aria-hidden="true"></div>
+        <div class="ac-viewer-toolbar">
+            <div class="ac-viewer-info"><span id="hub-viewer-rarity">Carta</span><strong id="hub-viewer-name">Sua figurinha</strong></div>
+            <div class="ac-viewer-actions">
+                <button type="button" id="hub-viewer-reset" class="hub-icon-button" aria-label="Centralizar carta" title="Centralizar"><svg width="16" height="16" aria-hidden="true" focusable="false"><use href="#control-reset"/></svg></button>
+                <button type="button" id="hub-viewer-fullscreen" class="hub-icon-button" aria-label="Tela cheia" title="Tela cheia"><svg width="16" height="16" aria-hidden="true" focusable="false"><use href="#control-fullscreen"/></svg></button>
+                <button type="button" id="hub-viewer-close" class="hub-icon-button" aria-label="Fechar visualizador"><svg width="16" height="16" aria-hidden="true" focusable="false"><use href="#control-close"/></svg></button>
+            </div>
+        </div>
+        <div class="ac-viewer-stage" id="hub-viewer-stage">
+            <div class="ac-viewer-card" id="hub-viewer-card"></div>
+        </div>
+        <p class="ac-viewer-hint">Arraste para girar · role ou use dois dedos para dar zoom</p>
+    </div>
 
     <div id="achievements-silent-toast" class="achievements-silent-toast" role="status" aria-live="polite">
         <span id="achievements-silent-toast-text">Novas conquistas disponíveis.</span>
@@ -349,7 +402,7 @@
 
     <div id="news-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="news-heading">
         <div class="modal-content news-modal-content">
-            <button type="button" class="close-modal" id="close-news-modal" aria-label="Fechar novidades">&times;</button>
+            <button type="button" class="close-modal" id="close-news-modal" aria-label="Fechar novidades"><svg width="18" height="18" aria-hidden="true" focusable="false"><use href="#control-close"/></svg></button>
             <div class="news-modal-header">
                 <div>
                     <h2 id="news-heading">Novidades</h2>
@@ -445,7 +498,7 @@
         <div class="modal-content">
             <div class="episode-media">
             <div class="video-banner">
-                <button type="button" class="close-modal video-modal-close" id="close-video" aria-label="Fechar episódio"><i class="fas fa-xmark" aria-hidden="true"></i></button>
+                <button type="button" class="close-modal video-modal-close" id="close-video" aria-label="Fechar episódio"><svg width="18" height="18" aria-hidden="true" focusable="false"><use href="#control-close"/></svg></button>
             </div>
             <div id="video-player-container">
                 <!-- Anime info overlay (top) -->
@@ -453,18 +506,18 @@
                     <span id="overlay-anime-title">Anime</span>
                     <span id="overlay-episode-info">Episódio 1</span>
                 </div>
-                
+
                 <!-- Banner above video -->
-                
+
                 <!-- Video element (hidden native controls) -->
-                <video id="anime-player" playsinline="" webkit-playsinline="true" preload="auto" style="width: 100%; display: block;">
+                <video id="anime-player" playsinline="" webkit-playsinline="true" preload="none" style="width: 100%; display: block;">
                     Seu navegador não suporta vídeos.
                 </video>
                 <video id="age-rating-overlay"
                        class="age-rating-overlay top-left"
                        src=""
                        muted
-                       preload="auto"
+                       preload="none"
                        playsinline
                        webkit-playsinline
                        style="display:none; pointer-events:none;"
@@ -474,18 +527,18 @@
                     <div class="video-loading-orb"></div>
                     <div class="video-loading-text">Preparando seu episódio…</div>
                 </div>
-                
+
                 <!-- Double-tap seek zones (mobile) -->
                 <div id="video-tap-zones">
                     <div id="tap-zone-left" class="video-tap-zone"></div>
                     <div id="tap-zone-center" class="video-tap-zone"></div>
                     <div id="tap-zone-right" class="video-tap-zone"></div>
                 </div>
-                
+
                 <!-- Seek feedback -->
                 <div id="seek-feedback-left" class="seek-feedback"><i class="fas fa-backward"></i> 5s</div>
                 <div id="seek-feedback-right" class="seek-feedback"><i class="fas fa-forward"></i> 5s</div>
-                
+
                 <!-- Custom controls overlay -->
                 <div id="custom-video-controls">
                     <div class="controls-row controls-row-primary">
@@ -498,8 +551,8 @@
                         <span id="time-display">0:00 / 0:00</span>
                     </div>
                     <div class="controls-row controls-row-secondary">
-                        <button id="volume-btn" class="btn-icon" title="Volume">
-                            <i class="fas fa-volume-up"></i>
+                        <button id="volume-btn" class="btn-icon" title="Volume" aria-label="Sem som" aria-pressed="false">
+                            <svg width="22" height="22" aria-hidden="true" focusable="false"><use href="#control-volume-high"/></svg>
                         </button>
                         <div class="volume-container">
                             <div id="volume-progress"></div>
@@ -578,10 +631,10 @@
 
     <div id="profile-modal" class="modal">
         <div class="modal-content profile-modal-modern">
-            <button type="button" class="close-modal-btn" id="close-profile-modal" aria-label="Fechar edição do perfil">×</button>
-            
+            <button type="button" class="close-modal-btn" id="close-profile-modal" aria-label="Fechar edição do perfil"><svg width="18" height="18" aria-hidden="true" focusable="false"><use href="#control-close"/></svg></button>
+
             <h2 class="profile-modal-title">Personalizar Perfil</h2>
-            
+
             <div class="profile-editor-layout">
                 <!-- Coluna da Esquerda: Preview -->
                 <div class="profile-preview-column">
@@ -595,7 +648,7 @@
                     </div>
                     <p class="preview-hint">Visualização em tempo real</p>
                 </div>
-                
+
                 <!-- Coluna da Direita: Opções -->
                 <div class="profile-options-column">
                     <!-- Nome -->
@@ -603,7 +656,7 @@
                         <label>Nome do Perfil</label>
                         <input type="text" id="profile-name" class="input-modern" placeholder="Digite seu nome" maxlength="20">
                     </div>
-                    
+
                     <!-- Pronome -->
                     <div class="form-group-modern">
                         <label>Pronome</label>
@@ -617,7 +670,7 @@
                         </div>
                         <input type="hidden" id="selected-pronoun" value="-san">
                     </div>
-                    
+
                     <!-- Senha (opcional) -->
                     <div class="form-group-modern">
                         <label>Senha (opcional) 🔒</label>
@@ -633,7 +686,7 @@
                         <button type="button" class="tab-btn" data-tab="frames">Molduras</button>
                         <button type="button" class="tab-btn" data-tab="preferences">Preferências</button>
                     </div>
-                    
+
                     <!-- Tab Content: Cores -->
                     <div class="tab-content active" id="tab-colors">
                         <label class="tab-label">Fundo Sólido</label>
@@ -650,7 +703,7 @@
                             <div class="color-option" data-type="solid" style="background: #a8e6cf;" data-value="#a8e6cf"></div>
                         </div>
                     </div>
-                    
+
                     <!-- Tab Content: Fundos -->
                     <div class="tab-content" id="tab-backgrounds">
                         <label class="tab-label">Imagem de Fundo</label>
@@ -658,14 +711,14 @@
                             <!-- Imagens injetadas via JS -->
                         </div>
                     </div>
-                    
+
                     <!-- Tab Content: Personagens -->
                     <div class="tab-content" id="tab-characters">
                         <div class="character-grid" id="character-grid">
                             <!-- Personagens serão injetados via JS -->
                         </div>
                     </div>
-                    
+
                     <!-- Tab Content: Molduras -->
                     <div class="tab-content" id="tab-frames">
                         <div class="frame-grid">
@@ -720,7 +773,7 @@
                             </label>
                         </div>
                     </div>
-                    
+
                     <!-- Botão Salvar -->
                     <button type="button" class="btn-save-profile" id="save-profile-btn">
                         <i class="fas fa-check"></i> Salvar Perfil
@@ -731,24 +784,28 @@
     </div>
 
     <!-- Terms Modal -->
-    <div id="terms-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal close-terms">&times;</span>
-            <h2>Termos de Serviço</h2>
-            <div class="terms-content">
+    <dialog id="terms-modal" class="site-policy-dialog" aria-labelledby="terms-heading">
+        <div class="site-policy-panel">
+            <div class="site-policy-heading">
+                <h2 id="terms-heading">Termos de Serviço</h2>
+                <form method="dialog">
+                    <button type="submit" class="site-policy-close" aria-label="Fechar termos de serviço" autofocus><svg width="19" height="19" aria-hidden="true" focusable="false"><use href="#control-close"/></svg></button>
+                </form>
+            </div>
+            <div class="site-policy-copy" tabindex="0">
                 <h3>1. Aceitação dos Termos</h3>
                 <p>Ao acessar e usar o AniVerse, você concorda em estar vinculado a estes Termos de Serviço e a todas as leis e regulamentos aplicáveis.</p>
-                
+
                 <h3>2. Uso do Serviço</h3>
                 <p>O AniVerse é uma plataforma de streaming de anime fornecida "como está". Você concorda em usar o serviço apenas para fins legais e de acordo com estes termos.</p>
 
                 <h3>2.1 Modelo de Segurança Local (Admin e Perfis)</h3>
                 <p>Os recursos administrativos (como editor de animes e edição inline) usam autenticação local no próprio navegador. O acesso administrativo depende de token de sessão informado manualmente em tempo de execução e mantido somente em memória da aba atual.</p>
                 <p>As senhas de perfil são protegidas localmente por hash SHA-256 com salt por perfil. O AniVerse não envia esse segredo para servidores próprios.</p>
-                
+
                 <h3>3. Propriedade Intelectual</h3>
                 <p>Todo o conteúdo disponível no AniVerse, incluindo mas não limitado a textos, gráficos, logos, ícones, imagens, clipes de áudio e vídeo, está sendo usado para o site, mas não hospedado aqui.</p>
-                
+
                 <h3>4. Conduta do Usuário</h3>
                 <p>Você concorda em não usar o serviço para:</p>
                 <ul>
@@ -756,27 +813,31 @@
                     <li>Transmitir material prejudicial, ameaçador, abusivo ou difamatório</li>
                     <li>Interferir ou interromper o serviço ou servidores</li>
                 </ul>
-                
+
                 <h3>5. Modificações dos Termos</h3>
                 <p>Reservamo-nos o direito de modificar estes termos a qualquer momento. Continuando a usar o serviço após tais modificações, você concorda com os termos revisados.</p>
-                
+
                 <h3>6. Limitação de Responsabilidade</h3>
                 <p>O AniVerse não será responsável por quaisquer danos diretos, indiretos, incidentais, consequenciais ou punitivos resultantes do uso ou incapacidade de usar o serviço.</p>
                 <p>Como o modelo de segurança é local (front-end), ele não substitui controles de servidor. Usuários com acesso ao dispositivo/navegador podem manipular dados locais, limpar armazenamento ou contornar proteções de interface.</p>
             </div>
         </div>
-    </div>
+    </dialog>
 
     <!-- Privacy Policy Modal -->
-    <div id="privacy-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal close-privacy">&times;</span>
-            <h2>Política de Privacidade</h2>
-            <div class="privacy-content">
+    <dialog id="privacy-modal" class="site-policy-dialog" aria-labelledby="privacy-heading">
+        <div class="site-policy-panel">
+            <div class="site-policy-heading">
+                <h2 id="privacy-heading">Política de Privacidade</h2>
+                <form method="dialog">
+                    <button type="submit" class="site-policy-close" aria-label="Fechar política de privacidade" autofocus><svg width="19" height="19" aria-hidden="true" focusable="false"><use href="#control-close"/></svg></button>
+                </form>
+            </div>
+            <div class="site-policy-copy" tabindex="0">
                 <h3>1. Informações que Coletamos</h3>
                 <p>O AniVerse coleta informações limitadas para melhorar sua experiência. Todas as informações são armazenadas localmente no seu navegador usando localStorage.</p>
                 <p>Para perfis com senha, armazenamos somente hash com salt por perfil (não a senha em texto puro). Para autenticação admin local, o token de sessão fica somente em memória enquanto a aba está aberta.</p>
-                
+
                 <h3>2. Como Usamos Suas Informações</h3>
                 <p>As informações coletadas são usadas para:</p>
                 <ul>
@@ -784,14 +845,14 @@
                     <li>Lembrar suas preferências e progresso de visualização</li>
                     <li>Manter suas configurações de perfil</li>
                 </ul>
-                
+
                 <h3>3. Armazenamento de Dados</h3>
                 <p>Todos os seus dados são armazenados localmente no seu dispositivo usando a tecnologia localStorage do navegador. Não enviamos ou compartilhamos suas informações com terceiros.</p>
                 <p>Observação: dados em memória (como token de sessão admin) não são persistidos em localStorage/cookies e podem ser perdidos ao recarregar/fechar a aba.</p>
-                
+
                 <h3>4. Cookies e Tecnologias Similares</h3>
                 <p>Utilizamos localStorage para armazenar suas preferências e progresso. Você pode limpar esses dados a qualquer momento através das configurações do seu navegador.</p>
-                
+
                 <h3>5. Seus Direitos</h3>
                 <p>Você tem o direito de:</p>
                 <ul>
@@ -799,76 +860,80 @@
                     <li>Excluir seus dados a qualquer momento</li>
                     <li>Optar por não usar certas funcionalidades</li>
                 </ul>
-                
+
                 <h3>6. Segurança</h3>
                 <p>Como todos os dados são armazenados localmente no seu dispositivo, a segurança depende das configurações de segurança do seu navegador e dispositivo.</p>
                 <p>Limitações importantes: sem backend dedicado de autenticação, não há garantia forte contra usuários locais avançados, extensões maliciosas do navegador, scripts injetados por ambiente comprometido ou acesso físico ao dispositivo.</p>
-                
+
                 <h3>7. Alterações na Política</h3>
                 <p>Podemos atualizar esta política de privacidade periodicamente. Recomendamos revisar esta página regularmente para estar ciente de quaisquer alterações.</p>
-                
+
                 <h3>8. Contato</h3>
                 <p>Se você tiver dúvidas sobre esta política de privacidade, entre em contato através do formulário de sugestões.</p>
             </div>
         </div>
-    </div>
+    </dialog>
 
-    <footer>
-        <div class="container">
-            <p> 2026 AniVerse - Seu Universo de Animes</p>
-            <div class="footer-links">
-                <a href="#" class="footer-link terms-link">Termos de Serviço</a>
-                <a href="#" class="footer-link privacy-link">Política de Privacidade</a>
-                <a href="#" class="footer-link news-link">Novidades</a>
-                <a href="mobile-preview.html" class="footer-link">📱 Ver como no celular</a>
+    <footer class="site-footer">
+        <div class="container site-footer-inner">
+            <div class="site-footer-brand">
+                <img src="images/logo.png?v=66d69c6689ec" alt="" width="42" height="42" loading="lazy" decoding="async">
+                <div>
+                    <strong>AniVerse</strong>
+                    <p>© 2026 AniVerse</p>
+                </div>
             </div>
+            <nav class="site-footer-links" aria-label="Informações do AniVerse">
+                <button type="button" class="site-footer-link" data-policy-dialog="terms-modal" aria-haspopup="dialog" aria-controls="terms-modal">Termos de Serviço</button>
+                <button type="button" class="site-footer-link" data-policy-dialog="privacy-modal" aria-haspopup="dialog" aria-controls="privacy-modal">Política de Privacidade</button>
+                <button type="button" class="site-footer-link news-link" aria-haspopup="dialog" aria-controls="news-modal">Novidades</button>
+            </nav>
         </div>
     </footer>
 
     <!-- Theme must load first, without defer -->
     <script src="js/theme.js?v=20261027-ui1"></script>
-    
+
     <!-- Image retry system - loads early to catch all images -->
     <script src="js/image-retry.js?v=20260326-2"></script>
-    
+
     <!-- Core scripts with defer -->
-    <script src="js/anime-db.js?v=20261028-resume-close1" defer></script>
-    <script src="js/anime-renderer.js?v=20261028-continue-layout1" defer></script>
-    <script src="js/anime-render-fallback.js?v=20260326-2" defer></script>
-    <script src="js/hero-bg-marquee.js?v=20261122-marquee4" defer></script>
+    <script src="js/anime-db.js?v=media-perf4" defer></script>
+    <script src="js/anime-renderer.js?v=media-offline2" defer></script>
+    <script src="js/anime-render-fallback.js?v=media-perf5" defer></script>
+    <script src="js/hero-bg-marquee.js?v=media-perf4" defer></script>
     <script src="js/header-sticky.js?v=20261122-header1" defer></script>
     <script src="js/profile-modal-bindings.js?v=20260326-2" defer></script>
-    <script src="js/music.js?v=20261027-mobile-links1" defer></script>
-    <script src="js/music-player.js?v=20261027-rewards1" defer></script>
+    <script src="js/music.js?v=music-bass1" defer></script>
+    <script src="js/music-player.js?v=media-perf4" defer></script>
     <script src="js/achievements.js?v=20260326-3" defer></script>
-    <script src="js/collection-engine.js?v=20261027-banner1" defer></script>
+    <script src="js/collection-engine.js?v=legacy-rates2" defer></script>
     <script src="js/card-gif.js?v=20261027-1" defer></script>
-    <script src="js/card-studio.js?v=20261027-launch1" defer></script>
-    <script src="js/achievements-hub.js?v=20261122-packmusic2" defer></script>
-    <script src="js/video-player.js?v=20261028-resume-close1" defer></script>
+    <script src="js/card-studio.js?v=media-perf4" defer></script>
+    <script src="js/achievements-hub.js?v=media-perf4" defer></script>
+    <script src="js/video-player.js?v=volume-center1" defer></script>
     <script src="js/vendor/socket.io.min.js" defer></script>
     <script src="js/watch-party-config.js?v=20261028-collection-online1" defer></script>
     <script src="js/watch-party-connection.js?v=20261028-warmup1" defer></script>
     <script src="js/watch-party.js?v=20261028-room-playback1" defer></script>
-    <script src="js/episode-picker.js?v=20261028-preview-png7" defer></script>
-    <script src="js/player-fixes.js?v=20261028-room-playback1" defer></script>
-    <script src="js/download-manager.js?v=20261027-episode-remake1" defer></script>
-    <script src="js/script.js?v=20261028-room-playback1" defer></script>
+    <script src="js/episode-picker.js?v=media-perf5" defer></script>
+    <script src="js/player-fixes.js?v=media-perf4" defer></script>
+    <script src="js/download-manager.js?v=media-offline2" defer></script>
+    <script src="js/script.js?v=site-footer1" defer></script>
     <script src="js/info-section.js?v=20260326-2" defer></script>
     <script src="js/fixes.js?v=20261027-ui1" defer></script>
     <script src="js/profile-enhancements.js?v=20261027-header2" defer></script>
     <script src="js/profile-multi.js?v=20261028-continue-layout1" defer></script>
     <script src="js/profile-modal-new.js?v=20261027-frame-refresh1" defer></script>
-    <script src="js/music-player-new.js?v=20260326-2" defer></script>
     <script src="js/inplace-admin.js?v=20260326-2" defer></script>
     <script src="js/tv-mode.js?v=20261028-mobile6" defer></script>
-    
+
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', async () => {
           try {
             const appBase = new URL('./', window.location.href);
-            const workerUrl = new URL('sw.js?v=20261028-continue-layout1', appBase);
+            const workerUrl = new URL('sw.js?v=music-cover1', appBase);
             const registration = await navigator.serviceWorker.register(workerUrl.href, { scope: appBase.pathname, updateViaCache: 'none' });
             const tryUpdate = () => registration.update().catch(() => {});
 
@@ -911,6 +976,5 @@
         });
       }
     </script>
-    <script id="ani-diagnostic-init">/* ANI-diagnostic-init-check */(function(){try{console.log("AniVerse init check running"); fetch(window.location.pathname.replace(/\/[^\/]*$/, "") + "/anime-data.json", {cache: "no-store"}).then(function(r){console.log("fetch anime-data.json ->", r.status, r.statusText); if(r.ok){ try{ window.dispatchEvent(new Event("animeDataLoaded")); console.log("Dispatched animeDataLoaded for diagnostic"); } catch(e){console.warn("dispatch error", e);} } }).catch(function(err){console.warn("fetch anime-data.json failed:", err); });}catch(e){console.error("ANI-diagnostic error:", e);}})();</script>
 </body>
 </html>

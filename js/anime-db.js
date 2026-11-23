@@ -18,7 +18,7 @@ class AnimeDatabase {
         this.profile = JSON.parse(localStorage.getItem('userProfile')) || null;
         this.customVideos = JSON.parse(localStorage.getItem('customVideos')) || {};
         
-        this.loadData().then(() => {
+        this.ready = this.loadData().then(() => {
             console.log("Dados dos animes carregados com sucesso!");
             window.dispatchEvent(new Event('animeDataLoaded'));
         });

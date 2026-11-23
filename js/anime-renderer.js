@@ -175,7 +175,7 @@
 
     card.innerHTML = `
       <div class="anime-thumbnail">
-        <img src="${escapeHtml(thumbnail)}" alt="${title}" loading="lazy" decoding="async">
+        <img src="${escapeHtml(thumbnail)}" alt="${title}" loading="${options.priority ? 'eager' : 'lazy'}" fetchpriority="${options.priority ? 'high' : 'auto'}" decoding="async">
         <div class="continue-progress-track">
           <div class="continue-progress-bar" style="width: ${Math.min(100, Math.max(0, progress))}%;"></div>
         </div>
@@ -387,8 +387,8 @@
       return;
     }
     
-    continueWatching.forEach(anime => {
-      const card = createContinueWatchingCard(anime);
+    continueWatching.forEach((anime, index) => {
+      const card = createContinueWatchingCard(anime, { priority: gridId === 'continue-watching-grid' && index < 3 });
       if (card) grid.appendChild(card);
     });
     

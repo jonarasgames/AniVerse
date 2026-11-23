@@ -19,16 +19,6 @@
         }
     }
 
-    function inferAudioMimeType(url) {
-        const raw = String(url || '').split('?')[0].toLowerCase();
-        if (raw.endsWith('.mp3')) return 'audio/mpeg';
-        if (raw.endsWith('.m4a')) return 'audio/mp4';
-        if (raw.endsWith('.aac')) return 'audio/aac';
-        if (raw.endsWith('.ogg')) return 'audio/ogg';
-        if (raw.endsWith('.wav')) return 'audio/wav';
-        return '';
-    }
-
     function addMediaCacheBust(url) {
         try {
             const parsed = new URL(url, window.location.href);
@@ -38,11 +28,6 @@
             const sep = String(url || '').includes('?') ? '&' : '?';
             return `${url}${sep}_tv_retry=${Date.now()}`;
         }
-    }
-
-    async function resolveTvAudioSource(url) {
-        if (!isTvMusicEnvironment() || !url) return url;
-        return url;
     }
 
     function getMusicUrlDiagnostics(url) {
@@ -99,52 +84,10 @@
         };
     }
 
-    async function probeMusicUrl(url) {
-        const diagnostics = getMusicUrlDiagnostics(url);
-        if (!diagnostics.ok) return diagnostics;
-
-        if (!diagnostics.url || diagnostics.url.startsWith('blob:') || diagnostics.url.startsWith('data:')) {
-            return { ...diagnostics, reason: 'ok' };
-        }
-
-        try {
-            const response = await fetch(diagnostics.url, {
-                method: 'HEAD',
-                mode: diagnostics.isCrossOrigin ? 'cors' : 'same-origin',
-                cache: 'no-store',
-                credentials: 'omit'
-            });
-            if (response.status === 404) {
-                return {
-                    ...diagnostics,
-                    ok: false,
-                    reason: 'http_404',
-                    userMessage: 'Arquivo de áudio não encontrado (HTTP 404).'
-                };
-            }
-            if (!response.ok) {
-                return {
-                    ...diagnostics,
-                    ok: false,
-                    reason: 'http_error',
-                    status: response.status,
-                    userMessage: `Servidor retornou erro HTTP ${response.status} ao verificar o áudio.`
-                };
-            }
-            return { ...diagnostics, reason: 'ok' };
-        } catch (_) {
-            // Muitos hosts bloqueiam HEAD/CORS. Não impedir playback nesses casos.
-            return { ...diagnostics, reason: 'head_blocked' };
-        }
-    }
-
     function messageForPlaybackFailure(error, diagnostics) {
         const errorName = error?.name || '';
         if (errorName === 'NotAllowedError') {
             return 'Reprodução bloqueada pelo navegador. Toque no player para iniciar a música.';
-        }
-        if (diagnostics?.reason === 'http_404') {
-            return 'Arquivo de áudio não encontrado (HTTP 404).';
         }
         if (diagnostics?.reason === 'invalid_url' || diagnostics?.reason === 'unsupported_protocol') {
             return diagnostics.userMessage || 'URL da música inválida.';
@@ -211,19 +154,14 @@
         if (!audio || !url) return;
         const preserveTime = Number.isFinite(options.preserveTime) ? options.preserveTime : 0;
         const nextUrl = options.cacheBust ? addMediaCacheBust(url) : url;
+        const analyseCors = options.analyseCors ?? (audio.crossOrigin === 'anonymous');
 
         audio.pause();
-        audio.removeAttribute('crossorigin');
         audio.removeAttribute('src');
         while (audio.firstChild) audio.removeChild(audio.firstChild);
-
-        const source = document.createElement('source');
-        source.src = nextUrl;
-        const sourceType = inferAudioMimeType(nextUrl);
-        if (sourceType) source.type = sourceType;
-        audio.appendChild(source);
+        if (analyseCors) audio.crossOrigin = 'anonymous';
+        else audio.removeAttribute('crossorigin');
         audio.src = nextUrl;
-        audio.load();
 
         if (preserveTime > 0) {
             audio.addEventListener('loadedmetadata', () => {
@@ -308,7 +246,6 @@
         }
         
         audio.preload = isTvMusicEnvironment() ? 'auto' : 'metadata';
-        audio.removeAttribute('crossorigin');
         audio.setAttribute('preload', audio.preload);
 
         musicPlayerInstance = audio;
@@ -371,6 +308,14 @@
             </div>
         `;
         document.body.appendChild(miniPlayer);
+        function setMiniPlayerHeight() {
+            const height = miniPlayer.offsetHeight;
+            if (height) document.body.style.setProperty('--mini-player-height', `${height}px`);
+        }
+        setMiniPlayerHeight();
+        if (typeof ResizeObserver === 'function') {
+            new ResizeObserver(setMiniPlayerHeight).observe(miniPlayer);
+        }
         
         const audio = getMusicAudio();
         
@@ -664,13 +609,12 @@
         const fsTitle = document.getElementById('music-fs-title');
         const fsArtist = document.getElementById('music-fs-artist');
         const fsBg = document.getElementById('music-fs-bg');
-        if (fsThumb) {
-            fsThumb.onerror = () => { fsThumb.src = 'images/bg-default.png'; };
+        if (fsThumb && fsThumb.getAttribute('src') !== thumb) {
             fsThumb.src = thumb;
+            fsBg.src = thumb;
         }
         if (fsTitle) fsTitle.textContent = title;
         if (fsArtist) fsArtist.textContent = artist;
-        if (fsBg) fsBg.style.backgroundImage = `url('${thumb}')`;
 
         updateTrackNavigationButtons();
         updateMediaSessionMetadata();
@@ -702,7 +646,165 @@
     }
     
     let fullscreenPreviousOverflow = '';
-    let fullscreenSeekGesture = null;
+    let previewingFullscreenSeek = false;
+    let syncFullscreenMotion;
+    let musicMotionCatalog;
+
+    function musicControlIcon(name, size = 22) {
+        return `<svg width="${size}" height="${size}" aria-hidden="true" focusable="false"><use href="#control-${name}"/></svg>`;
+    }
+
+    function setupFullscreenMotion(modal, audio) {
+        const artwork = modal.querySelector('.music-fs-artwork');
+        let catalog;
+        let curve;
+        let curveUrl;
+        let analysis;
+        let frame = 0;
+        let lastUpdate = 0;
+        let pulse = 0;
+        let pointerFrame = 0;
+        let pointerEvent;
+
+        function refreshCurve() {
+            const url = audio.currentSrc;
+            if (curveUrl === url) return;
+            curveUrl = url;
+            const source = url.includes('_tv_retry=') ? (currentMusicData?.resolvedSrc || url) : url;
+            const encoded = catalog?.tracks?.[source];
+            curve = encoded ? Uint8Array.from(atob(encoded), character => character.charCodeAt(0)) : null;
+        }
+
+        function disconnectAnalysis() {
+            if (!analysis) return;
+            analysis.stream.getTracks().forEach(track => track.stop());
+            analysis.source.disconnect();
+            analysis.context.close().catch(() => {});
+            analysis = null;
+        }
+
+        function connectAnalysis() {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            const capture = audio.captureStream || audio.mozCaptureStream;
+            if (!AudioContext || !capture || !audio.currentSrc) return;
+            const url = new URL(audio.currentSrc);
+            if (url.origin !== location.origin && url.protocol !== 'data:' && audio.crossOrigin == null) return;
+
+            let stream;
+            let context;
+            try {
+                // Analyse a copy so there is no change to the audio element's output or network request.
+                stream = capture.call(audio);
+                const [track] = stream.getAudioTracks();
+                if (!track) return;
+                context = new AudioContext();
+                const source = context.createMediaStreamSource(stream);
+                const analyser = context.createAnalyser();
+                analyser.fftSize = 1024;
+                analyser.smoothingTimeConstant = .55;
+                source.connect(analyser);
+                context.resume().catch(() => {});
+                const bassBins = Math.min(analyser.frequencyBinCount, Math.max(2, Math.round(180 * analyser.fftSize / context.sampleRate)));
+                analysis = { context, source, analyser, stream, track, bassBins, samples: new Uint8Array(analyser.frequencyBinCount), url: audio.currentSrc };
+            } catch (_) {
+                stream?.getTracks().forEach(track => track.stop());
+                context?.close().catch(() => {});
+            }
+        }
+
+        function measurePulse() {
+            if (analysis?.context.state === 'running' && !analysis.track.muted && analysis.track.readyState === 'live') {
+                const { analyser, samples, bassBins } = analysis;
+                analyser.getByteFrequencyData(samples);
+                let bass = 0;
+                for (let i = 1; i < bassBins; i++) bass += samples[i];
+                return bass / ((bassBins - 1) * 255);
+            }
+            if (curve) {
+                const position = audio.currentTime * catalog.samplesPerSecond;
+                const index = Math.floor(position);
+                const current = curve[index] || 0;
+                const next = curve[index + 1] || 0;
+                return (current + (next - current) * (position - index)) / 255;
+            }
+            return 0;
+        }
+
+        function resetPointer() {
+            cancelAnimationFrame(pointerFrame);
+            pointerFrame = 0;
+            artwork.style.removeProperty('--music-cover-x');
+            artwork.style.removeProperty('--music-cover-y');
+            artwork.classList.remove('is-pointed');
+        }
+
+        artwork.addEventListener('mousemove', event => {
+            pointerEvent = event;
+            if (pointerFrame) return;
+            pointerFrame = requestAnimationFrame(() => {
+                pointerFrame = 0;
+                const { clientX, clientY } = pointerEvent;
+                const rect = artwork.getBoundingClientRect();
+                const x = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+                const y = Math.max(0, Math.min(1, (clientY - rect.top) / rect.height));
+                artwork.classList.add('is-pointed');
+                artwork.style.setProperty('--music-cover-x', `${(.5 - y) * 28}deg`);
+                artwork.style.setProperty('--music-cover-y', `${(x - .5) * 28}deg`);
+                artwork.style.setProperty('--music-shine-x', `${x * 100}%`);
+                artwork.style.setProperty('--music-shine-y', `${y * 100}%`);
+            });
+        }, { passive: true });
+        artwork.addEventListener('mouseleave', resetPointer);
+
+        const shouldAnimate = () => modal.classList.contains('visible') && !document.hidden && !audio.paused && !audio.ended;
+
+        function animate(now) {
+            frame = 0;
+            if (!shouldAnimate() || curveUrl !== audio.currentSrc) {
+                sync();
+                return;
+            }
+            if (now - lastUpdate >= 32) {
+                lastUpdate = now;
+                const strength = measurePulse();
+                pulse += (strength - pulse) * (strength > pulse ? .72 : .45);
+                modal.style.setProperty('--music-pulse', pulse.toFixed(3));
+            }
+            frame = requestAnimationFrame(animate);
+        }
+
+        function sync() {
+            if (!modal.classList.contains('visible') || document.hidden) resetPointer();
+            refreshCurve();
+            if (analysis && analysis.url !== audio.currentSrc) disconnectAnalysis();
+            if (shouldAnimate() && !analysis && audio.readyState >= 2) connectAnalysis();
+            if (!shouldAnimate() || (!curve && !analysis)) {
+                cancelAnimationFrame(frame);
+                frame = 0;
+                pulse = 0;
+                modal.style.removeProperty('--music-pulse');
+                disconnectAnalysis();
+                return;
+            }
+            if (!frame) frame = requestAnimationFrame(animate);
+        }
+
+        ['playing', 'pause', 'ended', 'emptied'].forEach(type => audio.addEventListener(type, sync));
+        document.addEventListener('visibilitychange', sync);
+        if (!musicMotionCatalog) {
+            musicMotionCatalog = fetch('music-motion.json?v=1').then(response => {
+                if (!response.ok) throw new Error('Análise musical indisponível');
+                return response.json();
+            }).catch(() => null);
+        }
+        musicMotionCatalog.then(data => {
+            catalog = data;
+            curveUrl = undefined;
+            sync();
+        });
+        return sync;
+    }
+
     function openMusicFullscreen() {
         if (!currentMusicData) return;
         
@@ -716,17 +818,50 @@
             fullscreenModal.id = 'music-fullscreen-modal';
             fullscreenModal.className = 'music-fullscreen-modal';
             fullscreenModal.innerHTML = `
-                <div class="music-fullscreen-bg" id="music-fs-bg"></div>
-                <button class="music-fs-close" id="music-fs-close-btn" aria-label="Fechar player"><i class="fas fa-chevron-down"></i></button>
-                <main class="music-fullscreen-content">
-                    <div class="music-fs-artwork"><img src="" alt="Capa do álbum" id="music-fs-thumb" decoding="async"></div>
-                    <section class="music-fs-details"><p class="music-fs-eyebrow">TOCANDO AGORA</p><h2 id="music-fs-title">Título</h2><p id="music-fs-artist">Artista</p>
-                        <div class="music-fs-progress-container" id="music-fs-progress-container"><div class="music-fs-progress-bar" role="slider" tabindex="0" aria-label="Posição da música" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="music-fs-progress-fill" id="music-fs-progress-fill"></div></div><div class="music-fs-time"><span id="music-fs-current">0:00</span><span id="music-fs-duration">0:00</span></div></div>
-                        <div class="music-fs-controls"><button class="music-fs-control-btn" id="music-fs-download" aria-label="Baixar música"><i class="fas fa-download"></i></button><button class="music-fs-control-btn" id="music-fs-prev" aria-label="Faixa anterior"><i class="fas fa-backward-step"></i></button><button class="music-fs-control-btn primary" id="music-fs-play-pause" aria-label="Reproduzir ou pausar"><i class="fas fa-pause"></i></button><button class="music-fs-control-btn" id="music-fs-next" aria-label="Próxima faixa"><i class="fas fa-forward-step"></i></button></div>
+                <div class="music-fullscreen-bg" aria-hidden="true"><img id="music-fs-bg" alt="" decoding="async"></div>
+                <button type="button" class="music-fs-close" id="music-fs-close-btn" aria-label="Minimizar player" title="Minimizar player">${musicControlIcon('chevron-down')}</button>
+                <div class="music-fullscreen-content">
+                    <div class="music-fs-artwork">
+                        <div class="music-fs-sleeve"><img alt="Capa do álbum" id="music-fs-thumb" decoding="async"></div>
+                    </div>
+                    <section class="music-fs-details">
+                        <h2 id="music-fs-title"></h2>
+                        <p id="music-fs-artist"></p>
+                        <div id="music-fs-progress-container">
+                            <div class="music-fs-progress-bar">
+                                <div class="music-fs-progress-fill" id="music-fs-progress-fill"></div>
+                                <input id="music-fs-seek" type="range" min="0" max="100" step="0.1" value="0" aria-label="Posição da música">
+                            </div>
+                            <div class="music-fs-time"><span id="music-fs-current">0:00</span><span id="music-fs-duration">0:00</span></div>
+                        </div>
+                        <div class="music-fs-controls">
+                            <div class="music-fs-transport">
+                                <button type="button" class="music-fs-control-btn" id="music-fs-prev" aria-label="Faixa anterior" title="Faixa anterior">${musicControlIcon('prev-track')}</button>
+                                <button type="button" class="music-fs-control-btn primary" id="music-fs-play-pause" aria-label="Reproduzir">${musicControlIcon('play', 28)}</button>
+                                <button type="button" class="music-fs-control-btn" id="music-fs-next" aria-label="Próxima faixa" title="Próxima faixa">${musicControlIcon('next-track')}</button>
+                            </div>
+                            <button type="button" class="music-fs-control-btn" id="music-fs-download" aria-label="Baixar música" title="Baixar música">${musicControlIcon('download', 19)}</button>
+                        </div>
                     </section>
-                </main>`;
+                </div>`;
             document.body.appendChild(fullscreenModal);
+            fullscreenModal.setAttribute('role', 'dialog');
+            fullscreenModal.setAttribute('aria-labelledby', 'music-fs-title');
             fullscreenModal.setAttribute('aria-hidden', 'true');
+            fullscreenModal.inert = true;
+            syncFullscreenMotion = setupFullscreenMotion(fullscreenModal, audio);
+
+            const artwork = fullscreenModal.querySelector('#music-fs-thumb');
+            artwork.addEventListener('error', () => {
+                if (artwork.getAttribute('src') === 'images/bg-default.png') return;
+                artwork.src = 'images/bg-default.png';
+                fullscreenModal.querySelector('#music-fs-bg').src = 'images/bg-default.png';
+            });
+            artwork.addEventListener('load', () => {
+                if (fullscreenModal.classList.contains('visible')) {
+                    artwork.animate?.([{ opacity: .35 }, { opacity: 1 }], { duration: 280, easing: 'ease-out' });
+                }
+            });
             
             // Event listeners
             document.getElementById('music-fs-close-btn').addEventListener('click', closeMusicFullscreen);
@@ -748,38 +883,23 @@
                 }
             });
             
-            const fsProgressContainer = document.getElementById('music-fs-progress-container');
-            const seekBar = fsProgressContainer.querySelector('[role="slider"]');
-            const previewSeek = event => {
-                if (!fullscreenSeekGesture || event.pointerId !== fullscreenSeekGesture.pointerId) return;
-                const rect = seekBar.getBoundingClientRect();
-                if (!rect.width) return;
-                const percent = Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width));
-                fullscreenSeekGesture.time = percent * audio.duration;
-                document.getElementById('music-fs-progress-fill').style.width = `${percent * 100}%`;
-                document.getElementById('music-fs-current').textContent = formatTime(fullscreenSeekGesture.time);
-                seekBar.setAttribute('aria-valuenow', String(Math.round(percent * 100)));
-            };
-            seekBar.addEventListener('pointerdown', event => {
-                if (event.button !== 0 || !Number.isFinite(audio.duration) || audio.duration <= 0) return;
-                event.preventDefault();
-                fullscreenSeekGesture = { pointerId: event.pointerId, time: audio.currentTime };
-                seekBar.setPointerCapture(event.pointerId);
-                previewSeek(event);
+            const seekBar = document.getElementById('music-fs-seek');
+            seekBar.addEventListener('input', () => {
+                if (seekBar.disabled) return;
+                previewingFullscreenSeek = true;
+                const percent = seekBar.valueAsNumber;
+                renderFullscreenProgress(percent, percent * audio.duration / 100, audio.duration);
             });
-            seekBar.addEventListener('pointermove', previewSeek);
-            seekBar.addEventListener('pointerup', event => {
-                if (fullscreenSeekGesture?.pointerId !== event.pointerId) return;
-                previewSeek(event);
-                audio.currentTime = fullscreenSeekGesture.time;
-                fullscreenSeekGesture = null;
-                seekBar.releasePointerCapture(event.pointerId);
+            seekBar.addEventListener('change', () => {
+                if (!seekBar.disabled) audio.currentTime = seekBar.valueAsNumber * audio.duration / 100;
+                previewingFullscreenSeek = false;
                 updateFullscreenProgress();
             });
-            const cancelSeek = () => { fullscreenSeekGesture = null; updateFullscreenProgress(); };
-            seekBar.addEventListener('pointercancel', cancelSeek);
-            seekBar.addEventListener('lostpointercapture', cancelSeek);
-            fsProgressContainer.querySelector('[role="slider"]').addEventListener('keydown', event => {
+            seekBar.addEventListener('pointercancel', () => {
+                previewingFullscreenSeek = false;
+                updateFullscreenProgress();
+            });
+            seekBar.addEventListener('keydown', event => {
                 if (!Number.isFinite(audio.duration) || audio.duration <= 0) return;
                 if (!['ArrowLeft','ArrowRight','Home','End'].includes(event.key)) return;
                 event.preventDefault();
@@ -787,7 +907,7 @@
             });
             
             if (audio) {
-                audio.addEventListener('timeupdate', updateFullscreenProgress);
+                ['timeupdate', 'durationchange', 'seeked', 'emptied'].forEach(event => audio.addEventListener(event, updateFullscreenProgress));
                 audio.addEventListener('play', updateFullscreenPlayPauseIcon);
                 audio.addEventListener('pause', updateFullscreenPlayPauseIcon);
             }
@@ -802,54 +922,57 @@
         if (!fullscreenModal.classList.contains('visible')) fullscreenPreviousOverflow = document.body.style.overflow;
         fullscreenModal.classList.add('visible');
         fullscreenModal.setAttribute('aria-modal', 'true');
-        fullscreenModal.setAttribute('role', 'dialog');
         fullscreenModal.setAttribute('aria-hidden', 'false');
+        fullscreenModal.inert = false;
         document.body.style.overflow = 'hidden';
+        syncFullscreenMotion();
+        updateFullscreenProgress();
         document.getElementById('music-fs-close-btn')?.focus();
     }
     
-    function closeMusicFullscreen() {
-        fullscreenSeekGesture = null;
+    function closeMusicFullscreen(restoreFocus = true) {
         const fullscreenModal = document.getElementById('music-fullscreen-modal');
-        if (fullscreenModal) {
-            fullscreenModal.classList.remove('visible');
-            fullscreenModal.removeAttribute('aria-modal');
-            fullscreenModal.setAttribute('aria-hidden', 'true');
-            document.body.style.overflow = fullscreenPreviousOverflow;
+        if (!fullscreenModal?.classList.contains('visible')) return;
+        previewingFullscreenSeek = false;
+        fullscreenModal.classList.remove('visible');
+        syncFullscreenMotion();
+        fullscreenModal.removeAttribute('aria-modal');
+        fullscreenModal.inert = true;
+        fullscreenModal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = fullscreenPreviousOverflow;
+        if (restoreFocus) {
             document.getElementById('mini-music-fullscreen')?.focus({ preventScroll: true });
         }
     }
     
     function updateFullscreenProgress() {
-        if (fullscreenSeekGesture) return;
+        if (previewingFullscreenSeek || !document.getElementById('music-fullscreen-modal')?.classList.contains('visible')) return;
         const audio = getMusicAudio();
-        if (!audio) return;
-        
-        const fill = document.getElementById('music-fs-progress-fill');
-        const currentEl = document.getElementById('music-fs-current');
-        const durationEl = document.getElementById('music-fs-duration');
-        
-        if (fill && audio.duration) {
-            const percent = (audio.currentTime / audio.duration) * 100;
-            fill.style.width = percent + '%';
-            document.querySelector('#music-fs-progress-container [role="slider"]')?.setAttribute('aria-valuenow', String(Math.round(percent)));
-        }
-        
-        if (currentEl) {
-            currentEl.textContent = formatTime(audio.currentTime);
-        }
-        
-        if (durationEl) {
-            durationEl.textContent = formatTime(audio.duration);
-        }
+        const seekBar = document.getElementById('music-fs-seek');
+        const hasDuration = Number.isFinite(audio.duration) && audio.duration > 0;
+        const percent = hasDuration ? (audio.currentTime / audio.duration) * 100 : 0;
+        seekBar.disabled = !hasDuration;
+        seekBar.value = percent;
+        renderFullscreenProgress(percent, audio.currentTime, audio.duration);
+    }
+
+    function renderFullscreenProgress(percent, time, duration) {
+        const timestamp = formatTime(time);
+        document.getElementById('music-fs-progress-fill').style.width = `${percent}%`;
+        document.getElementById('music-fs-bg').style.setProperty('--music-backdrop-offset', `${-.65 * percent}dvh`);
+        document.getElementById('music-fs-current').textContent = timestamp;
+        document.getElementById('music-fs-duration').textContent = formatTime(duration);
+        document.getElementById('music-fs-seek').setAttribute('aria-valuetext', timestamp);
     }
     
     function updateFullscreenPlayPauseIcon() {
-        const audio = getMusicAudio();
-        const icon = document.querySelector('#music-fs-play-pause i');
-        if (icon) {
-            icon.className = audio && !audio.paused ? 'fas fa-pause' : 'fas fa-play';
-        }
+        const button = document.getElementById('music-fs-play-pause');
+        if (!button) return;
+        const playing = !getMusicAudio().paused;
+        const label = playing ? 'Pausar' : 'Reproduzir';
+        button.querySelector('use').setAttribute('href', playing ? '#control-pause' : '#control-play');
+        button.setAttribute('aria-label', label);
+        button.title = label;
     }
     
     // Play next track in the music list
@@ -930,13 +1053,7 @@
             currentPlayingCard = null;
         }
 
-        const fullscreenModal = document.getElementById('music-fullscreen-modal');
-        if (fullscreenModal) {
-            fullscreenModal.classList.remove('visible');
-            fullscreenModal.removeAttribute('aria-modal');
-            fullscreenModal.setAttribute('aria-hidden', 'true');
-            document.body.style.overflow = fullscreenPreviousOverflow;
-        }
+        closeMusicFullscreen(false);
     }
     
     async function playMusic(src, title, artist, thumb, card) {
@@ -973,7 +1090,7 @@
         refreshMusicPlayerUI();
         miniPlayer.classList.remove('hidden');
 
-        const diagnostics = await probeMusicUrl(src);
+        const diagnostics = getMusicUrlDiagnostics(src);
         if (!currentMusicData || currentMusicData.src !== src) return;
         if (!diagnostics.ok) {
             showMusicError(diagnostics.userMessage || 'URL da música inválida.');
@@ -983,10 +1100,12 @@
             showMusicError('Aviso: link pode não ser áudio direto. Tentando reproduzir...');
         }
 
-        const resolvedSrc = await resolveTvAudioSource(src);
+        const resolvedSrc = diagnostics.url;
         if (!currentMusicData || currentMusicData.src !== src) return;
         currentMusicData.resolvedSrc = resolvedSrc;
-        setAudioSource(audio, resolvedSrc);
+        const analyseCors = new URL(resolvedSrc).hostname === 'files.catbox.moe' &&
+            Boolean((window.AudioContext || window.webkitAudioContext) && (audio.captureStream || audio.mozCaptureStream));
+        setAudioSource(audio, resolvedSrc, { analyseCors });
         
         // Timeout for loading
         const loadTimeout = setTimeout(() => {
@@ -1002,9 +1121,15 @@
         };
 
         const onPlaybackError = () => {
-            clearLoadTimeout();
             if (!currentMusicData || currentMusicData.src !== src || !audio.getAttribute('src')) return;
             const mediaError = audio.error;
+            if (audio.crossOrigin && [MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED, MediaError.MEDIA_ERR_NETWORK].includes(mediaError?.code)) {
+                setAudioSource(audio, resolvedSrc, { analyseCors: false, preserveTime: audio.currentTime });
+                audio.addEventListener('error', onPlaybackError, { once: true });
+                requestPlayback();
+                return;
+            }
+            clearLoadTimeout();
             let playbackError = null;
             if (mediaError?.code === MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED) {
                 playbackError = { name: 'NotSupportedError' };
@@ -1018,17 +1143,23 @@
         audio.addEventListener('playing', clearLoadTimeout, { once: true });
         audio.addEventListener('canplay', clearLoadTimeout, { once: true });
         audio.addEventListener('error', onPlaybackError, { once: true });
-        
+
+        function requestPlayback() {
+            const attemptedCors = audio.crossOrigin;
+            audio.play().catch(err => {
+                if (!currentMusicData || currentMusicData.src !== src || err.name === 'AbortError' ||
+                    attemptedCors !== audio.crossOrigin || audio.error) return;
+                clearTimeout(loadTimeout);
+                console.error('Play failed:', err);
+                showMusicError(messageForPlaybackFailure(err, diagnostics));
+            });
+        }
+
         let playbackStarted = false;
         const startPlayback = () => {
             if (playbackStarted || !currentMusicData || currentMusicData.src !== src) return;
             playbackStarted = true;
-            audio.play().catch(err => {
-                clearTimeout(loadTimeout);
-                if (!currentMusicData || currentMusicData.src !== src || err.name === 'AbortError') return;
-                console.error('Play failed:', err);
-                showMusicError(messageForPlaybackFailure(err, diagnostics));
-            });
+            requestPlayback();
         };
 
         if (isTvMusicEnvironment()) {
@@ -1210,28 +1341,20 @@
         }
     }
     
-    // Flag to prevent duplicate event listener registration
-    let musicListenerAdded = false;
-    
-    // Initialize when anime data is loaded
-    function init() {
-        // Adicionar listener apenas uma vez para evitar memory leaks
-        if (!musicListenerAdded) {
-            window.addEventListener('animeDataLoaded', renderMusicGrid);
-            musicListenerAdded = true;
-        }
-        
-        // Tentar renderizar imediatamente se dados já disponíveis
-        if (window.animeDB && window.animeDB.musicLibrary) {
+    function renderVisibleMusicGrid() {
+        if (document.getElementById('openings-section')?.classList.contains('active')) {
             renderMusicGrid();
         }
     }
+
+    // Navigation renders the library on demand; refresh it if already open.
+    window.addEventListener('animeDataLoaded', renderVisibleMusicGrid);
     
     // Initialize
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
+        document.addEventListener('DOMContentLoaded', renderVisibleMusicGrid, { once: true });
     } else {
-        init();
+        renderVisibleMusicGrid();
     }
     
     function handleTvMediaCommand(command) {

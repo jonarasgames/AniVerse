@@ -1,7 +1,7 @@
 (function (root) {
   'use strict';
 
-  const RULES = Object.freeze({ episodePoints: 100, packCost: 300, packSize: 3, launchSeason: '2026-11' });
+  const RULES = Object.freeze({ episodePoints: 100, packCost: 300, packSize: 3, launchSeason: '2026-11', legacyWeights: Object.freeze([40, 35, 30, 25, 20, 15, 10, 8, 6, 4, 2, 1]) });
   const RARITIES = Object.freeze({
     common: { name: 'Comum', dust: 10, cost: 30 },
     rare: { name: 'Rara', dust: 20, cost: 60 },
@@ -42,15 +42,44 @@
     ] }
   ];
 
+  // A dated edition overrides only December 2026; previous albums and the theme cycle keep their IDs.
+  const FAMILY_EDITION = {
+    id: 'family', renderFolder: 'Familia', name: 'Em família', tag: 'Fim de ano em boa companhia.', icon: 'family', color: '#ed5269',
+    bannerSrc: 'images/seasons/2026-12/banner.png', logoSrc: 'images/seasons/2026-12/logo.png',
+    bannerFallback: 'images/seasons/2026-12/banner.svg', logoFallback: 'images/seasons/2026-12/logo.svg',
+    groups: [
+      ['Em casa', 'family', ['Loid Forger', 'Yor Forger', 'Anya Forger', 'Bond Forger', 'Hiroshi Nohara', 'Misae Nohara', 'Shin-chan Nohara', 'Himawari Nohara']],
+      ['Irmãos', 'family', ['Edward Elric', 'Alphonse Elric', 'Tanjiro Kamado', 'Nezuko Kamado', 'Tai Kamiya', 'Kari Kamiya', 'Satsuki Kusakabe', 'Mei Kusakabe']],
+      ['Laços', 'family', ['Kobayashi', 'Tohru', 'Kanna Kamui', 'Akio Furukawa', 'Sanae Furukawa', 'Nagisa Furukawa', 'Maes Hughes', 'Gracia Hughes']]
+    ]
+  };
+
   function seasonKey(date) {
     return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+  }
+
+  function legacyDropRates(key) {
+    if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(key)) throw new Error('Temporada inválida.');
+    const monthNumber = value => { const [year,month] = value.split('-').map(Number); return year * 12 + month - 1; };
+    const current = monthNumber(key);
+    const monthsSinceLaunch = Math.max(0, current - monthNumber(RULES.launchSeason));
+    const weights = RULES.legacyWeights.slice(0, monthsSinceLaunch);
+    // Reserve the remaining weight for the current season. If archived weights
+    // exceed 100, scale them together because only one archived card can drop.
+    const total = Math.max(100, weights.reduce((sum, weight) => sum + weight, 0));
+    return weights.map((weight, index) => {
+      const monthsAgo = index + 1;
+      const month = current - monthsAgo;
+      const season = `${Math.floor(month / 12)}-${String(month % 12 + 1).padStart(2, '0')}`;
+      return { key: season, monthsAgo, chance: weight / total };
+    });
   }
 
   function catalog(key) {
     if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(key)) throw new Error('Temporada inválida.');
     const [year, month] = key.split('-').map(Number);
     const index = ((year * 12 + month - (2026 * 12 + 11)) % THEMES.length + THEMES.length) % THEMES.length;
-    const theme = THEMES[index];
+    const theme = key === '2026-12' ? FAMILY_EDITION : THEMES[index];
     const cards = theme.groups.flatMap(([group, icon, names], category) => names.map((name, i) => ({
       id: `${category}-${i}`, name, category, group, icon,
       page: category * 2 + Math.floor(i / 4), number: category * 8 + i + 1,
@@ -59,7 +88,7 @@
     })));
     const label = new Date(year, month - 1, 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
     return { key, ...theme, cards, label,
-      bannerSrc: `images/seasons/${key}/banner.png`, logoSrc: `images/seasons/${key}/logo.png`,
+      bannerSrc: theme.bannerSrc || `images/seasons/${key}/banner.png`, logoSrc: theme.logoSrc || `images/seasons/${key}/logo.png`,
       endsAt: new Date(year, month, 1).toISOString() };
   }
 
@@ -131,6 +160,7 @@
         currentKey, comingSoon: currentKey < RULES.launchSeason, isCurrent: key === currentKey, progress: album.points % RULES.packCost,
         packs: currentKey < RULES.launchSeason ? 0 : Math.max(0, Math.floor(album.points / RULES.packCost) - album.opened),
         archive: [...new Set([currentKey < RULES.launchSeason ? RULES.launchSeason : currentKey, ...Object.keys(state.albums).filter(key => key >= RULES.launchSeason && key <= currentKey)])].sort().reverse(),
+        legacyChances: key === currentKey ? legacyDropRates(currentKey) : [],
         rewards: this.rewards(state, key),
         showcase: Object.keys(state.albums).filter(key => key >= RULES.launchSeason && key <= currentKey).flatMap(season => this.rewards(state, season).filter(r => r.claimed)),
         cards: book.cards.map(card => ({ ...card, owned: album.owned.includes(card.id), pasted: album.pasted.includes(card.id) }))
@@ -140,16 +170,33 @@
       this.assertAvailable(key);
       const state = this.read(profileId), album = this.album(state, key), book = catalog(key);
       if (Math.floor(album.points / RULES.packCost) <= album.opened) throw new Error('Complete mais episódios para ganhar um pacote.');
+      // Only the first slot can come from an older season. The other two,
+      // including the rare-or-better slot, always belong to the pack's season.
+      let firstKey = key;
+      const rates = key === seasonKey(this.now()) ? legacyDropRates(key) : [];
+      if (rates.length) {
+        const roll = this.random(); let threshold = 0;
+        for (const rate of rates) {
+          threshold += rate.chance;
+          if (roll < threshold) {
+            firstKey = rate.key;
+            break;
+          }
+        }
+      }
       const draws = Array.from({ length: RULES.packSize }, (_, slot) => {
+        const sourceKey = slot === 0 ? firstKey : key;
+        const sourceBook = sourceKey === key ? book : catalog(sourceKey);
+        const destination = this.album(state, sourceKey);
         const roll = this.random();
         const rarity = slot === 2 ? (roll < .70 ? 'rare' : roll < .95 ? 'epic' : 'legendary')
           : (roll < .60 ? 'common' : roll < .88 ? 'rare' : roll < .98 ? 'epic' : 'legendary');
-        const pool = book.cards.filter(c => c.rarity === rarity);
+        const pool = sourceBook.cards.filter(c => c.rarity === rarity);
         const card = pool[Math.min(pool.length - 1, Math.floor(this.random() * pool.length))];
-        const duplicate = album.owned.includes(card.id);
+        const duplicate = destination.owned.includes(card.id);
         if (duplicate) state.fragments += RARITIES[rarity].dust;
-        else album.owned.push(card.id);
-        return { ...card, duplicate, fragments: duplicate ? RARITIES[rarity].dust : 0 };
+        else destination.owned.push(card.id);
+        return { ...card, season: sourceKey, seasonName: sourceBook.name, seasonLabel: sourceBook.label, legacy: sourceKey !== key, duplicate, fragments: duplicate ? RARITIES[rarity].dust : 0 };
       });
       album.opened += 1;
       this.save(state, profileId);
@@ -193,7 +240,7 @@
       this.save(state, profileId);
     }
   }
-  if (typeof module !== 'undefined' && module.exports) module.exports = { CollectionEngine, catalog, seasonKey, RULES, RARITIES };
+  if (typeof module !== 'undefined' && module.exports) module.exports = { CollectionEngine, catalog, seasonKey, legacyDropRates, RULES, RARITIES };
   else {
     root.collectionEngine = new CollectionEngine();
     root.collectionRules = RULES;

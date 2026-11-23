@@ -1,5 +1,5 @@
-const STATIC_CACHE = 'aniverse-static-v66';
-const RUNTIME_CACHE = 'aniverse-runtime-v66';
+const STATIC_CACHE = 'aniverse-static-v84';
+const RUNTIME_CACHE = 'aniverse-runtime-v84';
 const MEDIA_CACHE = 'aniverse-media-v2';
 const IMAGE_CACHE = 'aniverse-images-v8';
 const STREAM_PROXY_PATH = '/__anv_stream_proxy__';
@@ -7,10 +7,28 @@ const STREAM_PROXY_PATH = '/__anv_stream_proxy__';
 const APP_SHELL = [
   './',
   './index.html',
+  './css/profile-enhancements.css',
+  './css/profile-modal-modern.css',
+  './css/hero-bg-marquee.css',
+  './css/tv-mode.css',
+  './js/theme.js',
+  './js/image-retry.js',
+  './js/anime-render-fallback.js',
+  './js/hero-bg-marquee.js',
+  './js/header-sticky.js',
+  './js/profile-modal-bindings.js',
+  './js/music-player.js',
+  './js/player-fixes.js',
+  './js/info-section.js',
+  './js/fixes.js',
+  './js/profile-enhancements.js',
+  './js/profile-multi.js',
+  './js/profile-modal-new.js',
+  './js/inplace-admin.js',
+  './js/tv-mode.js',
   './css/style.css',
   './css/dark-mode.css',
-  './css/hero-video-rotator.css',
-  './css/achievements-hub.css',
+  './css/achievements-club.css',
   './css/card-studio.css',
   './css/watch-party.css',
   './css/episode-layout.css',
@@ -38,6 +56,12 @@ const APP_SHELL = [
   './anime-data.json',
   './news-data.json',
   './images/logo.png?v=66d69c6689ec',
+  './images/Livre.svg',
+  './images/10.svg',
+  './images/12.svg',
+  './images/14.svg',
+  './images/16.svg',
+  './images/18.svg',
   './assets/fonts/lilita-one/LilitaOne-Regular.ttf',
   './images/bg-default.png'
 ];
@@ -56,7 +80,8 @@ self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys()
       .then(keys => Promise.all(keys
-        .filter(k => ![STATIC_CACHE, RUNTIME_CACHE, MEDIA_CACHE, IMAGE_CACHE].includes(k))
+        .filter(k => /^aniverse-(?:static|runtime|media|images)-v\d+$/.test(k)
+          && ![STATIC_CACHE, RUNTIME_CACHE, MEDIA_CACHE, IMAGE_CACHE].includes(k))
         .map(k => caches.delete(k))))
       .then(() => self.clients.claim())
   );
@@ -73,12 +98,16 @@ async function networkFirst(request) {
   const cache = await caches.open(RUNTIME_CACHE);
   try {
     const fresh = await fetch(request, { cache: 'no-store' });
-    cache.put(request, fresh.clone()).catch(() => {});
+    if (fresh.ok) cache.put(request, fresh.clone()).catch(() => {});
     return fresh;
   } catch (_) {
     const cached = await caches.match(request);
     if (cached) return cached;
-    return caches.match('./index.html');
+    const shell = await caches.open(STATIC_CACHE);
+    const fallback = request.mode === 'navigate'
+      ? await shell.match('./index.html')
+      : await shell.match(request, { ignoreSearch: true });
+    return fallback || Response.error();
   }
 }
 
@@ -154,11 +183,18 @@ async function fetchImageFromNetwork(request) {
 }
 
 async function cachedImage(request, event) {
-  const cache = await caches.open(IMAGE_CACHE);
   const requestUrl = new URL(request.url);
   const isCrossOrigin = requestUrl.origin !== self.location.origin;
+  const localSvg = !isCrossOrigin && /\.svg$/i.test(requestUrl.pathname);
+  if (localSvg) {
+    const shell = await caches.open(STATIC_CACHE);
+    const icon = await shell.match(request);
+    if (icon) return icon;
+  }
+  const cache = await caches.open(IMAGE_CACHE);
   const branding = !isCrossOrigin && /\/images\/(logo\.png|bg-default\.png)$/.test(requestUrl.pathname);
   const cached = await cache.match(request, { ignoreVary: true }) || (branding ? await caches.match(request) : null);
+  if (localSvg && cached && requestUrl.searchParams.has('v')) return cached;
   if (cached && !(isCrossOrigin && cached.type === 'opaque') && !branding) {
     // Show cached artwork immediately; refresh local images in the background.
     event.waitUntil(fetchImageFromNetwork(request).then(fresh => {
